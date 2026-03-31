@@ -18,9 +18,10 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
-            <span class="navbar-brand">
-                <i class="fas fa-square-root-alt"></i> Math Olympiad Club at ETHZ
-            </span>
+            <a class="navbar-brand" href="{{ url_for('home') }}">
+                <img src="{{ url_for('static', filename='images/club_logo.png') }}" alt="Math Olympiad Club" style="height: 40px; margin-right: 8px;">
+                Math Olympiad Club at ETHZ
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
