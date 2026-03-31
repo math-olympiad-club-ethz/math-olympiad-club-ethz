@@ -2,15 +2,15 @@
 
 A static website for the Math Olympiad Club Zurich, hosted on GitHub Pages.
 
+URL : https://math-olympiad-club-ethz.github.io/math-olympiad-club-ethz/
+
 ## How It Works
 
-This site is **statically generated** — no server required. When you push changes, GitHub Actions automatically rebuilds and deploys the site.
-
-URL = https://math-olympiad-club-ethz.github.io/math-olympiad-club-ethz/
+This site is **statically generated** — no server required. When "push changes", GitHub Actions automatically rebuilds and deploys the site.
 
 ## Adding New Problems
 
-1. Export your `.tex` files from Overleaf to the appropriate subfolder under `static/uploads/problems/`
+1. Export your `.tex` files to the appropriate subfolder under `static/uploads/problems/`
 2. Run `python compile_and_clean.py` from the project root to compile PDFs
 3. Commit and push — GitHub Actions will rebuild the site automatically
 
