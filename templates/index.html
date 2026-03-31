@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    
+    <div class="row mt-4">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title">Welcome to the Math Olympiad Club at ETHZ!</h2>
+                    <p class="card-text">
+                    We are a group of passionate mathematicians dedicated to solving challenging problems and exploring the beauty of mathematics. Our club focuses on preparing for and participating in mathematical competitions. In August 2025, seven of us took part of the International Mathematics Competition for University Students (<a href="https://www.imc-math.org.uk/" target="_blank" rel="noopener noreferrer">IMC</a>). In November 2025, we took part (for the first time!) in the <a href="https://icmathscomp.org/" target="_blank" rel="noopener noreferrer">ICMC</a>.
+                    </p>
+                    <p class="card-text">
+                    Our mission is to encourage problem-solving skills, and provide a space for students to meet and challenge themselves with Olympiad-style problems. Whether you're a beginner or an experienced problem-solver, we hope you'll find something in our meetings to inspire you.
+                    </p>
+                   <p class="card-text">
+    Join our WhatsApp group chat: <a href="https://chat.whatsapp.com/Lb3YqmnlctwBltOA1r1PLO" target="_blank" rel="noopener noreferrer">Click here to join</a>
+</p>
+
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <!-- Sponsor Section -->
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    <h3 class="card-title">Exclusive Sponsor</h3>
+                    <p class="card-text">We are proudly supported by</p>
+                    <img src="{{ url_for('static', filename='images/janestreet_logo_light.png') }}" alt="Jane Street" class="sponsor-logo sponsor-logo-light" style="max-width: 200px; height: auto;">
+                    <img src="{{ url_for('static', filename='images/janestreet_logo_dark.png') }}" alt="Jane Street" class="sponsor-logo sponsor-logo-dark" style="max-width: 200px; height: auto;">
+                </div>
+            </div>
+            <!-- Our Goals -->
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title">Our Goals</h3>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Develop problem-solving skills</li>
+                        <li class="list-group-item">Prepare for math competitions</li>
+                        <li class="list-group-item">Encourage collaboration and learning</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Team Section -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title">Actual Team</h3>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><strong>Antoine du Fresne</strong> — Co-founder & President</li>
+                        <li class="list-group-item"><strong>Georg Anegg</strong> — Team Leader / Finance</li>
+                        <li class="list-group-item"><strong>Spas Dimitrov</strong> — Organizer</li>
+                        <li class="list-group-item"><strong>Arnav</strong> — Organizer</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resources Section -->
+    <div class="row mt-4 mb-5">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title">Resources</h3>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <a href="https://play.google.com/store/apps/details?id=de.tobias.imctraining" target="_blank" rel="noopener noreferrer">IMC Training App</a> — Practice problems for competition preparation
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
