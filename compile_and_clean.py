@@ -73,4 +73,4 @@ def main(root_folder):
     print("✅ Done. Only PDFs remain.")
 
 if __name__ == "__main__":
-    main("static/uploads/problems")
+    main("docs/static/uploads/problems")

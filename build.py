@@ -84,10 +84,6 @@ def build():
             **context
         )
         
-        # Fix url_for calls for pages (home, problems)
-        html = html.replace("{{ url_for('home') }}", "index.html")
-        html = html.replace("{{ url_for('problems') }}", "problems.html")
-        
         # Write output
         output_path = os.path.join(OUTPUT_DIR, output_name)
         with open(output_path, "w") as f:

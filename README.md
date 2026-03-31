@@ -10,7 +10,7 @@ This site is **statically generated** — no server required. When "push changes
 
 ## Adding New Problems
 
-1. Export your `.tex` files to the appropriate subfolder under `static/uploads/problems/`
+1. Export your `.tex` files to the appropriate subfolder under `docs/static/uploads/problems/`
 2. Run `python compile_and_clean.py` from the project root to compile PDFs
 3. Commit and push — GitHub Actions will rebuild the site automatically
 
