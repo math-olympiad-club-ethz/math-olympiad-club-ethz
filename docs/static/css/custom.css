@@ -1,0 +1,62 @@
+[data-bs-theme="light"] .footer,
+[data-bs-theme="dark"] .footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    z-index: 100;
+}
+
+/* Light mode styles */
+[data-bs-theme="light"] body,
+[data-bs-theme="light"] .card,
+[data-bs-theme="light"] .card-header,
+[data-bs-theme="light"] .card-body,
+[data-bs-theme="light"] .list-group-item,
+[data-bs-theme="light"] .navbar,
+[data-bs-theme="light"] .footer {
+    background-color: #fff !important;
+    color: #222 !important;
+}
+[data-bs-theme="light"] h1,
+[data-bs-theme="light"] h2,
+[data-bs-theme="light"] h3,
+[data-bs-theme="light"] h4,
+[data-bs-theme="light"] h5,
+[data-bs-theme="light"] h6 {
+    color: #222 !important;
+}
+
+/* Dark mode styles */
+[data-bs-theme="dark"] body,
+[data-bs-theme="dark"] .card,
+[data-bs-theme="dark"] .card-header,
+[data-bs-theme="dark"] .card-body,
+[data-bs-theme="dark"] .list-group-item,
+[data-bs-theme="dark"] .navbar,
+[data-bs-theme="dark"] .footer {
+    background-color: #222 !important;
+    color: #fff !important;
+}
+[data-bs-theme="dark"] h1,
+[data-bs-theme="dark"] h2,
+[data-bs-theme="dark"] h3,
+[data-bs-theme="dark"] h4,
+[data-bs-theme="dark"] h5,
+[data-bs-theme="dark"] h6 {
+    color: #fff !important;
+}
+
+/* Sponsor logo theme switching */
+[data-bs-theme="light"] .sponsor-logo-dark {
+    display: none;
+}
+[data-bs-theme="light"] .sponsor-logo-light {
+    display: inline-block;
+}
+[data-bs-theme="dark"] .sponsor-logo-light {
+    display: none;
+}
+[data-bs-theme="dark"] .sponsor-logo-dark {
+    display: inline-block;
+}

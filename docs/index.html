@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Olympiad Club at ETHZ</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- KaTeX CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css" rel="stylesheet">
+    <!-- Custom Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Math&family=Fira+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="static/css/custom.css" rel="stylesheet">
+    <!-- Font Awesome (latest version) -->
+    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <img id="club-logo" src="static/images/club_logo.png" alt="Math Olympiad Club" style="height: 140px; margin-right: 12px;">
+                Math Olympiad Club at ETHZ
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="problems.html">Problem Sets</a>
+                    </li>
+                </ul>
+                <button id="theme-toggle" class="btn btn-outline-secondary ms-auto" type="button" aria-label="Toggle color mode">
+                    Dark
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container py-4">
+        
+<div class="container mt-5">
+    
+    <div class="row mt-4">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title">Welcome to the Math Olympiad Club at ETHZ!</h2>
+                    <p class="card-text">
+                    We are a group of passionate mathematicians dedicated to solving challenging problems and exploring the beauty of mathematics. Our club focuses on preparing for and participating in mathematical competitions. In August 2025, seven of us took part of the International Mathematics Competition for University Students (<a href="https://www.imc-math.org.uk/" target="_blank" rel="noopener noreferrer">IMC</a>). In November 2025, we took part (for the first time!) in the <a href="https://icmathscomp.org/" target="_blank" rel="noopener noreferrer">ICMC</a>.
+                    </p>
+                    <p class="card-text">
+                    Our mission is to encourage problem-solving skills, and provide a space for students to meet and challenge themselves with Olympiad-style problems. Whether you're a beginner or an experienced problem-solver, we hope you'll find something in our meetings to inspire you.
+                    </p>
+                   <p class="card-text">
+    Join our WhatsApp group chat: <a href="https://chat.whatsapp.com/Lb3YqmnlctwBltOA1r1PLO" target="_blank" rel="noopener noreferrer">Click here to join</a>
+</p>
+
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <!-- Sponsor Section -->
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    <h3 class="card-title">Exclusive Sponsor</h3>
+                    <p class="card-text">We are proudly supported by</p>
+                    <img src="static/images/janestreet_logo_light.png" alt="Jane Street" class="sponsor-logo sponsor-logo-light" style="max-width: 200px; height: auto;">
+                    <img src="static/images/janestreet_logo_dark.png" alt="Jane Street" class="sponsor-logo sponsor-logo-dark" style="max-width: 200px; height: auto;">
+                </div>
+            </div>
+            <!-- Our Goals -->
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title">Our Goals</h3>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Develop problem-solving skills</li>
+                        <li class="list-group-item">Prepare for math competitions</li>
+                        <li class="list-group-item">Encourage collaboration and learning</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Team Section -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title">Actual Team</h3>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><strong>Antoine du Fresne</strong> — Co-founder & President</li>
+                        <li class="list-group-item"><strong>Georg Anegg</strong> — Team Leader / Finance</li>
+                        <li class="list-group-item"><strong>Spas Dimitrov</strong> — Organizer</li>
+                        <li class="list-group-item"><strong>Arnav</strong> — Organizer</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resources Section -->
+    <div class="row mt-4 mb-5">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title">Resources</h3>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <a href="https://play.google.com/store/apps/details?id=de.tobias.imctraining" target="_blank" rel="noopener noreferrer">IMC Training App</a> — Practice problems for competition preparation
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    </main>
+
+    <footer class="footer mt-auto py-3 bg-light">
+        <div class="container text-center">
+            <span class="text-muted">© <span id="current-year"></span> Math Olympiad Club at ETHZ</span>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- KaTeX JS -->
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js"></script>
+    <!-- Custom JS -->
+    <script src="static/js/main.js"></script>
+    <script>
+    // Set current year
+    document.getElementById('current-year').textContent = new Date().getFullYear();
+
+    // Theme toggle logic with button text and persistence
+    const themeToggle = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    const clubLogo = document.getElementById('club-logo');
+    const logoLight = "static/images/club_logo.png";
+    const logoDark = "static/images/club_logo_dark.png";
+    function updateToggleText() {
+        const currentTheme = html.getAttribute('data-bs-theme');
+        themeToggle.textContent = currentTheme === 'light' ? 'Dark' : 'Light';
+    }
+    function updateLogo(theme) {
+        clubLogo.src = theme === 'light' ? logoLight : logoDark;
+    }
+    function setTheme(theme) {
+        html.setAttribute('data-bs-theme', theme);
+        updateToggleText();
+        updateLogo(theme);
+        localStorage.setItem('theme', theme);
+    }
+    themeToggle.addEventListener('click', function() {
+        const currentTheme = html.getAttribute('data-bs-theme');
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        setTheme(newTheme);
+    });
+    // On page load, set theme from localStorage if available
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark' || savedTheme === 'light') {
+        setTheme(savedTheme);
+    } else {
+        setTheme('light');
+    }
+    </script>
+</body>
+</html>

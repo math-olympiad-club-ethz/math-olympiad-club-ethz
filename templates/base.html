@@ -19,7 +19,7 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('home') }}">
-                <img src="{{ url_for('static', filename='images/club_logo.png') }}" alt="Math Olympiad Club" style="height: 40px; margin-right: 8px;">
+                <img id="club-logo" src="{{ url_for('static', filename='images/club_logo.png') }}" alt="Math Olympiad Club" style="height: 140px; margin-right: 12px;">
                 Math Olympiad Club at ETHZ
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -64,13 +64,20 @@
     // Theme toggle logic with button text and persistence
     const themeToggle = document.getElementById('theme-toggle');
     const html = document.documentElement;
+    const clubLogo = document.getElementById('club-logo');
+    const logoLight = "{{ url_for('static', filename='images/club_logo.png') }}";
+    const logoDark = "{{ url_for('static', filename='images/club_logo_dark.png') }}";
     function updateToggleText() {
         const currentTheme = html.getAttribute('data-bs-theme');
         themeToggle.textContent = currentTheme === 'light' ? 'Dark' : 'Light';
     }
+    function updateLogo(theme) {
+        clubLogo.src = theme === 'light' ? logoLight : logoDark;
+    }
     function setTheme(theme) {
         html.setAttribute('data-bs-theme', theme);
         updateToggleText();
+        updateLogo(theme);
         localStorage.setItem('theme', theme);
     }
     themeToggle.addEventListener('click', function() {

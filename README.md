@@ -1,32 +1,42 @@
 # Math Olympiad Club Zurich
 
-A Flask-based website for the Math Olympiad Club Zurich.
+A static website for the Math Olympiad Club Zurich, hosted on GitHub Pages.
 
-## Non-Website Files
+## How It Works
 
-The following files are **not directly used by the website** but serve auxiliary purposes:
-
-### `compile_and_clean.py`
-A utility script for compiling LaTeX `.tex` files into PDFs. It:
-- Automatically installs required LaTeX packages from `preamble.tex` using `tlmgr`
-- Copies the shared preamble into each folder containing `.tex` files
-- Compiles all `.tex` files to PDF using `latexmk`
-- Cleans up auxiliary files, leaving only the PDFs
-
-This is used offline to generate PDF problem sheets that are then served by the website.
-
-### `preamble.tex`
-A shared LaTeX preamble containing common packages, custom commands, and theorem environments used across all math problem documents. It includes:
-- Math packages (amsmath, amssymb, tikz, etc.)
-- Custom `\problem` and `\solution` commands
-- Theorem environments (theorem, lemma, remark)
-- Consistent styling and formatting
-
-This file is copied into problem directories by `compile_and_clean.py` during compilation.
+This site is **statically generated** — no server required. When you push changes, GitHub Actions automatically rebuilds and deploys the site.
 
 ## Adding New Problems
 
 1. Export your `.tex` files from Overleaf to the appropriate subfolder under `static/uploads/problems/`
-2. Run `python compile_and_clean.py` from the project root
-3. The script compiles all `.tex` files to PDF and cleans up the source files
-4. The PDFs automatically appear on the website
+2. Run `python compile_and_clean.py` from the project root to compile PDFs
+3. Commit and push — GitHub Actions will rebuild the site automatically
+
+## Local Development
+
+```bash
+pip install jinja2
+python build.py
+# Open docs/index.html in browser, or:
+cd docs && python -m http.server 8000
+```
+
+## Utility Scripts
+
+### `compile_and_clean.py`
+Compiles LaTeX `.tex` files into PDFs:
+- Installs required LaTeX packages from `preamble.tex`
+- Compiles all `.tex` files to PDF using `latexmk`
+- Cleans up auxiliary files, leaving only PDFs
+
+### `preamble.tex`
+Shared LaTeX preamble with common packages and custom commands for problem documents.
+
+### `build.py`
+Static site generator — scans problems folder and generates HTML files in `docs/`.
+
+## Legacy Files (can be removed)
+
+- `app.py` — Old Flask app (no longer needed)
+- `Procfile` — Render/Heroku config (no longer needed)
+- `requirements.txt` — Can be simplified to just `jinja2`
