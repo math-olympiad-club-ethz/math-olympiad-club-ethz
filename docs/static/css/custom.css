@@ -1,10 +1,39 @@
-/* Footer positioning */
+/* Footer positioning — stick to bottom of page, not viewport */
+html {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+main {
+    flex: 1;
+}
 .footer {
-    position: fixed;
-    left: 0;
-    bottom: 0;
     width: 100%;
-    z-index: 100;
+}
+
+/* Accordion styling */
+.accordion-button:not(.collapsed) {
+    font-weight: 600;
+}
+.accordion-body .list-group-item {
+    border: none;
+    padding: 0.5rem 1rem;
+}
+.accordion-body .list-group-item a {
+    text-decoration: none;
+}
+.accordion-body .list-group-item a:hover {
+    text-decoration: underline;
+}
+
+/* Nested accordion indent */
+.accordion .accordion {
+    margin-left: 1rem;
 }
 
 /* Sponsor logo theme switching */
