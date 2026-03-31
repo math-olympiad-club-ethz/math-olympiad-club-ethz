@@ -13,9 +13,7 @@ def extract_week_number(filename):
 def home():
     return render_template('about.html')
 
-@app.route('/about')
-def about():
-    return render_template('about.html')
+
 
 
 def scan_folder(path, rel_path=''):
