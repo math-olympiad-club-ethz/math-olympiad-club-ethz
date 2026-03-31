@@ -70,7 +70,7 @@ def build():
 
     # Define pages to build
     pages = [
-        ("home.html", "index.html", {}),
+        ("index.html", "index.html", {}),
         ("problems.html", "problems.html", {"problems_tree": problems_tree}),
     ]
 

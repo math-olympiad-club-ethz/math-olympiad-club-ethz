@@ -12,8 +12,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Fira+Math&family=Fira+Sans:wght@400;700&display=swap" rel="stylesheet">
     <!-- Custom CSS -->
     <link href="{{ url_for('static', filename='css/custom.css') }}" rel="stylesheet">
-    <!-- Font Awesome (latest version) -->
-    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -21,7 +19,7 @@
             <span class="navbar-brand">
                 <img id="club-logo" src="{{ url_for('static', filename='images/club_logo.png') }}" alt="Math Olympiad Club" style="height: 140px; margin-right: 12px;">
                 Math Olympiad Club at ETHZ
-            </a>
+            </span>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>

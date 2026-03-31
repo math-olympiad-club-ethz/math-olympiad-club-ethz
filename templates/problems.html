@@ -8,7 +8,7 @@
             {% set this_id = collapse_id ~ '-' ~ loop.index %}
             <li class="list-group-item">
                 <a data-bs-toggle="collapse" href="#{{ this_id }}" role="button" aria-expanded="false" aria-controls="{{ this_id }}">
-                    <i class="fas fa-folder"></i> {{ item.name }}
+                    📁 {{ item.name }}
                 </a>
                 <div class="collapse ms-3" id="{{ this_id }}">
                     {{ render_tree(item.children, parent_path ~ item.name ~ '/', this_id) }}
@@ -17,7 +17,7 @@
         {% else %}
             <li class="list-group-item">
                 <a href="{{ url_for('static', filename='uploads/problems/' ~ item.path) }}" target="_blank">
-                    <i class="fas fa-file"></i> {{ item.name }}
+                    📄 {{ item.name }}
                 </a>
             </li>
         {% endif %}
