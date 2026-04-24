@@ -25,7 +25,12 @@ def install_latex_packages_from_preamble(preamble_path):
     for pkg in pkgs:
         print(f"Installing LaTeX package: {pkg}")
         try:
-            subprocess.run(["tlmgr", "install", pkg], check=False)
+            result = subprocess.run(["tlmgr", "install", pkg], check=False, capture_output=True, text=True)
+            if "permission" in result.stderr.lower() or "permission" in result.stdout.lower():
+                print(f"⚠️  Permission denied for {pkg}. Assuming it's already installed.")
+                continue
+            if result.returncode != 0:
+                print(f"⚠️  Could not install {pkg}. Continuing anyway.")
         except Exception as e:
             print(f"Could not install {pkg}: {e}")
 

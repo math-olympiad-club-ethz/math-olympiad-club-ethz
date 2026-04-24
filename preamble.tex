@@ -6,6 +6,7 @@
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
+\usepackage{fontawesome5}
 \usepackage{lmodern}
 
 % ===== Math Packages =====
@@ -13,6 +14,10 @@
 \usepackage{stmaryrd}
 \usepackage{mathrsfs}
 \usepackage{bbm}
+\usepackage{algorithmicx}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{hyperref}
 \usepackage{tensor}
 \usepackage{mathtools}
 
@@ -27,13 +32,13 @@
 
 % ===== Bibliography =====
 \usepackage{biblatex}
-% \addbibresource{references.bib}  % Uncomment and add your .bib file
+\addbibresource{references.bib}  % Uncomment and add your .bib file
 
 % ===== Tables =====
 \usepackage{makecell}
 
 % ===== Colors =====
-\usepackage{xcolor}
+\usepackage[dvipsnames]{xcolor}
 \definecolor{linkcolour}{rgb}{0.5,0,0}  % Dark red color for links
 
 % ===== Hyperlinks =====
@@ -64,10 +69,44 @@
 \def\bc#1{\textcolor{linkcolour}{BC note: {#1}}}
 \def\b#1{\textcolor{linkcolour}{{#1}}}
 
+% ===== Code Design =====
+\usepackage{listings}
+% Python style for listings
+% Define colors with good contrast for printing
+\definecolor{backcolour}{rgb}{0.98,0.98,0.96}  % Lighter background for printing
+\definecolor{bluekeywords}{rgb}{0,0,0.8}       % Darker blue for better print contrast
+\definecolor{greencomments}{rgb}{0,0.5,0}      % Dark green
+\definecolor{redstrings}{rgb}{0.8,0,0}         % Dark red
+\definecolor{codegray}{rgb}{0.3,0.3,0.3}       % Darker gray for line numbers
+
+\lstdefinestyle{mypython}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{greencomments},
+    keywordstyle=\color{bluekeywords},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{redstrings},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2,
+    frame=single,
+    rulecolor=\color{black},
+    framesep=5pt,
+    language=Python,
+    morekeywords={as, assert, lambda, None, with, yield, import, from, def, class, return, print, True, False}
+}
+
 % ===== Comment Environment =====
 \usepackage{comment}
 \begin{comment}
-Useful LaTeX fonts:
+Useful other LaTeX fonts:
 \usepackage{mathptmx}
 \usepackage{txfonts}
 \usepackage{pxfonts}
