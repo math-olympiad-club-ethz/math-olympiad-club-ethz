@@ -1,0 +1,29 @@
+{
+  "name": "math-olympiad-club-zurich",
+  "version": "1.0.0",
+  "description": "Website and problem bank of the Math Olympiad Club at ETH Zurich, hosted on GitHub Pages.",
+  "scripts": {
+    "build": "python3 build.py",
+    "build:preview": "python3 build.py --preview --no-compile --no-bundle",
+    "serve": "python3 -m http.server 8000 --directory site",
+    "test": "npm run test:unit && npm run test:python && npm run build:preview && npm run test:e2e",
+    "test:unit": "node --test tests/unit/*.test.mjs",
+    "test:python": "python3 -m unittest discover -s tests/python",
+    "test:e2e": "node tests/e2e/bank.mjs && node tests/e2e/propose.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/math-olympiad-club-ethz/math-olympiad-club-ethz.git"
+  },
+  "keywords": [],
+  "author": "Math Olympiad Club at ETH Zurich",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/math-olympiad-club-ethz/math-olympiad-club-ethz/issues"
+  },
+  "homepage": "https://github.com/math-olympiad-club-ethz/math-olympiad-club-ethz#readme",
+  "devDependencies": {
+    "playwright": "^1.63.0"
+  },
+  "private": true
+}

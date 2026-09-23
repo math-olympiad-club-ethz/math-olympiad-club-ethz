@@ -1,0 +1,11 @@
+# SHA-256 of the texlyre-busytex assets (release assets-v1.4.0, build.py::ASSETS_URL) that the engine bundle uses.
+# tools/busytex_bundle.py checks them before every build, also when they come from the cache: busytex.js runs in Node
+# during the build and ships to every visitor with busytex.wasm.  A new release = new hashes here (and in build.py).
+875b87795162cb26b15bd93cffa2e8739bcb900d623ab904029b39402508a1a4  busytex.js
+8d1988fc58cd1611c3cbd6bd986c3e607e5ff44f1d94252207ff7aae4cee72e0  busytex.wasm
+d4abc2e93a1ae33099107c6ad8a61813978cd44036a95697db2f2365a393c283  texlive-basic.js
+ccb35d98d77cbaf988e1481f8538709f72166196785cf6b8785eabe6c8fb2993  texlive-basic.data
+4354ad2040462400ca856e595cec970509c95f8d2ac87fb3e06e0e17ffc9033a  texlive-recommended.js
+7a912aa15f9e534b1948566771bf2510ca704fab3c3fdece7f75bc6558525a92  texlive-recommended.data
+6c935b358ababde879aa2c62b48601d6e6be4ee7f3f9ed86c7f49136b803d618  texlive-extra.js
+9ae117b8fd7eacc13430296278d63603070f083c6f1e647937a6866874c726ae  texlive-extra.data
