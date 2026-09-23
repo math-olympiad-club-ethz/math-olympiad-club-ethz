@@ -129,13 +129,13 @@ or equivalently (since \( k \geq 2 \)), we obtain the equation:
 We shall show that this leads to a contradiction. Let \( c'' := v_p\left( k \right) \geq 0 \). We prove:
 \begin{equation}
 -k p^{c'} B \not\equiv \mathbf{0}_{n \times n} \pmod{p^{c' + c'' + 1}},
-\end{equation}
 \label{1}
+\end{equation}
 whilst
 \begin{equation}
 \sum_{i=2}^{k} \binom{k}{i} p^{i c'} B^i \equiv \mathbf{0}_{n \times n} \pmod{p^{c' + c'' + 1}},
-\end{equation}
 \label{2}
+\end{equation}
 which is impossible by the derived equation above.
 \\
 For (\hyperref[1]{1}): because \( v_p\left( k p^{c'} \right) = c' + c'' \) and \( B \not\equiv \mathbf{0}_{n \times n} \pmod{p} \), we have \( -k p^{c'} B \not\equiv \mathbf{0}_{n \times n} \pmod{p^{c' + c'' + 1}} \) (but obviously \( k p^{c'} B \equiv \mathbf{0}_{n \times n} \pmod{p^{c' + c''}} \)).
@@ -399,7 +399,7 @@ Because $\sigma\left(M\right) = \left\{0_{\mathbb{F}}\right\}$, we must have $\o
 \\\\
 $4. \Rightarrow 5.$: This is trivial (use $t = 0$).
 \\\\
-To finish, we need to show that $5. \Rightarrow 1.$. Now, notice that $3. \Rightarrow 1.$: indeed, the characteristic polynomial has degree $r$, so $P_{\text{char}, M}\left(X\right) = \prod_{\lambda \in \sigma\left(M\right)} \left(X - \lambda\right)^{m_{P_{\text{char}, M}\left(X\right)}\left(\lambda\right)} \overset{\sigma\left(M\right)=\left\{0_{\mathbb{F}}\right\}}{=} X^r$. We have by the Cayley-Hamilton theorem (valid over any field) that $M^r = \mathbf{0}_{r \times r}$. Hence $1.\Leftrightarrow 3.$, and so it suffices, in fact, to show $6.\Rightarrow 3.$. This relies on the lemma [\hyperref[A2]{A.2}]. Let $\boldsymbol{\lambda} \in \left(\mathbb{F}^{\text{alg}}\right)^r$ be any vector (the order in this vector doesn't matter) of exactly all the eigenvalues of $M$ counted with their respective algebraic multiplicities. By the Spectral Mapping Theorem [\hyperref[A1]{A.1}], for all $k \in \mathbb{N}_{\geq 1}$, $\operatorname{tr}\left(M^k\right) = \sum_{i \in r} \lambda_i^k$. Hence if there exists $t \in \mathbb{N}$ such that $\forall k \in \llbracket 1, r \rrbracket, \operatorname{tr}\left(M^{t+k}\right) = 0_{\mathbb{F}}$, then by our lemma [\hyperref[A2]{A.2}], we have $\forall i \in r, \lambda_i = 0_{\mathbb{F}}$. Hence $\sigma\left(M\right) = \left\{0_{\mathbb{F}}\right\}$ (since $\sigma\left(M\right) \neq \varnothing$).
+To finish, we need to show that $5. \Rightarrow 1.$. Now, notice that $3. \Rightarrow 1.$: indeed, the characteristic polynomial has degree $r$, so $P_{\text{char}, M}\left(X\right) = \prod_{\lambda \in \sigma\left(M\right)} \left(X - \lambda\right)^{m_{P_{\text{char}, M}\left(X\right)}\left(\lambda\right)} \overset{\sigma\left(M\right)=\left\{0_{\mathbb{F}}\right\}}{=} X^r$. We have by the Cayley-Hamilton theorem (valid over any field) that $M^r = \mathbf{0}_{r \times r}$. Hence $1.\Leftrightarrow 3.$, and so it suffices, in fact, to show $5.\Rightarrow 3.$. This relies on the lemma [\hyperref[A2]{A.2}]. Let $\boldsymbol{\lambda} \in \left(\mathbb{F}^{\text{alg}}\right)^r$ be any vector (the order in this vector doesn't matter) of exactly all the eigenvalues of $M$ counted with their respective algebraic multiplicities. By the Spectral Mapping Theorem [\hyperref[A1]{A.1}], for all $k \in \mathbb{N}_{\geq 1}$, $\operatorname{tr}\left(M^k\right) = \sum_{i \in r} \lambda_i^k$. Hence if there exists $t \in \mathbb{N}$ such that $\forall k \in \llbracket 1, r \rrbracket, \operatorname{tr}\left(M^{t+k}\right) = 0_{\mathbb{F}}$, then by our lemma [\hyperref[A2]{A.2}], we have $\forall i \in r, \lambda_i = 0_{\mathbb{F}}$. Hence $\sigma\left(M\right) = \left\{0_{\mathbb{F}}\right\}$ (since $\sigma\left(M\right) \neq \varnothing$).
 \\\\
 To show that a general set of powers $S \subset \mathbb{N}_{>0}$ of size equal to the dimension of the matrix does not suffice:
 \\\\

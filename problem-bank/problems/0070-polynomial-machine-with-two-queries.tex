@@ -102,7 +102,7 @@ $R=0$, i.e.\ $P=Q$.
 \end{proof}
 This settles the \emph{information} --- $P$ is the unique element of
 $\mathbb{N}[X]$ taking the value $s:=P(e)$ --- and it remains only to extract it by an
-algorithm. Recall that $n=\deg P$ and $a\in\mathbb{N}^{n+1}$ satisfies $P=\sum_{i=0}^{n}a_iX^i$ with $a_n\ge 1$. Hence $s>1$.
+algorithm. Recall that $n=\deg P$ and $a\in\mathbb{N}^{n+1}$ satisfies $P=\sum_{i=0}^{n}a_iX^i$ with $a_n\ge 1$. Hence $s\geq 1$.
 \\\\
 Now, we can compute a rational $q$ with $s<q$ (which is possible since we may request $s$ to any precision). Since $a_n\ge 1$, and $e>0$, we have $e^{n}\le a_n e^{n}\le P(e)=s<q$, hence $n\leq\lfloor\log(q)\rfloor$ and $q\geq 1$. We can compute a sufficiently close approximation of $\log(q) \geq \log(1) = 0$ such that taking its floor yields $\lfloor\log(q)\rfloor\geq 0$. We could also bound $n$ without computing approximations of $e$ and $\log(q)$: simply compute recursively $3^0, 3^1, \dots, 3^k, \dots$ until finding the first $T\in\mathbb{N}$ that satisfies $3^T > q$. Because $e < 3$, this guarantees $e^n < 3^T$, so we know $0\leq n \leq T-1$. In either case, there is an explicitly computable integer $B_q$ depending on $q$ (which could be optimized) such that $0\leq n \leq B_q$. 
 \\\\
@@ -112,7 +112,7 @@ Now as $e>0$, for every $0\leq i\leq n$, we have $a_ie^{i}\le P(e)=s<q$ so that 
 \]
 
 For each candidate $a'\in \mathcal{A}_{q}$, consider the corresponding polynomial
-$Q(X) = \sum_{i\in \operatorname{dom}(a')} a'_i X^i\in\mathbb{N}[X]$. Now assume that $a'\neq a$, we have $Q(X)\neq P(X)$, and by Lemma \ref{lem:transc}, $Q(e)\neq s$. Thus, there must exist a decimal place where their expansions differ. Since both $s$ and $Q(e)$ are readable to arbitrary precision (one algorithm is given by the oracle, and there are algorithms to compute the first $k$ exact decimals of $Q(e)$), we can certifies this inequality in finitely many steps, allowing $a'$ to be discarded. 
+$Q(X) = \sum_{i\in \operatorname{dom}(a')} a'_i X^i\in\mathbb{N}[X]$. Now assume that $a'\neq a$, we have $Q(X)\neq P(X)$, and by Lemma \ref{lem:transc}, $Q(e)\neq s$. Thus, there must exist a decimal place where their expansions differ. Since both $s$ and $Q(e)$ are readable to arbitrary precision (one algorithm is given by the oracle, and there are algorithms to compute the first $k$ exact decimals of $Q(e)$), we can certify this inequality in finitely many steps, allowing $a'$ to be discarded. 
 \\\\
 Crucially, because we do not know which sequence $a'$ is the correct one in advance, and because testing the true sequence $a$ for equality ($P(e) = s$) will never halt, we must carry out these inequality tests for all candidates $a'\in\mathcal{A}_q$ in \textbf{parallel} (which is computationally trivial since there are only finitely many of them). This ensures we \textbf{eventually} eliminate every incorrect candidate in finite time. Once exactly $|\mathcal{A}_q| - 1$ tests have terminated, the single non-halting process corresponds to the true sequence $a$. Thus, $a$ is the unique survivor of this process, and our algorithm halts.
 

@@ -29,21 +29,21 @@ Since \( \langle \cdot, \cdot \rangle_{\mathbb{F}_2^n}\) is symmetric and non-de
 \] 
 where \( Z^\perp = \{ v \in \mathbb{F}_2^n \mid \langle v, z \rangle_{\mathbb{F}_2^n} = 0_{\mathbb{F}_2} \ \forall z \in Z \} \) for any $\mathbb{F}_{2}-$subspace \( Z \subset \mathbb{F}_2^n \). For a proof of this classical fact, see the Appendix [\hyperref[A]{A}].
 \\\\
-With this being introduced, lets take an \( n \times n \)-matrix \( A \) with $\operatorname{diag}(A)=\underline{1}$.
+With this being introduced, lets take an \( n \times n \)-matrix \( A \) with $\operatorname{diag}(A)=1_{\mathbb{F}_2^n}$.
 Now write \( A = (a_{ij})_{1 \leq i, j \leq n} \) with \( a_{ii} = 1_{\mathbb{F}_2} \) and \( a_{ij} = a_{ji} \). Then we have for any \( v \in \mathbb{F}_2^n \),
 \[
-\langle v, Av \rangle_{\mathbb{F}_2^n} = \sum_{0 \leq i, j \leq n-1} v_i v_j a_{ij} = \sum_{i=1}^n v_i^2 + 2 \sum_{0\leq i < j\leq n-1} v_i v_j a_{ij} = \sum_{i=0}^{n-1} v_i = \left\langle v, 1_{\mathbb{F}_2^n} \right\rangle_{\mathbb{F}_2^n},
+\langle v, Av \rangle_{\mathbb{F}_2^n} = \sum_{0 \leq i, j \leq n-1} v_i v_j a_{ij} = \sum_{i=0}^{n-1} v_i^2 + 2 \sum_{0\leq i < j\leq n-1} v_i v_j a_{ij} = \sum_{i=0}^{n-1} v_i = \left\langle v, 1_{\mathbb{F}_2^n} \right\rangle_{\mathbb{F}_2^n},
 \]
 because we are working over \( \mathbb{F}_2 \). In particular for any \( z \in \operatorname{Im}(A)^\perp\subset \mathbb{F}_2^n \),
 \[
-\langle z, \underline{1} \rangle_{\mathbb{F}_2^n} = \langle z, Az \rangle_{\mathbb{F}_2^n} = 0_{\mathbb{F}_2},
+\langle z, 1_{\mathbb{F}_2^n} \rangle_{\mathbb{F}_2^n} = \langle z, Az \rangle_{\mathbb{F}_2^n} = 0_{\mathbb{F}_2},
 \]
 since \( Az \in \operatorname{Im}(A) \) and $z\in \operatorname{Im}(A)^{\perp}$. As $z\in \operatorname{Im}(A)^{\perp}$ was arbitrary, we must have
 \[
 1_{\mathbb{F}_2^n}\in \left(\operatorname{Im}(A)^{\perp}\right)^{\perp} = \operatorname{Im}(A).
 \]
 \appendix
-\section{}
+\section{Appendix}
 \label{A}
 Let \( E \) be a vector space over a field \( K \), and let \( B \colon E \times E \to K \) be a symmetric \( K \)-bilinear form. For any subspace \( Q \subseteq E \), the orthogonal complement is defined by
 \[

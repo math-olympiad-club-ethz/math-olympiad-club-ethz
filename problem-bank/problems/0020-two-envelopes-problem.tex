@@ -70,7 +70,7 @@ To formalize this idea, we introduce a measurable function \( g: \mathbb{R}_{>0}
 \[
 f_g\left(x, y\right) = \mathbbm{1}_{\left[0, g\left(x\right)\right]}\left(y\right),
 \]
-which means we keep the first envelope if the generated number \( U\left(\xi\right) \) satisfies \(0\leq  U\left(\xi\right) \leq g\left(\pi_1\left(\omega\right)\right) \), and we switch otherwise. For example, if $g=\text{cte}_0$ then we always switch, while if $g=\text{cte}_1$ then we always keep. 
+which means we keep the first envelope if the generated number \( U\left(\xi\right) \) satisfies \(0\leq  U\left(\xi\right) \leq g\left(\pi_1\left(w\right)\right) \), and we switch otherwise. For example, if $g=\text{cte}_0$ then we always switch, while if $g=\text{cte}_1$ then we always keep. 
 \\\\
 For this specific choice of \( f_g \), the probabilities of keeping and switching the envelope are as follows:
 with probability \(\frac{1}{2}\) the first envelope has amount \(\alpha\), and we keep it if the randomly generated number in $\left[0,1\right]$ is below $g\left(\alpha\right)$ that is we keep it with probability:
@@ -125,7 +125,7 @@ Then by simply iterating this inequality we obtain by induction on $\mathbb{N}$:
 \[
 g'(2^n x)-g'(x) \ge nc \quad \text{for all } n\in\mathbb{N}.
 \]
-Since \(g'\) is bounded above by \(1\) and bounded below by $0$, this implies $nc< 1$ for every \(n\), which is impossible since $c$ is not an \href{https://en.wikipedia.org/wiki/Archimedean_property}{infinitesimal element} w.r.t to $1$. However if we had more information on $\alpha$ (say some lower or/and upper bound) we may tune hyperparameter $t,c\in\mathbb{R}_{>0}$ by doing first order optimization on for examples:
+Since \(g'\) is bounded above by \(1\) and bounded below by $0$, this implies $nc< 1$ for every \(n\), which is impossible since $c$ is not an \href{https://en.wikipedia.org/wiki/Archimedean_property}{infinitesimal element} w.r.t. $1$. However if we had more information on $\alpha$ (say some lower or/and upper bound) we may tune hyperparameter $t,c\in\mathbb{R}_{>0}$ by doing first order optimization on for examples:
 \\
 \textit{Power-Law Functions}:
     \[
@@ -234,7 +234,7 @@ for label, g_func in g_functions.items():
     print(f"Strategy: {label}")
     print(f"  Theoretical Expected Gain: {theo:.6f}")
     print(f"  Experimental Average Gain: {exp_gain:.6f}")
-    print(f"  Improvement over naive: {improvement:+.6f}\n")
+    print(f"  Improvement over naive strategy: {improvement:+.6f}\n")
 \end{lstlisting}
 
 \section{Results}

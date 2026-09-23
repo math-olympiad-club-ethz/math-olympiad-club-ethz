@@ -37,9 +37,8 @@ __pycache__/
 /problem-bank/work-in-progress/*
 !/problem-bank/work-in-progress/README.md
 
-# Personal Claude Code instructions and the maintainer's local cleanup notes — local only, never committed.
+# Personal Claude Code instructions — local only, never committed.
 CLAUDE.local.md
-CLEANUP_AUDIT.md
 
 # Node test toolchain (Playwright, for the browser tests)
 node_modules/

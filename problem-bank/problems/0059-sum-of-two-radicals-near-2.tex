@@ -17,7 +17,7 @@
 Find all solutions in the natural numbers to the equation: $\sqrt[n]{m} + \sqrt[m]{n} = 2 + \frac{2}{mn(m+n)^{\frac{1}{m} + \frac{1}{n}}}$
 \end{problem}
 \begin{solution}
-For all natural n and m, $\lfloor{\sqrt[n]{m}\rfloor} \geq 1$, we will prove that $\{\sqrt[n]{m}\} \geq \frac{1}{nm}$. Let us call the floor value a, and the fractional value x:\\
-$1\leq m-a^n = (m^\frac{1}{n})^n - a^n = x \sum_{i=0}^{n-1} m^{\frac{i}{n}} a^{n-1-i} \leq xnm \ => \ x \geq \frac{1}{nm}$\\
+For all natural n and m, $\lfloor\sqrt[n]{m}\rfloor \geq 1$, we will prove that $\{\sqrt[n]{m}\} \geq \frac{1}{nm}$. Let us call the floor value a, and the fractional value x:\\
+$1\leq m-a^n = (m^\frac{1}{n})^n - a^n = x \sum_{i=0}^{n-1} m^{\frac{i}{n}} a^{n-1-i} \leq xnm \Rightarrow x \geq \frac{1}{nm}$\\
 We get  $\sqrt[n]{m} + \sqrt[m]{n} \geq 2 + \frac{2}{nm} > 2 + \frac{2}{mn(m+n)^{\frac{1}{m} + \frac{1}{n}}}$, so there are no integer solutions.
 \end{solution}

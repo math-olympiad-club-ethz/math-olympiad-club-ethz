@@ -31,14 +31,14 @@ Note that this definition is independent where we start to compute since $\cdot$
 Show $(S,\cdot)$ is a group.
 \end{problem}
 \begin{solution}
-In order to show $(S,\cdot)$ is a group we need to start by showing that $(S,\cdot)$ is a monoïd; that is a semi-group where there exist an identity element for $\cdot$ .
-We know $(S,\cdot)$ is a semi-group. We search and identity element.\\\\
+In order to show $(S,\cdot)$ is a group we need to start by showing that $(S,\cdot)$ is a monoid; that is a semi-group where there exist an identity element for $\cdot$ .
+We know $(S,\cdot)$ is a semi-group. We search an identity element.\\\\
 Let $a\in S$ which exists since it is non-empty, now we know $a^{\mathbb{N}_{\geq 1}}$ is not infinite which means the following statement is true:
 $$
 \neg(\forall m',n'\in\mathbb{N}_{\geq 1}, m'< n'\rightarrow a^{m'}\neq a^{n'})
 $$
 Which means $\exists m,n\in\mathbb{N}_{\geq 1}, m< n\wedge a^m=a^n$. We define:
-$$e_S:=a^{n-m>0}\in S$$
+$$e_S:=a^{n-m}\in S$$
 We see that since $\cdot$ is an associative binary operation that: $$a=a^1=a^{m-(m-1)}=a^{n-(m-1)}=a\cdot a^{n-m}=a\cdot e_S$$
 Therefore again for the same reason we have:  
 $$a\cdot e_S^2=a\cdot (e_S\cdot e_S)=(a\cdot e_S)\cdot e_S=a\cdot e_S$$
@@ -50,7 +50,7 @@ and $$e_S\cdot b=e_S^2\cdot b=e_S\cdot(e_S\cdot b)$$
 using injectivity in the right and left coordinate respectively:
 $b=b\cdot e_S$ and $b=e_S\cdot b$
 as desired.\\
-We have therefore shown $(S,\cdot,e_S)$ is a monoïd, to show it is a group we need to show $\forall g\in S,\exists h\in S,g\cdot h=e_S=h\cdot g$ (each element have right and left inverse which are the same).
+We have therefore shown $(S,\cdot,e_S)$ is a monoid, to show it is a group we need to show $\forall g\in S,\exists h\in S,g\cdot h=e_S=h\cdot g$ (each element have right and left inverse which are the same).
 Let $g\in S$:\\
 if $g=e_S$ we have $e_S^2=e_S$ so $e_S$ has an inverse which is itself.
 \\

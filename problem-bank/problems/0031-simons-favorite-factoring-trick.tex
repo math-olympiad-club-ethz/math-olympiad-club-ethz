@@ -105,7 +105,7 @@ mnp = \frac{1}{2}\left( m + 2 \right)\left( n + 2 \right)\left( p + 2 \right).
 \]
 which is equivalent to 
 \[
-p\left( mn - (m+2)(n+2)2m - 2n - 4 \right) = 2\left( mn + 2m + 2n + 4 \right).
+p\left( mn - 2m - 2n - 4 \right) = 2\left( m+2 \right)\left( n+2 \right).
 \]
 Note that using SFFT:
 \[
@@ -138,7 +138,7 @@ B = \underbrace{88\ldots8}_{n \text{ digits}} = \sum_{i=0}^{n-1} 8 \cdot 10^{i} 
 \]
 Now compute:
 \begin{align*} A+2B+4 &= \frac{4 \cdot 10^{2n} - 4 + 16 \cdot 10^n - 16 + 36}{9} \\ &= \frac{4 \cdot (10^n)^2 + 16 \cdot 10^n + 16}{9} \\ &= \left(\frac{2(10^n + 2)}{3}\right)^2. \end{align*}
-Since \(10 \equiv 1 \pmod{3}\), we have \(10^n \equiv 1 \pmod{3}\), so \(10^n + 2 \equiv 0 \pmod{3}\). Hence \(\frac{10^n + 2}{3}\) is an integer. Therefore, \(S\) is a perfect square.
+Since \(10 \equiv 1 \pmod{3}\), we have \(10^n \equiv 1 \pmod{3}\), so \(10^n + 2 \equiv 0 \pmod{3}\). Hence \(\frac{10^n + 2}{3}\) is an integer. Therefore, \(A + 2B + 4\) is a perfect square.
 \subsection{AIME (2000)} 
 The system of equations (for $x, y, z \in \mathbb{R}_{>0}$)
 \begin{align*}

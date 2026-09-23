@@ -17,35 +17,35 @@
 Prove that if the complex number \( z \) satisfies the equation
 
 \[
-11z^{10} + 10i z^9 + 10i z -11 = 0,
+    11z^{10} + 10i z^9 + 10i z -11 = 0,
 \]
 
 then \( |z| = 1 \). (Here, \( i \) is the imaginary unit satisfying \( i^2 = -1 \).)
 \end{problem}
 \begin{solution}
-We begin by expressing $z^9$ in terms of $z$:
-\begin{equation*}
-    z^9 = \frac{11 - 10iz}{11z + 10i}.
-\end{equation*}
-Taking the modulus on both sides, we examine the numerator and denominator separately:
-\begin{align*}
-    |11 - 10iz|^2 &= (11 - 10iz)(11 + 10iz) = 121 + 100|z|^2 + 220 \Im z, \\
-    |11z + 10i|^2 &= (11z + 10i)(11\bar{z} - 10i) = 100 + 121|z|^2 + 220 \Im z.
-\end{align*}
-If we define $|z^9| = N/D$ where
-\begin{equation*}
-    N = 121 + 100|z|^2 + 220 \Im z, \quad D = 100 + 121|z|^2 + 220 \Im z,
-\end{equation*}
-then their difference is given by
-\begin{equation*}
-    N - D = 21(1 - |z|^2).
-\end{equation*}
+    We begin by expressing $z^9$ in terms of $z$:
+    \begin{equation*}
+        z^9 = \frac{11 - 10iz}{11z + 10i}.
+    \end{equation*}
+    Taking the modulus on both sides, we examine the numerator and denominator separately:
+    \begin{align*}
+        |11 - 10iz|^2 & = (11 - 10iz)(11 + 10i\bar{z}) = 121 + 100|z|^2 + 220 \Im z, \\
+        |11z + 10i|^2 & = (11z + 10i)(11\bar{z} - 10i) = 100 + 121|z|^2 + 220 \Im z.
+    \end{align*}
+    If we define $|z^9| = N/D$ where
+    \begin{equation*}
+        N = 121 + 100|z|^2 + 220 \Im z, \quad D = 100 + 121|z|^2 + 220 \Im z,
+    \end{equation*}
+    then their difference is given by
+    \begin{equation*}
+        N - D = 21(1 - |z|^2).
+    \end{equation*}
 
-Now, consider the cases:
-\\\\
-- If $|z| > 1$, then $1 - |z|^2 < 0$, so $N < D$ and hence $|z^9| < 1$.
-\\\\
-- If $|z| < 1$, then $1 - |z|^2 > 0$, so $N > D$ and hence $|z^9| > 1$.
+    Now, consider the cases:
+    \\\\
+    - If $|z| > 1$, then $1 - |z|^2 < 0$, so $N < D$ and hence $|z^9| < 1$.
+    \\\\
+    - If $|z| < 1$, then $1 - |z|^2 > 0$, so $N > D$ and hence $|z^9| > 1$.
 
-Both cases is a contradiction. Thus, we conclude that $|z| = 1$ for all roots $z$.
+    Both cases are a contradiction. Thus, we conclude that $|z| = 1$ for all roots $z$.
 \end{solution}

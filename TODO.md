@@ -31,12 +31,10 @@ Details, sources and the full change table: [`problem-bank/history-review.md`](p
 
 ## Problem bank — LaTeX fixes (humans only)
 
-- [ ] **0062**: the "not transcendental" claim is probably false (The Pentagon's editor note, 2024) — ask only for irrationality?
-- [ ] **0065**: typos "inekcalaty" → "inekoalaty", "suitable x_m" → "x_n".
-- [ ] **0074**: typo "cost pf".
-- [ ] **0080**: m is a natural number in the original; typo "for elements".
-- [ ] **0052**: the statement only assumes the closed disc in U.
-- [ ] The 142 known content errors listed in [`problem-bank/known-errors.md`](problem-bank/known-errors.md).
+- [x] Pure typos in the problem files fixed (59 entries, 2026-09-23, with Antoine's OK; check the diff before committing).
+- [ ] The 87 errors that need a mathematical fix, each with an AI **Proposal** to check, in
+      [`problem-bank/known-errors.md`](problem-bank/known-errors.md) (among them 0062 "not transcendental", 0080 m a
+      positive integer, 0052 closed disc in U).
 - [ ] Missing solutions: 0052, 0060–0062, 0065–0068, 0071–0080.
 - [ ] Partial solutions: 0019, 0031, 0034, 0038–0040, 0049, 0063, 0064, 0069.
 
@@ -67,10 +65,16 @@ The audit's code fixes are done (report: session scratchpad `audit/REPORT.md`). 
 
 ## Repository
 
-- [ ] Commit the reorganisation, the problem bank, the history pass and the website in a series of commits grouped
-      by theme on branch `problem-bank`, push the branch, and merge it into `main` only at the very end — that
-      merge is what replaces the live site.
+- [x] Reorganisation, problem bank, history pass and website committed as a themed series, merged into `main` and
+      live (2026-09-23).
 - [x] `.gitignore` decided (2026-09-22): signed minutes public, `website-code/site/*.html` ignored, `* 2.*` narrowed
       to the build folders.
-- [ ] Cleanup left, all outside the repository (the maintainer's local notes): move the folder out of iCloud and delete
-      the `* 2.*` copies (after the push), old Playwright browsers, the backup tarball, the `inspiration/` questions.
+- [ ] The repository stays in iCloud (decided 2026-09-23), which keeps making " 2" copies of files that change while
+      it syncs. Check `git status` before `git add -A`. To delete the copies identical to their original:
+
+      ```sh
+      git ls-files --others --exclude-standard | grep ' 2\.' | while IFS= read -r d; do cmp -s "$d" "${d/ 2./.}" && rm -v "$d"; done
+      ```
+- [ ] Local `inspiration/` folder (each member's own, git-ignored), later: are the two images of the Bernoulli 2026 P5
+      solution the same write-up; have the problems in `proposals/` been added to the bank; is
+      `competitions/putnam/Very Nice Putnam problem.png` in the bank; clean the old 2025 notes in `problem_collection.tex`.

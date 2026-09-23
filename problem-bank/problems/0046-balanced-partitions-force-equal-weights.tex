@@ -82,7 +82,7 @@ Let us therefore fix $n \in \mathbb{N}$ and $\mathbf{x}: 2 \cdot n + 1 \to \math
 $$
 \phi(\mathbf{x}':= \text{lcm}(q_i)_{i \in A} \cdot \mathbf{x}, n)
 $$
-as $0 \neq x'_j \in \{x'_i \mid i \in A\} \subset \operatorname{ran}(\mathbf{x}') \subset \mathbb{N}$.
+as $0 \neq x'_j \in \{x'_i \mid i \in A\} \subset \operatorname{ran}(\mathbf{x}') \subset \mathbb{Z}$.
 \\
 This leads to a solution with at least one zero-weighted stone by considering:
 $$
@@ -124,7 +124,7 @@ $$
 $$
 Therefore $\{0\}=\operatorname{ran}(\textbf{x}'')$ i.e. $\textbf{x}$ is constant. Since $n$ and $\textbf{x}$ were arbitrary we indeed have $$\forall \textbf{x} \forall n \left( \operatorname{ran}(\textbf{x}) \subset \mathbb{Q} \wedge \phi(\textbf{x}, n) \right) \rightarrow |\operatorname{ran}(\textbf{x})| = 1$$
 \\\\
-$\bullet$ Having solved for rational weights, we now use this for the general case, i.e., $\operatorname{ran}(\textbf{x}) \subset \mathbb{R}$. The idea is to apply $dim_{\mathbb{Q}}(\langle \operatorname{ran}(\textbf{x}) \rangle_{\mathbb{Q}})$, the result for the rational case, to certain rational weights. We will express each $x_i$ as a unique $\mathbb{Q}$-linear combination of elements in a certain basis of $\operatorname{ran}(\textbf{x})$. Conceptually, this will form a matrix with rational coefficients, where the $i$-th row (indexed by the basis) corresponds to those unique weighted rational coefficients in the expression of $x_i$. By using the fact that $\textbf{x}$ satisfies the property, we will deduce that each column of this matrix gives us a set of rational weighted coefficients which also satisfies the property. Therefore, by applying the result for the rational case on each column, we deduce that each of them consists of only one rational number. From this, we then easily see that each $x_i$ must be equal. 
+$\bullet$ Having solved for rational weights, we now use this for the general case, i.e., $\operatorname{ran}(\textbf{x}) \subset \mathbb{R}$. The idea is to apply $\dim_{\mathbb{Q}}(\langle \operatorname{ran}(\textbf{x}) \rangle_{\mathbb{Q}})$, the result for the rational case, to certain rational weights. We will express each $x_i$ as a unique $\mathbb{Q}$-linear combination of elements in a certain basis of $\operatorname{ran}(\textbf{x})$. Conceptually, this will form a matrix with rational coefficients, where the $i$-th row (indexed by the basis) corresponds to those unique weighted rational coefficients in the expression of $x_i$. By using the fact that $\textbf{x}$ satisfies the property, we will deduce that each column of this matrix gives us a set of rational weighted coefficients which also satisfies the property. Therefore, by applying the result for the rational case on each column, we deduce that each of them consists of only one rational number. From this, we then easily see that each $x_i$ must be equal. 
 \\\\
 We formalize this more properly: Let us therefore fix $n \in \mathbb{N}$ and $\mathbf{x}: 2 \cdot n + 1 \to \mathbb{R}$ with the property $\phi(\mathbf{x}, n)$.
 
@@ -164,7 +164,7 @@ Since $S$ is free, we must have the uniqueness of the coefficients, for each $x_
 \[
 \sum_{k \in n} \Delta_{x_{j}}(\tau_{l}(k)) = \sum_{k \in 2n \setminus n} \Delta_{x_{j}}(\tau_{l}(k))
 \]
-and since $l \in 2n + 1$ was arbitrary, we conclude $\forall x_j \in S$ that $\phi(\Delta_{x_{j}}, n)$. Since for each $x_j \in S$ we have $\operatorname{ran}(\Delta_{x_{j}}) \subset \mathbb{Q}$, we may apply $|S| = dim_{\mathbb{Q}}(\langle \operatorname{ran}(\textbf{x}) \rangle_{\mathbb{Q}})$ times the result for rational weights to obtain that each $\Delta_{x_{j}}$ is constant and therefore we have for each $d, e \in 2n + 1$:
+and since $l \in 2n + 1$ was arbitrary, we conclude $\forall x_j \in S$ that $\phi(\Delta_{x_{j}}, n)$. Since for each $x_j \in S$ we have $\operatorname{ran}(\Delta_{x_{j}}) \subset \mathbb{Q}$, we may apply $|S| = \dim_{\mathbb{Q}}(\langle \operatorname{ran}(\textbf{x}) \rangle_{\mathbb{Q}})$ times the result for rational weights to obtain that each $\Delta_{x_{j}}$ is constant and therefore we have for each $d, e \in 2n + 1$:
 \[
 \sigma_d(x_j) = \Delta_{x_{j}}(d) = \Delta_{x_{j}}(e) = \sigma_e(x_j)
 \]

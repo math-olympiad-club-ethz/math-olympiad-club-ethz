@@ -14,30 +14,30 @@
 % references:     62nd Putnam 2001 (Saturday, December 1, 2001), B4 - https://kskedlaya.org/putnam-archive/2001.pdf; solutions by Bhargava, Kedlaya and Ng (height-function proof) - https://kskedlaya.org/putnam-archive/2001s.pdf; Kalva archive, J. Scholes' solution (denominator-growth argument) - https://prase.cz/kalva/putnam/psoln/psol0110.html; W. Kahan, Solutions to Putnam Exam Problems for 1 Dec. 2001 - https://people.eecs.berkeley.edu/~wkahan/MathH90/SPutn01.pdf; reprinted in Kedlaya, Kane, Kane, O'Dorney, The William Lowell Putnam Mathematical Competition 2001-2016: Problems, Solutions, and Commentary (book listed on https://kskedlaya.org/putnam-archive/), 2001 B4.
 % history:        ai
 \begin{problem}
-Let \( S \) denote the set of rational numbers different from \(\{-1, 0, 1\}\). Define \( f : S \to S \) by  
-\( f(x) = x - \frac{1}{x} \). Prove or disprove that  
+Let \( S \) denote the set of rational numbers different from \(\{-1, 0, 1\}\). Define \( f : S \to S \) by
+\( f(x) = x - \frac{1}{x} \). Prove or disprove that
 
 \[
-\bigcap_{n=1}^{\infty} f^{(n)}(S) = \emptyset,
+    \bigcap_{n=1}^{\infty} f^{(n)}(S) = \emptyset,
 \]
 
 where \( f^{(n)} \) denotes \( f \) composed with itself \( n \) times.
 \end{problem}
 \begin{solution}
-The intersection is empty. To see this, analyze the behavior of denominators under iteration of \( f \). Let \( x = \frac{m}{n} \in S \), where \( m, n \) are coprime integers. Applying \( f \):
-\[
-f\left(\frac{m}{n}\right) = \frac{m}{n} - \frac{n}{m} = \frac{m^2 - n^2}{mn}.
-\]
-Since \( \gcd(m^2 - n^2, mn) = 1 \) (as \( m, n \) are coprime: if $p\in\mathbb{P}$ is such that $p|_{\mathbb{Z}}mn$ and $p|_{\mathbb{Z}}m^2+n^2$ then either $p|_{\mathbb{Z}}m$ which implies that $p|_{\mathbb{Z}}n^2$ so $p|_{\mathbb{Z}}n$, or $p|_{\mathbb{Z}}n$ which similarly implies $p|_{\mathbb{Z}}n$ in all case this implies $p\mid_{\mathbb{Z}}\gcd(m,n)$ a contradiction), we have that:
-\[
-\frac{m^2 - n^2}{mn} = \frac{\text{sign}(mn)(n^2-m^2)}{|mn|}
-\]
-is reduced. For \( m \neq 1 \), \( |mn| \geq 2|n| \). If \( m = 1 \), then \( f\left(\frac{1}{n}\right) = \frac{1 - n^2}{n} \), and since \( n \neq \pm 1 \), the numerator satisfies \( |1 - n^2| \geq 3 \) and then . 
-\\\\
-Iterating \( f \), the denominator grows at least exponentially. Specifically:
-\begin{itemize}
-    \item For \( x \in S \), if the denominator of \( f^{(k)}(x) \) is \( d_k \), then \( d_{k+1} \geq 2d_k \).
-    \item Thus, \( d_k \geq 2^k d_0 \), where \( d_0 \) is the initial denominator.
-\end{itemize}
-For any rational \( x = \frac{a}{b} \) (in reduced form), choose \( k \) such that \( 2^k > b \). Then \( d_k > b \), so \( x \notin f^{(k)}(S) \). Hence, \( x \) cannot belong to \( \bigcap_{n=1}^{\infty} f^{(n)}(S) \). Since \( x \) was arbitrary, the intersection is empty.
+    The intersection is empty. To see this, analyze the behavior of denominators under iteration of \( f \). Let \( x = \frac{m}{n} \in S \), where \( m, n \) are coprime integers. Applying \( f \):
+    \[
+        f\left(\frac{m}{n}\right) = \frac{m}{n} - \frac{n}{m} = \frac{m^2 - n^2}{mn}.
+    \]
+    Since \( \gcd(m^2 - n^2, mn) = 1 \) (as \( m, n \) are coprime: if $p\in\mathbb{P}$ is such that $p|_{\mathbb{Z}}mn$ and $p|_{\mathbb{Z}}m^2-n^2$ then either $p|_{\mathbb{Z}}m$ which implies that $p|_{\mathbb{Z}}n^2$ so $p|_{\mathbb{Z}}n$, or $p|_{\mathbb{Z}}n$ which similarly implies $p|_{\mathbb{Z}}n$ in all case this implies $p\mid_{\mathbb{Z}}\gcd(m,n)$ a contradiction), we have that:
+    \[
+        \frac{m^2 - n^2}{mn} = \frac{\text{sign}(mn)(n^2-m^2)}{|mn|}
+    \]
+    is reduced. For \( m \neq 1 \), \( |mn| \geq 2|n| \). If \( m = 1 \), then \( f\left(\frac{1}{n}\right) = \frac{1 - n^2}{n} \), and since \( n \neq \pm 1 \), the numerator satisfies \( |1 - n^2| \geq 3 \) and then .
+    \\\\
+    Iterating \( f \), the denominator grows at least exponentially. Specifically:
+    \begin{itemize}
+        \item For \( x \in S \), if the denominator of \( f^{(k)}(x) \) is \( d_k \), then \( d_{k+1} \geq 2d_k \).
+        \item Thus, \( d_k \geq 2^k d_0 \), where \( d_0 \) is the initial denominator.
+    \end{itemize}
+    For any rational \( x = \frac{a}{b} \) (in reduced form), choose \( k \) such that \( 2^k > b \). Then \( d_k > b \), so \( x \notin f^{(k)}(S) \). Hence, \( x \) cannot belong to \( \bigcap_{n=1}^{\infty} f^{(n)}(S) \). Since \( x \) was arbitrary, the intersection is empty.
 \end{solution}

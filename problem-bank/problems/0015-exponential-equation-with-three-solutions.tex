@@ -22,7 +22,7 @@ Find all real solutions to the equation
 \begin{solution}
 It is easy to see that \( x = 0 \), \( x = 1 \), and \( x = 2 \) are solutions. So the equation has at least 3 distinct real solutions. Let us introduce the function \( f: \mathbb{R} \rightarrow \mathbb{R} \) defined by
 \[
-f(x) = 9^{x} + 4^{x} + 2^{x} - 8^{x} + 6^{x} + 1.
+f(x) = 9^{x} + 4^{x} + 2^{x} - 8^{x} - 6^{x} - 1.
 \]
 As stated above, \( f \) has at least 3 distinct zeros. We claim there are no other roots. By Rolle's theorem, if a function \( g: \mathbb{R} \rightarrow \mathbb{R} \) has at least \( n \geq 2 \) zeros \( x_1 < \dots < x_n \), then the function \( g'(x) \) has at least \( n - 1 \) zeros \( y_1 < \dots < y_{n-1} \), where for each \( i = 1, \dots, n-1 \), we have \( x_i < y_i < x_{i+1} \). In particular, since for each \( a \in \mathbb{R}_{>0} \), \( a^{-x} g(x) \) has at least \( n \) zeros, we have that \( \left( a^{-x} g(x) \right)' \) has at least \( n - 1 \) zeros, and so does the function
 \[
@@ -41,7 +41,7 @@ h_{6} h_{1} f(x) = f''(x) - \ln(6) f'(x)
 \]
 has at least \( 2 \) zeros, which again implies that
 \[
-h_{8} h_{6} h_{1} f(x) = \ln\left( \frac{9}{8} \right) \ln\left( \frac{9}{6} \right) \ln(9) 9^x - \ln\left( \frac{4}{8} \right) \ln\left( \frac{4}{6} \right) \ln(4) 4^x - \ln\left( \frac{2}{8} \right) \ln\left( \frac{2}{6} \right) \ln(2) 2^x
+h_{8} h_{6} h_{1} f(x) = \ln\left( \frac{9}{8} \right) \ln\left( \frac{9}{6} \right) \ln(9) 9^x + \ln\left( \frac{4}{8} \right) \ln\left( \frac{4}{6} \right) \ln(4) 4^x + \ln\left( \frac{2}{8} \right) \ln\left( \frac{2}{6} \right) \ln(2) 2^x
 \]
 has at least \( 1 \) zero.
 \\\\

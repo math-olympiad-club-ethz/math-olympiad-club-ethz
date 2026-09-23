@@ -16,7 +16,7 @@
 \begin{problem}
 We have a finite linked list of elements, \( x_{0} \rightarrow x_{1} \rightarrow \ldots \rightarrow x_{n} \), where \( n \in \mathbb{N} \) is \textbf{unknown}. Starting at \( x_{0} \), we have a pointer to \( x_{1} \), which leads to \( x_{2} \), and so on, until we reach the end of the linked list \( x_{n} \). At each step of traversing the list, we cannot go back, but we are informed whether or not we have reached the end. We have enough memory to store at least one of any of the elements \( x_i \) (\(0 \leq i \leq n\)), but perhaps not more; in particular, we cannot simply store the entire list in an array (unless, of course, \( n = 0 \)).
 \\\\
-(a) How can we select uniformly at random an element in the linked list, if we are allowed to traverse it only once? More precisely, in the situation where the list can be traversed only once, design an algorithm with input the pointer to the head of the linked list $x_0$ which outputs an element of the linked list chosen uniformly at random\footnote{We assume that one can generate potentially infinitely many independent uniform random numbers in the interval \( [0,1] \) so in particular one has a \href{https://en.wikipedia.org/wiki/Pseudorandom_number_generator}{pseudo-random number generators} that is a \href{https://en.wikipedia.org/wiki/Random_number_generation}{random number generators}.} (i.e. with probability $\frac{1}{n+1}$).
+(a) How can we select uniformly at random an element in the linked list, if we are allowed to traverse it only once? More precisely, in the situation where the list can be traversed only once, design an algorithm with input the pointer to the head of the linked list $x_0$ which outputs an element of the linked list chosen uniformly at random\footnote{We assume that one can generate potentially infinitely many independent uniform random numbers in the interval \( [0,1] \) so in particular one has a \href{https://en.wikipedia.org/wiki/Pseudorandom_number_generator}{pseudo-random number generator} that is a \href{https://en.wikipedia.org/wiki/Random_number_generation}{random number generator}.} (i.e. with probability $\frac{1}{n+1}$).
 \\\\
 (b) Why might solving this problem be useful in practice?
 \end{problem}
@@ -62,7 +62,7 @@ By induction on $n$, it is easy to see that each element $x_i$ (for $0 \leq i \l
 \\\\
 Assume \texttt{current} $\gets x_{j+1}$. This means that we entered the loop of the \texttt{while} instruction after \texttt{current} $\gets x_j$ and at this time \texttt{current.next} is $x_{j+1}$. In this loop:
 \begin{itemize}
-    \item We generate a number $u$ uniformly at random in $]0,1[$ and store $x_{j+1}$ in the variable \texttt{store} if $u \le \frac{1}{(j+1)+1} \leq \frac{1}{2}$. Thus $x_{j+1}$ is stored with probability $\frac{1}{(j+1)+1}$.
+    \item We generate a number $u$ uniformly at random in $[0,1]$ and store $x_{j+1}$ in the variable \texttt{store} if $u \le \frac{1}{(j+1)+1} \leq \frac{1}{2}$. Thus $x_{j+1}$ is stored with probability $\frac{1}{(j+1)+1}$.
     \item For any previous element $x_k$ with $0 \le k \le j$, the probability that it remains in \texttt{store} is the probability it was already stored ($\frac{1}{j+1}$ by the inductive hypothesis) \emph{and} that it is not replaced by $x_{j+1}$. Since all numbers are generated independently, this probability is
     \[
         \frac{1}{j+1} \cdot \left(1 - \frac{1}{j+2}\right) = \frac{1}{j+1} \cdot \frac{j+1}{j+2} = \frac{1}{j+2}.

@@ -40,7 +40,7 @@ Now assume the result holds for \(N \geq 1\). We prove it for \(N+1\). By the in
 \[
 \iota_{N+1} = \iota_N|_{\llbracket1;k-1\rrbracket} \cup \left\{(k, N+1)\right\} \cup \left\{(t+1, \iota_N(t))\,\middle|\, t \in \llbracket k;N \rrbracket\right\}.
 \]
-This changes the value at \(k\) to \(N+1\) and shifts the rest to take the preceding value. Clearly, \(\iota_N\) is a bijection, and \(\iota_{N+1}|_{\llbracket1;k-1\rrbracket}\) preserves the order. By choice of \(k\), \(\pi\left(\iota_{N+1}(k)\right) = \pi(N+1) < \pi\left(\iota_N(k)\right) = \pi\left(\iota_{N+1}(k+1)\right)\). Now if \(k > 1\), then by minimality (and again by injectivity), we have \(\pi\left(\iota_{N+1}(k)\right) = \pi(N+1) > \pi\left(\iota_N(k-1)\right) = \pi\left(\iota_{N+1}(k-1)\right)\). In all cases, \(\iota_{N+1}|_{\llbracket1;k+1\rrbracket}\) preserves the order. For \(N \geq i > k\), we have \(\pi\left(\iota_{N+1}(i+1)\right) = \pi\left(\iota_N(i)\right) > \pi\left(\iota_N(i-1)\right) = \pi\left(\iota_{N+1}(i)\right)\) by the inductive hypothesis. In total, \(\iota_{N+1}\) satisfies the required ordering. This concludes the induction step and hence the induction.} by induction over \(\mathbb{N}^{*}\) that there exists a permutation \(\iota_N \colon \llbracket 1;N \rrbracket \hookrightarrow \llbracket 1;N \rrbracket\) such that:
+This changes the value at \(k\) to \(N+1\) and shifts the rest to take the preceding value. Clearly, \(\iota_{N+1}\) is a bijection, and \(\iota_{N+1}|_{\llbracket1;k-1\rrbracket}\) preserves the order. By choice of \(k\), \(\pi\left(\iota_{N+1}(k)\right) = \pi(N+1) < \pi\left(\iota_N(k)\right) = \pi\left(\iota_{N+1}(k+1)\right)\). Now if \(k > 1\), then by minimality (and again by injectivity), we have \(\pi\left(\iota_{N+1}(k)\right) = \pi(N+1) > \pi\left(\iota_N(k-1)\right) = \pi\left(\iota_{N+1}(k-1)\right)\). In all cases, \(\iota_{N+1}|_{\llbracket1;k+1\rrbracket}\) preserves the order. For \(N \geq i > k\), we have \(\pi\left(\iota_{N+1}(i+1)\right) = \pi\left(\iota_N(i)\right) > \pi\left(\iota_N(i-1)\right) = \pi\left(\iota_{N+1}(i)\right)\) by the inductive hypothesis. In total, \(\iota_{N+1}\) satisfies the required ordering. This concludes the induction step and hence the induction.} by induction over \(\mathbb{N}^{*}\) that there exists a permutation \(\iota_N \colon \llbracket 1;N \rrbracket \hookrightarrow \llbracket 1;N \rrbracket\) such that:
 \[
 \forall i \in \llbracket 1;N-1 \rrbracket,\quad \pi\left(\iota_N(i+1)\right) > \pi\left(\iota_N(i)\right).
 \]
@@ -84,6 +84,6 @@ Thus,
 \]
 In particular, as \(N\) was arbitrary, we get:
 \[
-\liminf_{N \to +\infty} \sum_{n=1}^{N} \frac{\pi(n)}{n^2} \geq \liminf_{N \to +\infty} \sum_{n=2}^{N} \frac{1}{n} = +\infty.
+\liminf_{N \to +\infty} \sum_{n=1}^{N} \frac{\pi(n)}{n^2} \geq \liminf_{N \to +\infty} \sum_{n=1}^{N} \frac{1}{n} = +\infty.
 \]
 \end{solution}

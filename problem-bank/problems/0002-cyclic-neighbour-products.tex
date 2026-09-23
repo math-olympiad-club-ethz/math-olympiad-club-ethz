@@ -15,9 +15,9 @@
 % history:        ai
 \begin{problem}
 a) Given a 4-tuple of positive numbers \((a,b,c,d)\), it is transformed into a new one according to the rule:
-    \[
+\[
     a' = ab, \quad b' = bc, \quad c' = cd, \quad d' = da.
-    \]
+\]
 The second 4-tuple is transformed into the third according to the same rule, and so on.
 \\\\
 Prove that if at least one initial number does not equal 1, then you can never obtain the initial 4-tuple again.
@@ -27,33 +27,33 @@ b) Given a \(2^k\)-tuple of numbers (where \(k\) is a nonnegative integer), each
 Prove that you will always eventually obtain a tuple consisting entirely of 1s.
 \end{problem}
 \begin{solution}
-\begin{enumerate}
-    \item[(a)] Let \( Q_0 = (a, b, c, d) \) be the original 4-tuple and let \( Q_n \) be the 4-tuple after \( n \) transformations. We consider the product of all elements:
-    \[
-    abcd.
-    \]
-    If \( abcd > 1 \), then at each step, the product of the transformed values is strictly increasing, making a return to the initial 4-tuple impossible. Similarly, if \( abcd < 1 \), the product is strictly decreasing, again preventing a return. Therefore, the only possibility for a return is if \( abcd = 1 \).
+    \begin{enumerate}
+        \item[(a)] Let \( Q_0 = (a, b, c, d) \) be the original 4-tuple and let \( Q_n \) be the 4-tuple after \( n \) transformations. We consider the product of all elements:
+              \[
+                  abcd.
+              \]
+              If \( abcd > 1 \), then at each step, the product of the transformed values is strictly increasing, making a return to the initial 4-tuple impossible. Similarly, if \( abcd < 1 \), the product is strictly decreasing, again preventing a return. Therefore, the only possibility for a return is if \( abcd = 1 \).
 
-    Next, define \( M(Q) \) as the largest number in the 4-tuple \( Q \). If at least one number in \( Q_1 \) is not \( 1 \), then necessarily \( M(Q_1) > 1 \). Moreover, in \( Q_3 \), each element is the square of some element from \( Q_1 \) (use $abcd=1$), implying:
-    \[
-    M(Q_3) = M(Q_1)^2.
-    \]
-    Since squaring a number greater than 1 results in an even larger number, the sequence \( M(Q_1), M(Q_3), M(Q_5), \dots \) grows indefinitely. This precludes any possibility of returning to the original 4-tuple, as a return would imply cycling, contradicting the unbounded growth of \( M(Q_n) \).
+              Next, define \( M(Q) \) as the largest number in the 4-tuple \( Q \). If at least one number in \( Q_1 \) is not \( 1 \), then necessarily \( M(Q_1) > 1 \). Moreover, in \( Q_3 \), each element is the square of some element from \( Q_1 \) (use $abcd=1$), implying:
+              \[
+                  M(Q_3) = M(Q_1)^2.
+              \]
+              Since squaring a number greater than 1 results in an even larger number, the sequence \( M(Q_1), M(Q_3), M(Q_5), \dots \) grows indefinitely. This precludes any possibility of returning to the original 4-tuple, as a return would imply cycling, contradicting the unbounded growth of \( M(Q_n) \).
 
-    \item[(b)] After \( r \) transformations, the first element of the \( n \)-tuple can be written as:
-    \[
-    a_1 \prod_{i=1}^{r} a_{i+1}^{\binom{r}{i}},
-    \]
-    where \( \binom{r}{i} \) is the binomial coefficient. By induction, after \( n = 2^k \) transformations, this simplifies to:
-    \[
-    a_1^2 \prod_{i=1}^{n-1} a_{i+1}^{\binom{n}{i}}.
-    \]
-    It suffices to prove that \( \binom{n}{i} \) is even for all \( 0 < i < n \) when \( n \) is a power of \( 2 \).  
+        \item[(b)] After \( r \) transformations, the first element of the \( n \)-tuple can be written as:
+              \[
+                  a_1 \prod_{i=1}^{r} a_{i+1}^{\binom{r}{i}},
+              \]
+              where \( \binom{r}{i} \) is the binomial coefficient. By induction, after \( n = 2^k \) transformations, this simplifies to:
+              \[
+                  a_1^2 \prod_{i=1}^{n-1} a_{i+1}^{\binom{n}{i}}.
+              \]
+              It suffices to prove that \( \binom{n}{i} \) is even for all \( 0 < i < n \) when \( n \) is a power of \( 2 \).
 
-    This follows from the fact that in Pascal's triangle, the binomial coefficient \( \binom{n}{i} \) is given by:
-    \[
-    \binom{n}{i} = \frac{n!}{i!(n-i)!}.
-    \]
-    Since \( n = 2^k \), the highest power of \( 2 \) dividing \( n \) is greater than the highest power of \( 2 \) dividing \( i \) or \( n-i \), ensuring that \( \binom{n}{i} \) is always even for \( 0 < i < n \). Thus, all elements in the sequence eventually become \( 1 \), completing the proof.
-\end{enumerate}
+              This follows from the fact that in Pascal's triangle, the binomial coefficient \( \binom{n}{i} \) is given by:
+              \[
+                  \binom{n}{i} = \frac{n!}{i!(n-i)!}.
+              \]
+              Since \( n = 2^k \), the highest power of \( 2 \) dividing \( n \) is greater than the highest power of \( 2 \) dividing \( i \) or \( n-i \), ensuring that \( \binom{n}{i} \) is always even for \( 0 < i < n \). Thus, all elements in the sequence eventually become \( 1 \), completing the proof.
+    \end{enumerate}
 \end{solution}
