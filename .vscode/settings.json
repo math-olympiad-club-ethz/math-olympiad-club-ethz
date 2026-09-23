@@ -1,0 +1,68 @@
+// Math Olympiad Club ETHZ — LaTeX authoring settings for the problem bank.
+// Saving a problem-bank/problems/NNNN-title.tex compiles it through problem-bank/problems/_preview.tex
+// (which adds the shared preamble); the PDF appears next to the .tex (git-ignored).
+// Requires the "LaTeX Workshop" extension (see .vscode/extensions.json).
+{
+  "latex-workshop.latex.tools": [
+    {
+      // Compiles the problem file you are editing through problems/_preview.tex (adds the preamble).
+      // -norc: never run a latexmkrc / .latexmkrc (a pull request could add one next to the problems).
+      // The -e guard stops at once for any other .tex (statutes.tex, preamble.tex, ...): their PDFs stay untouched.
+      // Paths go through "env", never into Perl code, so any checkout folder name works.
+      "name": "bank-preview",
+      "command": "latexmk",
+      "args": [
+        "-norc",
+        "-e",
+        "die qq{bank-preview only builds problem-bank/problems/NNNN-*.tex and new-*.tex\\n} unless ($ENV{BANK_DOC} // q{}) =~ m{/problem-bank/problems/(?:[0-9]{4}|new)-[^/]+\\z};",
+        "-pdf",
+        "-f",
+        "-interaction=nonstopmode",
+        "-synctex=1",
+        "-file-line-error",
+        "-usepretex=\\def\\bankfile{%DOC%}",
+        "-jobname=%DOCFILE%",
+        "-outdir=%DIR%",
+        "%WORKSPACE_FOLDER%/problem-bank/problems/_preview.tex"
+      ],
+      "env": {
+        "BANK_DOC": "%DOC%",
+        "TEXINPUTS": "%WORKSPACE_FOLDER%/problem-bank:",
+        "BIBINPUTS": "%WORKSPACE_FOLDER%/problem-bank:",
+        "shell_escape": "f"
+      }
+    }
+  ],
+  "latex-workshop.latex.recipes": [
+    { "name": "problem preview (via problem-bank/problems/_preview.tex)", "tools": ["bank-preview"] }
+  ],
+  "latex-workshop.latex.recipe.default": "first",
+  "latex-workshop.latex.outDir": "%DIR%",
+  "latex-workshop.latex.autoBuild.run": "onSave",
+  "latex-workshop.latex.autoClean.run": "onBuilt",
+  // After each build, delete the aux junk but KEEP *.synctex.gz (powers ⌘-click
+  // jump, both directions) and the .pdf. Each folder keeps just .tex + .pdf +
+  // .synctex.gz — all visible, nothing hidden, nothing stacks up.
+  "latex-workshop.latex.clean.fileTypes": [
+    "*.aux", "*.bbl", "*.bcf", "*.blg", "*.fdb_latexmk", "*.fls",
+    "*.log", "*.out", "*.run.xml",
+    "*.toc", "*.lof", "*.lot", "*.nav", "*.snm", "*.vrb",
+    "*.idx", "*.ind", "*.ilg", "*.xdv"
+  ],
+  // Use the explicit list above (default 'latexmk -c' refuses to delete .bbl).
+  "latex-workshop.latex.clean.method": "glob",
+  "latex-workshop.view.pdf.viewer": "tab",
+  // After each build, jump the PDF to wherever your cursor is — automatic
+  // forward-sync, so you rarely need to press the shortcut yourself.
+  "latex-workshop.synctex.afterBuild.enabled": true,
+  "latex-workshop.message.update.show": false,
+  "latex-workshop.message.error.show": false,
+  "latex-workshop.message.warning.show": false,
+
+  // Lets a plain `latexmk` in the VS Code integrated terminal also find the
+  // shared preamble.tex / references.bib in problem-bank/.
+  "terminal.integrated.env.osx": {
+    "TEXINPUTS": "${workspaceFolder}/problem-bank:",
+    "BIBINPUTS": "${workspaceFolder}/problem-bank:"
+  }
+}
