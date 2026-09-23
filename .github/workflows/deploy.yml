@@ -1,40 +1,128 @@
-name: Build and Deploy
+name: Build, test and deploy
 
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
 
+# The build job runs pull-request code: it only reads.  Only the deploy job may publish (see its permissions).
 permissions:
   contents: read
-  pages: write
-  id-token: write
+
+# Deploys (push to main, and the run started by number-new-problems.yml) share one queue, so a newer pending deploy
+# always builds a newer main.  Pull requests get their own group: they can never cancel a pending deploy.
+concurrency:
+  group: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || 'pages' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 45          # a first run (TeX Live + engine assets uncached) takes about 15 min; a stuck compile stops here
+    defaults:
+      run:
+        working-directory: website-code
     steps:
       - uses: actions/checkout@v4
-      
+        with:
+          persist-credentials: false   # nothing here pushes: no token left in .git/config for problem code to read
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-      
-      - name: Install dependencies
-        run: pip install jinja2
-      
-      - name: Build static site
-        run: python build.py
+          python-version: '3.12'
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: website-code/package-lock.json
+
+      - name: Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Node dependencies
+        run: npm ci
+
+      # TeX Live: validates every problem (pdflatex), externalises TikZ figures, and provides the packages
+      # missing from the WebAssembly TeX Live (stmaryrd, bbm, algorithmicx, algorithms) for the bundle.
+      # Third-party action: pinned to a reviewed commit, not to the movable tag.
+      - name: TeX Live (cached apt packages)
+        uses: awalsh128/cache-apt-pkgs-action@553a35bb8ebd9fcabcb1c9451aa4c98e1b4ca8a9   # v1.6.3 (= tag v1 on 2026-09-23)
+        with:
+          packages: texlive-latex-base texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra texlive-science texlive-pictures texlive-bibtex-extra biber
+          version: 1.0
+
+      # The texlyre-busytex release assets (~520 MB) are downloaded once and cached; tools/busytex_bundle.py checks
+      # them against tools/busytex-assets.sha256 on every build, cached or not.
+      - name: Cache the in-browser TeX engine assets
+        uses: actions/cache@v4
+        with:
+          path: website-code/.cache/busytex-assets
+          key: busytex-assets-v1.4.0-${{ hashFiles('website-code/tools/busytex-assets.sha256') }}
+
+      - name: Cache externalised figures
+        uses: actions/cache@v4
+        with:
+          path: website-code/.cache/figures
+          key: figures-${{ hashFiles('problem-bank/problems/**', 'problem-bank/preamble.tex') }}
+          restore-keys: figures-
+
+      # Successful pdflatex proofs, keyed by a hash of everything that goes in (bank/validate.py::compile_problem):
+      # an unchanged problem is not compiled again.
+      - name: Cache the pdflatex proofs
+        uses: actions/cache@v4
+        with:
+          path: website-code/.cache/proofs
+          key: proofs-${{ hashFiles('problem-bank/problems/**', 'problem-bank/preamble.tex', 'problem-bank/tags.yml', 'problem-bank/references.bib') }}
+          restore-keys: proofs-
+
+      - name: Cache Playwright's Chromium
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ hashFiles('website-code/package-lock.json') }}
+
+      # Preview build: validates + compiles EVERY problem (reviewed or not, and proposed new-*.tex files under
+      # their provisional number) and trims the engine bundle against all of them, so the deployed bundle is
+      # always a superset of what the public site needs and a proposal is tested in the browser engine too.
+      - name: Build (validate + compile every problem, site data for all problems, engine bundle, HTML)
+        run: python3 build.py --preview
+
+      - name: Unit tests (search logic)
+        run: npm run test:unit
+
+      - name: Validator / stitch tests
+        run: npm run test:python
+
+      - name: Browser test (Playwright, headless Chromium)
+        run: |
+          npx playwright install --with-deps chromium
+          npm run test:e2e
+
+      - name: Public build (published problems only; keeps the bundle built above)
+        run: python3 build.py --no-compile --no-bundle
+
+      # What gets deployed: only review: human problems with a final number, their figures, the public pages.
+      - name: Check the public build
+        run: python3 tests/python/check_public_build.py
 
       - name: Upload Pages artifact
+        if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./docs
+          path: website-code/site
 
   deploy:
+    if: github.event_name != 'pull_request'
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

@@ -1,0 +1,9 @@
+# Changes to these paths need the approval of a code owner before they can be merged, once the branch rule for main
+# requires "Review from Code Owners" (Settings > Rules / Branches).  They run code: in CI (workflows, build, tests),
+# on every visitor's browser (website-code/site/), or on the maintainer's machine when a problem is previewed
+# (.vscode/settings.json, preamble.tex, _preview.tex).  Problem files and tags.yml need no code owner.
+/.github/                               @AntoineduFresne
+/.vscode/                               @AntoineduFresne
+/website-code/                          @AntoineduFresne
+/problem-bank/preamble.tex              @AntoineduFresne
+/problem-bank/problems/_preview.tex     @AntoineduFresne
