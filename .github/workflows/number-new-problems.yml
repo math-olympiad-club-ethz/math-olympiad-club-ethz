@@ -1,0 +1,71 @@
+name: Number new problems
+
+# A proposed problem arrives as problem-bank/problems/new-<title>.tex (from the website's "+" page or by hand).
+# Once merged into main, this job renames it to the next free NNNN-<title>.tex (website-code/bank/number.py),
+# commits as github-actions[bot] and starts the deploy workflow so the site is rebuilt with the final number.
+# It first validates the folder and checks _last-id.txt against the git history (hence fetch-depth: 0); if anything
+# is wrong it fails and pushes nothing.  It pushes to main directly: a branch rule on main must let it through.
+# No loop: pushes made with GITHUB_TOKEN never start workflows, the bot's own runs are skipped, and the job
+# does nothing when no new-*.tex is left.  (Pull requests from forks have no write token, hence main.)
+
+on:
+  push:
+    branches: [main]
+    paths: ['problem-bank/problems/new-*.tex']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: number-new-problems
+  cancel-in-progress: false
+
+jobs:
+  number:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # bank.number validates the whole folder (tags.yml needs PyYAML) and renames nothing if anything is wrong.
+      - name: Python dependencies
+        run: pip install -r website-code/requirements.txt
+
+      - name: Rename new-*.tex to NNNN-*.tex, commit and push
+        id: number
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+            (cd website-code && python3 -m bank.number --apply --message "$RUNNER_TEMP/message.txt")
+            if git diff --cached --quiet; then
+              echo "Nothing to number."
+              echo "pushed=false" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            git commit -F "$RUNNER_TEMP/message.txt"
+            if git push origin HEAD:main; then
+              echo "pushed=true" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            echo "main moved while numbering (attempt $attempt); starting again from the new main"
+          done
+          exit 1
+
+      - name: Rebuild and deploy the site with the new numbers
+        if: steps.number.outputs.pushed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run deploy.yml --ref main

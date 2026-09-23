@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% set v = ('?v=' ~ asset_version) if asset_version else '' %}{# one version per build: see bank-propose.js #}
+<div class="propose">
+  <div class="bank-head">
+    <h1 class="mb-1">Propose a problem</h1>
+    <div>
+      <button id="pp-clear" type="button" class="btn btn-outline-secondary mb-1" hidden>Clear the form</button>
+    </div>
+  </div>
+  <p class="text-muted mb-3">Write your problem, check the preview and send it. A board member reviews it before it joins the <a href="{{ url_for('problems') }}">problem bank</a>. Only the statement and one area are required; the rest can be added later, by you or the board.</p>
+
+  <div id="pp-draft-note" class="alert alert-info py-2 small" role="status" hidden>Your draft was restored from this browser.</div>
+  <div id="pp-other-tab" class="alert alert-warning py-2 small" role="status" hidden>Another tab changed the draft saved in this browser. Type here to save this one again.</div>
+
+  <form id="pp-form" novalidate>
+    <div class="mb-3">
+      <label for="pp-title" class="form-label fw-semibold">Title <span class="text-muted fw-normal small">(optional)</span></label>
+      <input id="pp-title" class="form-control" type="text" maxlength="120" autocomplete="off">
+    </div>
+
+    <div class="row g-3 mb-2">
+      <div class="col-12 col-lg-6">
+        <label for="pp-statement" class="form-label fw-semibold">Statement <span class="text-danger" aria-hidden="true">*</span><span class="visually-hidden">(required)</span></label>
+        <textarea id="pp-statement" class="form-control pp-tex" rows="14" spellcheck="false" aria-required="true"></textarea>
+      </div>
+      <div class="col-12 col-lg-6">
+        <label for="pp-solution" class="form-label fw-semibold">Solution <span class="text-muted fw-normal small">(optional)</span></label>
+        <textarea id="pp-solution" class="form-control pp-tex" rows="14" spellcheck="false"></textarea>
+      </div>
+    </div>
+    <details class="pp-rules small text-muted mb-3">
+      <summary>Writing rules</summary>
+      <ul class="mt-2 mb-0 ps-3">
+      <li>Only the club's LaTeX (below): no <code>\usepackage</code>, no <code>\input</code>, no images.</li>
+      <li>Drawings: TikZ inside <code>\begin{tikzpicture}</code> … <code>\end{tikzpicture}</code>. The preview shows a box; the website draws the real picture.</li>
+      <li>Your own macros: <code>\newcommand</code> (not <code>\def</code>).</li>
+      <li>No date or time (<code>\today</code>).</li>
+      <li>Citations: <code>\cite{key}</code>, with the entry in the Bibliography box below.</li>
+      </ul>
+      <button id="pp-show-latex" type="button" class="btn btn-sm btn-outline-secondary mt-2" aria-haspopup="dialog" aria-controls="pp-latex">Show available LaTeX</button>
+    </details>
+
+    <section class="card mb-4" aria-labelledby="pp-preview-title">
+      <div class="card-header d-flex flex-wrap align-items-center gap-2">
+        <strong id="pp-preview-title">Preview</strong>
+        <span id="pp-preview-status" class="small text-muted" role="status" aria-live="polite"></span>
+        <span class="flex-grow-1"></span>
+        <div class="form-check form-switch m-0">
+          <input class="form-check-input" type="checkbox" role="switch" id="pp-auto" checked>
+          <label class="form-check-label small" for="pp-auto">Update while typing</label>
+        </div>
+        <button id="pp-refresh" type="button" class="btn btn-sm btn-outline-primary">Update now</button>
+      </div>
+      <div class="card-body">
+        <div id="pp-preview-error" class="alert alert-danger small" role="alert" hidden></div>
+        <p id="pp-preview-empty" class="m-0"></p>
+        <iframe id="pp-pdf" class="bank-pdf" title="Preview of the problem as a PDF" hidden></iframe>
+        <p id="pp-pdf-links" class="mt-2 mb-0" hidden><a id="pp-pdf-open" class="btn btn-sm btn-outline-primary me-2" href="#" target="_blank" rel="noopener">Open PDF</a><a id="pp-pdf-download" class="btn btn-sm btn-outline-secondary" href="#" download="preview.pdf">Download PDF</a></p>
+      </div>
+    </section>
+
+    <fieldset class="mb-4">
+      <legend class="h5">Tags</legend>
+      <div class="row g-3">
+        <div class="col-12 col-lg-6">
+          <label class="form-label fw-semibold" for="pp-area-input">Area <span class="text-danger" aria-hidden="true">*</span><span class="visually-hidden">(required)</span> <span class="text-muted fw-normal small">(what the problem is about)</span></label>
+          <div class="pp-picker" id="pp-area"></div>
+        </div>
+        <div class="col-12 col-lg-6">
+          <label class="form-label fw-semibold" for="pp-methods-input">Methods <span class="text-muted fw-normal small">(optional: what the solution uses)</span></label>
+          <div class="pp-picker" id="pp-methods"></div>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4">
+          <label class="form-label fw-semibold" for="pp-difficulty">Difficulty <span class="text-muted fw-normal small">(optional, your estimate)</span></label>
+          <select id="pp-difficulty" class="form-select"></select>
+          <div class="form-text" id="pp-difficulty-help"></div>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="mb-4">
+      <legend class="h5">Where it comes from <span class="text-muted fw-normal small">(optional)</span></legend>
+      <div class="row g-3">
+        <div class="col-12 col-md-4">
+          <label class="form-label fw-semibold" for="pp-origin">Origin</label>
+          <select id="pp-origin" class="form-select"></select>
+          <div class="form-text">Not in the list? Write it in References.</div>
+        </div>
+        <div class="col-6 col-md-4">
+          <label class="form-label fw-semibold" for="pp-origin-date">Date</label>
+          <input id="pp-origin-date" class="form-control" type="text" inputmode="numeric" autocomplete="off">
+        </div>
+        <div class="col-6 col-md-4">
+          <label class="form-label fw-semibold" for="pp-origin-number">Number</label>
+          <input id="pp-origin-number" class="form-control" type="text" autocomplete="off">
+        </div>
+        <div class="col-12">
+          <label class="form-label fw-semibold" for="pp-references">References</label>
+          <textarea id="pp-references" class="form-control" rows="2" placeholder="Sources or links, one per line"></textarea>
+        </div>
+      </div>
+    </fieldset>
+
+    <div class="mb-4">
+      <label for="pp-bibtex" class="form-label fw-semibold">Bibliography <span class="text-muted fw-normal small">(optional, BibTeX; only for <code>\cite{key}</code> in the text)</span></label>
+      <textarea id="pp-bibtex" class="form-control pp-tex" rows="5" spellcheck="false" placeholder="@article{hurwitz1967,&#10;  author  = {Solomon Hurwitz},&#10;  title   = {On the Rational Solutions of $m^n = n^m$},&#10;  journal = {The American Mathematical Monthly},&#10;  year    = {1967},&#10;}"></textarea>
+      <div class="form-text" id="pp-bib-keys"></div>
+    </div>
+  </form>
+
+  <section class="card mb-4" aria-labelledby="pp-send-title">
+    <div class="card-header"><strong id="pp-send-title">Send your problem</strong></div>
+    <div class="card-body">
+      <div id="pp-errors" class="alert alert-warning small" role="alert" hidden></div>
+      <ol class="small mb-3">
+        <li>Click <strong>Copy file and open GitHub</strong>. GitHub opens a new file, <code id="pp-filename">new-untitled-problem.tex</code>. Sign in, or create a free account, if GitHub asks.</li>
+        <li>Paste the file (<kbd>Ctrl</kbd>+<kbd>V</kbd>, on a Mac <kbd>⌘</kbd>+<kbd>V</kbd>).</li>
+        <li>Click <strong>Propose new file</strong> (or <strong>Commit changes…</strong>), then <strong>Create pull request</strong>. A board member checks it, may add tags or a solution, then adds it to the bank. You can follow the review on GitHub.</li>
+      </ol>
+      <div class="d-flex flex-wrap gap-2 align-items-center">
+        <button id="pp-submit" type="button" class="btn btn-primary">Copy file and open GitHub</button>
+        <a id="pp-download" class="btn btn-outline-secondary" href="#" download="problem.tex">Download .tex</a>
+        <button id="pp-show-file" type="button" class="btn btn-outline-secondary" aria-expanded="false" aria-controls="pp-file">Show the file</button>
+        <span id="pp-submit-status" class="small" role="status" aria-live="polite"></span>
+      </div>
+      <p class="small text-muted mt-2 mb-0">Your proposal is public on GitHub as soon as you send it.</p>
+      <p id="pp-open-fallback" class="small mt-2 mb-0" hidden>GitHub did not open? <a id="pp-github-link" href="#" target="_blank" rel="noopener">Open the new-file page</a> and paste the file there.</p>
+      <textarea id="pp-file" class="form-control pp-tex mt-2" rows="14" readonly hidden aria-label="The problem file"></textarea>
+      <p class="small text-muted mt-3 mb-0">No GitHub account? Send your problem to <a href="mailto:olympiadclub@math.ethz.ch">olympiadclub@math.ethz.ch</a>, with the downloaded .tex file attached.</p>
+    </div>
+  </section>
+
+  <dialog id="pp-latex" class="pp-dialog" aria-labelledby="pp-latex-title">
+    <div class="d-flex align-items-center gap-2 mb-2">
+      <h2 id="pp-latex-title" class="h5 m-0">Available LaTeX</h2>
+      <span class="flex-grow-1"></span>
+      <button type="button" class="btn-close" aria-label="Close" data-close></button>
+    </div>
+    <p class="small text-muted">Statements and solutions can use everything this preamble (<code>problem-bank/preamble.tex</code>) loads or defines, and nothing else: packages cannot be added. Something missing? Ask the board.</p>
+    <pre id="pp-preamble" class="pp-preamble" tabindex="0">Loading…</pre>
+  </dialog>
+
+  <script type="application/json" id="propose-data">{{ propose_data_json }}</script>
+  <link rel="modulepreload" href="{{ url_for('static', filename='js/bank-search.js') }}{{ v }}">
+  <link rel="modulepreload" href="{{ url_for('static', filename='js/bank-compile.js') }}{{ v }}">
+  <link rel="modulepreload" href="{{ url_for('static', filename='js/bank-tex.js') }}{{ v }}">
+  <link rel="modulepreload" href="{{ url_for('static', filename='js/bank-propose.js') }}{{ v }}">
+  <script type="module" src="{{ url_for('static', filename='js/bank-propose-ui.js') }}{{ v }}"></script>
+</div>
+{% endblock %}
