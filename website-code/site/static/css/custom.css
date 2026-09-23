@@ -1,0 +1,154 @@
+/* Footer positioning — stick to bottom of page, not viewport */
+html {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+main {
+    flex: 1;
+}
+.footer {
+    width: 100%;
+}
+
+/* hidden means hidden, also where a rule below sets display (and if the CDN stylesheet does not load) */
+[hidden] { display: none !important; }
+
+/* Logos: CSS backgrounds, so a visitor downloads only the current theme's file (2x the displayed size) */
+.club-logo { display: inline-block; flex: 0 0 auto; width: 140px; height: 140px; margin-right: 12px; vertical-align: middle;
+    background: url("../images/club_logo_light_280.png") center / contain no-repeat; }
+[data-bs-theme="dark"] .club-logo { background-image: url("../images/club_logo_dark_280.png"); }
+.sponsor-logo { display: inline-block; width: 200px; max-width: 100%; aspect-ratio: 1238 / 322;
+    background: url("../images/janestreet_logo_light_400.png") center / contain no-repeat; }
+[data-bs-theme="dark"] .sponsor-logo { background-image: url("../images/janestreet_logo_dark_400.png"); }
+/* below the lg breakpoint: a smaller logo and a brand that wraps, so a phone never scrolls sideways */
+@media (max-width: 991.98px) {
+    .navbar-brand { display: flex; align-items: center; flex: 1 1 0; min-width: 0; white-space: normal; font-size: 1.1rem; line-height: 1.25; }
+    .club-logo { width: 64px; height: 64px; margin-right: 8px; }
+}
+/* the theme button says what a click does: "Dark" on the light page, "Light" on the dark one */
+.theme-label-dark, [data-bs-theme="dark"] .theme-label-light { display: none; }
+[data-bs-theme="dark"] .theme-label-dark { display: inline; }
+/* ===================== Problem bank (problems.html) ===================== */
+.bank-toolbar { display: flex; flex-wrap: wrap; gap: .5rem; align-items: flex-start; position: relative; }
+.bank-filter-btn { position: relative; flex: 0 0 auto; height: 2.5rem; }
+.bank-filter-count { position: absolute; top: -.4rem; right: -.4rem; font-size: .65rem; }
+.bank-searchbox { flex: 1 1 18rem; min-width: 12rem; }
+.bank-search { width: 100%; height: 2.5rem; padding: .375rem .75rem; border: 1px solid var(--bs-border-color); border-radius: var(--bs-border-radius); background: var(--bs-body-bg); color: var(--bs-body-color); }
+.bank-search:focus { outline: 0; border-color: var(--bs-primary); box-shadow: 0 0 0 .2rem rgba(var(--bs-primary-rgb), .25); }
+.bank-chips { display: flex; flex-wrap: wrap; gap: .35rem; align-items: center; flex: 1 1 100%; }
+.bank-chip { display: inline-flex; align-items: center; gap: .3rem; padding: .1rem .5rem; border-radius: 1rem; font-size: .8rem; line-height: 1.4; border: 1px solid transparent; white-space: nowrap; }
+.bank-chip-type { font-size: .65rem; text-transform: uppercase; letter-spacing: .03em; opacity: .7; }
+.bank-chip-area { background: rgba(13,110,253,.12); border-color: rgba(13,110,253,.35); }
+.bank-chip-methods { background: rgba(111,66,193,.12); border-color: rgba(111,66,193,.35); }
+.bank-chip-difficulty { background: rgba(255,193,7,.18); border-color: rgba(255,193,7,.5); }
+.bank-chip-origin { background: rgba(25,135,84,.12); border-color: rgba(25,135,84,.35); }
+.bank-chip-unrated { background: var(--bs-tertiary-bg); color: var(--bs-secondary-color); border-color: var(--bs-border-color); }
+.bank-chip-clickable { cursor: pointer; }
+.bank-chip-clickable:hover, .bank-chip-clickable:focus-visible { filter: brightness(.93); outline: 0; box-shadow: 0 0 0 .15rem rgba(var(--bs-primary-rgb), .35); }
+.bank-chip-x { border: 0; background: transparent; padding: 0 .1rem; line-height: 1; font-size: 1rem; color: inherit; opacity: .7; cursor: pointer; }
+.bank-chip-x:hover { opacity: 1; }
+.bank-chip-x:focus-visible { opacity: 1; outline: 2px solid rgba(var(--bs-primary-rgb), .6); outline-offset: 1px; border-radius: .5rem; }
+.bank-ai { font-size: .6rem; opacity: .8; margin-left: .15rem; }
+
+/* the Problems page's tag list floats over the page: opening or closing it never moves what is below (a click there
+   would miss).  (The propose page's pickers use the same look, in the flow.) */
+.bank { position: relative; }
+.bank > .bank-listbox { position: absolute; left: 0; right: 0; }
+.bank-listbox { position: relative; z-index: 1030; max-height: 60vh; overflow-y: auto; margin-top: .25rem; border: 1px solid var(--bs-border-color); border-radius: var(--bs-border-radius); background: var(--bs-body-bg); box-shadow: 0 .5rem 1rem rgba(0,0,0,.15); padding: .25rem 0; }
+.bank-list-header { padding: .5rem .75rem .25rem; font-size: .7rem; text-transform: uppercase; letter-spacing: .05em; color: var(--bs-secondary-color); border-top: 1px solid var(--bs-border-color-translucent); }
+.bank-list-header:first-child { border-top: 0; }
+.bank-list-section { display: flex; align-items: center; gap: .35rem; cursor: pointer; user-select: none; }
+.bank-list-section:hover { color: var(--bs-body-color); }
+.bank-list-caret { width: .8rem; }
+.bank-list-count-head { margin-left: auto; text-transform: none; letter-spacing: 0; }
+.bank-list-subheader { padding: .3rem .75rem .1rem 1.75rem; font-size: .75rem; font-weight: 600; color: var(--bs-secondary-color); }
+.bank-option { display: flex; align-items: baseline; gap: .5rem; padding: .3rem .75rem; padding-left: calc(.75rem + var(--depth, 0) * 1.25rem); cursor: pointer; }
+.bank-option:hover, .bank-option-active { background: var(--bs-tertiary-bg); }
+.bank-option-active { outline: 2px solid rgba(var(--bs-primary-rgb), .5); outline-offset: -2px; }
+.bank-option-selected .bank-option-label { font-weight: 600; }
+.bank-option-selected .bank-option-label::after { content: " ✓"; color: var(--bs-success); }
+.bank-option-type { font-size: .65rem; text-transform: uppercase; letter-spacing: .03em; color: var(--bs-secondary-color); min-width: 4.5rem; }
+.bank-option-sub { font-size: .75rem; color: var(--bs-secondary-color); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1 1 auto; min-width: 0; }
+.bank-option-count { margin-left: auto; padding-left: .5rem; font-size: .75rem; color: var(--bs-secondary-color); font-variant-numeric: tabular-nums; }
+.bank-toggle { display: inline-block; flex: 0 0 auto; width: 1.25rem; margin-left: -.25rem; text-align: center; color: var(--bs-secondary-color); cursor: pointer; }
+.bank-toggle-empty { display: inline-block; }
+.bank-list-empty { padding: .5rem .75rem; color: var(--bs-secondary-color); font-size: .875rem; }
+
+.bank-advanced { margin-top: .75rem; }
+.bank-results-head { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; margin: 1rem 0 .25rem; }
+.bank-status { min-height: 1.25rem; }
+.bank-results .bank-row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: .25rem .6rem; align-items: start; padding: .5rem .75rem; }
+.bank-row-selected { background: rgba(var(--bs-primary-rgb), .06); }
+.bank-row-main { display: flex; gap: .6rem; align-items: baseline; margin: 0; min-width: 0; }
+.bank-row-title { cursor: pointer; margin: 0; min-width: 0; }
+.bank-title { font-weight: 500; overflow-wrap: anywhere; }
+/* the tags may use the space under the actions; a long tag name wraps inside its chip instead of widening the row */
+.bank-row-tags { grid-column: 2 / -1; display: flex; flex-wrap: wrap; gap: .35rem; align-items: center; min-width: 0; }
+.bank-row-tags .bank-chip { white-space: normal; max-width: 100%; }
+.bank-tags { display: contents; }
+.bank-results:not(.bank-show-methods) .bank-chip-methods { display: none; }
+.bank-chip-alsoin { border-style: dashed; }
+.bank-marker { font-size: .75rem; padding: .05rem .45rem; border-radius: .35rem; }
+.bank-marker-unsolved { background: var(--bs-danger-bg-subtle); color: var(--bs-danger-text-emphasis); }
+.bank-marker-partial { background: var(--bs-warning-bg-subtle); color: var(--bs-warning-text-emphasis); }
+.bank-review { font-size: .7rem; padding: .05rem .4rem; border-radius: .35rem; border: 1px dashed var(--bs-border-color); color: var(--bs-secondary-color); }
+.bank-review-human { border-style: solid; color: var(--bs-success-text-emphasis); }
+.bank-out-actions { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: .5rem; }
+.bank-pdf { width: 100%; height: 70vh; border: 1px solid var(--bs-border-color); border-radius: var(--bs-border-radius); margin-top: .5rem; }
+@media (max-width: 575.98px) { .bank-pdf { height: 55vh; } .bank-option-type { display: none; } .bank-chip-type { display: none; } }
+
+/* ===================== Problems page: propose button, Edit links, PDF order ===================== */
+.bank-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem; }
+.bank-propose-btn { white-space: nowrap; }
+.bank-row-actions { grid-column: 3; grid-row: 1; display: flex; align-items: center; gap: .5rem; white-space: nowrap; }
+.bank-preview-btn { padding: 0; font-size: .8rem; text-decoration: none; }
+.bank-preview-btn:hover { text-decoration: underline; }
+.bank-preview-panel { grid-column: 1 / -1; background: var(--bs-tertiary-bg); border-radius: var(--bs-border-radius); padding: .5rem; margin-top: .25rem; }
+.bank-preview-pdf { height: 55vh; margin-top: .5rem; }
+.bank-edit { grid-column: 3; grid-row: 1; display: inline-flex; align-items: center; gap: .2rem; font-size: .8rem; white-space: nowrap; text-decoration: none; }
+.bank-edit:hover span { text-decoration: underline; }
+.bank-review-new { grid-column: 3; grid-row: 1; align-self: start; background: var(--bs-success-bg-subtle); color: var(--bs-success-text-emphasis); }
+.bank-order-list { max-height: 26rem; overflow-y: auto; }
+.bank-order-row { display: flex; align-items: center; gap: .5rem; padding: .35rem .6rem; user-select: none; }
+.bank-order-row .bank-title { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bank-order-handle { cursor: grab; touch-action: none; font-size: 1.1rem; line-height: 1; padding: .2rem .3rem; color: var(--bs-secondary-color); }
+.bank-order-pos { min-width: 2.2rem; text-align: right; font-variant-numeric: tabular-nums; }
+.bank-order-meta { white-space: nowrap; }
+.bank-order-dragging { opacity: .75; background: var(--bs-primary-bg-subtle); cursor: grabbing; }
+.bank-order-dragging .bank-order-handle { cursor: grabbing; }
+.bank-order-row .btn { padding: 0 .45rem; }
+@media (max-width: 575.98px) { .bank-order-meta { display: none; } }
+
+/* ===================== Propose a problem (propose.html) ===================== */
+.pp-tex { font-family: var(--bs-font-monospace); font-size: .85rem; line-height: 1.45; tab-size: 2; }
+.pp-picker .pp-chips { display: flex; flex-wrap: wrap; gap: .35rem; margin-bottom: .35rem; }
+.pp-picker .pp-chips:empty { display: none; }
+.pp-picker .pp-listbox { max-height: 18rem; }
+.pp-picker-input.is-invalid, .pp-tex.is-invalid { border-color: var(--bs-form-invalid-border-color); }
+.pp-dialog { width: min(58rem, calc(100vw - 2rem)); max-height: calc(100vh - 3rem); border: 1px solid var(--bs-border-color); border-radius: var(--bs-border-radius-lg); padding: 1rem 1.25rem; background: var(--bs-body-bg); color: var(--bs-body-color); }
+.pp-dialog::backdrop { background: rgba(0, 0, 0, .45); }
+.pp-preamble { max-height: calc(100vh - 13rem); overflow: auto; font-size: .78rem; background: var(--bs-tertiary-bg); border: 1px solid var(--bs-border-color); border-radius: var(--bs-border-radius); padding: .75rem; margin: 0; white-space: pre; }
+#pp-errors ul { padding-left: 1.2rem; }
+
+/* origin-year slider: two range inputs on one track; only their handles take the pointer */
+.bank-range { position: relative; height: 1.5rem; }
+.bank-range-track { position: absolute; left: .5rem; right: .5rem; top: 50%; height: .3rem; margin-top: -.15rem; border-radius: .15rem; background: var(--bs-secondary-bg); }
+.bank-range-fill { position: absolute; top: 0; bottom: 0; left: var(--lo, 0%); right: calc(100% - var(--hi, 100%)); border-radius: .15rem; background: var(--bs-primary); }
+.bank-range-input { position: absolute; inset: 0; width: 100%; height: 1.5rem; margin: 0; background: none; pointer-events: none; -webkit-appearance: none; appearance: none; }
+.bank-range-input::-webkit-slider-runnable-track { height: 1.5rem; background: none; }
+.bank-range-input::-moz-range-track { background: none; }
+.bank-range-input::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; pointer-events: auto; width: 1rem; height: 1rem; margin-top: .25rem; border-radius: 50%; background: var(--bs-primary); border: 2px solid var(--bs-body-bg); cursor: pointer; }
+.bank-range-input::-moz-range-thumb { pointer-events: auto; width: 1rem; height: 1rem; border-radius: 50%; background: var(--bs-primary); border: 2px solid var(--bs-body-bg); cursor: pointer; }
+.bank-range-input:focus { outline: 0; }
+.bank-range-input:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 .2rem rgba(var(--bs-primary-rgb), .4); }
+.bank-range-input:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 .2rem rgba(var(--bs-primary-rgb), .4); }
+
+/* propose page: the writing rules open on a click */
+.pp-rules summary { cursor: pointer; width: max-content; color: var(--bs-link-color); }
+.pp-rules summary:hover { text-decoration: underline; }
