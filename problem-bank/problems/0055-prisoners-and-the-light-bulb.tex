@@ -1,0 +1,57 @@
+% title:          Prisoners and the light bulb
+% area:           hat-prisoner-puzzles
+% methods:        construction, invariants
+% difficulty:
+% difficulty-ai:  medium
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         folklore
+% origin-date:    2002
+% origin-number:
+% also-in:        journal
+% taken-from:
+% references:     William Wu, wu :: riddles, 'hard' page, '100 Prisoners and a Light Bulb' (our statement is adapted from it: solitary soundproof cells, bulb initially off, random daily visit, MENSA, courtyard meeting; Note 1 gives ~3500 days as the best-known average; Note 4: origin unknown to Wu), online by July 2002 - https://web.archive.org/web/20021007223120/http://www.ocf.berkeley.edu:80/~wwu/riddles/hard.shtml (Oct 2002 snapshot), https://web.archive.org/web/20201109033456/https://www.ocf.berkeley.edu/~wwu/riddles/hard.shtml (later version with notes); wu :: forums thread '100 prisoners & a light bulb', 23 Jul 2002 - https://web.archive.org/web/20111109020821/http://www.ocf.berkeley.edu/%7Ewwu/cgi-bin/yabb/YaBB.cgi?board=riddles_hard;action=display;num=1027805293; P.-O. Dehaye, D. Ford, H. Segerman, 'One hundred prisoners and a lightbulb', Mathematical Intelligencer 25(4) (2003) 53-61, doi:10.1007/BF02984862 (its references date Wu's page to Feb 2002) - https://api.crossref.org/works/10.1007/BF02984862; related variant: IBM Research Ponder This, July 2002, 23 prisoners and two switches ('making the rounds of Hungarian mathematicians' parties') - https://research.ibm.com/blog/ponder-this-july-2002; arbitrary-order variant in P. Winkler, Mathematical Puzzles: A Connoisseur's Collection, A K Peters, 2004, pp. 109-111, as cited by cut-the-knot - https://www.cut-the-knot.org/Probability/LightBulbs.shtml
+% history:        ai
+\begin{problem}
+100 prisoners are imprisoned in solitary confinement. Each cell is soundproof and windowless. There is a central living room with a single light bulb, initially turned off. The prisoners cannot see the bulb from their cells.
+
+Each day, the warden selects one prisoner uniformly at random to visit the central room. While in the room, the prisoner may toggle the bulb (on $\leftrightarrow$ off) if they so choose. The prisoner may also choose to declare that \textit{all 100 prisoners have visited the central room at least once}. If this claim is false (i.e., at least one prisoner has never been in the room), all 100 prisoners are executed. If the claim is true, they are all freed and inducted into MENSA.
+
+Before this process begins, the prisoners are allowed to meet once in a courtyard to devise a strategy. What strategy should they adopt to ensure their eventual release, with certainty?
+
+The strategy must guarantee eventual success, not merely a high probability.
+
+The average time until release depends on the strategy.
+
+The best-known strategies achieve an average release time of approximately 3500 days.
+\end{problem}
+\begin{solution}
+The following is a classical (though not necessarily optimal) solution that guarantees eventual success.
+\\\\
+The prisoners agree beforehand on a unique individual, called the \textit{counter}. The remaining 99 prisoners are referred to as \textit{non-counters}. The strategy unfolds as follows:
+\\\\
+Each non-counter prisoner follows this rule:
+\begin{itemize}
+    \item The \textbf{first time} a non-counter enters the central room and finds the light bulb \textit{off}, they turn it \textit{on}.
+    \item They do this \textbf{only once} in the entire process. If the light is already on, or if they've already toggled it once before, they do nothing.
+\end{itemize}
+The counter follows this rule:
+\begin{itemize}
+    \item Every time the counter enters the room and finds the bulb \textit{on}, they turn it \textit{off} and increment a mental count by 1.
+    \item Once their count reaches 99 (i.e., they have turned the light off 99 times), they confidently declare that all 100 prisoners have visited the room.
+\end{itemize}
+Each of the 99 non-counters turns the bulb on exactly once, and only upon their \textit{first} encounter with the bulb in the off state. Thus, the counter can infer that each increment in their count corresponds to a distinct non-counter having visited the room. Once the count reaches 99, all non-counters have visited.
+\\\\
+Since the process is infinite and each prisoner is selected with uniform probability, every prisoner will eventually be selected infinitely often with probability 1. Therefore, the strategy will eventually succeed with certainty.
+\\\\
+The average number of days until the counter has counted 99 distinct toggles is approximately:
+\[
+100 \cdot H_{99} \approx 100 \cdot \ln(99) + \gamma \approx 5180 \text{ days},
+\]
+where \( H_n \) is the \( n \)-th harmonic number and \( \gamma \) is the Euler-Mascheroni constant.
+\\\\
+Smarter strategies exist (e.g., multiple counters, probabilistic switching, phase-based methods) that reduce the expected time to around 3500 days, but the strategy above is easier to verify and implement.
+\\\\
+The key idea lies in symmetry-breaking: establishing a unique counter, and having each prisoner signal their participation exactly once. The problem beautifully illustrates distributed consensus under severe communication constraints, and has applications in theoretical computer science and protocol design.
+\end{solution}

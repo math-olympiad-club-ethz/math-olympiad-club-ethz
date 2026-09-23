@@ -1,0 +1,53 @@
+% title:          Jacobson's lemma on invertibility
+% area:           matrices, ring-theory
+% methods:        generalisation, construction, symmetry
+% difficulty:
+% difficulty-ai:  easy
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         folklore
+% origin-date:
+% origin-number:
+% also-in:        book
+% taken-from:
+% references:     Folklore: Jacobson's lemma (1-ab invertible iff 1-ba invertible in a unital ring), usually attributed to N. Jacobson, 'The radical and semi-simplicity for arbitrary rings', Amer. J. Math. 67 (1945) 300-320. This citation is taken from arXiv:1411.7847, Lemma 2.1, ref. [2] (https://arxiv.org/pdf/1411.7847); the 1945 paper itself was not opened. P. R. Halmos, 'Does mathematics have elements?', Math. Intelligencer 3(4) 1981, reprinted Bull. Austral. Math. Soc. 25 (1982) 161-175, section 'Geometric series', p. 166, calls it mathematical folklore usually ascribed to N. Jacobson - https://marktomforde.com/academic/miscellaneous/images/Elements-Halmos.pdf; Hoffman & Kunze, Linear Algebra, 2nd ed., 1971, Section 6.2, Exercise 8, p. 190 - https://archive.org/download/linear-algebra-hoffman-and-kunze/Linear%20Algebra%20-%20Hoffman%20and%20Kunze_djvu.txt; Wu :: riddles (William Wu), putnam section, 'Invertibility of I-AB' (the club's statement almost word for word; on the page by the 20-Aug-2004 version) - https://web.archive.org/web/20050216155804/http://www.ocf.berkeley.edu/~wwu/riddles/putnam.shtml; X. Zhao, arXiv:1702.06271 (name 'Jacobson's lemma') - https://arxiv.org/pdf/1702.06271; PlanetMath, 'I-AB is invertible if and only if I-BA is invertible' - https://planetmath.org/iabisinvertibleifandonlyifibaisinvertible; Math.SE 365837 - https://math.stackexchange.com/questions/365837/i-ab-be-invertible-leftrightarrow-i-ba-is-invertible
+% history:        ai
+\begin{problem}
+Let \( n \in \mathbb{N}_{>0} \) and \( A, B \in \mathbb{R}^{n \times n} \) be real matrices. Now suppose \( I_n - BA \) is invertible, where \( I_n \) is the identity matrix. Prove that \( I_n - AB \) is also invertible.
+\end{problem}
+\begin{solution}
+Let \( (R, +_R, \cdot_R, 0_R, 1_R) \) be any (possibly non-commutative) unital ring, let \(\textcolor{red}{c}, \textcolor{blue}{b} \in R\), we show that:
+\[
+1_R - \textcolor{blue}{b}\textcolor{red}{c} \in R^{\times} \leftrightarrow 1_R - \textcolor{red}{c}\textcolor{blue}{b} \in R^{\times}.
+\]
+By symmetry in \( \textcolor{blue}{b}, \textcolor{red}{c} \in R \), we only need to prove one direction of the equivalence. So suppose \( 1_R - \textcolor{blue}{b}\textcolor{red}{c} \in R^{\times} \); we show \( 1_R - \textcolor{red}{c}\textcolor{blue}{b} \in R^{\times} \).
+\\\\
+We claim that the element
+\[
+1_R + \textcolor{red}{c} \left( 1_R - \textcolor{blue}{b}\textcolor{red}{c} \right)^{-1} \textcolor{blue}{b}\in R
+\]
+is the inverse of \( 1_R - \textcolor{red}{c}\textcolor{blue}{b} \); for this, we have to show it is a right inverse:
+\[
+\begin{aligned}
+\left( 1_R - \textcolor{red}{c}\textcolor{blue}{b} \right) \left( 1_R + \textcolor{red}{c} \left( 1_R - \textcolor{blue}{b}\textcolor{red}{c} \right)^{-1} \textcolor{blue}{b} \right)
+&= 1_R - \textcolor{red}{c}\textcolor{blue}{b} + \textcolor{red}{c} \left( 1_R - \textcolor{blue}{b}\textcolor{red}{c} \right)^{-1} \textcolor{blue}{b} \\
+&\quad - \textcolor{red}{c}\textcolor{blue}{b} \textcolor{red}{c} \left( 1_R - \textcolor{blue}{b}\textcolor{red}{c} \right)^{-1} \textcolor{blue}{b} \\
+&= 1_R - \textcolor{red}{c}\textcolor{blue}{b} + \textcolor{red}{c} \left( 1_R - \textcolor{blue}{b}\textcolor{red}{c} \right) \left( 1_R - \textcolor{blue}{b}\textcolor{red}{c} \right)^{-1} \textcolor{blue}{b} \\
+&= 1_R - \textcolor{red}{c}\textcolor{blue}{b} + \textcolor{red}{c}\textcolor{blue}{b} = 1_R.
+\end{aligned}
+\]
+We now verify it is a left inverse (recalling that for any element \( a \in R \), we have \( -a = (-1_R)a \) and that \( -1_R \) commutes with every element in \( R \)):
+\[
+\begin{aligned}
+\left( 1_R + \textcolor{red}{c} \left( 1_R - \textcolor{blue}{b}\textcolor{red}{c} \right)^{-1} \textcolor{blue}{b} \right) \left( 1_R - \textcolor{red}{c}\textcolor{blue}{b} \right)
+&= 1_R - \textcolor{red}{c}\textcolor{blue}{b} + \textcolor{red}{c} \left( 1_R - \textcolor{blue}{b}\textcolor{red}{c} \right)^{-1} \textcolor{blue}{b} \\
+&\quad + \textcolor{red}{c} \left( 1_R - \textcolor{blue}{b}\textcolor{red}{c} \right)^{-1} \textcolor{blue}{b} (-\textcolor{red}{c}\textcolor{blue}{b}) \\
+&= 1_R - \textcolor{red}{c}\textcolor{blue}{b} + \textcolor{red}{c} \left( 1_R - \textcolor{blue}{b}\textcolor{red}{c} \right)^{-1} \textcolor{blue}{b} \\
+&\quad + \textcolor{red}{c} \left( 1_R - \textcolor{blue}{b}\textcolor{red}{c} \right)^{-1} (-\textcolor{blue}{b}\textcolor{red}{c}) \textcolor{blue}{b} \\
+&= 1_R - \textcolor{red}{c}\textcolor{blue}{b} + \textcolor{red}{c} \left( 1_R - \textcolor{blue}{b}\textcolor{red}{c} \right)^{-1} \left( 1_R - \textcolor{blue}{b}\textcolor{red}{c} \right) \textcolor{blue}{b} \\
+&= 1_R - \textcolor{red}{c}\textcolor{blue}{b} + \textcolor{red}{c}\textcolor{blue}{b} = 1_R.
+\end{aligned}
+\]
+Apply this result to the non-commutative unital ring \( \left( \mathbb{R}^{n \times n}, +, \cdot, \mathbf{0}_{n \times n}, I_n \right) \).
+\end{solution}

@@ -1,0 +1,134 @@
+% title:          Bijection as two involutions
+% area:           permutation-groups
+% methods:        construction
+% difficulty:
+% difficulty-ai:  medium
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         folklore
+% origin-date:
+% origin-number:
+% also-in:        book
+% taken-from:
+% references:     Classical result (every bijection of any set is a composition of two involutions). B. M. Makarov, M. G. Goluzina, A. A. Lodkin, A. N. Podkorytov, Selected Problems in Real Analysis, AMS Translations of Mathematical Monographs 107, 1992 (translation of Izbrannye zadachi po veshchestvennomu analizu, Nauka, Moscow, 1992), Problem X.1.4 (Chapter X, Section 1 'Topological dynamics', p. 125; solution p. 317); the club took the problem from here - https://analysis.spbu.ru/bib_r.html; T. K. Petersen and B. E. Tenner, How to write a permutation as a product of involutions (and why you might care), 2012 (calls the finite two-involution fact well known; for writing a permutation as a product of involutions it cites W. R. Scott, Group Theory, 1964, Exercise 10.1.17) - https://arxiv.org/pdf/1202.5319; K. Leeb, 'Every permutation is a product of two involutions: not recursively (Preliminary report)', Abstracts of Papers Presented to the AMS 6 (1985), p. 228 (index entry) - https://archive.org/stream/sim_abstracts-of-papers-american-mathematical-society_1985_6_index/sim_abstracts-of-papers-american-mathematical-society_1985_6_index_djvu.txt; Q. Yang, J. Ellis, K. Mamakani, F. Ruskey, Parallel and sequential in-place permuting and perfect shuffling using involutions, Corollary 2.2 (finite case) - https://arxiv.org/pdf/1204.1958; Math StackExchange question 3437747 (same statement for an arbitrary set) - https://math.stackexchange.com/questions/3437747/prove-that-every-bijection-of-the-set-into-itself-is-representable-as-a-composit
+% history:        ai
+\begin{problem}
+Let \( S \) be a set and \( f: S \rightarrow S \) a bijection. Show that \( f \) can be written as the composition of two involutions, where an involution \( h \) is a function that is its own inverse.
+\end{problem}
+\begin{solution}
+For an arbitrary point \( s \in S \), its orbit is the set of elements
+\[
+s,\quad f\left(s\right),\quad f^{-1}\left(s\right),\quad  f^{2}\left(s\right),\quad f^{-2}\left(s\right),\quad \ldots
+\]
+Denote it temporarily by \( A_{s} := \left\{ f^n\left(s\right) \mid n \in \mathbb{Z} \right\} \subset S \).
+\\\\
+If there exist two involutions \( h, k : S \rightarrow S \) such that \( h \circ k = f \), then for every \( n \in \mathbb{Z} \),
+\[
+f^{n+1}\left(s\right) = f \circ f^n\left(s\right) = \left(h \circ k\right)\left(f^n\left(s\right)\right) \Rightarrow h\left(f^{n+1}\left(s\right)\right) = k\left(f^n\left(s\right)\right).
+\]
+Moreover, we require that \( \left(h \circ h\right)\left(f^n\left(s\right)\right) = f^n\left(s\right) \) and \( \left(k \circ k\right)\left(f^n\left(s\right)\right) = f^n\left(s\right) \), so we may consider two auxiliary involutions of \( \mathbb{Z} \), \( k', h' : \mathbb{Z} \rightarrow \mathbb{Z} \), satisfying
+\begin{equation}
+\label{2.1}
+\tag{1}
+h'\left(n+1\right) = k'\left(n\right).
+\end{equation}
+Such \( h', k' \) will help us define involutions on \( A_s \); we want to define the following relations (trivially over \( A_s \)):
+\[
+\hat{h} := \left\{ \left( f^n\left(s\right), f^{h'\left(n\right)}\left(s\right) \right) \mid n \in \mathbb{Z} \right\}, \quad \hat{k} := \left\{ \left( f^n\left(s\right), f^{k'\left(n\right)}\left(s\right) \right) \mid n \in \mathbb{Z} \right\},
+\]
+such that they are functional. That is, for \( m, m' \in \mathbb{Z} \), if \( f^m\left(s\right) = f^{m'}\left(s\right) \), then
+\[
+f^{h'\left(m\right)}\left(s\right) = f^{h'\left(m'\right)}\left(s\right)\quad \text{and} \quad f^{k'\left(m\right)}\left(s\right) = f^{k'\left(m'\right)}\left(s\right).
+\]
+A simple condition to impose on \( h' \) and \( k' \) so that \( \hat{h}, \hat{k} \) are functional is that for every \( m, m' \in \mathbb{Z} \), we have
+\begin{equation}
+\label{2.2}
+\tag{2}
+\left| h'\left(m\right) - h'\left(m'\right) \right| = \left| m - m' \right| = \left| k'\left(m\right) - k'\left(m'\right) \right|.
+\end{equation}
+Because then, whenever \( f^m\left(s\right) = f^{m'}\left(s\right) \), we get \( f^{\left| m - m' \right|}\left(s\right) = s \), so that:
+\[
+f^{\left| h'\left(m\right) - h'\left(m'\right) \right|}\left(s\right) = s = f^{\left| k'\left(m\right) - k'\left(m'\right) \right|}\left(s\right),
+\]
+and thus \( f^{h'\left(m\right)}\left(s\right) = f^{h'\left(m'\right)}\left(s\right) \) and \( f^{k'\left(m\right)}\left(s\right) = f^{k'\left(m'\right)}\left(s\right) \).
+\\\\
+Once \( \hat{h}, \hat{k} : A_s \rightarrow A_s \) are functional, we will get for \( n \in \mathbb{Z} \):
+\[
+\left(\hat{h} \circ \hat{k}\right)\left(f^n\left(s\right)\right) = f^{h'\circ k'\left(n\right)}\left(s\right) = f^{n+1}\left(s\right) = f\left(f^n\left(s\right)\right),
+\]
+and
+\[
+\left(\hat{h} \circ \hat{h}\right)\left(f^n\left(s\right)\right) = f^{h'\circ h'\left(n\right)}\left(s\right) = f^n\left(s\right) = f^{k'\circ k'\left(n\right)}\left(s\right) = \left(\hat{k} \circ \hat{k}\right)\left(f^n\left(s\right)\right).
+\]
+Therefore, by the arbitrariness of \( n \in \mathbb{Z} \), \(\hat{h},\hat{k}\) will be two involutions of \( A_s \) such that \( \hat{h} \circ \hat{k} = f|_{A_s} \), and it would suffice to "repeat" the process for another \( s' \in S \setminus A_s \).
+\\\\
+So we must find involutions \( k', h' \) of \( \mathbb{Z} \) that satisfy the properties \eqref{2.1} and \eqref{2.2}. For example, we may choose the simplest involution \(k':=-\mathrm{id}_{\mathbb{Z}}\), which is clearly an involution. The corresponding involution \( h': \mathbb{Z} \rightarrow \mathbb{Z} \) satisfying \eqref{2.1}
+\[
+h'\left(n\right) := k'\left(n - 1\right) = -\left(n - 1\right) = -n + 1
+\]
+is also an involution, since
+\[
+h'\left(h'\left(n\right)\right) = -h'\left(n\right) + 1 = -\left(-n + 1\right) + 1 = n - 1 + 1 = n = \operatorname{id}_{\mathbb{Z}}\left(n\right).
+\]
+By construction, \( h', k' \) satisfy \eqref{2.1} and are involutions. Moreover, \( k', h' \) trivially satisfy \eqref{2.2}. So \( \hat{h}, \hat{k} \) are functional relations and, by the above, they are involutions of \( A_s \) with \( \hat{h} \circ \hat{k} = f|_{A_s} \).
+\\\\
+Now, let us formalise our argument. Consider the subgroup \( f^{\mathbb{Z}} := \langle \{f\} \rangle \leq \operatorname{Aut}_{\mathrm{Ens}}(S) \). It acts on the left of \( S \) via the group action
+\[
+\operatorname{eval} : f^{\mathbb{Z}} \longrightarrow \operatorname{Aut}_{\mathrm{Ens}}(S),
+\]
+where, for each \( g \in f^{\mathbb{Z}} \), we define \( \operatorname{eval}(g) : S \rightarrow S \) by \( \operatorname{eval}(g)(s) := g(s) \).
+\\\\
+For an arbitrary point \( s \in S \), its orbit is given by \( \operatorname{Orb}_{\operatorname{eval}}(s) \), and it cannot be empty. Consider the set of all such orbits. Then, by the axiom of choice\footnote{If we are in the finite case, we may construct a choice function by induction.}, there exists a function
+\[
+\chi : \left\{ \operatorname{Orb}_{\operatorname{eval}}(s) \mid s \in S \right\} \longrightarrow \bigcup_{s \in S} \operatorname{Orb}_{\operatorname{eval}}(s)
+\]
+such that, for every \( s \in S \), we have \( \chi\left( \operatorname{Orb}_{\operatorname{eval}}(s) \right) \in \operatorname{Orb}_{\operatorname{eval}}(s) \). Since the set of orbits of a group action on a set \( S \) partitions \( S \), this yields the disjoint decomposition:
+\[
+S = \bigsqcup_{t \in \mathrm{ran}(\chi)} \operatorname{Orb}_{\operatorname{eval}}(t).
+\]
+Inspired by our previous construction, we now need to define the involutions on each disjoint orbit; \( \forall t \in \mathrm{ran}(\chi) \), \( \operatorname{Orb}_{\operatorname{eval}}(t) \). This is captured, by defining the following relations:
+\[
+\hat{h} := \left\{ \left( s, f^{-m+1}\left( \chi\left( \operatorname{Orb}_{\operatorname{eval}}\left( s \right) \right) \right) \right) \,\middle|\, \exists s \in S\,\exists m \in \mathbb{Z} \text{ such that } f^{m}\left( \chi\left( \operatorname{Orb}_{\operatorname{eval}}\left( s \right) \right) \right) = s \right\},
+\]
+\[
+\hat{k} := \left\{ \left( s, f^{-m}\left( \chi\left( \operatorname{Orb}_{\operatorname{eval}}\left( s \right) \right) \right) \right) \,\middle|\, \exists s \in S\,\exists m \in \mathbb{Z} \text{ such that } f^{m}\left( \chi\left( \operatorname{Orb}_{\operatorname{eval}}\left( s \right) \right) \right) = s \right\}.
+\]
+Then \( \hat{h}, \hat{k} \) are relations on \( S \), since for any \( s \in S \), the condition 
+\[
+\exists m \in \mathbb{Z} \text{ such that } f^{m}\left( \chi\left( \operatorname{Orb}_{\operatorname{eval}}(s) \right) \right) = s
+\]
+is always met, because we always have
+\[
+s \in \operatorname{Orb}_{\operatorname{eval}}(s) = \operatorname{Orb}_{\operatorname{eval}}\left( \chi\left( \operatorname{Orb}_{\operatorname{eval}}(s) \right) \right),
+\]
+in other words, there exists \( m \in \mathbb{Z} \) such that \( s = f^{m}\left( \chi\left( \operatorname{Orb}_{\operatorname{eval}}(s) \right) \right) \).
+\\\\
+Moreover, \(\hat{h},\hat{k}\) are functional relations: for any \( s \in S \) and \( m, m' \in \mathbb{Z} \) such that
+\[
+f^{m}\left( \chi\left( \operatorname{Orb}_{\operatorname{eval}}(s) \right) \right) = f^{m'}\left( \chi\left( \operatorname{Orb}_{\operatorname{eval}}(s) \right) \right),
+\]
+we obtain
+\[
+f^{m - m'}\left( \chi\left( \operatorname{Orb}_{\operatorname{eval}}(s) \right) \right) = \chi\left( \operatorname{Orb}_{\operatorname{eval}}(s) \right),
+\]
+which implies by composing with \(f^{-m}\) that:
+\[
+f^{-m}\left( \chi\left( \operatorname{Orb}_{\operatorname{eval}}(s) \right) \right) = f^{-m'}\left( \chi\left( \operatorname{Orb}_{\operatorname{eval}}(s) \right) \right),
+\]
+and by composing with \( f \) once:
+\[
+f^{-m + 1}\left( \chi\left( \operatorname{Orb}_{\operatorname{eval}}(s) \right) \right) = f^{-m' + 1}\left( \chi\left( \operatorname{Orb}_{\operatorname{eval}}(s) \right) \right). 
+\]
+Hence \( \hat{h} \) and \( \hat{k} \) are indeed well-defined functions. Furthermore, they are involutions and satisfy \( \hat{h} \circ \hat{k} = f \): for any \( s \in S \), there exists \( m \in \mathbb{Z} \) with \( f^{m}\left( \operatorname{Orb}_{\operatorname{eval}}(s) \right) = s \), so that, by the well-definedness of \( \hat{h} \) and \( \hat{k} \), we get
+\begin{align*}
+\hat{h} \circ \hat{h}(s) &= \hat{h}\left( f^{-m+1}\left( \operatorname{Orb}_{\operatorname{eval}}(s) \right) \right) = f^{-(-m+1)+1}\left( \operatorname{Orb}_{\operatorname{eval}}(s) \right) = f^{m}\left( \operatorname{Orb}_{\operatorname{eval}}(s) \right) = s,
+\\
+\hat{k} \circ \hat{k}(s) &= \hat{k}\left( f^{-m}\left( \operatorname{Orb}_{\operatorname{eval}}(s) \right) \right) = f^{-(-m)}\left( \operatorname{Orb}_{\operatorname{eval}}(s) \right) = f^{m}\left( \operatorname{Orb}_{\operatorname{eval}}(s) \right) = s,
+\\
+\hat{h} \circ \hat{k}(s) &= \hat{h}\left( f^{-m}\left( \operatorname{Orb}_{\operatorname{eval}}(s) \right) \right) = f^{-(-m)+1}\left( \operatorname{Orb}_{\operatorname{eval}}(s) \right)
+\\
+&= f^{m+1}\left( \operatorname{Orb}_{\operatorname{eval}}(s) \right) = f\left( f^{-m}\left( \operatorname{Orb}_{\operatorname{eval}}(s) \right) \right) = f(s).
+\end{align*}
+Since \( s \in S \) was arbitrary, we conclude.
+\end{solution}

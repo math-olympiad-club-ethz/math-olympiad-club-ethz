@@ -1,0 +1,143 @@
+% title:          Vieta jumping
+% area:           diophantine-equations, divisibility
+% methods:        vieta-jumping, extremal-principle, contradiction
+% difficulty:
+% difficulty-ai:  extreme
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         imo
+% origin-date:    1988-07-16
+% origin-number:  6
+% also-in:        imo
+% taken-from:
+% references:     Part 1: IMO 1988 Problem 6 (Day II, 16 July 1988, Canberra), proposed by Stephan Beck (West Germany). Sources: https://www.imo-official.org/assets/documents/problems/1988/1988_eng.pdf; https://imomath.com/othercomp/I/Imo1988.pdf; AoPS wiki 'IMO Problems and Solutions, with authors' (Wayback) https://artofproblemsolving.com/wiki/index.php/IMO_Problems_and_Solutions,_with_authors; Kalva solution incl. Stan Dolan's variant https://prase.cz/kalva/imo/isoln/isoln886.html. Part 2: IMO 2007 Problem 5 (26 July 2007, Hanoi), by Kevin Buzzard & Edward Crane (UK); it is the Lemma of Shortlist 2007 N6. Sources: https://www.imo-official.org/assets/documents/problems/2007/2007_eng.pdf; https://www.imo-official.org/problems/IMO2007SL.pdf; UK report https://www.imo-register.org.uk/2007-report.html; Evan Chen https://web.evanchen.cc/exams/IMO-2007-notes.pdf. Method: Wikipedia 'Vieta jumping' https://en.wikipedia.org/wiki/Vieta_jumping (cites Engel, Problem-Solving Strategies, 1998, p. 127); Yimin Ge, 'The Method of Vieta Jumping', Mathematical Reflections 5 (2007) https://pimosbat.ir/wp-content/uploads/2026/01/The-Method-of-Vieta-Jumping.pdf
+% history:        ai
+\begin{problem}
+\subsection{Problem 6 (IMO 1988)}
+Let \( a \) and \( b \) be positive integers such that \( ab + 1 \) divides \( a^{2} + b^{2} \). Show that
+\[ \frac{a^{2} + b^{2}}{ab + 1} \]
+is the square of an integer.
+\subsection{Problem (Kevin Buzzard \& Edward Crane)}
+Let $a$ and $b$ be positive integers. Show that if $4ab - 1$ divides $\left(4a^{2} - 1\right)^{2}$, then $a = b$. 
+\end{problem}
+\begin{solution}
+Define
+\[
+S := \left\{ (a,b) \in \mathbb{N}^{*} \times \mathbb{N}^{*} \mid ab+1 \mid a^2 + b^2 \right\}.
+\]
+For each \( k \in \mathbb{N}^{*} \), define
+\[
+S_k := \left\{ (a,b) \in \mathbb{N}^{*} \times \mathbb{N}^{*} \mid a^2 + b^2 = k(ab+1) \right\}.
+\]
+Clearly, \( S \) is decomposed into the sets \( S_k \):
+\[
+S = \bigcup_{k \in \mathbb{N}^{*}} S_k,
+\]
+and for any \( k \in \mathbb{N}^{*} \) we have:
+\[
+(a,b) \in S_k \Leftrightarrow (b,a) \in S_k.
+\]
+To show the statement of the problem, we therefore need to show that for a fixed \( k > 0 \) with \( S_k \neq \varnothing \), we have \( k \in \square_{\mathbb{N}} := \left\{ n^2 \mid n \in \mathbb{N} \right\} \).
+\\\\
+For a fixed \( k > 0 \) with \( S_k \neq \varnothing \), we can define the following minimum:
+\[
+b' := \min \left\{ \min\{a,b\} \mid (a,b) \in S_k \right\}.
+\]
+By construction, there exists \( (a,b) \in S_k \) such that \( b' = \min\{a,b\} \). Label
+\[
+a' = \max\{a, b\}.
+\]
+Then \( (a',b') \in S_k \) and we have the equation:
+\[
+a'^2 - k a' b' + b'^2 - k = 0,
+\]
+which is quadratic in \( a' \). Let \( c' \in \mathbb{C} \) be the other root of the polynomial \( X^2 - k b' X + b'^2 - k \) (this is the famous \textit{root jumping}). We show that \( c' = 0 \), leading to the factorization
+\[
+X^2 - k b' X + b'^2 - k = X(X - a'),
+\]
+and will imply that \( k = b'^2 \), which will conclude $k\in\square_{\mathbb{N}}$.
+\\\\
+By Vieta's formulas for the coefficient of degree 1 and the constant coefficient, we obtain respectively:
+\[
+c' = k b' - a' \in \mathbb{Z},
+\]
+and
+\[
+a' c' = b'^2 - k < b'^2,
+\]
+where we used the fact \( k \geq 1 \). In particular, \( c' \) is subject to the order \( < \) of \( \mathbb{Z} \). Suppose to obtain a contradiction that \( c' > 0 \); then:
+\[
+b' c' \leq a' c' < b'^2 \implies c' < b',
+\]
+where we used \( 0 < b' \leq a' \) and \( 0 < c' \).
+\\\\
+By choice of \( c' \), we have \( c'^2 - k b' c' + b'^2 - k = 0 \), i.e.,
+\[
+c'^2 + b'^2 = k(c' b' + 1),
+\]
+this implies that \( (c',b') \in S_k \). As \( c' < b' \), we have a contradiction to the minimality of \( b' \). Thus \( c' \leq 0 \). 
+\\\\
+Additionally,
+\[
+(a' + 1)(c' + 1) = a' c' + a' + c' + 1 = b'^2 - k + b' k + 1 = b'^2 + (b' - 1)k + 1 \geq 1,
+\]
+where we used \( b' \geq 1 \) and \( k > 0 \). As \( a' + 1 > 1 \), we must have \( c' + 1 > 0 \), i.e., \( c' > -1 \), so we conclude that \( c' = 0 \) as desiblack. Since \( k > 0 \) with \( S_k \neq \varnothing \) was arbitrary, we are done.
+
+
+\subsection{Problem (Kevin Buzzard \& Edward Crane)}
+Let $a$ and $b$ be positive integers. Show that if $4ab - 1$ divides $\left(4a^{2} - 1\right)^{2}$, then $a = b$. 
+
+\subsection*{Solution:}
+
+Standard manipulations\footnote{Let $m = 4ab - 1$. Since \(\gcd(b,m)=1\), \(b\) is invertible modulo \(m\).  Note that
+\[
+4a^2b \;=\;a\,(4ab)\;\equiv\;a\pmod{m}
+\quad\Longrightarrow\quad
+4a^2 \equiv a\,b^{-1} \pmod{m}.
+\]
+Hence $b\,(4a^2 - 1)\equiv b\,(ab^{-1}-1)\equiv a - b \pmod{m}
+\quad\Longrightarrow\quad
+b^2\,(4a^2 - 1)^2 \equiv (a-b)^2 \pmod{m}$. By hypothesis \(m\mid (4a^2-1)^2\), so \(m\mid b^2(4a^2-1)^2\).  Therefore, $4ab-1 \mid (a-b)^2$, as claimed.} of $4ab - 1 \mid \left(4a^{2} - 1\right)^{2}$ show that this implies $4ab - 1 \mid (a - b)^{2}$.
+\\
+\\
+So it suffices to show the statement that if $4ab - 1 \mid_{\mathbb{Z}} (a - b)^2$ then $a = b$. Assume for the sake of contradiction that there exist positive integers $a$ and $b$ with $a \neq b$ such that $4ab - 1 \mid (a - b)^{2}$. Define:
+\[
+k = \frac{(a - b)^{2}}{4ab - 1} > 0.
+\]
+Consider the set
+\[
+S_k := \left\{ (a', b') \in \mathbb{N}^{*} \times \mathbb{N}^{*} \mid (a' - b')^{2} = k(4a'b' - 1) \right\}.
+\]
+Notice that $S_k$ cannot contain a pair on the diagonal of $\mathbb{N}^{*}$ as $4a'b' - 1 \geq 3$ and $k > 0$ and, in addition, $(a', b') \in S_k \Leftrightarrow (b', a') \in S_k$.
+\\\\
+Since $S_k \neq \varnothing$, there exists a pair $(A, B) \in S_k$ that minimizes $A + B$.  As said above, we necessarily have $A \neq B$ and by the symmetry above we can without loss of generality assume $A > B$. Consider the quadratic polynomial arising from the condition of $(A, B)\in S_k$:
+\[
+X^{2} - (2B + 4kB)X + B^{2} + k = 0.
+\]
+This polynomial has roots $x_1 := A > 0$ by construction. By Vieta's formulas for the coefficient of degree 1 and the constant coefficient, we obtain respectively that:
+\[
+x_2 := 2B + 4kB - A \in \mathbb{Z}
+\]
+is also a root (this is the famous \textit{root jumping}) and an integer, satisfying:
+\[
+x_2 = \frac{B^{2} + k}{A} > 0.
+\]
+Since $x_2$ is a positive integer, we have $(x_2, B) \in S_k$. By the minimality of $A + B$: $A + B \leq x_2 + B$ from which it follows $x_2 \geq A$, i.e.,
+\[
+\frac{B^{2} + k}{A} \geq A.
+\]
+Thus, we obtain (as $A>0$)
+\[
+k \geq A^{2} - B^{2} = (A - B)(A + B)>0.
+\]
+From $k\geq (A - B)(A + B)>0$ and $4AB-1\geq 3$ we get in order:
+\[
+(A - B)^{2} = k(4AB - 1)\geq \left(A^{2} - B^{2}\right)3.
+\]
+Since $A-B>0$ we can divide the inequality on both sides without changing the inequality direction to obtain:
+\[
+A + B \geq A - B \geq 3(A + B) \geq 3(A + B),
+\]
+Again dividing by $A+B>0$ the inequality is preserved and we obtain $1 \geq 3$. This is a contradiction. Thus, our assumption must be false, and the statement is proven.
+\end{solution}

@@ -1,0 +1,121 @@
+% title:          Integer powers force integer exponent
+% area:           real-analysis, irrationality
+% methods:        mean-value-theorem, induction, squeeze, finite-differences
+% difficulty:
+% difficulty-ai:  medium
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         putnam
+% origin-date:    1971
+% origin-number:  A6
+% also-in:        bernoulli
+% taken-from:
+% references:     Putnam 1971 (32nd), A6 - https://prase.cz/kalva/putnam/putn71.html (solution by finite differences and the mean value theorem: https://prase.cz/kalva/putnam/psoln/psol716.html); wording '1971-A-6' in Barbeau's Putnam number-theory compilation - https://www.math.utoronto.ca/barbeau/putnamnumb.pdf. Bernoulli Competition 2025 (EPFL, 27 May 2025), Problem 1 (club's copy of the official solutions, not online), competition date - https://bernoulli.epfl.ch/youth-at-bernoulli/bernoulli-competition/. Discussion: MSE 2923901 ('a somewhat infamous Putnam problem (A6 from 1971)') - https://math.stackexchange.com/questions/2923901; MSE 570218 - https://math.stackexchange.com/questions/570218; MathOverflow 17560 (2^x, 3^x, 5^x variant via the six exponentials theorem; a contestant recalls meeting it on the 1971 Putnam; a comment says it is also in R. Young, Excursions in Calculus, p. 71) - https://mathoverflow.net/questions/17560; Club source: C. Hongler, Analysis I lecture (EPFL), 2021, per the legacy solutions file
+% history:        ai
+\begin{problem}
+Let $\alpha\in\mathbb{R}$ such that $\forall n\in\mathbb{Z}_{>0}\, n^\alpha:=\exp(\alpha\cdot\ln(n))\in\mathbb{Z}_{>0}$. Show that $\alpha\in\mathbb{N}$.
+\end{problem}
+\begin{solution}
+Let us to the trivial cases.
+\\
+If $\alpha<0$ we notice that $\forall n\in\mathbb{N}^{*}$ we have:
+$\mathbb{N}\ni n^{\alpha}=\frac{1}{n^{|\alpha|}}$. Since $x\mapsto x^{|\alpha|}:=exp(|\alpha|\cdot ln(x))$ is strictly increasing over $]0;+\infty[$ (it is derivable over $]0;+\infty[$ with positive derivative $|\alpha|\cdot x^{|\alpha|}$) we must have (since $x\mapsto\frac{1}{x}$ is strictly decreasing over $]0;+\infty[$) that $x\mapsto x^{\alpha}$ is strictly decreasing over $]0;+\infty[$. So:
+$$1<2\rightarrow 1=1^{\alpha}>2^{\alpha}\in\mathbb{N}\Rightarrow 0=2^{\alpha}=exp(\alpha\cdot ln(2))$$
+a contradiction since $0\notin ran(exp)=\mathbb{R}_{>0}$.
+\\
+Therefore we cannot have $\alpha<0$ and we must have $\alpha\geq 0$.
+\\\\
+If $\alpha=0$ (this is a valid solution) we are done.
+\\\\
+If $\alpha>0$, let us get some intuition a bit by doing an informal discussion on how this sentence:
+$$\forall n\in\mathbb{N}^{*}\, n^{\alpha}\in\mathbb{N}$$
+is intricate with the strictly growing function $x\mapsto x^{\alpha}$ and how the discrete property of the integers $\mathbb{Z}$ and their realisation in the continuum realm of the real number $\mathbb{R}$ can be cleverly used.
+\\
+For now a simple heuristic shows that if $0<\alpha<1$ then taking the first $2$ number $1,2$ we must have $1=1^{\alpha}$ and $2^\alpha\in\mathbb{N}$ but $ 2\alpha=\exp(\alpha\ln(2))<\exp(1\ln(2))=2^1=2$ so that $2\alpha=1$ but then $\alpha=0$ a contradiction. Thus there is no $\alpha\in]0,1[$ such that the statement holds. Cotninuing on this idea if $1<\alpha<2$ then $1^{\alpha}=1$ and 
+\\\\
+What is the "minimal" distance one has to do between integer i.e. $(n+1)-n$? Of course it is one unit of distance, lets call this distance the $0$-th order distance. Now, how much this unit distance is being increased when it comes to taking it to the exponent $\alpha$ i.e. $(n+1)^{\alpha}-n^{\alpha}$ (this is a positive value in the $1$-th order case since $x\mapsto x^{\alpha}$ is increasing) ? Knowing a close form of this $1$-th order distance can be helpful because we know $(n+1)^{\alpha},n^{\alpha}\in\mathbb{N}$ and thus this distance being $positive$ should be a strictly positive natural number i.e.  $(n+1)^{\alpha}-n^{\alpha}\in\mathbb{N}^{*}$ ! Imagine if we could quantify that it was $<2$ uniformly over all $n\in\mathbb{N}^{*}$, then we would know $(n+1)^{\alpha}-n^{\alpha}=1$ which in turn would imply (by the binomial theorem) that $\alpha=1$. This idea of trying to force the value of the distance uniformly over the strictly positive natural number is a thing to dig because it is helpful since we are free to roll $n\in\mathbb{N}$ in particular make it tend to $+\infty$.
+\\
+But what if this distance was $\geq 2$ ? Then we could hope to quantify the $2$-th order distance i.e. the distance between the $1$-th order distance:
+$$(((n+1)+1)^{\alpha}-(n+1)^{\alpha})-((n+1)^{\alpha}-n^{\alpha})$$
+$$=(((n+2)^{\alpha}-(n+1)^{\alpha})-((n+1)^{\alpha}-n^{\alpha})=(n+2)^{\alpha}+n^{\alpha}-2(n+1)^{\alpha}$$
+which this times may be simple an integer in $\mathbb{Z}$, and we can try to get some useful information. We can continue on the $3$-th order distance:
+$$\left((((n+1)+2)^{\alpha}-((n+1)+1)^{\alpha})-(((n+1)+1)^{\alpha}-(n+1)^{\alpha})\right)$$
+$$-\left(((n+2)^{\alpha}-(n+1)^{\alpha})-((n+1)^{\alpha}-n^{\alpha})\right)$$
+$$=(n+3)^{\alpha}-3(n+2)^{\alpha}+(n+1)^{\alpha}-n^{\alpha}\in\mathbb{N}^{*}$$
+This starts to go messy...
+The key here is to notice that at some point i.e. at some $k$-th order distance and at some rank $n\geq N$ we are \textbf{forced} to take some specific integer value ! And from there we can hope to deduce something about $\alpha$.
+\\\\
+Surprisingly (or not so surprisingly in fact) we can exactly give a closed form for each of these $k$-th order distance. Remember by using the mean value theorem we have the existence of $\theta_{1}\in]0;1[$ such that:
+$$\alpha\cdot (n+\theta_1)^{\alpha-1}=\frac{(n+1)^{\alpha}-n^{\alpha}}{(n+1)-n}=(n+1)^{\alpha}-n^{\alpha}$$
+Our above feel that iterating this process ($x\mapsto x^{\alpha}\in C^{\infty}(]0;+\infty[,\mathbb{R})$) until some point is correct. In fact after $\lfloor\alpha\rfloor+1$ iteration of the mean value theorem, the expression on the LHS which really is  $\prod_{i=0}^{\lfloor\alpha\rfloor+1}(\alpha-i)$ multiplied by $(n+\theta_{\lfloor\alpha\rfloor+1})^{(\alpha-(\lfloor\alpha\rfloor+1))<0}$ where $\theta_{\lfloor\alpha\rfloor+1}\in]0;\lfloor\alpha\rfloor+1[$ should represent the $\lfloor\alpha\rfloor+1$-th order distance (which is an integer) ! And this must hold for any $n\in\mathbb{N}$ ! In particular balading $n$ to infinity we must have (as the distance is an integer) that this distance is zero, (this uses $(\alpha-(\lfloor\alpha\rfloor+1))<0$).  This tell us that such a distance at some point must be zero and therefore that $\alpha=\lfloor\alpha\rfloor$ which will show that $\alpha\in\mathbb{N}$ !
+\\\\
+Let us make this more formally by defining the following operation the \href{https://en.m.wikipedia.org/wiki/Finite_difference}{difference operator }:
+\[\begin{tikzcd}
+	{\Delta:\mathcal{F}(\mathbb{R},\mathbb{R})} & {\mathcal{F}(\mathbb{R};\mathbb{R})} \\
+	f & {\Delta(f):\mathbb{R}} & {\mathbb{R}} \\
+	& x & {f(x+1)-f(x)}
+	\arrow[from=1-1, to=1-2]
+	\arrow[maps to, from=2-1, to=2-2]
+	\arrow[from=2-2, to=2-3]
+	\arrow[maps to, from=3-2, to=3-3]
+\end{tikzcd}\]
+It has the property that $\Delta[C^{\infty}(\mathbb{R},\mathbb{R})]\subset C^{\infty}(\mathbb{R},\mathbb{R})$ and that (restricted to $C^{\infty}(\mathbb{R},\mathbb{R})$) the following diagram commutes:
+\[\begin{tikzcd}
+	{C^{\infty}(\mathbb{R},\mathbb{R})} & {C^{\infty}(\mathbb{R},\mathbb{R})} \\
+	{C^{\infty}(\mathbb{R},\mathbb{R})} & {C^{\infty}(\mathbb{R},\mathbb{R})}
+	\arrow["\Delta", from=1-1, to=1-2]
+	\arrow["{\frac{d}{dx}}"', from=1-1, to=2-1]
+	\arrow["{\frac{d}{dx}}", from=1-2, to=2-2]
+	\arrow["\Delta"', from=2-1, to=2-2]
+\end{tikzcd}\]
+Indeed for $f\in C^{\infty}(\mathbb{R},\mathbb{R})$ and $\tilde{x}\in\mathbb{R}$ we have:
+$$\left((\frac{d}{dx}\circ\Delta) (f)\right)(\tilde{x})=\left(\frac{d}{dx}(\Delta(f))\right)(\tilde{x}+1)$$
+$$=\left(\frac{d}{dx}(f)\right)(\tilde{x}+1)\cdot \left(\frac{d}{dx}(\_+1)\right)(\tilde{x})-\left(\frac{d}{dx}(f)\right)(\tilde{x})=\left(\frac{d}{dx}(f)\right)(\tilde{x}+1)-\left(\frac{d}{dx}(f)\right)(\tilde{x})$$
+$$=\left(\Delta\left(\frac{d}{dx}(f)\right)\right)(\tilde{x})=\left((\Delta\circ\frac{d}{dx})(f)\right)(\tilde{x})$$
+We define by recursion along the integers; for $k\in\mathbb{N}$:
+$$\Delta^{(k)}=\begin{cases}
+    Id\text{ if } k = 0\\
+    \Delta\circ \Delta^{(k-1)}\text{ if } k\geq 1
+\end{cases}$$
+and we define the set:
+$$\mathcal{A}:=\left\{k\in\mathbb{N}\,:\, \forall f\in C^{\infty}(\mathbb{R},\mathbb{R})\forall x\in\mathbb{R}\exists\theta_{k}\in]0;k[\, \left(\frac{d^k}{dx^k}(f)\right)(x+\theta_{k})=(\Delta^{(k)}(f))(x)\right\}$$
+(This is just formal induction)
+\\We claim $\mathcal{A}=\mathbb{N}$. One inclusion is trivial. For the other inclusion: suppose $\mathbb{N}\setminus\mathcal{A}\neq\varnothing$ then we can take:
+$$m:=min\, \mathbb{N}\setminus\mathcal{A}$$
+As for any function $f\in C^{\infty}(\mathbb{R},\mathbb{R})$ we have:
+$$\left(\frac{d^0}{dx^0}(f)\right):=f=Id(f)=(\Delta^{(0)}(f))$$ this means that $0\in\mathcal{A}$ so $m\neq 0$ i.e. $m$ is a succesor natural number with $m=(m-1)+1$ and $m-1\in\mathcal{A}$ (by minimality). Fix $f\in C^{\infty}(\mathbb{R},\mathbb{R})$ by hypothesis we know 
+that for $\frac{d}{dx}(f)\in C^{\infty}(\mathbb{R},\mathbb{R})$ that $\exists \theta_{m-1}\in\mathcal{F}(\mathbb{R};]0;m-1[)$ with $\forall \tilde{x}\in\mathbb{R}$:
+$$\left(\frac{d^{m-1}}{dx^{m-1}}\left(\frac{d}{dx}(f)\right)\right)(\tilde{x}+\theta_{m-1}(\tilde{x}))=\left(\Delta^{(m-1)}\left(\frac{d}{dx}(f)\right)\right)(\tilde{x})
+$$
+Also as $\Delta[C^{\infty}(\mathbb{R},\mathbb{R})]\subset C^{\infty}(\mathbb{R},\mathbb{R})$ we must have $\Delta^{(m-1)}(f)\in C^{\infty}(\mathbb{R};\mathbb{R})$. Fixing $\tilde{x}\in\mathbb{R}$, so we can apply the mean value theorem to obtain $\exists u\in ]0;1[$ such that:
+$$\left(\Delta^{(m)}(f)\right)(\tilde{x})\overset{def}{=}\left(\Delta^{(m-1)}(f)\right)(\tilde{x}+1)-\left(\Delta^{(m-1)}(f)\right)(\tilde{x})$$
+$$\frac{\left(\Delta^{(m-1)}(f)\right)(\tilde{x}+1)-\left(\Delta^{(m-1)}(f)\right)(\tilde{x})}{(\tilde{x}+1)-\tilde{x}}\overset{mean}{=}\left(\frac{d}{dx}\left(\Delta^{(m-1)}(f)\right)\right)(\tilde{x}+u)$$
+$$\overset{\frac{d}{dx}\circ\Delta=\Delta\circ\frac{d}{dx}}{=}\left(\Delta^{(m-1)}\left(\frac{d}{dx}(f)\right)\right)(\tilde{x}+u)\overset{hyp}{=}\left(\frac{d^{m-1}}{dx^{m-1}}\left(\frac{d}{dx}(f)\right)\right)(\tilde{x}+u+\theta_{m-1}(\tilde{x}+u))$$
+$$=\left(\frac{d^{m}}{dx^{m}}(f)\right)(\tilde{x}+u+\theta_{m-1}(\tilde{x}+u))$$
+Since $u+\theta_{m-1}(\tilde{x}+u)\in]0;m[$ we conclude. As $\tilde{x}\in\mathbb{R}$ and $f\in C^{\infty}(\mathbb{R},\mathbb{R})$ were arbitrary we conclude $m\in\mathcal{A}$. This is a contradiction and $\mathcal{A}=\mathbb{N}$ as desired.
+\\\\
+Take the function:
+$$f(x):=\begin{cases}
+x^{\alpha} \text{ if } x\in\mathbb{R}_{+}    \\
+0 \text{ else }
+\end{cases}
+$$
+we have $f\in C^{\infty}(\mathbb{R},\mathbb{R})$ (not analytic!), so we can apply the theorem to obtain that for $\lfloor\alpha\rfloor+1\in\mathbb{N}=\mathcal{A}$ and  $\forall n\in\mathbb{N}^{*}\exists\theta_{\lfloor\alpha\rfloor+1}\in]0;\lfloor\alpha\rfloor+1[$ with:
+$$\left(\Delta^{(\lfloor\alpha\rfloor+1)}(f)\right)(n)=\left(\frac{d^{\lfloor\alpha\rfloor+1}}{dx^{\lfloor\alpha\rfloor+1}}f\right)(n+\theta_{\lfloor\alpha\rfloor+1})$$
+$$=\left(\prod_{i=0}^{\lfloor\alpha\rfloor}(\alpha-i)\right)\frac{1}{(n+\theta_{\lfloor\alpha\rfloor+1})^{\lfloor\alpha\rfloor+1-\alpha}}\in\left[0;\left(\prod_{i=0}^{\lfloor\alpha\rfloor}(\alpha-i)\right)\left(\frac{1}{n}\right)^{\lfloor\alpha\rfloor+1-\alpha}\right]$$
+Since $$lim_{n\rightarrow+\infty}\left(\prod_{i=0}^{\lfloor\alpha\rfloor}(\alpha-i)\right)\left(\frac{1}{n}\right)^{\lfloor\alpha\rfloor+1-\alpha}\overset{\lfloor\alpha\rfloor+1-\alpha>0}{=}0$$
+We must have by the squeeze theorem:
+$$lim_{n\rightarrow+\infty}\left(\Delta^{(\lfloor\alpha\rfloor+1)}(f)\right)(n)=0$$
+However by induction we can show that $\forall k\in\mathbb{N}$ we must have $(\Delta^{(k)}(f))[\mathbb{Z}]\subset\mathbb{Z}$. Combining these two fact we have that for some $N\in\mathbb{N}$ the following phenomena occurs:
+$$0\leq (\Delta^{(\lfloor\alpha\rfloor+1)}(f))(N)=\left(\prod_{i=0}^{\lfloor\alpha\rfloor}(\alpha-i)\right)\left(\frac{1}{N}\right)^{\lfloor\alpha\rfloor+1-\alpha}<\frac{1}{2}$$
+and:$$(\Delta^{(\lfloor\alpha\rfloor+1)}(f))(N)\in\mathbb{Z}$$
+Hence $\left(\prod_{i=0}^{\lfloor\alpha\rfloor}(\alpha-i)\right)\left(\frac{1}{N}\right)^{\lfloor\alpha\rfloor+1-\alpha}=0$ so $\left(\prod_{i=0}^{\lfloor\alpha\rfloor}(\alpha-i)\right)=0$ and as $i<\lfloor\alpha\rfloor\rightarrow \alpha\neq i$ this implies $\alpha=\lfloor\alpha\rfloor$.
+So in total we have shown (at least in \textbf{ZFC}):
+$$\forall\alpha\in\mathbb{R}\left((\forall n\in\mathbb{N}^{*}\, n^{\alpha}\in\mathbb{N})\rightarrow \alpha\in\mathbb{N}\right)$$
+Remark: One has use the fact we could take $n$ to infinity, one can ask if we can reduce the set $\mathbb{N}^{*}$ say to an unbounded part of $\mathbb{N}^{*}$ or even to a finite set (but then this would require other tricks). A difficult result $6$ exponent theorem proved in 1966 tells us that the following formula holds:
+$$\forall\alpha\in\mathbb{R}\left((\forall n\in\{2,3,5\}\, n^{\alpha}\in\mathbb{N})\rightarrow \alpha\in\mathbb{N}\right)$$
+We have not decided yet the $4$ exponent conjecture/ Schanuel conjecture:
+$$\forall\alpha\in\mathbb{R}\left((\forall n\in\{2,3\}\, n^{\alpha}\in\mathbb{N})\rightarrow \alpha\in\mathbb{N}\right)$$
+(a set of size $1$ is false for instance $4^{\frac{1}{2}}=2$). \\
+\end{solution}

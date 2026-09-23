@@ -1,0 +1,41 @@
+% title:          Convex function shifted by its derivative
+% area:           derivatives, convex-functions
+% methods:        mean-value-theorem
+% difficulty:
+% difficulty-ai:  easy
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         journal
+% origin-date:    1989
+% origin-number:  Problem 6143
+% also-in:        book, course
+% taken-from:
+% references:     D. Andrica, Revista Matematică Timișoara (RMT), No. 1-2 (1989), p. 67, Problem 6143 (attribution printed in Andreescu-Andrica; RMT issue not available online); T. Andreescu, D. Andrica, 360 Problems for Mathematical Contests, GIL 2003, Ch. 5 Mathematical Analysis, Problem 33 (statement p. 185, solution with attribution p. 207; stated with f'' >= 0) - https://archive.org/download/360ProblemsForMathematicalContestsAndreescu/360%20Problems%20for%20Mathematical%20Contests%20%5BAndreescu%5D%20_djvu.txt; R. Gelca, T. Andreescu, Putnam and Beyond, Springer 2007, Sect. 3.2.5 The Mean Value Theorem, Example p. 140 ('a problem of D. Andrica') - https://mathematicalolympiads.files.wordpress.com/2012/08/putnam-and-beyond.pdf (full text also at https://archive.org/stream/X87QHX87XQSH8XQ8HHXQSH8HQH8Q8H/Razvan%20Gelca,%20Titu%20Andreescu-Putnam%20and%20beyond-Springer%20(2007)_djvu.txt); 2nd ed. 2017, p. 152 (Google Books search hit only, restricted page) - https://books.google.com/books?vid=ISBN9783319589886&q=%22positive+second+derivative%22; UConn Problem Seminar, Fall 2020, Mean Value Theorems, Problem 5 - https://undergradactivities.math.uconn.edu/wp-content/uploads/sites/1884/2020/10/Putnam2020fall-mvt.pdf; Math StackExchange 902875 (2014) - https://math.stackexchange.com/questions/902875/if-f-is-strictly-convex-prove-that-fx-fx-geq-fx-for-every-x; Math StackExchange 4455327 (2022) - https://math.stackexchange.com/questions/4455327/fx-is-always-positive-then-fxfx-geq-fx
+% history:        ai
+\begin{problem}
+Let $f : \mathbb{R} \to \mathbb{R}$ be a twice-differentiable function, with positive second derivative. 
+Prove that
+\[
+f\left(x + f'(x)\right) \geq f(x),
+\]
+for any real number $x$.
+\end{problem}
+\begin{solution}
+If $x$ is such that $f'(x) = 0$, then the relation holds with equality. Else $f'(x)\neq 0$ and then the following set has non empty interior:
+$$[\,x + f'(x),\, x\,]\sqcup[\,x,\, x+ f'(x)\,]$$
+It is clear that one of these interval is non empty and the second is empty.
+The mean value theorem applied on the non empty interval yields the existence of $c\in [\,x + f'(x),\, x\,]\sqcup[\,x,\, x+ f'(x)\,]$ such that:
+\[
+f'(c) 
+= \frac{f\left(x + f'(x)\right) - f(x)}{\left(x + f'(x)\right) - x} 
+= \frac{f(x + f'(x)) - f(x)}{f'(x)},
+\]
+i.e. $f'(c)f'(x)=f(x + f'(x)) - f(x)$.
+\\\\
+If $f'(x)>0$ then $c\in [\,x,\, x+ f'(x)\,]$ and because the second derivative is positive, $f'$ is increasing; hence $0<f'(x) < f'(c)$. Therefore $f(x + f'(x)) - f(x)>0$.
+\\\\
+If $f'(x)<0$ then $c\in [\,x+ f'(x),\, x\,]$ and because the second derivative is positive, $f'$ is increasing; hence $f'(c) < f'(x)<0$. Therefore $f(x + f'(x)) - f(x)>0$.
+\\\\
+In all cases: $$f(x + f'(x)) \geq f(x)$$
+\end{solution}

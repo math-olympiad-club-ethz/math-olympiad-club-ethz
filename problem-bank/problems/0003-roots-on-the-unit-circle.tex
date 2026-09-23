@@ -1,0 +1,51 @@
+% title:          Roots on the unit circle
+% area:           polynomial-roots
+% methods:        contradiction
+% difficulty:
+% difficulty-ai:  medium
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         putnam
+% origin-date:    1989-12-02
+% origin-number:  A3
+% also-in:        book
+% taken-from:
+% references:     Putnam 1989, A3 (exam of 2 Dec 1989) - https://kskedlaya.org/putnam-archive/1989.pdf; Kalva archive (statement and z^9-modulus solution) - https://prase.cz/kalva/putnam/putn89.html and https://prase.cz/kalva/putnam/psoln/psol893.html; official report: Klosinski, Alexanderson, Larson, The Fiftieth William Lowell Putnam Mathematical Competition, Amer. Math. Monthly 98 (1991), no. 4, 319-327, doi:10.1080/00029890.1991.12000760 - https://api.crossref.org/works/10.1080/00029890.1991.12000760; Kedlaya, Poonen, Vakil, The William Lowell Putnam Mathematical Competition 1985-2000, MAA 2002, 1989 A3, p. 101 ff. (several solutions) - https://archive.org/details/Putnam19852000; Andreescu, Andrica, Complex Numbers from A to ... Z, 2nd ed., Birkhauser 2014, Sect. 5.2 'Algebraic Equations and Polynomials', Problem 7, p. 194 - https://archive.org/details/complexnumbersfr0000andr_b4d8 (bibliographic record https://api.crossref.org/works/10.1007/978-0-8176-8415-0); solutions sheet - https://www.sfu.ca/~lockhart/richard/Putnam1989Sol.pdf
+% history:        ai
+\begin{problem}
+Prove that if the complex number \( z \) satisfies the equation
+
+\[
+11z^{10} + 10i z^9 + 10i z -11 = 0,
+\]
+
+then \( |z| = 1 \). (Here, \( i \) is the imaginary unit satisfying \( i^2 = -1 \).)
+\end{problem}
+\begin{solution}
+We begin by expressing $z^9$ in terms of $z$:
+\begin{equation*}
+    z^9 = \frac{11 - 10iz}{11z + 10i}.
+\end{equation*}
+Taking the modulus on both sides, we examine the numerator and denominator separately:
+\begin{align*}
+    |11 - 10iz|^2 &= (11 - 10iz)(11 + 10iz) = 121 + 100|z|^2 + 220 \Im z, \\
+    |11z + 10i|^2 &= (11z + 10i)(11\bar{z} - 10i) = 100 + 121|z|^2 + 220 \Im z.
+\end{align*}
+If we define $|z^9| = N/D$ where
+\begin{equation*}
+    N = 121 + 100|z|^2 + 220 \Im z, \quad D = 100 + 121|z|^2 + 220 \Im z,
+\end{equation*}
+then their difference is given by
+\begin{equation*}
+    N - D = 21(1 - |z|^2).
+\end{equation*}
+
+Now, consider the cases:
+\\\\
+- If $|z| > 1$, then $1 - |z|^2 < 0$, so $N < D$ and hence $|z^9| < 1$.
+\\\\
+- If $|z| < 1$, then $1 - |z|^2 > 0$, so $N > D$ and hence $|z^9| > 1$.
+
+Both cases is a contradiction. Thus, we conclude that $|z| = 1$ for all roots $z$.
+\end{solution}

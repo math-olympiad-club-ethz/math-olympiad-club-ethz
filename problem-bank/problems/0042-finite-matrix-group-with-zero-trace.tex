@@ -1,0 +1,42 @@
+% title:          Finite matrix group with zero trace
+% area:           trace, finite-groups
+% methods:        trace-argument, eigenvalue-arguments, symmetry
+% difficulty:
+% difficulty-ai:  medium
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         putnam
+% origin-date:    1985-12-07
+% origin-number:  B6
+% also-in:
+% taken-from:
+% references:     46th Putnam, 7 December 1985, Problem B6 - https://kskedlaya.org/putnam-archive/1985.pdf; solution in Kalva (J. Scholes) - https://prase.cz/kalva/putnam/psoln/psol8512.html; K. Kedlaya, B. Poonen, R. Vakil, The William Lowell Putnam Mathematical Competition 1985-2000: Problems, Solutions, and Commentary (MAA, 2002), 1985 B6, pp. 63-64 (representation-theoretic solution via character orthogonality; notes the M_i need not be invertible; literature note to Serre, Linear representations of finite groups) - https://dl.icdst.org/pdfs/files/543f31d967d180839d1bca21f370f692.pdf; R. Lockhart, solutions to Putnam 1985 - https://www.sfu.ca/~lockhart/richard/Putnam1985Sol.pdf
+% history:        ai
+\begin{problem}
+Let \( n \geq 1 \) and \( G \leq \mathrm{GL}_n(\mathbb{R}) \) be a finite group consisting of real \( n \times n \) matrices under matrix multiplication. Suppose the sum of the traces of all elements in \( G \) is zero:
+\[
+\sum_{M \in G} \mathrm{tr}(M) = 0.
+\]
+Prove that the sum of the elements of \( G \) is the zero matrix:
+\[
+\sum_{M \in G} M = \mathbf{0}_{n \times n}.
+\]
+\end{problem}
+\begin{solution}
+Define the matrix \( A := \sum_{M \in G} M \in \mathbb{R}^{n \times n} \). Let \( N \in G \subset \mathrm{GL}_n\left( \mathbb{R} \right) \); then left multiplication by \( N \) clearly defines a bijection \( N \cdot \_: G \rightarrow G \). In particular, \( \mathrm{ran}\left( N \cdot \_ \right) = G \). Since \( + \) is commutative, we have:
+\[
+N \cdot A = \sum_{M \in G} N \cdot M = \sum_{T \in \mathrm{ran}\left( N \cdot \_ \right)} T = \sum_{T \in G} T = A. 
+\]
+Since \( N \in G \) was arbitrary, we have in particular
+\[
+A^{2} = \left( \sum_{M \in G} M \right) \cdot A = \sum_{M \in G} \left( M \cdot A \right) = \sum_{M \in G} A = \left| G \right| A.
+\]
+In particular, \( A^{2} - \left| G \right| A = \mathbf{0}_{n \times n} \), which implies that the minimal polynomial of \( A \), denoted \( P_{\min, A}(X) \in \mathbb{R}[X] \), divides \( X\left( X - \left| G \right| \right) \). In particular, since the roots of the minimal polynomial of a matrix over a field are precisely the roots of its characteristic polynomial (i.e., the eigenvalues of the matrix), it follows that all eigenvalues of \( A \) are either \( 0 \) or \( \left| G \right| \geq 1 \).
+\\\\
+Denote by \( m_0(A) := \dim_{\mathbb{R}} \left( \ker\left( A \right) \right) \) and \( m_{\left| G \right|}(A) := \dim_{\mathbb{R}} \left( \ker\left( A - \left| G \right| I \right) \right) \) the respective geometric multiplicities. Since the trace of a matrix equals the sum of its eigenvalues (by Vieta’s formula), and the trace map \( \mathrm{tr} \) is \( \mathbb{R} \)-linear, the condition
+\[
+0 = \sum_{M \in G} \mathrm{tr}\left( M \right) = \mathrm{tr}\left( A \right) = m_{0}(A) \cdot 0 + m_{\left| G \right|}(A) \cdot \left| G \right| = m_{\left| G \right|}(A) \cdot \left| G \right|,
+\]
+implies that there are no eigenvalues of \(A\) equal to \( \left| G \right| \); \(m_{\left| G \right|}(A) = 0\). Hence all eigenvalues of \( A \) are \( 0 \). Thus \( P_{\min, A}(X) = X \), which means \( \mathbf{0}_{n \times n} = P_{\min, A}(A) = A = \sum_{M \in G} M\), and this concludes.
+\end{solution}

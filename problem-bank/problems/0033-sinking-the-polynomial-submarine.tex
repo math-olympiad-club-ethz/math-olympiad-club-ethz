@@ -1,0 +1,121 @@
+% title:          Sinking the polynomial submarine
+% area:           strategy-puzzles, algorithms
+% methods:        bijection, construction
+% difficulty:
+% difficulty-ai:  easy
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         folklore
+% origin-date:    2002
+% origin-number:
+% also-in:        course
+% taken-from:
+% references:     Linear version (integer start, integer velocity): wu::riddles (William Wu, UC Berkeley), hard riddles, 'Sink The Sub', contributed by [srowen], 2002 - https://web.archive.org/web/20021007223120/http://www.ocf.berkeley.edu/~wwu/riddles/hard.shtml; wu::forums thread 'Sink The Sub', opened 31 Jul 2002 (reply #18 by W. Wu, 9 Apr 2004: any finite number of countably-valued parameters still works; reply #19, 29 Apr 2004, suggests a Taylor-polynomial generalisation) - https://web.archive.org/web/20250818025840/https://www.ocf.berkeley.edu/~wwu/cgi-bin/yabb/YaBB.cgi?board=riddles_hard;action=display;num=1028142186; R. Vakil, Stanford Problem-Solving Masterclass, Week 7 (29 Nov 2004), Problem 4, credited to Wu's website - http://math.stanford.edu/~vakil/putnam04/04mc7.pdf; Math Fail, 'Submarine Puzzle', Jan 2011 - https://www.math-fail.com/2011/01/submarine-puzzle.html; 'Catching a spy' variant (yes/no queries), K. R. M. Leino, from Radu Grigore - https://leino.science/puzzles/catching-a-spy; real-parameter variant with a bomb of width 1: Math StackExchange Q642957 (2014) - https://math.stackexchange.com/questions/642957. No published source found for the rational-polynomial, unknown-degree version; it looks like the club's own generalisation.
+% history:        ai
+\begin{problem}
+An enemy submarine is hidden somewhere along the infinite line $\mathbb{R}$. It travels silently, and you know that its path is described by a fixed rational polynomial rule \(\sum_{i=0}^{n}c_iT^{i}\in\mathbb{Q}[X]\); for each time \(t \in \mathbb{N}\), its position is given by
+\[
+x(t) = \sum_{i=0}^{n} c_i t^{i}\in\mathbb{Q}.
+\]
+However, you do not know \(n \in \mathbb{N}\), nor the rational coefficients \((c_i)_{i \in n} \in \mathbb{Q}^n\) that form this rational polynomial rule.
+\\\\
+Each unit of time (starting from \(0\)), you are allowed to launch a single torpedo at any chosen rational position. If the submarine is at that position at that time, it is struck and sinks. Assume you possess a potentially countably infinite arsenal of torpedoes and potentially countably infinite time.
+\\\\
+Devise a strategy — a sequence of torpedo launches — such that, regardless of the submarine's unknown position, you will \textbf{eventually} hit it.
+\end{problem}
+\begin{solution}
+\[
+\substack{\textit{This solution needs to be written more formally}}
+\]
+Notice that \(\forall t \in \mathbb{N}\), we have \(x(t) \in \mathbb{Q}\). We must find a function
+\[
+f: \mathbb{N} \rightarrow \mathbb{Q}
+\]
+(which represents the sequence of torpedo launches — one per unit of time) such that there exists a time \(\tilde{t} \in \mathbb{N}\) with
+\[
+f(\tilde{t}) = x(\tilde{t}).
+\]
+The strategy is the following: assume the submarine does not move, i.e. \(x(T) = c_0 \in \mathbb{Q}[T]\), then taking any bijection \(g: \mathbb{N} \simeq \mathbb{Q}\) and defining \(f(t) = g(t)\) works.
+\\\\
+If the submarine moves linearly, \(x(T) = c_0 + c_1 T \in \mathbb{Q}[T]\), since we do not know \(c_0, c_1\), we enumerate each 2-tuple of rationals in the following way: suppose it started with \((c_0', c_1')\), and knowing the elapsed time \(t\), we shoot at position \(c_0' + c_1' t\). If it truly started with \((c_0', c_1')\), then we would certainly hit it. If it did not start with \((c_0', c_1')\) and by chance we still hit it, we are done; otherwise, we proceed to try another pair \((c_0'', c_1'')\), and continue this process, incrementing time to \(t' = t + 1\) each unit of time. Taking any bijection \(g: \mathbb{N} \simeq \mathbb{Q}^{2}\) and defining \(f(t) = g(t)(0)+g(t)(1)t\) works.
+\\\\
+If the submarine moves quadratically, \(x(T) = c_0 + c_1 T + c_2 T^2 \in \mathbb{Q}[T]\), again, since we do not know \(c_0, c_1, c_2\), we enumerate each 3-tuple of rationals similarly: suppose it started with \((c_0', c_1', c_2')\), and knowing the elapsed time \(t\), we shoot at position \(c_0' + c_1' t + c_2' t^2\). If it truly started with \((c_0', c_1', c_2')\), we would certainly hit it. If it did not start with that and we still hit it by chance, we are done; otherwise, we proceed to try another triple \((c_0'', c_1'', c_2'')\), incrementing time each step. Taking any bijection \(g: \mathbb{N} \simeq \mathbb{Q}^{3}\) and defining \(f(t) = g(t)(0)+g(t)(1)t+g(t)(2)t^2\) works.
+\\\\
+The problem you may raise is: we already enumerate \(\mathbb{Q}\) in the case the submarine does not move. How can we have finished that enumeration and moved on to the linear case, and further to the quadratic case, etc.?
+\\\\
+The key observation is that we can enumerate all of them simultaneously in a single shot! Indeed, we can enumerate all \textit{finite} sequences of rationals because
+\[
+\mathbb{N} \simeq \bigcup_{k \in \mathbb{N}} \mathbb{Q}^k =: \mathbb{Q}^{<\omega}.
+\]
+Any bijection \(g: \mathbb{N} \simeq \mathbb{Q}^{<\omega}\) suffices, since then the strategy at time \(t \in \mathbb{N}\) is, if \(g(t) = (c_i')_{i \in k}\), to shoot at \(\sum_{i \in k} c_i' t^{i}\). That is, the sequence of torpedo launches \(f: \mathbb{N} \rightarrow \mathbb{Q}\) is defined by:
+\[
+f(t) := \sum_{i \in \operatorname{dom}(g(t))} g(t)(i) t^{i}.
+\]
+You may object that such a bijection \(g: \mathbb{N} \rightarrow \mathbb{Q}^{<\omega}\) requires the axiom of choice and is not realisable in practice; however, we prove otherwise by providing multiple constructive examples of such bijections.
+\\\\
+First, we show that \(\mathbb{N} \simeq \mathbb{Q}\). Define \(s: \mathbb{N} \to \mathbb{Z}\) for \(n \in \mathbb{N}\) by:
+\[
+s(n) = (-1)^n \left\lfloor \frac{n + 1}{2} \right\rfloor,
+\]
+which is clearly a bijection. (The sequence \(s(0), s(1), s(2), s(3), \ldots\) is \(0, -1, 1, -2, 2, \ldots\), a bijection from \(\mathbb{N}\) to \(\mathbb{Z}\).)
+\\\\
+It suffices then to find a bijection between \(\mathbb{Z}\) and \(\mathbb{Q}\). Any bijection \(h_+: \mathbb{Z}_{>0} \to \mathbb{Q}_{>0}\) induces a bijection \(h: \mathbb{Z} \to \mathbb{Q}\) defined by:
+\[
+h(n) =
+\begin{cases}
+h_+(n) & \text{if } n > 0, \\
+0 & \text{if } n = 0, \\
+-h_+(-n) & \text{if } n < 0.
+\end{cases}
+\]
+It remains to find a bijection \(h_+: \mathbb{Z}_{>0} \to \mathbb{Q}_{>0}\). Every positive integer has a unique prime factorisation \(p_1^{a_1} p_2^{a_2} \cdots\), where \(p_i\) is the \(i\)-th prime and the \(a_i\) are non-negative integers, almost all zero. Similarly, every positive rational number has a unique expression \(p_1^{b_1} p_2^{b_2} \cdots\) with finitely many non-zero integers \(b_i\).
+\\\\
+Thus, for any \(n = p_1^{a_1} p_2^{a_2} \cdots \in \mathbb{Z}_{>0}\), define
+\[
+h_+(n) := p_1^{s(a_1)} p_2^{s(a_2)} \cdots.
+\]
+This defines a bijection \(h_+: \mathbb{Z}_{>0} \to \mathbb{Q}_{>0}\), and \(h\) gives a bijection \(\mathbb{Z} \to \mathbb{Q}\), hence \(\mathbb{N} \simeq \mathbb{Q}\).
+\\\\
+Such a bijection induces one between \(\mathbb{N}^{<\omega}\) and \(\mathbb{Q}^{<\omega}\). So, to get a bijection between \(\mathbb{N}\) and \(\mathbb{Q}^{<\omega}\), it suffices to give one between \(\mathbb{N}\) and \(\mathbb{N}^{<\omega}\). We give three examples \(f_1, f_2, f_3: \mathbb{N}^{<\omega} \rightarrow \mathbb{N}\) below:
+\\\\
+The prime encoding bijection:
+\[
+f_1((a_0, a_1, \dots, a_{k-1})) := \prod_{i=0}^{k-1} p_i^{a_i + 1} - 1,
+\]
+where \(p_i\) is the \(i\)-th prime. Note \(f_1(\varepsilon) = 0\).
+\\\\
+The multiset rank encoding bijection:
+\[
+f_2((a_0, a_1, \dots, a_{k-1})) := \sum_{j=0}^{k-1} \binom{a_j + j}{j + 1}.
+\]
+Again, \(f_2(\varepsilon) = 0\).
+\\\\
+The recursive Cantor pairing bijection:
+\\\\
+Recall the \href{https://en.wikipedia.org/wiki/Pairing_function}{Cantor pairing function}:
+\[
+\pi(a, b) := \frac{1}{2}(a + b)(a + b + 1) + b.
+\]
+Define recursively:
+\[
+f_3(\varepsilon) := 0, \quad f_3((a_0, \dots, a_k)) := \pi(a_0, f_3((a_1, \dots, a_k))) + 1.
+\]
+These induce constructive bijections \(g_1, g_2, g_3: \mathbb{N} \to \mathbb{Q}^{<\omega}\).
+\\\\
+Now, we show that any bijection \(g: \mathbb{N} \to \mathbb{Q}^{<\omega}\) induces a well-defined strategy that works. Technically, we only use the surjectivity of \(g\). Let \(n\) and \(\mathbf{c} := (c_i)_{i \in n} \in \mathbb{Q}^n\) be the true coefficients of the submarine's trajectory. Then by surjectivity of \(g\), there exists \(\tilde{t} \in \mathbb{N}\) such that
+\[
+g(\tilde{t}) = \mathbf{c}.
+\]
+At time \(\tilde{t}\), the difference between our shot and the submarine’s position is:
+\[
+f(\tilde{t}) - x(\tilde{t}) = \left( \sum_{j \in \operatorname{dom}(\mathbf{c})} \mathbf{c}(j) \tilde{t}^j \right) - \left( \sum_{i = 0}^{n} c_i \tilde{t}^i \right) = 0.
+\]
+Thus, the torpedo launched at time \(\tilde{t}\) will hit the submarine.
+\\\\
+The overall strategy is simply to apply \(f\) recursively:
+\[
+\text{At time } t = 0, \text{ shoot at } f(0); \quad t = 1, \text{ shoot at } f(1); \quad t = 2, \text{ shoot at } f(2); \quad \dots
+\]
+By construction, there will be a finite time \(\tilde{t}\) when the torpedo hits the submarine.
+\end{solution}

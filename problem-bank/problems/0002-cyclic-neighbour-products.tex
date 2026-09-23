@@ -1,0 +1,59 @@
+% title:          Cyclic neighbour products
+% area:           processes
+% methods:        invariants, induction
+% difficulty:
+% difficulty-ai:  medium
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         all-russian
+% origin-date:    1961
+% origin-number:  5
+% also-in:
+% taken-from:
+% references:     1st All-Russian (All-Union) Mathematical Olympiad, Moscow 1961, Problem 5 (part a on the form-8 paper, part b on the form-10 paper); book source N. B. Vasil'ev, A. A. Egorov, Zadachi vsesoyuznykh matematicheskikh olimpiad, Nauka 1988, problem 5 - https://olympiads.win.tue.nl/imo/soviet/RusMath.html; AoPS '1961 All-Soviet Union Olympiad' (Form 8 P5 = part a, Form 10 P5 = part b) - https://web.archive.org/web/20210506170132/https://artofproblemsolving.com/downloads/printable_post_collections/114577; Kalva-style compilation '1st ASU 1961, Problem 5' - https://mathematikalpha.de/wp-content/uploads/2016/01/All_Soviet_Union_Math_Competitions.pdf; also http://schoolexercisebooks.blogspot.com/2010/10/1st-all-russian-mathematical-olympiad.html. Part (b) is the modulo-2 Ducci map for n = 2^k (write a_i = (-1)^{x_i}): https://en.wikipedia.org/wiki/Ducci_sequence
+% history:        ai
+\begin{problem}
+a) Given a 4-tuple of positive numbers \((a,b,c,d)\), it is transformed into a new one according to the rule:
+    \[
+    a' = ab, \quad b' = bc, \quad c' = cd, \quad d' = da.
+    \]
+The second 4-tuple is transformed into the third according to the same rule, and so on.
+\\\\
+Prove that if at least one initial number does not equal 1, then you can never obtain the initial 4-tuple again.
+\\\\
+b) Given a \(2^k\)-tuple of numbers (where \(k\) is a nonnegative integer), each equal either to 1 or to -1, the tuple is transformed according to the same rule as in part (a): each number is multiplied by the next one, and the last is multiplied by the first.
+\\\\
+Prove that you will always eventually obtain a tuple consisting entirely of 1s.
+\end{problem}
+\begin{solution}
+\begin{enumerate}
+    \item[(a)] Let \( Q_0 = (a, b, c, d) \) be the original 4-tuple and let \( Q_n \) be the 4-tuple after \( n \) transformations. We consider the product of all elements:
+    \[
+    abcd.
+    \]
+    If \( abcd > 1 \), then at each step, the product of the transformed values is strictly increasing, making a return to the initial 4-tuple impossible. Similarly, if \( abcd < 1 \), the product is strictly decreasing, again preventing a return. Therefore, the only possibility for a return is if \( abcd = 1 \).
+
+    Next, define \( M(Q) \) as the largest number in the 4-tuple \( Q \). If at least one number in \( Q_1 \) is not \( 1 \), then necessarily \( M(Q_1) > 1 \). Moreover, in \( Q_3 \), each element is the square of some element from \( Q_1 \) (use $abcd=1$), implying:
+    \[
+    M(Q_3) = M(Q_1)^2.
+    \]
+    Since squaring a number greater than 1 results in an even larger number, the sequence \( M(Q_1), M(Q_3), M(Q_5), \dots \) grows indefinitely. This precludes any possibility of returning to the original 4-tuple, as a return would imply cycling, contradicting the unbounded growth of \( M(Q_n) \).
+
+    \item[(b)] After \( r \) transformations, the first element of the \( n \)-tuple can be written as:
+    \[
+    a_1 \prod_{i=1}^{r} a_{i+1}^{\binom{r}{i}},
+    \]
+    where \( \binom{r}{i} \) is the binomial coefficient. By induction, after \( n = 2^k \) transformations, this simplifies to:
+    \[
+    a_1^2 \prod_{i=1}^{n-1} a_{i+1}^{\binom{n}{i}}.
+    \]
+    It suffices to prove that \( \binom{n}{i} \) is even for all \( 0 < i < n \) when \( n \) is a power of \( 2 \).  
+
+    This follows from the fact that in Pascal's triangle, the binomial coefficient \( \binom{n}{i} \) is given by:
+    \[
+    \binom{n}{i} = \frac{n!}{i!(n-i)!}.
+    \]
+    Since \( n = 2^k \), the highest power of \( 2 \) dividing \( n \) is greater than the highest power of \( 2 \) dividing \( i \) or \( n-i \), ensuring that \( \binom{n}{i} \) is always even for \( 0 < i < n \). Thus, all elements in the sequence eventually become \( 1 \), completing the proof.
+\end{enumerate}
+\end{solution}

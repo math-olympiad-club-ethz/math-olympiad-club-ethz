@@ -1,0 +1,3 @@
+# Highest problem number ever given (website-code/bank/number.py updates it). Numbers are never reused,
+# even when a problem is deleted.
+80

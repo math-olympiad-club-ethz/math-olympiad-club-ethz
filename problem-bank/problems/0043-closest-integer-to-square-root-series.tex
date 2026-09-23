@@ -1,0 +1,51 @@
+% title:          Closest integer to square root series
+% area:           series, sums
+% methods:        telescoping
+% difficulty:
+% difficulty-ai:  medium
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         putnam
+% origin-date:    2001-12-01
+% origin-number:  B3
+% also-in:
+% taken-from:
+% references:     62nd Putnam 2001 (Saturday, December 1, 2001), B3 - https://kskedlaya.org/putnam-archive/2001.pdf; solutions by Bhargava, Kedlaya and Ng (answer 3, with an alternate solution) - https://kskedlaya.org/putnam-archive/2001s.pdf; Kalva archive (reworded statement) - https://prase.cz/kalva/putnam/putn01.html; W. Kahan, Solutions to Putnam Exam Problems for 1 Dec. 2001 - https://people.eecs.berkeley.edu/~wkahan/MathH90/SPutn01.pdf; reprinted in Kedlaya, Kane, Kane, O'Dorney, The William Lowell Putnam Mathematical Competition 2001-2016: Problems, Solutions, and Commentary (book listed on https://kskedlaya.org/putnam-archive/), 2001 B3.
+% history:        ai
+\begin{problem}
+For each $n\in\mathbb{N}$, let \(\langle n \rangle\) denote the closest integer to $\sqrt{n}$. Find \(\sum_{n=1}^{\infty} \frac{2^{\langle n \rangle} + 2^{-\langle n \rangle}}{2^n}\).
+\end{problem}
+\begin{solution}
+\begin{enumerate}
+    \item \textbf{Understanding \(\langle n \rangle\):}  
+    For integer \(k\), \(\langle n \rangle = k\) when \((k - 0.5)^2 < n \leq (k + 0.5)^2\). This interval contains \(2k\) integers. Specifically, for \(k \geq 1\), \(\langle n \rangle = k\) for \(n = k^2 - k + 1, \ldots, k^2 + k\).
+
+    \item \textbf{Decomposing the Sum:}  
+    Group terms by \(\langle n \rangle = k\):
+    \[
+    \sum_{n=1}^{\infty} \frac{2^{\langle n \rangle} + 2^{-\langle n \rangle}}{2^n} = \sum_{k=1}^{\infty} \sum_{m=k^2 - k + 1}^{k^2 + k} \frac{2^k + 2^{-k}}{2^m}
+    \]
+
+    \item \textbf{Inner Geometric Series:}  
+    For fixed \(k\), the inner sum is:
+    \[
+    \sum_{m=k^2 - k + 1}^{k^2 + k} \frac{1}{2^m} = \frac{1 - 2^{-2k}}{2^{k^2 - k}}
+    \]
+    Multiply by \(2^k + 2^{-k}\):
+    \[
+    \frac{(2^k + 2^{-k})(1 - 2^{-2k})}{2^{k^2 - k}} = \frac{2^k - 2^{-k}}{2^{k^2 - k}} - \frac{2^k - 2^{-k}}{2^{k^2 + k}}
+    \]
+
+    \item \textbf{Telescoping Sums:}  
+    Split into two reindexed sums:
+    \[
+    \sum_{k=1}^{\infty} \frac{2^k}{2^{k^2 - k}} - \sum_{k=1}^{\infty} \frac{2^{-k}}{2^{k^2 - k}} = \sum_{m=0}^{\infty} 2^{1 - m^2} - \sum_{m=2}^{\infty} 2^{1 - m^2}
+    \]
+    All intermediate terms cancel, leaving:
+    \[
+    2^{1 - 0^2} + 2^{1 - 1^2} = 2 + 1 = 3
+    \]
+
+\end{enumerate}
+\end{solution}

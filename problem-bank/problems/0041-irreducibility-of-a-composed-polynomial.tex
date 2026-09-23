@@ -1,0 +1,284 @@
+% title:          Irreducibility of a composed polynomial
+% area:           irreducibility, integer-polynomials
+% methods:        reduction-mod-p, contradiction, capelli-lemma, complex-numbers, freshmans-dream, field-norm, cyclotomic-polynomials
+% difficulty:
+% difficulty-ai:  hard
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         romania-tst
+% origin-date:    1998
+% origin-number:  Day 3, Problem 3
+% also-in:
+% taken-from:
+% references:     Romania IMO Team Selection Test 1998, Day (Test) 3, Problem 3, proposed by Marius Cavachi - https://artofproblemsolving.com/downloads/printable_post_collections/4453 (AoPS printable collection, via web.archive.org); IMO Compendium Group, Romanian IMO Team Selection Tests 1998, Third Test, Problem 3 - https://imomath.com/othercomp/Rom/RomTST98.pdf; T. Andreescu, G. Dospinescu, Problems from the Book (XYZ Press, 2008), Ch. 21 'Some Useful Irreducibility Criteria', Example 12, solved with Capelli's theorem (attributed there to 'Marius Cavachi, Romanian TST 1997') - https://archive.org/stream/X87QHX87XQSH8XQ8HHXQSH8HQH8Q8H/problems-from-the-book-1-pdf_1380724174_djvu.txt; Y. Zhao, Integer Polynomials (MOP 2007 Black Group), Problem 29 - https://yufeizhao.com/olympiad/intpoly.pdf; Math StackExchange Q3291233 'Prove that (x^2+x)^{2^n}+1 is irreducible' (mod-2 argument, like Solution 1) - https://math.stackexchange.com/questions/3291233
+% history:        ai
+\begin{problem}
+Show that the polynomial with integer coefficient $(X^2+X)^{2^n}+1\in\mathbb{Z}[X]$ is irreducible over $\mathbb{Q}[X]$.
+\end{problem}
+\begin{solution}
+\textit{Solution 1.}
+\\\\
+Fix \( n \in \mathbb{N} \) and define the integer polynomial \( P(X) := \left( X^2 + X \right)^{(2^{n})} + 1 \in \mathbb{Z}[X] \). Since \( P(X) \) is monic, it is primitive. The irreducibility of \( P(X) \) over \( \mathbb{Q}[X] = \operatorname{Frac}\left( \mathbb{Z} \right)[X] \) is therefore equivalent, by Gauss’s Lemma III, to its irreducibility over \( \mathbb{Z}[X] \).
+\\\\
+Suppose, for the sake of contradiction, that \( P(X) \) is reducible over \( \mathbb{Z}[X] \). Then there exist \( Q(X), T(X) \in \mathbb{Z}[X]\setminus\left(\mathbb{Z}[X]^{\times}\cup \{0\}\right)\) such that:
+\[
+P(X) = Q(X)T(X).
+\]
+Since \( P(X) \) is monic, we have \( Q(X), T(X) \notin \mathbb{Z} \), and we may (by multiplying both polynomials by \( -1 \)) assume that \( Q(X) \) and \( T(X) \) are monic as well.
+\\\\
+Now, consider the ring reduction morphism \( \pi_2 : \mathbb{Z} \twoheadrightarrow \mathbb{F}_2 \hookrightarrow \mathbb{F}_2[X] \). It induces, by the universal property of polynomial rings, a surjective ring reduction morphism \( \overline{\pi_2} := \mathrm{ev}_{\pi_2, X} : \mathbb{Z}[X] \twoheadrightarrow \mathbb{F}_2[X] \) with kernel:
+\begin{equation}
+\label{4.1}
+\tag{1}
+\ker \left( \overline{\pi_2} \right) = 2\mathbb{Z}[X].
+\end{equation}
+Thus, we have the decomposition:
+\[
+\overline{\pi_2}(Q(X)) \, \overline{\pi_2}(T(X)) = \overline{\pi_2}(Q(X)T(X)) = \overline{\pi_2}(P(X)) = \left( X^2 + X \right)^{(2^n)} + [1]_2.
+\]
+By the freshman’s dream (since \( \mathrm{char}(\mathbb{F}_2[X]) = 2 \)), we obtain:
+\[
+\overline{\pi_2}(Q(X)) \, \overline{\pi_2}(T(X)) = \left( X^2 + X \right)^{(2^n)} + 1_{\mathbb{F}_2} = \left( X^2 + X + 1_{\mathbb{F}_2} \right)^{(2^n)}.
+\]
+Since \( \mathbb{F}_2 \) is a field,  \( X^2 + X + 1_{\mathbb{F}_2} \in \mathbb{F}_2[X] \) is a polynomial of degree 2 with no roots in \( \mathbb{F}_2 \) (such as \( 0^2 + 0 + 1 = 1 \) and \( 1^2 + 1 + 1 = 1 \)), we conclude that it is irreducible in \( \mathbb{F}_2[X] \).
+\\\\
+As \( \mathbb{F}_2 \) is a field, \( \mathbb{F}_2[X] \) is a unique factorisation domain (UFD), since \( \deg \) is a Euclidean function, hence \( \mathbb{F}_2[X] \) is Euclidean, thus principal, hence a UFD (or simply \(\mathbb{F}_2\) is a UFD hence by the UFD Extension Theorem so is \(\mathbb{F}_2[X]\)).
+\\\\
+Therefore, by unique factorisation, and the fact that \(\overline{\pi_2}\left( Q(X) \right), \overline{\pi_2}\left( T(X) \right)\) are each of degree at least \(1\) (since \(Q(X), T(X)\) are monic), there exists \(0< k < 2^n\) such that:
+\[
+\overline{\pi_2}(Q(X)) = \left( X^2 + X + 1_{\mathbb{F}_2} \right)^k, \quad \overline{\pi_2}(T(X)) = \left( X^2 + X + 1_{\mathbb{F}_2} \right)^{(2^n) - k}.
+\]
+The form \eqref{4.1} of the kernel \( \overline{\pi_2} \), tell us then that there exist \( Q'(X), T'(X) \in \mathbb{Z}[X] \) such that:
+\[
+Q(X) = \left( X^2 + X + 1 \right)^k + 2Q'(X), \quad T(X) = \left( X^2 + X + 1 \right)^{(2^n) - k} + 2T'(X).
+\]
+Hence:
+\[
+P(X) = \left( \left( X^2 + X + 1 \right)^k + 2Q'(X) \right) \left( \left( X^2 + X + 1 \right)^{(2^n) - k} + 2T'(X) \right).
+\]
+Let \( \epsilon \in \mathbb{C} \) be a root of \( X^2 + X + 1 \), i.e. \( \epsilon \in \left\{ \frac{-1}{2} \pm \frac{\sqrt{3}}{2}i \right\} \), then from \(\epsilon^2+\epsilon=-1\) we obtain \( P(\epsilon) = (-1)^{2^n} + 1 = 2 \), so:
+\[
+2 = \left(\left( \epsilon^2 + \epsilon + 1 \right)^k + 2Q'(\epsilon)\right) \cdot \left(\left( \epsilon^2 + \epsilon + 1 \right)^{(2^n) - k} + 2T'(\epsilon)\right) \overset{1\leq k\leq 2^n-1}{=} 4 Q'(\epsilon) T'(\epsilon)
+\]
+This is impossible. Indeed, apply the Euclidean division of \( Q'(X) \) and \( T'(X) \) by \( X^2 + X + 1 \) in \( \mathbb{Z}[X] \) (this is possible since \( \mathbb{Z} \) is commutative and \( X^2 + X + 1 \) has an invertible leading coefficient) to obtain unique remainders \( r_1(X) = aX + b \), \( r_2(X) = cX + d \in \mathbb{Z}[X] \), with \( a, b, c, d \in \mathbb{Z} \), and unique \( Q''(X), T''(X) \in \mathbb{Z}[X] \) such that:
+\[
+Q'(X) = Q''(X)\left( X^2 + X + 1 \right) + r_1(X), \quad T'(X) = T''(X)\left( X^2 + X + 1 \right) + r_2(X).
+\]
+Then:
+\[
+2 = 4 r_1(\epsilon) r_2(\epsilon) = 4(a\epsilon + b)(c\epsilon + d) = 4ac\epsilon^2 + 4(ad + bc)\epsilon + 4bd.
+\]
+i.e., after some algebra (using the fact that \(\epsilon^2 = -\epsilon - 1\)),
+\[
+\frac{1}{2} = \left( bd - ac \right) + \left( ad + bc- ac \right) \epsilon.
+\]
+From:  
+\[
+\left( bd - ac \right) + \left( ad + bc - ac \right) \overline{\epsilon}  
+= \overline{\left( bd - ac \right) + \left( ad + bc - ac \right) \epsilon}  
+= \overline{\frac{1}{2}}
+\]
+\[
+= \frac{1}{2}  
+= \left( bd - ac \right) + \left( ad + bc - ac \right) \epsilon.
+\]
+We get:  
+\[
+\left( ad + bc - ac \right) \left( \overline{\epsilon} - \epsilon \right) = 0,
+\]
+and because \(\overline{\epsilon} \neq \epsilon\), we must have \(\left( ad + bc - ac \right) = 0\), so that:  
+\(\frac{1}{2} = \left( bd - ac \right) \in \mathbb{Z}\). This is a clear contradiction. Therefore \(P(X)=\left(X^2+X\right)^{(2^n)}+1\) must be irreducible.
+\\\\
+\textit{Solution 2.}
+\begin{lemma}{Capelli's Lemma:}  
+Let \( K \) be a field, and let \( P(X), g(X) \in K[X] \). Let \( \iota:K \hookrightarrow K^{\text{alg}} \) be an algebraic closure of \( K \), and let \( \alpha \in K^{\text{alg}} \) be a root of \( P(X) \). Assume without loss of generality that $K\subset K^{\text{alg}}$ (the ring morphism is injective).
+\\\\
+Then the polynomial \( P\left( g(X) \right) \) (obtained via the canonical universal evaluation morphism at \( g(X) \)) is irreducible over \( K[X] \) if and only if the following two conditions hold simultaneously:
+\begin{enumerate}
+    \item \( P(X) \) is irreducible over \( K[X] \), and
+    \item \( g(X) - \alpha \) is irreducible over \( K(\alpha)[X] \), where \(K(\alpha) \) is the smallest subfield of \(K^{\text{alg}}\) containing \(K\cup\{\alpha\}\).
+\end{enumerate}
+\end{lemma}
+The proof can be found in Appendix [\hyperref[A.1]{A.1}].  
+\\\\
+Apply this result to the field \( \iota:\mathbb{Q}\hookrightarrow \mathbb{Q}^{\mathrm{alg}}\), and the polynomials \( P(X) = X^{(2^{n})} + 1 \) and \( g(X) = X^2 + X \) in $\mathbb{Q}[X]$. Assume without loss of generality that \(\mathbb{Q}\subset\mathbb{Q}^{\text{alg}}\subset\mathbb{C}\) (all ring morphism involved in making the identification are injective and the algebraic closure is unique up to a ring isomorphism). The polynomial \( P\left( g(X) \right) = \left( X^2 + X \right)^{(2^n)} + 1 \) is then irreducible over \( \mathbb{Q}[X] \) if and only if \( P(X) \) is irreducible over \( \mathbb{Q}[X] \), and if we fix one of its root \( \zeta \in \mathbb{Q}^{\mathrm{alg}} \), we have that \( g(X) - \zeta \in \mathbb{Q}(\zeta)[X] \) is irreducible.
+\\\\
+Clearly, \( X^{(2^n)} + 1 \) is irreducible over \( \mathbb{Q}[X] \), since it is the \( 2^{n+1} \)-th cyclotomic polynomial:
+\[
+\Phi_{2^{n+1}}(X) = \Phi_{2}\left( X^{2^{(n+1)-1}} \right) = \Phi_{2}\left( X^{(2^{n})} \right) = X^{(2^{n})} + 1.
+\]
+Let \( \zeta := \exp\left( \frac{\pi i}{2^{n}} \right) \in \mathbb{Q}^{\text{alg}} \) be our choice of root in the algebraic closure of \( P(X) \) (a primitive \( 2^{n+1} \)-th root of unity). To conclude that \(P\left( g(X) \right)\) is irreducible it only remains to show that \( g(X) - \zeta \in \mathbb{Q}(\zeta)[X] \) is irreducible over \( \mathbb{Q}(\zeta)[X] \). Since \( g(X) - \zeta \) is of degree \( 2 \) and \(\mathbb{Q}(\zeta)\) is a field, this is equivalent to show that it has no root in \( \mathbb{Q}(\zeta) \). The roots of \( g(X) - \zeta \) lie in \(\mathbb{Q}^{\text{alg}} \) (since \(g(X) - \zeta\in \mathbb{Q}^{\text{alg}}[X] \) and \(\mathbb{Q}^{\text{alg}}\) is algebraically closed), moreover they are given by the quadratic formula; for any element \( \xi \in \mathbb{Q}^{\text{alg}} \) such that \( \xi^2 = 1 + 4\zeta \)\footnote{Another way of seeing that such an element \(\xi\) exists is that \( \xi \) would be a root of \( \left( \frac{1}{4}(X^2 - 1) \right)^{\left(2^{n}\right)} + 1 \in \mathbb{Q}[X] \).}:
+\[
+\frac{-1 \pm \xi}{2} \text{ is a root of } g(X)-\zeta,
+\]
+i.e.
+\[
+g(X)-\zeta=X^2+X-\zeta = \left(X+\left(\frac{1-\xi}{2}\right)\right)\left(X+\left(\frac{1+\xi}{2}\right)\right),
+\]
+so it suffices to show that \( \frac{-1 \pm \xi}{2} \notin \mathbb{Q}(\zeta) \), or equivalently that \( \xi \notin \mathbb{Q}(\zeta) \). So without further ado, we suppose for the sake of contradiction that \( \xi \in \mathbb{Q}(\zeta) \).
+\\\\
+Since \( P(X) \) is irreducible and \( P(\zeta) = 0 \), we have:
+\[
+\mathbb{Q}[X] / \left( P(X) \right) \cong \mathbb{Q} \left( \zeta \right),
+\]
+hence \( \mathbb{Q} \hookrightarrow \mathbb{Q} \left( \zeta \right) \) is a finite extension of \( \mathbb{Q} \), and therefore algebraic. As \( \operatorname{char} \left( \mathbb{Q} \right) = 0 \), this extension is separable. Since \( P(X) \) splits over \( \mathbb{Q} \left( \zeta \right)[X] \) (because \(\left\{\zeta^{2k+1}\mid 0\leq k\leq 2^{n}-1\right\}\) are pairwise distinct roots of \(P(X)\) and \(\mathrm{deg}(P(X))=2^n\)), and clearly \( \mathbb{Q} \left( \zeta \right) \) is minimal in terms of degree \([\mathbb{Q}(\zeta):\mathbb{Q}]=\mathrm{deg}(P(X))=2^n\) with the property of splitting \(P(X)\) (because any subfield of \(\mathbb{Q}^{\text{alg}}\) splitting \(P(X)\) must contain \(\mathbb{Q}\cup\{\zeta\}\)), we conclude that \( \mathbb{Q} \left( \zeta \right) \) is a splitting field of \( P(X) \). Thus, \( \mathbb{Q} \hookrightarrow \mathbb{Q} \left( \zeta \right) \) is a finite field extension generated by the separable element $\zeta$ and is a splitting field of \( P(X) \in \mathbb{Q}[X] \). Hence it is Galois. In particular (since we are in the finite case), 
+\[
+ \left| \operatorname{Gal} \left( \mathbb{Q}(\zeta)/\mathbb{Q} \right) \right|=[\mathbb{Q}(\zeta) : \mathbb{Q}] =2^n.
+\]
+Let the field norm  of the extension  \( N_{\mathbb{Q}(\zeta)/\mathbb{Q}} : \mathbb{Q}(\zeta) \rightarrow \mathbb{Q} \) (the general theory of field norm is developed in Appendix~\hyperref[A.2]{A.2}). Applying it to \( \xi \in \mathbb{Q}(\zeta) \), we must have:
+\[
+N_{\mathbb{Q}(\zeta)/\mathbb{Q}}(\xi)^2 = N_{\mathbb{Q}(\zeta)/\mathbb{Q}}\left( \xi^2 \right) = N_{\mathbb{Q}(\zeta)/\mathbb{Q}}(1 + 4\zeta),
+\]
+where we used, for the first equality, the fact that the field norm is compatible with multiplication (and \( \xi \in \mathbb{Q}(\zeta) \)). Now, since \( \mathbb{Q} \hookrightarrow \mathbb{Q}(\zeta) = \mathbb{Q}(1 + 4\zeta) \) is a finite Galois extension, generated by the element \( 1 + 4\zeta \) (clear), we can use the closed form~\eqref{A.2.3} of the field norm at this element \( 1 + 4\zeta \) to obtain the first equality:
+\[
+N_{\mathbb{Q}(\zeta)/\mathbb{Q}}(1 + 4\zeta)=\prod_{\sigma \in \operatorname{Gal}(\mathbb{Q}(\zeta)/\mathbb{Q})} \sigma(1 + 4\zeta) = \prod_{\sigma \in \operatorname{Gal}(\mathbb{Q}(\zeta)/\mathbb{Q})} \left( 1 + 4\sigma(\zeta) \right) = \prod_{i< 2^n} \left( 1 + 4\zeta^{2i+1} \right).
+\]
+where we used for the last equality, the fact that  
+\[
+\{\sigma(\zeta)\mid\sigma\in \operatorname{Gal}(\mathbb{Q}(\zeta)/\mathbb{Q})\}=\operatorname{Root}_{P_{\min, \zeta}(X)}\left(\mathbb{Q}(\zeta) \right) = \operatorname{Root}_{P(X)}\left(\mathbb{Q}(\zeta) \right) = \left\{ \zeta^{2i+1} \mid i < 2^n \right\},
+\]
+together with \( \left[ \mathbb{Q}(\zeta) : \mathbb{Q} \right] = \left| \operatorname{Gal}\left( \mathbb{Q}(\zeta)/\mathbb{Q} \right) \right|=2^n \). However, since \[
+X^{(2^{n})} + 1 = P(X) = \prod_{i < 2^n} \left( X - \zeta^{2i+1} \right),
+\]
+we obtain, magically,
+\[
+\prod_{i < 2^n} \left( 1 + 4\zeta^{2i+1} \right) = \prod_{i < 2^n} \left( -4\left( -\frac{1}{4} - \zeta^{2i+1} \right) \right) = 2^{\left(2^{n+1}\right)} (-1)^{2^n} \prod_{i < 2^n} \left( -\frac{1}{4} - \zeta^{2i+1} \right)
+\]
+\[
+= 2^{\left(2^{n+1}\right)} P\left( -\frac{1}{4} \right) = 2^{\left(2^{n+1}\right)} \left( \left( -\frac{1}{4} \right)^{(2^{n})} + 1 \right) = 2^{\left(2^{n+1}\right)} \left( \frac{1}{2^{\left(2^{n+1}\right)}} + 1 \right) = 1 + 2^{\left(2^{n+1}\right)}.
+\]
+In total:
+\[
+N_{\mathbb{Q}(\zeta)/\mathbb{Q}}(\xi)^2 = 1 + 2^{\left(2^{n+1}\right)}.
+\]
+Since \( N_{\mathbb{Q}(\zeta)/\mathbb{Q}}(\xi) \in \mathbb{Q} \), write \( N_{\mathbb{Q}(\zeta)/\mathbb{Q}}(\xi) = \frac{a}{b} \) for \( a, b \in \mathbb{Z} \), \( b \neq 0 \), with \( \gcd(a, b) = 1 \). Then
+\[
+a^2 = b^2 + b^2 2^{\left(2^{n+1}\right)}.
+\]
+If there is a prime \( p \in \mathbb{P} \) such that \( p \mid b \), then \( p \mid b^2 + b^2 2^{\left(2^{n+1}\right)} = a^2 \), so \( p \mid a \), a contradiction to \( \gcd(a, b) = 1 \). Thus, \( b \in \mathbb{Z}^{\times} \), i.e. \( b^2 = 1 \), but then \( a^2 = 1 + 2^{2^{n+1}} \), i.e.
+\[
+\left( a - 2^{(2^{n})} \right)\left( a + 2^{(2^{n})} \right) = 1,
+\]
+which implies \( a - 2^{(2^{n})},\, a + 2^{(2^{n})} \in \mathbb{Z}^{\times} = \{ \pm 1 \} \) and \(a - 2^{(2^{n})}=a + 2^{(2^{n})}\). In particular \( -2^{(2^{n})} = 2^{(2^{n})} \) i.e. \( 2^{(2^{n}+1)} = 0 \), a contradiction.
+\\\\
+Therefore it is a contradiction to assume that \(\xi\in\mathbb{Q}(\zeta)\), so that \(g(X)-\zeta\in\mathbb{Q}(\zeta)[X]\) is irreducible.
+\\\\
+Thus \(P(g(X))=\left(X^2+X\right)^{(2^{n})}+1\) is irreducible.
+\\\\
+\appendix
+\section{}
+\subsection{}
+\label{A.1}
+\begin{lemma}{Capelli's Lemma:}  
+Let \( K \) be a field, and let \( P(X), g(X) \in K[X] \). Let \( \iota:K \hookrightarrow K^{\text{alg}} \) be an algebraic closure of \( K \), and let \( \alpha \in K^{\text{alg}} \) be a root of \( P(X) \). Assume without loss of generality that $K\subset K^{\text{alg}}$ (the ring morphism is injective).
+\\\\
+Then the polynomial \( P\left( g(X) \right) \) (obtained via the canonical universal evaluation morphism at \( g(X) \)) is irreducible over \( K[X] \) if and only if the following two conditions hold simultaneously:
+\begin{enumerate}
+    \item \( P(X) \) is irreducible over \( K[X] \), and
+    \item \( g(X) - \alpha \) is irreducible over \( k(\alpha)[X] \), where \(K(\alpha) \) is the smallest subfield of \(K^{\text{alg}}\) containing \(K\cup\{\alpha\}\).
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+Let \( K \) be a field, and let \( P(X), g(X) \in K[X] \). Let \( K \hookrightarrow K^{\text{alg}} \) be an algebraic closure of \( K \), and let \( \alpha \in K^{\text{alg}} \) be a root of \( P(X) \). Now, let \( \theta \in K^{\text{alg}} \) be a root of \( g(X) - \alpha\in K^{\text{alg}}[X]\). From \( g(\theta) = \alpha \), we obtain \( P\left( g(\theta) \right) = 0 \). Notice then that \( \alpha=g(\theta) \in K(\theta) \), so that \( K(\alpha) \subset K(\theta) \). Now it is a matter of field extensions:
+\[
+\begin{tikzcd}
+	K & {K(\alpha)} & {K(\theta)} & {K^{\mathrm{alg}}}
+	\arrow[hook, from=1-1, to=1-2]
+	\arrow[hook, from=1-2, to=1-3]
+	\arrow[hook, from=1-3, to=1-4]
+\end{tikzcd}
+\]
+Let \( P_{\min, K, \alpha}(X) \in K[X] \), \( P_{\min, K, \theta}(X) \in K[X] \), and \( P_{\min, K(\alpha), \theta}(X) \in K(\alpha)[X] \) be the minimal polynomial of \( \alpha \in K^{\text{alg}} \) over \( K \), and the minimal polynomials of \( \theta \in K^{\text{alg}} \) over \( K \) and \( K(\alpha) \) respectively. Then \( P_{\min, K, \alpha}(X) \mid_{K[X]} P(X) \), \( P_{\min, K, \theta}(X) \mid_{K[X]} P(g(X)) \), and \( P_{\min, K(\alpha), \theta}(X) \mid_{K(\alpha)[X]} g(X) - \alpha \). Hence,
+\begin{equation}
+\label{A.1.1}
+\tag{1}
+\left[ K(\alpha) : K \right] = \deg\left( P_{\min, K, \alpha}(X) \right) \leq \deg\left( P(X) \right),
+\end{equation}
+\begin{equation}
+\label{A.1.2}
+\tag{2}
+\left[ K(\theta) : K \right] = \deg\left( P_{\min, K, \theta}(X) \right) \leq \deg\left( P\left( g(X) \right) \right) = \deg\left( P(X) \right) \cdot \deg\left( g(X) \right),
+\end{equation}
+\begin{equation}
+\label{A.1.3}
+\tag{3}
+\left[ K(\theta) : K(\alpha) \right] = \deg\left( P_{\min, K(\alpha), \theta}(X) \right) \leq \deg\left( g(X) - \alpha \right) = \deg\left( g(X) \right).
+\end{equation}
+It is clear that each inequality becomes an equality if and only if the corresponding polynomial is irreducible (because then they are, up to units, the corresponding minimal polynomial). Recall the general dimension formula,
+\begin{equation}
+\label{A.1.4}
+\tag{4}
+\left[ K(\theta) : K \right] = \left[ K(\theta) : K(\alpha) \right] \cdot \left[ K(\alpha) : K \right].
+\end{equation}
+If \( P(g(X)) \) is irreducible over \( K[X] \) then \eqref{A.1.2} is an equality:
+\[
+\left[ K(\theta) : K \right] = \deg\left( P(X) \right) \cdot \deg\left( g(X) \right),
+\]
+but then by (in order) \eqref{A.1.3}, \eqref{A.1.4}, and \eqref{A.1.1}:
+\begin{align*}
+\deg\left( g(X) \right)\cdot \left[ K(\alpha) : K \right] &\geq \left[ K(\theta) : K(\alpha) \right] \cdot \left[ K(\alpha) : K \right] \\
+&= \deg\left( P(X) \right) \cdot \deg\left( g(X) \right) \\
+&\geq \left[ K(\alpha) : K \right]\cdot \deg\left( g(X) \right).
+\end{align*}
+This implies (since everything is finite and positive) that \( \deg\left( P(X) \right) = \left[ K(\alpha) : K \right] \), i.e., \( P(X) \) is irreducible over \( K[X] \).  
+Therefore, from \eqref{A.1.4}, we have:
+\[
+\left[ K(\theta) : K(\alpha) \right] \cdot \left[ K(\alpha) : K \right] = \left[ K(\theta) : K \right] = \deg\left( P(X) \right) \cdot \deg\left( g(X) \right) = \left[ K(\alpha) : K \right] \cdot \deg\left( g(X) \right).
+\]
+Since everything is finite and positive, it follows that \( \deg\left( g(X) - \alpha \right) = \deg\left( g(X) \right) = \left[ K(\theta) : K(\alpha) \right] \), i.e., \( g(X) - \alpha \) is irreducible over \( K(\alpha)[X] \).  
+\\\\
+Conversely, if \( P(X) \) is irreducible over \( K[X] \) and \( g(X) - \alpha \) is irreducible over \( K(\alpha)[X] \), then \eqref{A.1.1} and \eqref{A.1.3} are equalities, and so, by (in order) \eqref{A.1.4} and \eqref{A.1.2}, we have:
+\begin{align*}
+\deg\left( P(g(X)) \right) &= \deg\left( P(X) \right) \cdot \deg\left( g(X) \right)\\&=\left[ K(\alpha) : K \right] \cdot\left[ K(\theta) : K(\alpha) \right]\\ &= \left[ K(\theta) : K \right]\\&\leq \deg\left( P(g(X)) \right),
+\end{align*}
+hence \( \deg\left( P(g(X)) \right) = \left[ K(\theta) : K \right] \), i.e., \( P(g(X)) \) is irreducible.
+\\\\
+This concludes the lemma.
+\subsection{}
+\label{A.2}
+For a field extension \( K \hookrightarrow L \), for each \( \alpha \in L \), we can consider the \( K \)-linear endomorphism of mutliplication by \(\alpha\):
+\[
+[\times \alpha] : L \rightarrow L.
+\]
+If the extension is \(K\)-finite-dimensional (then it is algebraic), we can compute its characteristic polynomial \( P_{\operatorname{char}, [\times \alpha]}(X) \in K[X] \). In particular, we can compute its determinant (the constant term of \( P_{\operatorname{char}, [\times \alpha]}(X) \)), which defines the \textit{field norm}:
+\[
+N_{L/K} : L \rightarrow K, \quad N_{L/K}(\alpha) := {\det}_{K}([\times \alpha]).
+\]
+Since \( \forall \beta \in L,\ [\times \alpha \beta] = [\times \alpha] \circ [\times \beta] \), we have
+\[
+N_{L/K}(\alpha \beta) = N_{L/K}(\alpha) N_{L/K}(\beta).
+\]
+In the case where \( L/K \) is Galois (which is equivalent to \( K \hookrightarrow L \) being a normal and separable field extension), we must have that the roots in \( L \) of the minimal polynomial of \( \alpha \) in \( K[X] \) satisfy
+\[
+\left\{ \sigma(\alpha) \mid \sigma \in \operatorname{Gal}(L/K) \right\} = \operatorname{Root}_{P_{\min, \alpha}(X)}(L) = \operatorname{Root}_{P_{\min, \alpha}(X)}\left( K^{\mathrm{alg}} \right),
+\]
+where the first equality follows from standard Galois theory, and the second from the fact that the extension is normal. Now, because \( P_{\min, \alpha}(X) = P_{\min, [\times \alpha]}(X) \) (a mental exercise), we have:
+\[
+\operatorname{Root}_{P_{\operatorname{char}, [\times \alpha]}(X)}\left( K^{\mathrm{alg}} \right) = \operatorname{Root}_{P_{\min, [\times \alpha]}(X)}\left( K^{\mathrm{alg}} \right) = \operatorname{Root}_{P_{\min, \alpha}(X)}\left( K^{\mathrm{alg}} \right),
+\]
+where the first equality follows since the roots (in \( K^{\mathrm{alg}} \)) of the minimal polynomial of an endomorphism (on a finite-dimensional vector space) are precisely its eigenvalues. Combining:
+\begin{equation}
+\label{A.2.1}
+\tag{1}
+\operatorname{Root}_{P_{\operatorname{char}, [\times \alpha]}(X)}\left( K^{\mathrm{alg}} \right) = \left\{ \sigma(\alpha) \mid \sigma \in \operatorname{Gal}(L/K) \right\}.
+\end{equation}
+If \( \alpha \) generates the extension, i.e. \( L = K(\alpha) \), or equivalently \( \deg\left( P_{\min, \alpha}(X) \right) = [L:K] \), then, since the extension is finite and Galois, we have \( \left| \operatorname{Gal}(L/K) \right| = [L:K] \). From this, as \( P_{\min, \alpha}(X) \) is separable, it follows that for each \( \sigma, \sigma' \in \operatorname{Gal}(L/K) \), \( \sigma \neq \sigma' \) implies \( \sigma(\alpha) \neq \sigma'(\alpha) \). Thus:
+\begin{equation}
+\label{A.2.2}
+\tag{2}
+\left|\left\{ \sigma(\alpha) \mid \sigma \in \operatorname{Gal}(L/K) \right\}\right|=[L:K]=\deg\left(P_{\operatorname{char}, [\times \alpha]}(X)\right).
+\end{equation}
+From \eqref{A.2.1} and \eqref{A.2.2}, we obtain:
+\[
+P_{\operatorname{char}, [\times \alpha]}(X) = \prod_{\sigma \in \operatorname{Gal}(L/K)} \left( X - \sigma(\alpha) \right)\footnote{In fact, this holds even if \( \alpha \) does not generate the extension (but still \( L/K \) is finite and Galois), as one can show that the multiplicities of each root of the characteristic polynomial \( \theta \in \operatorname{Root}_{P_{\operatorname{char}, [\times \alpha]}(X)}\left( K^{\mathrm{alg}} \right) \) coincide with the number of automorphisms of \( L \) fixing \( K \) and sending \( \alpha \) to \( \theta \), that is, \( \left| \left\{ \sigma \in \operatorname{Gal}(L/K) \mid \sigma(\alpha) = \theta \right\} \right| \).},
+\]
+and so, by Vieta's formula:
+\begin{equation}
+\label{A.2.3}
+\tag{**}
+N_{L/K}(\alpha) = \prod_{\sigma \in \operatorname{Gal}(L/K)} \sigma(\alpha).
+\end{equation}
+\end{proof}
+\end{solution}

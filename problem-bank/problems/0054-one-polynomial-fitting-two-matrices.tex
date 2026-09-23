@@ -1,0 +1,48 @@
+% title:          One polynomial fitting two matrices
+% area:           matrices, eigenvalues
+% methods:        cayley-hamilton, chinese-remainder, eigenvalue-arguments, rank-nullity
+% difficulty:
+% difficulty-ai:  medium
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         bernoulli
+% origin-date:    2024-06-03
+% origin-number:  1
+% also-in:
+% taken-from:
+% references:     Bernoulli Competition (EPFL Bernoulli Center), 3 June 2024, Problem 1 (checked in the club's copy of the official solutions (Bernoulli 2023-2026 solutions PDF, not online)) - https://bernoulli.epfl.ch/youth-at-bernoulli/bernoulli-competition/; key ingredient: Sylvester's theorem (AX - XB = C is uniquely solvable for every C iff A and B have no common eigenvalue), J. Sylvester, Sur l'équation en matrices px = xq, C. R. Acad. Sci. Paris 99 (1884) - https://en.wikipedia.org/wiki/Sylvester_equation
+% history:        ai
+\begin{problem}
+Let \( A, B \in \mathrm{Mat}_{n \times n}(\mathbb{C}) \). Suppose that every matrix \( C \in \mathrm{Mat}_{n \times n}(\mathbb{C}) \) can be written in the form \( C = AD - DB \) for some \( D \in \mathrm{Mat}_{n \times n}(\mathbb{C}) \). Prove that there exists a polynomial \( R \in \mathbb{C}[x] \) such that
+\[
+R(A) = A^3 - A^2 - A + I_n \quad \text{and} \quad R(B) = (2 - i)B^4 + (2 + i)B^3 - B.
+\]
+\end{problem}
+\begin{solution}
+\textbf{Step 1.} We prove \( A \) and \( B \) have no common eigenvalues.
+
+By assumption, the linear map
+\[
+\mathrm{Mat}_{n \times n}(\mathbb{C}) \to \mathrm{Mat}_{n \times n}(\mathbb{C}), \quad X \mapsto AX - XB
+\]
+is surjective, therefore injective. Suppose \( \lambda \) is a common eigenvalue of \( A \) and \( B \). Then
+\[
+Av = \lambda v, \qquad w^t B = \lambda w^t
+\]
+for some \( v, w \neq 0 \). Consider \( X := v w^t \). Then \( X \neq 0 \) and
+\[
+AX = Av w^t = \lambda v w^t = v \lambda w^t = v w^t B = XB,
+\]
+which is a contradiction.
+
+\textbf{Step 2.} In fact, we prove that for any two polynomials \( R_1, R_2 \in \mathbb{C}[x] \), there exists a polynomial \( R \in \mathbb{C}[x] \) such that \( R(A) = R_1(A) \) and \( R(B) = R_2(B) \).
+
+Let \( P_i \) be the characteristic polynomial of \( A_i \). Then \( P_i \) and \( P_j \) are relatively prime for \( i \neq j \) (they have no common roots by Step 1). By the Cayley–Hamilton theorem, \( P_i(A_i) = 0 \) for each \( i \).
+
+The Chinese Remainder Theorem in the Euclidean domain \( \mathbb{C}[x] \) implies that there exists a polynomial \( R \in \mathbb{C}[x] \) such that
+\[
+R \equiv R_i \pmod{P_i} \quad \text{for each } i.
+\]
+Such an \( R \) satisfies the required property.
+\end{solution}

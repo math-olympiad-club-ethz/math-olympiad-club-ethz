@@ -1,0 +1,52 @@
+% title:          Largest trace-orthogonal matrix subspace
+% area:           trace, vector-spaces
+% methods:        trace-argument, construction
+% difficulty:
+% difficulty-ai:  medium
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         imc
+% origin-date:    2005-07
+% origin-number:  Day 2, Problem 3
+% also-in:
+% taken-from:
+% references:     IMC 2005 (12th IMC, Blagoevgrad, 22-28 July 2005), Second Day, Problem 3, official problems & solutions - https://www.imc-math.org.uk/imc2005/day2_solutions.pdf; IMC 2005 problems index page - https://www.imc-math.org.uk/?year=2005&item=problems
+% history:        ai
+\begin{problem}
+In the linear space of all real \( n \times n \) matrices, find the maximum possible \( \mathbb{R} \)-dimension of an \( \mathbb{R} \)-linear subspace \( V \) such that
+\[
+    \forall X, Y \in V, \quad \operatorname{tr}\left(XY\right) = 0.
+\]
+(The trace of a matrix is the sum of its diagonal entries.)
+\end{problem}
+\begin{solution}
+For \( \left\{ \mathbf{0}_{n \times n} \right\} \), we have
+\[
+    \operatorname{tr}\left( \mathbf{0}_{n \times n} \cdot \mathbf{0}_{n \times n} \right) = \operatorname{tr}\left( \mathbf{0}_{n \times n} \right) = 0,
+\]
+so it is clear that an \( \mathbb{R} \)-subspace satisfying the condition exists. Denote by \( V \) such a subspace with the maximum possible \( \mathbb{R} \)-dimension (necessarily less than \( n^2 \)).
+\\\\
+Now, if \( A \) is a symmetric matrix, then:
+\[
+    \operatorname{tr}\left( A^2 \right) = \operatorname{tr}\left( A^T A \right)
+    = \sum_{i=0}^{n-1} \left( A^T A \right)_{ii}
+    = \sum_{i=0}^{n-1} \sum_{j=0}^{n-1} \left( A^T \right)_{ij} A_{ji}
+    = \sum_{i=0}^{n-1} \sum_{j=0}^{n-1} \left( A_{ji} \right)^2
+    = \left\| A \right\|_{F}^2,
+\]
+which is the sum of the squared entries of \( A \) (the Frobenius norm squared), and is strictly positive as long as \( A \neq \mathbf{0}_{n \times n} \). Therefore, \( V \) cannot contain any symmetric matrix except \( \mathbf{0}_{n \times n} \).
+\\\\
+Denote by \( S \) the \( \mathbb{R} \)-linear space of all real \( n \times n \) symmetric matrices; its \( \mathbb{R} \)-dimension is clearly \( \frac{n(n+1)}{2} \).  
+Since \( V \cap S = \left\{ \mathbf{0}_{n \times n} \right\} \), we have
+\[
+    \dim_{\mathbb{R}}\left( V \right) + \dim_{\mathbb{R}}\left( S \right) \leq n^2,
+\]
+which gives
+\[
+    \dim_{\mathbb{R}}\left( V \right) \leq n^2 - \frac{n(n+1)}{2} = \frac{n(n-1)}{2}.
+\]
+Thus, the maximum \( \mathbb{R} \)-dimension is bounded above by \( \frac{n(n-1)}{2} \). This bound is tight: the space of strictly upper triangular matrices clearly has \( \mathbb{R} \)-dimension \( \frac{n(n-1)}{2} \) and satisfies the given condition.
+\\\\
+Therefore, the maximum \( \mathbb{R} \)-dimension of subspaces \( V \) satisfying the given condition is \( \frac{n(n-1)}{2} \).
+\end{solution}

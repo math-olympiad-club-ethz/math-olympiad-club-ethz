@@ -1,0 +1,28 @@
+% title:          Decimal digits of powers of 5+sqrt(26)
+% area:           digits-bases, irrationality
+% methods:        algebraic-conjugates
+% difficulty:
+% difficulty-ai:  easy
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         folklore
+% origin-date:
+% origin-number:
+% also-in:        course
+% taken-from:
+% references:     Ravi Vakil, Stanford Putnam seminar, Problem Solving Masterclass Week 4 (Monday 17 Nov 2003), Problem 4, presented by 'Andy', no source given; same wording as the bank statement - http://math.stanford.edu/~vakil/putnam03/03mc4.pdf ; seminar page listing the masterclass handouts - http://math.stanford.edu/~vakil/putnam03/
+% history:        ai
+\begin{problem}
+Prove that the decimal part of
+\[
+{(5 + \sqrt{26})}^{n}
+\]
+begins with either $n$ zeros or $n$ nines for all positive integers $n$.
+\end{problem}
+\begin{solution}
+It is clear that ${(5 + \sqrt{26})}^{n} + {(5 - \sqrt{26})}^{n}$ is an integer, whether by expanding the products and noting that all odd powers of $\sqrt{26}$ cancel, or by using Galoi theory - sum of algebraic integers is algebraic integer, sum of all roots is a rational, rational algebraic integer is integer.\\
+What remains is to show $|{(5 - \sqrt{26})}^{n}| < 10^{-n}$, or simply $5 - \sqrt{26} = \frac{1}{5 + \sqrt{26}} < \frac{1}{5+5} < \frac{1}{10}$.\\
+
+Note: These are called Pisot-Vijayaraghavan numbers.
+\end{solution}

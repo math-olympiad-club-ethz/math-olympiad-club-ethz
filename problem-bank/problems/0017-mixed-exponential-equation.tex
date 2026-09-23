@@ -1,0 +1,58 @@
+% title:          Mixed exponential equation
+% area:           real-analysis, algebraic-identities
+% methods:        rolle-theorem, contradiction
+% difficulty:
+% difficulty-ai:  medium
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         romania-nmo
+% origin-date:    1984
+% origin-number:  11.3
+% also-in:        book
+% taken-from:
+% references:     Romanian National Mathematical Olympiad (Olimpiada Națională de Matematică), final round (etapa națională) 1984, grade XI, Problem 3, proposed by M. Chiriță (proposer per Gelca-Andreescu) - papers: https://examenemate.wordpress.com/wp-content/uploads/2018/10/1984_nat_lic.pdf (blog post: https://examenemate.wordpress.com/2018/10/13/olimpiada-nationala-de-matematica-liceu-1984/); R. Gelca, T. Andreescu, Putnam and Beyond, Springer 2007, Sect. 3.2.5 The Mean Value Theorem, Example p. 140 ('given at the 1984 Romanian Mathematical Olympiad, being proposed by M. Chiriță') - https://mathematicalolympiads.files.wordpress.com/2012/08/putnam-and-beyond.pdf (full text also at https://archive.org/stream/X87QHX87XQSH8XQ8HHXQSH8HQH8Q8H/Razvan%20Gelca,%20Titu%20Andreescu-Putnam%20and%20beyond-Springer%20(2007)_djvu.txt); 2nd ed. 2017, p. 152 (Google Books search hit only, restricted page) - https://books.google.com/books?vid=ISBN9783319589886&q=%221984+Romanian+Mathematical+Olympiad%22
+% history:        ai
+\begin{problem}
+Find all real solutions to the equation
+\[
+4^{x} + 6^{x^{2}} = 5^{x} + 5^{x^{2}}.
+\]
+\end{problem}
+\begin{solution}
+Note that \(x = 0\) and \(x = 1\) satisfy the equation from the statement. Are there other solutions? The answer is no, but to prove it we use the amazing idea of treating the numbers 4, 5, 6 as variables and the presumably new solution \(x\) as a constant.
+\\\\
+Thus let us consider the function \(f(t) = t^{x^{2}} + (10 - t)^{x}\). The fact that \(x\) satisfies the equation from the statement translates to \(f(5) = f(6)\). By Rolle's theorem there exists \(c \in (5, 6)\), such that \(f'(c) = 0\). This means that
+\[
+x^{2}c^{x^{2} - 1} - x(10 - c)^{x - 1} = 0,
+\]
+or
+\[
+x c^{x^{2} - 1} = (10 - c)^{x - 1}.
+\]
+Because exponentials are positive, this implies that \(x\) is positive.
+\\
+If \(x > 1\), then $x^2-1> x-1$ and as $c>5$
+\[
+(10 - c)^{x - 1}=x c^{x^{2} - 1} > c^{x^{2} - 1} > c^{x - 1} > (10 - c)^{x - 1},
+\]
+which is a contradiction.
+\\\\
+If \(0 < x < 1\), then $x^2-1<x-1$ and:
+\[
+(10-c)^{x-1}=x c^{x^{2} - 1} < x c^{x - 1}.
+\]
+Let us prove that
+\[
+x c^{x - 1} < (10 - c)^{x - 1}.
+\]
+With the substitution \(y = x - 1\), the inequality can be rewritten as
+\[
+y + 1 < \left(\frac{10 - c}{c}\right)^{y}.
+\]
+which must be proven for \(y \in ]-1;0[\).
+\\\\
+Lets make a simple analysis of the two functions defined over $\mathbb{R}$.\\
+The exponential has base less than 1, so it is strictly decreasing, while the affine function on the left is strictly increasing. The two meet at \(y = 0\) so  we must have that strictly before $y=0$ the exponential is strictly bigger than the affine. The inequality (on $]-1;0[$) follows. Using it we conclude again that:
+\((10 - c)^{x - 1}=x c^{x^{2} - 1}<(10 - c)^{x - 1}\) which is a contradiction. This shows that a third solution to the equation from the statement does not exist. So the only solutions to the given equation are \(x = 0\) and \(x = 1\).
+\end{solution}

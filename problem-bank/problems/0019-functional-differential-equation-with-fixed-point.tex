@@ -1,0 +1,83 @@
+% title:          Functional differential equation with fixed point
+% area:           differential-equations, functional-equations
+% methods:        intermediate-value-theorem, contradiction
+% difficulty:
+% difficulty-ai:  hard
+% status:         partial
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         folklore
+% origin-date:
+% origin-number:
+% also-in:
+% taken-from:
+% references:     Mathematics Stack Exchange, question 5051989 'Solve the differential equation f'=f/(f∘f)', posted 2025-04-01 by Antoine du Fresne. This is the earliest public record of the equation. The post says a friend passed it on informally about two years earlier and the original poser is unknown. The post contains the fixed-point proof that f = id. For the no-fixed-point case, the answers by piggy, Christophe Boilley and LegionMammal978 reduce it to the delay equation g'(x)=1/g(x+1), and LegionMammal978 builds a numerical one-parameter family f_a(x)=a·g(1+g^{-1}(x/a)) of non-identity solutions. Spas Dimitrov also posted an answer claiming a full solution - https://math.stackexchange.com/questions/5051989/solve-the-differential-equation-f-f-f-circ-f
+% history:        ai
+\begin{problem}
+Find all differentiable functions \( f : \mathbb{R}_{>0} \to \mathbb{R}_{>0} \) having at least one fixed point $\alpha\in\mathbb{R}_{>0}$ satisfying:
+\[
+f' = \frac{f}{f \circ f}.
+\]
+\\\\
+\textbf{Bonus:} What happens if $f$ has no fixed point?
+\end{problem}
+\begin{solution}
+The identity function obviously works. We claim this is the only solution. Let $f:\mathbb{R}_{>0}\to\mathbb{R}_{>0}$ be a differentiable function with a fixed point $\alpha>0$ and satisfying:
+\[
+f' = \frac{f}{f \circ f}.
+\]
+Note that $f$ is continuous (since $f$ is differentiable), therefore we can integrate it and define for any $x>0$:
+\[
+F(x) := \int_{\alpha}^{x} f(t) \, \mathrm{d}t.
+\]
+The first fundamental theorem of calculus gives us easily that $F:\mathbb{R}_{>0}\to\mathbb{R}$ is continuous. Moreover, since $f$ is continuous, $F$ is everywhere differentiable with $F' = f$ (this holds for both $x \geq \alpha$ and $0<x < \alpha$). Because $f$ is always strictly positive, $F$ is strictly increasing and thus injective.
+\\\\
+Fix $x \in \mathbb{R}_{>0}$. From the given equation (valid for all $t>0$),
+\[
+f(t) = f(f(t)) f'(t) = F'(f(t)) f'(t) = (F \circ f)'(t),
+\]
+we obtain the continuity of $(F \circ f)'$ and so its integrability, thus:
+\[
+F(x) = \int_{\alpha}^{x} f(t) \, \mathrm{d}t = \int_{\alpha}^{x} (F \circ f)'(t) \, \mathrm{d}t = (F \circ f)(x) - (F \circ f)(\alpha),
+\]
+where we used the second fundamental theorem of calculus for the function $(F \circ f)'$ (this holds for both $x \geq \alpha$ and $0<x < \alpha$).
+\\\\
+Now, using the fact that $\alpha$ is a fixed point of $f$, we get $F(f(\alpha)) = F(\alpha) = 0$, so $F(x) = F(f(x))$. By the injectivity of $F$, we conclude that $f(x) = x$. Since $x > 0$ was arbitrary, the proof is complete.
+\\\\
+\textbf{Bonus:} What happens if $f$ has no fixed point?
+
+\subsection*{Solution:}
+Let $f:\mathbb{R}_{>0}\to\mathbb{R}_{>0}$ be a differentiable function satisfying:
+\[
+f' = \frac{f}{f \circ f}
+\]
+such that $f$ has \textbf{no} fixed point. Note that $f$ takes positive values, so we must have that $f' = \frac{f}{f \circ f}$ takes strictly positive values. Therefore, $f$ must be strictly increasing and hence injective. From this, we derive the equivalence $\forall \beta>0$:
+\[
+f'(\beta) = 1 \Leftrightarrow f(\beta) = f(f(\beta)) \Leftrightarrow f(\beta) = \beta.
+\]
+Thus, the existence of a fixed point $\beta>0$ is equivalent to the fact that $f'(\beta) = 1$. Since $f$ has no fixed point, $f'$ can never take the value $1$. As we have seen in the first part, $f$ is continuous, so must be $f \circ f$, and thus $f'$ is continuous (being the quotient of the continuous function $f$ with $f \circ f$). Knowing this, we infer that we cannot have one value of $f'$ strictly bigger than $1$ and one value strictly less than $1$; otherwise, by the intermediate value theorem (or simply because the image of a connected set is connected), we would have $1$ as a value of $f'$. Hence, we must be in two cases:
+$$\text{either }\forall x>0,\, f'(x) > 1\text{ or }\forall x>0,\,f'(x) < 1.$$
+$\bullet$ If $\forall x>0$, $f'(x) > 1$, then in particular, $f'(1) > 1$, so $f(1) > f(f(1))$. Since $f$ is strictly increasing, we must have $1 > f(1)$ (if $1 \leq f(1)$, then $f(1) \leq f(f(1))$, so $f(1) < f(1)$, a contradiction). Since $f'$ is continuous, it is integrable over any compact interval in $\mathbb{R}_{>0}$. Because $\forall t>0$, $f'(t) > 1$, we have for any $0 < x < 1$:
+\[
+f(1) - f(x) = \int_{x}^{1} f'(t) \, \mathrm{d}t \geq \int_{x}^{1} 1 \, \mathrm{d}t = 1 - x
+\]
+where we used the second fundamental theorem of calculus for the functions $f'$ and $\underline{1}$ and the fact $\int_{x}^{1} \_ \mathrm{d}t$ is increasing from the space of real-valued integrable functions over $[x,1]$.
+\\\\
+Thus, $\forall x>0$ with $x<1$,
+\[
+f(x) \leq (f(1) - 1) + x.
+\]
+But then, for any $0 < y < 1 - f(1)<1$, we have $f(y) < 0$, contradicting the positivity of $f$.
+\\\\
+$\bullet$ This means we must be in the latter case $\forall x>0$, $f'(x) < 1$. Here the problem becomes significantly more challenging. Since $f'(x)$ is determined by the value of $f$ at $x$ and its composition $f \circ f$ at $x$, and because $f(f(x)) > f(x)$ (as $f'(x)<1$), the derivative $f'(x)$ depends on values of $f$ at points beyond $f(x)$. This leads to a non-causal delay differential equation. We will classify all differentiable functions \( f: \mathbb{R}_{>0} \to \mathbb{R}_{>0} \) satisfying $\forall x \in \mathbb{R}_{>0}\, f'(x) < 1$ and:
+\[
+f' = \frac{f}{f\circ f}.
+\]
+\[
+\substack{\textit{Not done yet; I have some incomplete arguments. See the related \href{https://math.stackexchange.com/questions/5051989/solve-the-differential-equation-f-f-f-circ-f}{MathStack Exchange thread}}\\
+\textit{If you have a solution, send them to me:} \\ \href{mailto:antoine@du-fresne.ch}{antoine@du-fresne.ch}}
+\]
+\begin{remark}
+The fundamental solution exhibits delayed dependence, making the system non-Markovian. For numerical constructions, see this \href{https://www.desmos.com/calculator/hfizeaaf9k}{interactive graph}. We thank everyone that participate in the related \href{https://math.stackexchange.com/questions/5051989/solve-the-differential-equation-f-f-f-circ-f}{MathStack Exchange thread}.
+\end{remark}
+\end{solution}

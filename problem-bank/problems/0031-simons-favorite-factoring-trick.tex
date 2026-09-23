@@ -1,0 +1,193 @@
+% title:          Simon's favorite factoring trick
+% area:           algebraic-identities, diophantine-equations
+% methods:        sfft
+% difficulty:
+% difficulty-ai:  easy
+% status:         partial
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         amc
+% origin-date:    2007
+% origin-number:  12B-23
+% also-in:        aime, bmo-uk, jbmo
+% taken-from:
+% references:     Collection taken from Eugenis, 'Simon's Favorite Factoring Trick' (handout, 31 May 2015), Challenge Problems 1-5: the same five problems in the same order, labelled 2007 AMC 12, 1998 AIME, 2005 BMO, 2003 JBMO, 2000 AIME - https://studymath.github.io/assets/docs/SFFT.pdf; right triangles with area = 3 x perimeter: AMC 12B 2007, Problem 23 - https://artofproblemsolving.com/wiki/index.php/2007_AMC_12B_Problems/Problem_23; box m x n x p with half the volume of (m+2) x (n+2) x (p+2): AIME 1998, Problem 14 - https://artofproblemsolving.com/wiki/index.php/1998_AIME_Problems/Problem_14; 1/x + 1/y = 1/N with exactly 2005 pairs: British MO Round 2 (1 February 2005), Problem 1 - https://bmos.ukmt.org.uk/home/bmo2-2005.pdf; A + 2B + 4 is a perfect square: JBMO 2003, Problem 1 - https://artofproblemsolving.com/wiki/index.php/2003_JBMO_Problems; log system, y1 + y2: AIME 2000 I, Problem 9 - https://artofproblemsolving.com/wiki/index.php/2000_AIME_I_Problems/Problem_9; the technique: AoPS Wiki 'Simon's Favorite Factoring Trick' (named after Simon Rubinstein-Salzedo) - https://artofproblemsolving.com/wiki/index.php/Simon%27s_Favorite_Factoring_Trick
+% history:        ai
+\begin{problem}
+SFFT is often used in a Diophantine equation where factoring is needed. We let \( R \) be any unitary ring. If we have a multipolynomial in two formal variables \( X \) and \( Y \), \( P(X,Y) \in R[X,Y] \) of the form 
+\[
+P(X,Y) = aXY + bX + cY + d \in R[X,Y]
+\] 
+with \( a \in R^{\times} \). According to \textit{Simon's Favorite Factoring Trick}, this multipolynomial is:
+\[
+P(X,Y) = a\left(X + a^{-1}c\right)\left(Y + a^{-1}b\right) + d - ca^{-1}b.
+\]
+
+\subsection{AMC 12 (2012)} 
+How many non-congruent right triangles with positive integer leg lengths have areas equal to \( 3 \) times their perimeters?
+
+\subsection{AIME (1998)} 
+An \( m \times n \times p \) rectangular box has half the volume of an \( (m+2) \times (n+2) \times (p+2) \) rectangular box, where \( m, n \), and \( p \) are integers, and \( m \leq n \leq p \). What is the largest possible value of \( p \)?
+
+\subsection{BMO (2005)} 
+The integer \( N \) is positive. There are exactly \( 2005 \) ordered pairs \( (x,y) \) of positive integers satisfying:
+\[
+\frac{1}{x} + \frac{1}{y} = \frac{1}{N}.
+\]
+Prove that \( N \) is a perfect square.
+
+\subsection{JBMO (2003)} 
+Let \( n \) be a positive integer. A number \( A \) consists of \( 2n \) digits, each of which is \( 4 \); and a number \( B \) consists of \( n \) digits, each of which is \( 8 \). Prove that \( A + 2B + 4 \) is a perfect square.
+
+\subsection{AIME (2000)} 
+The system of equations
+\begin{align*}
+\log_{10}(2000xy) - \log_{10}\left(x\right)\log_{10}\left(y\right) &= 4, \\
+\log_{10}(2yz) - \log_{10}\left(y\right)\log_{10}\left(z\right) &= 1, \\
+\log_{10}(zx) - \log_{10}\left(z\right)\log_{10}\left(x\right) &= 0,
+\end{align*}
+has two solutions \( (x_{1},y_{1},z_{1}) \) and \( (x_{2},y_{2},z_{2}) \). Find \( y_{1} + y_{2} \).
+\end{problem}
+\begin{solution}
+Let \( x, y \in \mathbb{N} \) with \( 1 \leq x \leq y \) (to avoid congruent right triangles) be the lengths of the legs of such a right triangle. The area is \( A\left( x, y \right) = \frac{1}{2}xy \) and the perimeter is \( P\left( x, y \right) = x + y + \sqrt{x^{2} + y^{2}} \). The condition \( A\left( x, y \right) = 3P\left( x, y \right) \) becomes:
+\[
+\frac{1}{2}xy = 3\left( x + y + \sqrt{x^{2} + y^{2}} \right),
+\]
+which is equivalent to
+\begin{equation}
+\label{1}
+xy - 6x - 6y = 6\sqrt{x^{2} + y^{2}}.
+\end{equation}
+Now, if we square both sides, the above condition implies:
+\[
+\left( xy - 6x - 6y \right)^{2} = 36\left( x^{2} + y^{2} \right).
+\]
+Expanding the left-hand side:
+\[
+x^{2}y^{2} - 12x^{2}y - 12xy^{2} + 36x^{2} + 72xy + 36y^{2} = 36x^{2} + 36y^{2},
+\]
+simplifying:
+\[
+x^{2}y^{2} - 12x^{2}y - 12xy^{2} + 72xy = 0,
+\]
+factoring out \( xy \):
+\[
+xy\left( xy - 12x - 12y + 72 \right) = 0.
+\]
+Using \( x, y > 0 \), we have that the leg pairs must satisfy:
+\[
+xy - 12x - 12y + 72 = 0.
+\]
+Using SFFT, we can rewrite the equation:
+\[
+\left( x - 12 \right)\left( y - 12 \right) = 72.
+\]
+The factor pairs of \( 72 \) with first coordinate smaller than or equal to the second coordinate are:
+\[
+\left( 1, 72 \right),\ \left( 2, 36 \right),\ \left( 3, 24 \right),\ \left( 4, 18 \right),\ \left( 6, 12 \right),\ \left( 8, 9 \right).
+\]
+The corresponding leg pairs must then be among the following pairs:
+\[
+\left( 13, 84 \right),\ \left( 14, 48 \right),\ \left( 15, 36 \right),\ \left( 16, 30 \right),\ \left( 18, 24 \right),\ \left( 20, 21 \right).
+\]
+In fact, all the above pairs satisfy the original equation (we must check this because squaring can introduce extraneous solutions). For each above pair \( \left( x, y \right) \), we have \( x, y \geq 13 \), so:
+\[
+xy - 6x - 6y = \left( x - 6 \right)\left( y - 6 \right) - 36 \geq 7 \cdot 7 - 36 = 13 > 0.
+\]
+Thus, the left-hand side of (\hyperref[1]{1}) is positive and equals \( 6\sqrt{x^{2} + y^{2}} \), so all pairs are valid.
+
+\subsection{AIME (1998)} 
+An \( m \times n \times p \) rectangular box has half the volume of an \( (m+2) \times (n+2) \times (p+2) \) rectangular box, where \( m, n \), and \( p \) are integers, and \( m \leq n \leq p \). What is the largest possible value of \( p \)?
+\subsection*{Solution:}
+We have:
+\[
+mnp = \frac{1}{2}\left( m + 2 \right)\left( n + 2 \right)\left( p + 2 \right).
+\]
+which is equivalent to 
+\[
+p\left( mn - (m+2)(n+2)2m - 2n - 4 \right) = 2\left( mn + 2m + 2n + 4 \right).
+\]
+Note that using SFFT:
+\[
+mn + 2m + 2n + 4 = \left( m + 2 \right)\left( n + 2 \right), \quad mn - 2m - 2n - 4 = \left( m - 2 \right)\left( n - 2 \right) - 8.
+\]
+Thus:
+\[
+p\left(\left( m - 2 \right)\left( n - 2 \right) - 8\right)= 2\left( m + 2 \right)\left( n + 2 \right).
+\]
+Since \( 2\left( m + 2 \right)\left( n + 2 \right) \geq 8 \), we have $p,\left( m - 2 \right)\left( n - 2 \right) - 8 >0$. 
+
+\subsection{BMO (2005)} 
+The integer \( N \) is positive. There are exactly \( 2005 \) ordered pairs \( (x,y) \) of positive integers satisfying:
+\[
+\frac{1}{x} + \frac{1}{y} = \frac{1}{N}.
+\]
+Prove that \( N \) is a perfect square.
+\subsection*{Solution:}
+
+\subsection{JBMO (2003)} 
+Let \( n \) be a positive integer. A number \( A \) consists of \( 2n \) digits, each of which is \( 4 \); and a number \( B \) consists of \( n \) digits, each of which is \( 8 \). Prove that \( A + 2B + 4 \) is a perfect square.
+
+\subsection*{Solution:}
+We have:
+\[
+A = \underbrace{44\ldots4}_{2n \text{ digits}} = \sum_{i=0}^{2n-1} 4 \cdot 10^{i} = 4 \cdot \frac{10^{2n} - 1}{9},
+\]
+\[
+B = \underbrace{88\ldots8}_{n \text{ digits}} = \sum_{i=0}^{n-1} 8 \cdot 10^{i} = 8 \cdot \frac{10^n - 1}{9}.
+\]
+Now compute:
+\begin{align*} A+2B+4 &= \frac{4 \cdot 10^{2n} - 4 + 16 \cdot 10^n - 16 + 36}{9} \\ &= \frac{4 \cdot (10^n)^2 + 16 \cdot 10^n + 16}{9} \\ &= \left(\frac{2(10^n + 2)}{3}\right)^2. \end{align*}
+Since \(10 \equiv 1 \pmod{3}\), we have \(10^n \equiv 1 \pmod{3}\), so \(10^n + 2 \equiv 0 \pmod{3}\). Hence \(\frac{10^n + 2}{3}\) is an integer. Therefore, \(S\) is a perfect square.
+\subsection{AIME (2000)} 
+The system of equations (for $x, y, z \in \mathbb{R}_{>0}$)
+\begin{align*}
+\log_{10}\left(2000xy\right) - \log_{10}\left(x\right)\log_{10}\left(y\right) &= 4, \\
+\log_{10}\left(2yz\right) - \log_{10}\left(y\right)\log_{10}\left(z\right) &= 1, \\
+\log_{10}\left(zx\right) - \log_{10}\left(z\right)\log_{10}\left(x\right) &= 0,
+\end{align*}
+has two solutions $(x_{1}, y_{1}, z_{1})$ and $(x_{2}, y_{2}, z_{2})$. Find $y_{1} + y_{2}$.
+
+\subsection*{Solution:}
+Let
+\[
+a := \log_{10}\left(x\right), \quad b := \log_{10}\left(y\right), \quad c := \log_{10}\left(z\right).
+\]
+Note that
+\[
+\log_{10}\left(2000xy\right) = \log_{10}\left(2\right) + 3 + a + b, \quad 
+\log_{10}\left(2yz\right) = \log_{10}\left(2\right) + b + c, \quad 
+\log_{10}\left(zx\right) = c + a.
+\]
+Let $d := \log_{10}\left(2\right)\in ]0,1[$. Then the system becomes
+\begin{align*}
+ab - a - b + 1 - d &= 0, \\
+bc - b - c + 1 - d &= 0, \\
+ac - a - c &= 0.
+\end{align*}
+Each equation is of the form $XY - X - Y + K = 0$ and, using SFFT, is equivalent to 
+\[
+\left(X - 1\right)\left(Y - 1\right) = 1 - K.
+\]
+Applying this to our system, we get the equivalent system
+\begin{align*}
+\left(a - 1\right)\left(b - 1\right) &= d, \\
+\left(b - 1\right)\left(c - 1\right) &= d, \\
+\left(a - 1\right)\left(c - 1\right) &= 1.
+\end{align*}
+From the third equation, $\left(a - 1\right) \neq 0$, so \(c - 1 = \frac{1}{a - 1}\).
+Substitute this into the second equation: \(\left(b - 1\right)\frac{1}{a - 1} = d \quad \Leftrightarrow \quad b - 1 = d\left(a - 1\right)\).
+Substitute $b - 1 = d\left(a - 1\right)$ into the first equation:
+\(
+\left(a - 1\right)\left(d\left(a - 1\right)\right) = d \quad \Leftrightarrow \quad \left(a - 1\right)^{2} = 1 \quad \Leftrightarrow \quad a \in \left\{0, 2\right\}\).
+We obtain two solutions: $a_{1} = 2$ and $a_{2} = 0$. Correspondingly,
+\[
+b_{i} - 1 = d\left(a_{i} - 1\right) = \pm d \quad \Leftrightarrow \quad b_{1} = 1 + d, \quad b_{2} = 1 - d.
+\]
+Finally,
+\begin{align*}
+y_{1} + y_{2} &= 10^{b_{1}} + 10^{b_{2}} = 10^{1 + d} + 10^{1 - d} \\
+&= 10\left(10^{\log_{10}\left(2\right)} + 10^{-\log_{10}\left(2\right)}\right) \\
+&= 10\left(2 + \frac{1}{2}\right) = 25.
+\end{align*}
+\end{solution}

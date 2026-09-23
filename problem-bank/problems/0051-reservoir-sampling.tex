@@ -1,0 +1,74 @@
+% title:          Reservoir sampling
+% area:           algorithms, discrete-probability
+% methods:        induction
+% difficulty:
+% difficulty-ai:  easy
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         folklore
+% origin-date:    1962
+% origin-number:
+% also-in:        interview
+% taken-from:
+% references:     Classical algorithm, reservoir sampling (the single-item case of Algorithm R). Earliest one-pass sampling method for an unknown population size: C. T. Fan, M. E. Muller, I. Rezucha, 'Development of sampling plans by using sequential (item by item) selection techniques and digital computers', J. Amer. Statist. Assoc. 57(298), 1962, 387-402, Method 4 - https://api.crossref.org/works/10.1080/01621459.1962.10480667 ; the rule 'keep the i-th item with probability 1/i' is Algorithm R, due to Alan G. Waterman (1975 letter to Knuth), printed in D. E. Knuth, TAOCP vol. 2, 2nd ed., 1981, Section 3.4.2, pp. 138-139; the 1st ed. had an older Algorithm 3.4.2R - https://markkm.com/blog/reservoir-sampling/ ; found independently by A. I. McLeod & D. R. Bellhouse, J. Roy. Statist. Soc. C 32(2), 1983, 182-184; faster algorithms in J. S. Vitter, 'Random sampling with a reservoir', ACM TOMS 11(1), 1985, 37-57, which credits Algorithm R to Waterman - https://www.cs.umd.edu/~samir/498/vitter.pdf ; overview - https://en.wikipedia.org/wiki/Reservoir_sampling ; coding-interview version: LeetCode 382 'Linked List Random Node' - https://leetcode.com/problems/linked-list-random-node/ ; GeeksforGeeks 'Select a random node from a singly linked list' - https://www.geeksforgeeks.org/dsa/select-a-random-node-from-a-singly-linked-list/ . The club's version was proposed by Hongler.
+% history:        ai
+\begin{problem}
+We have a finite linked list of elements, \( x_{0} \rightarrow x_{1} \rightarrow \ldots \rightarrow x_{n} \), where \( n \in \mathbb{N} \) is \textbf{unknown}. Starting at \( x_{0} \), we have a pointer to \( x_{1} \), which leads to \( x_{2} \), and so on, until we reach the end of the linked list \( x_{n} \). At each step of traversing the list, we cannot go back, but we are informed whether or not we have reached the end. We have enough memory to store at least one of any of the elements \( x_i \) (\(0 \leq i \leq n\)), but perhaps not more; in particular, we cannot simply store the entire list in an array (unless, of course, \( n = 0 \)).
+\\\\
+(a) How can we select uniformly at random an element in the linked list, if we are allowed to traverse it only once? More precisely, in the situation where the list can be traversed only once, design an algorithm with input the pointer to the head of the linked list $x_0$ which outputs an element of the linked list chosen uniformly at random\footnote{We assume that one can generate potentially infinitely many independent uniform random numbers in the interval \( [0,1] \) so in particular one has a \href{https://en.wikipedia.org/wiki/Pseudorandom_number_generator}{pseudo-random number generators} that is a \href{https://en.wikipedia.org/wiki/Random_number_generation}{random number generators}.} (i.e. with probability $\frac{1}{n+1}$).
+\\\\
+(b) Why might solving this problem be useful in practice?
+\end{problem}
+\begin{solution}
+(a) First, it is very important that we do not know \( n \); otherwise, the solution is easy: select in advance an index \( i \) between \( 0 \) and \( n \) with equal probability \(\frac{1}{n+1}\), traverse the list, and store the \( i \)-th element. The difficulty arises because we do not know the exact value of \( n \) in advance. Moreover, we also know that we cannot store the entire list in an array (unless $n=0$) and choose uniformly one element from it once we reach the end. 
+\\\\
+We present the simplest version of the \href{https://en.wikipedia.org/wiki/Reservoir_sampling}{Reservoir Sampling} algorithm, which belongs to the family of randomized algorithms for selecting a random sample, without replacement, of \( k \geq 1 \) items from a population of unknown size \( n \geq k \) in a single pass over the items. Heuristically:
+\begin{itemize}
+    \item Start by storing the first element, since with only one element it must be selected.
+    \item As we traverse the list, each new element should have a chance to replace the currently stored element. The probability of replacing the stored element should decrease as we move further along the list, to ensure that earlier elements retain their fair share of being selected.
+    \item Specifically, when we reach the $i$-th element, we replace the stored element with probability $\frac{1}{i+1}$. This balances the probabilities so that every element seen so far has the same chance (that is $\frac{1}{i+1}$) of being chosen.
+    \item By continuing this process until the end of the list, we guarantee that each element has probability $1/(n+1)$ of being selected.
+\end{itemize}
+\textbf{Pseudo-code: Reservoir Sampling on a Linked List}
+{\begin{algorithm}
+\caption{ReservoirSampling($x_0$)}
+\begin{algorithmic}
+\State \textbf{Input:} pointer to the head $x_0$ of a finite linked list
+\State \textbf{Output:} a uniformly random element from the linked list
+\State \texttt{store} $\gets x_0$ \Comment{initially store the first element with probability $1$}
+\State \texttt{current} $\gets x_0$
+\State $i \gets 1$
+\While{\texttt{current.next}$\neq$ NULL}
+    \State $i \gets i + 1$
+    \State $u \gets$ \texttt{random\_uniform}[0,1]
+    \If{$u \leq \frac{1}{i}$}
+        \State \texttt{store} $\gets$\texttt{current.next}
+    \EndIf
+    \State \texttt{current} $\gets$\texttt{current.next}
+\EndWhile
+\State \Return \texttt{store}
+\end{algorithmic}
+\end{algorithm}}
+\\\\
+\textbf{Termination:} The algorithm terminates because it iterates through a finite linked list. The variable \texttt{current} starts at the head of the list, $x_0$, and moves to the next element in each iteration of the \texttt{while} loop. Since the list contains a finite number $n+1$ of elements and each \texttt{current.next} eventually becomes \texttt{NULL}, the \texttt{while} loop executes exactly $n$ times. After reaching the last element, the loop condition \texttt{current.next} $\neq$ \texttt{NULL} fails, causing the loop to exit and the algorithm to return the stored element. Therefore, the algorithm always terminates after a finite number of steps.
+\\\\
+\textbf{Correctness:}
+By induction on $n$, it is easy to see that each element $x_i$ (for $0 \leq i \leq n$) in the linked list will pass, in order of increasing indices, exactly once through the variable \texttt{current}, that the variable \texttt{store} is updated at most once between each update of \texttt{current}, and that it will not be updated when \texttt{current} $\gets x_n$. It thus suffices to show that for each $n \geq 0$, for each $0 \leq j \leq n$, when \texttt{current} $\gets x_j$, the variable \texttt{store} contains an element selected uniformly at random among $x_0, \dots, x_j$ (i.e.\ with probability $\frac{1}{j+1}$). Fix $n \geq 0$; we prove this by induction on $j$:
+\\\\
+\textit{Base case:} If $j=0$, then when \texttt{current} $\gets x_0$, the variable \texttt{store} necessarily contains $x_0$, which is thus selected with probability $1 = \frac{1}{0+1}$.
+\\\\
+\textit{Inductive step:} Assume that $0 < j+1 \le n$ and that when the variable \texttt{current} $\gets x_j$, the variable \texttt{store} contains an element selected uniformly at random among $x_0, \dots, x_j$ (i.e.\ with probability $\frac{1}{j+1}$). We show that when the variable \texttt{current} $\gets x_{j+1}$, the variable \texttt{store} contains an element selected uniformly at random among $x_0, \dots, x_{j+1}$ (i.e.\ with probability $\frac{1}{(j+1)+1}$).  
+\\\\
+Assume \texttt{current} $\gets x_{j+1}$. This means that we entered the loop of the \texttt{while} instruction after \texttt{current} $\gets x_j$ and at this time \texttt{current.next} is $x_{j+1}$. In this loop:
+\begin{itemize}
+    \item We generate a number $u$ uniformly at random in $]0,1[$ and store $x_{j+1}$ in the variable \texttt{store} if $u \le \frac{1}{(j+1)+1} \leq \frac{1}{2}$. Thus $x_{j+1}$ is stored with probability $\frac{1}{(j+1)+1}$.
+    \item For any previous element $x_k$ with $0 \le k \le j$, the probability that it remains in \texttt{store} is the probability it was already stored ($\frac{1}{j+1}$ by the inductive hypothesis) \emph{and} that it is not replaced by $x_{j+1}$. Since all numbers are generated independently, this probability is
+    \[
+        \frac{1}{j+1} \cdot \left(1 - \frac{1}{j+2}\right) = \frac{1}{j+1} \cdot \frac{j+1}{j+2} = \frac{1}{j+2}.
+    \]
+\end{itemize}
+Hence, when \texttt{current} $\gets x_{j+1}$ (so at the end of this loop), the variable \texttt{store} contains an element selected uniformly at random among $x_0, \dots, x_{j+1}$ (with probability $\frac{1}{(j+1)+1}$). This concludes the induction step.
+\\\\
+(b) This problem is useful in practice because it models situations where data arrive sequentially, and it is impossible or inefficient to store all elements at once. For instance, in \href{https://en.wikipedia.org/wiki/Streaming_algorithm}{streaming algorithms}, online data processing, or when sampling from large files or network logs, \textit{reservoir sampling} enables the selection of a uniformly random element using only constant memory and a single pass through the data.
+\end{solution}

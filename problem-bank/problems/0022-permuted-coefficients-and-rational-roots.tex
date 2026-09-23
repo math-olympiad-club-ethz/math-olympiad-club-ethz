@@ -1,0 +1,71 @@
+% title:          Permuted coefficients and rational roots
+% area:           polynomial-roots, integer-polynomials
+% methods:        am-gm
+% difficulty:
+% difficulty-ai:  medium
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         imc
+% origin-date:    2005-07
+% origin-number:  Day 1, Problem 4
+% also-in:
+% taken-from:
+% references:     IMC 2005 (12th IMC, Blagoevgrad, 22-28 July 2005), First Day, Problem 4, official problems & solutions - https://www.imc-math.org.uk/imc2005/day1_solutions.pdf; IMC 2005 problems index page - https://www.imc-math.org.uk/?year=2005&item=problems
+% history:        ai
+\begin{problem}
+Find all polynomials
+\[
+P(X) = a_n X^n + a_{n-1} X^{n-1} + \dots + a_1 X + a_0 \quad (a_n \neq 0)
+\]
+satisfying the following two conditions:
+
+\begin{enumerate}
+    \item \( (a_0, a_1, \dots, a_n) \) is a permutation of the numbers \( (0, 1, \dots, n) \), and
+    \item all roots of \( P(X) \) are rational numbers.
+\end{enumerate}
+\end{problem}
+\begin{solution}
+Let $n\geq 1$. If $n=1$, then trivially the only such polynomial is $X$. Else, $n\geq 2$, and let $P(X)$ be a polynomial of degree $n$ satisfying the conditions. Note that \( P(X) \) does not have any positive root because \( P(x) > 0 \) for every \( x > 0 \). Thus, we can represent the roots as \( -\alpha_i \) for \( i = 0,1, \dots, n-1 \), where \( \{\alpha_i\mid i\in n\}\subset\mathbb{Q}_{+}\).
+\\\\
+If \( a_0 \neq 0 \), then the roots are strictly positive $\{\alpha_i\mid i\in n\}\subset\mathbb{Q}_{>0}$, and condition 1 gives that there exists some \( k \in \mathbb{N} \) with \( 1 \leq k \leq n-1 \) such that \( a_k = 0 \). Using Vieta’s formulas for this coefficient $a_k$, we obtain: 
+\[
+    \sum_{\substack{S\subset n\\|S|=n-k}}\left(\prod_{i\in S}\alpha_i\right)= \frac{a_k}{a_n}=0,
+\]
+which is impossible since the left-hand side is strictly positive (as $k<n$). Therefore, \( a_0 = 0 \), and one of the roots of \( P(X) \), say (without loss of generality) \( \alpha_{n-1} \), must be zero.
+\\\\
+Consider the polynomial \[
+    Q(X) = \sum_{i=1}^{n}a_iX^{i-1}=a_n X^{n-1} + a_{n-1} X^{n-2} + \dots + a_1.
+\]
+One has $P(X)=XQ(X)$, so it has the zeros \( -\alpha_i \) for \( 0\leq i\leq n-2\). Again, using Vieta’s formulas for the coefficients $\frac{a_1}{a_n},\frac{a_{2}}{a_n}$ and $\frac{a_{n-1}}{a_n}$ (recall $n\geq 2$), we get:
+\[
+    \prod_{0\leq i<n-1}\alpha_i = \frac{a_1}{a_n},\quad
+    \sum_{0\leq i<n-1}\left(\prod_{\substack{0\leq j<n-1\\j\neq i}}\alpha_j\right)= \frac{a_2}{a_n},
+\quad
+    \sum_{0\leq i<n-1}\alpha_i= \frac{a_{n-1}}{a_n}.
+\]
+Dividing the second equation by the first, we obtain
+\[
+    \frac{\sum_{0\leq i<n-1}\left(\prod_{\substack{0\leq j<n-1\\j\neq i}}\alpha_j\right)}{\prod_{0\leq i<n-1}\alpha_i}=\sum_{0\leq i<n-1}\frac{1}{\alpha_i} = \frac{a_{2}}{a_1}.
+\]
+Applying the AM-HM inequality (which is a corollary of the very useful-to-know \href{https://en.wikipedia.org/wiki/Generalized_mean#Generalized_mean_inequality}{Generalized Mean Inequality}):
+\[
+    \frac{a_{n-1}}{(n-1)a_n} = \frac{\sum_{0\leq i<n-1}\alpha_i}{n-1} \geq \frac{n-1}{\sum_{0\leq i<n-1}\frac{1}{\alpha_i}} = \frac{(n-1)a_1}{a_{2}}.
+\]
+Rearranging, we find
+\[
+    \frac{a_2 a_{n-1}}{a_1 a_n} \geq (n-1)^2,
+\]
+and since $1 \leq a_2, a_{n-1} \leq n$ we have $a_2 a_{n-1} \leq n^2$ (equality happens only when $a_2 = a_{n-1} = n$, which can furthermore only happen when $n = 3$ since the $a_i$ are all distinct). Since $n \geq 2$, we have $1 \leq a_1 \neq a_n \leq n$, so either $1 \leq a_1 < a_n\leq n$ or $1 \leq a_n < a_1\leq n$, and we have $a_1 a_n \geq 2$ (equality happens only when $\{a_1, a_n\} = \{1, 2\}$). In total:
+\[
+\frac{n^2}{2} \geq \frac{a_2 a_{n-1}}{a_1 a_n} \geq (n-1)^2 \implies n^2 + 2 \leq 4n \implies \left(n - \left(2 + \sqrt{2}\right)\right) \left(n + \left(-2 + \sqrt{2}\right)\right) \leq 0,
+\]
+which holds only for integers \(1 \leq n \leq 3\). Since $n \geq 2$, the only possibility is $n \in \{2, 3\}$.
+\\\\
+Summarizing, the only possible polynomials \( Q(X)\in\mathbb{Z}[X] \) satisfying the given conditions are \( X \), and otherwise they have degree \( 2 \) or \( 3 \) with a constant term \( 0 \) and negative roots.
+\\\\
+These polynomials can then be explicitly found by brute force (finitely many possibilities), and they form exactly the set:
+\[
+    \left\{X,\quad X^2 + 2X, \quad 2X^2 + X,\quad X^3 + 3X^2 + 2X,\quad 2X^3 + 3X^2 + X\right\}.
+\]
+\end{solution}

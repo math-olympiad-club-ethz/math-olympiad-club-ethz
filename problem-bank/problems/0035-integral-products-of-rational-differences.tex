@@ -1,0 +1,173 @@
+% title:          Integral products of rational differences
+% area:           divisibility, integer-polynomials
+% methods:        polynomial-method, gauss-lemma
+% difficulty:
+% difficulty-ai:  hard
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         usamo
+% origin-date:    2009
+% origin-number:  6
+% also-in:
+% taken-from:
+% references:     USAMO 2009, Problem 6 (proposed by Gabriel Carroll) - https://web.archive.org/web/20250904024022/https://artofproblemsolving.com/wiki/index.php/2009_USAMO_Problems/Problem_6; Evan Chen, USAMO 2009 Solution Notes, §2.3 - https://web.evanchen.cc/exams/USAMO-2009-notes.pdf; Club source: Sudakov & Milojević (ETH problem list)
+% history:        ai
+\begin{problem}
+Let \(\left( a_n \right)_{n \in \mathbb{N}}, \left( b_n \right)_{n \in \mathbb{N}} \in \mathbb{Q}^{\mathbb{N}}\) be non-constant sequences of rational numbers. Suppose that for all \( i, j \in \mathbb{N} \),
+\[
+\left( a_i - a_j \right)\left( b_i - b_j \right) \in \mathbb{Z}.
+\]
+Prove that there exists a non-zero rational number \( \gamma \in \mathbb{Q}^{\times} \) such that for all \( i, j \in \mathbb{N} \),
+\[
+\gamma\left( a_i - a_j \right), \quad \gamma^{-1}\left( b_i - b_j \right) \in \mathbb{Z}.
+\]
+\end{problem}
+\begin{solution}
+Clearly, the sequences \( \left( a_n' := a_n - a_0 \right)_{n \in \mathbb{N}} \), \( \left( b_n' := b_n - b_0 \right)_{n \in \mathbb{N}} \) are non-constant rational sequences. Fix \( i, j \in \mathbb{N} \); then \( a_i' - a_j' = a_i - a_j \) and \( b_i' - b_j' = b_i - b_j \), and thus:
+\[
+\forall i,j \in \mathbb{N}, \quad \left( a_i' - a_j' \right)\left( b_i' - b_j' \right) = \left( a_i - a_j \right)\left( b_i - b_j \right) \in \mathbb{Z}.
+\]
+That is, \( \left( a_n' \right)_{n \in \mathbb{N}}, \left( b_n' \right)_{n \in \mathbb{N}} \in \mathbb{Q}^{\mathbb{N}} \) satisfy the same property, but they have the advantage that \( a_0' = 0 = b_0' \), which in particular implies \( \forall i \in \mathbb{N},\; a_i'b_i' = \left( a_i' - a_0' \right)\left( b_i' - b_0' \right) \in \mathbb{Z} \). For all \( i,j \in \mathbb{N} \), the equalities \( a_i' - a_j' = a_i - a_j \) and \( b_i' - b_j' = b_i - b_j \) also imply that \( \forall \gamma \in \mathbb{Q}^{\times} \):
+\[
+\forall s,t \in \mathbb{N},\; \gamma\left( a_s' - a_t' \right),\; \gamma^{-1}\left( b_s' - b_t' \right) \in \mathbb{Z} \;\Leftrightarrow\; \forall s,t \in \mathbb{N},\; \gamma\left( a_s' - a_t' \right),\; \gamma^{-1}\left( b_s' - b_t' \right) \in \mathbb{Z}.
+\]
+So, the problem is equivalent to finding such an invertible rational number for these two new non-constant rational sequences.
+\\\\
+Let us consider the sequence of polynomials
+\[
+\left( A_n(X) := \sum_{i=0}^{n} a_i' X^{i} \right)_{n\in\mathbb{N}}, \quad \left( B_n(X) := \sum_{j=0}^{n} b_j' X^{j} \right)_{n\in\mathbb{N}} \in \mathbb{Q}[X]^{\mathbb{N}}.
+\]
+and define for each \( n\in\mathbb{N} \)
+\[
+\Gamma_{A_n,+} := \left\{ \gamma \in \mathbb{Q}^{\times} \,\middle|\, \gamma A_n(X) \in \mathbb{Z}[X] \right\}, \quad
+\Gamma_{B_n,-} := \left\{ \gamma \in \mathbb{Q}^{\times} \,\middle|\, \gamma^{-1} B_n(X) \in \mathbb{Z}[X] \right\},
+\]
+\[
+\Gamma_n := \Gamma_{A_n,+} \cap \Gamma_{B_n,-}.
+\]
+Notice that any \( \gamma \in \Gamma_n \) satisfies the statement of the problem but only for integers \( i, j \leq n \), i.e. for all \( i, j \leq n \),
+\[
+\gamma\left( a_i - a_j \right), \quad \gamma^{-1}\left( b_i - b_j \right) \in \mathbb{Z}.
+\]
+So, the goal is to show that the whole intersection of these sets is non-empty:
+\[
+\Gamma := \bigcap_{n \in \mathbb{N}} \Gamma_n \neq \varnothing.
+\]
+Because then, any element \( \gamma \in \Gamma \) is a non-zero rational number satisfying, for all \( i, j \in \mathbb{N} \),
+\[
+\gamma\left( a_i - a_j \right), \quad \gamma^{-1}\left( b_i - b_j \right) \in \mathbb{Z}.
+\]
+To show that this intersection is non-empty, we must work a little. The plan proceeds in three steps. Fix \( n \in \mathbb{N} \); we will show, in order, that:
+\begin{itemize}
+    \item \( \Gamma_n \neq \varnothing \).
+    \item \( \Gamma_{n+1} \subset \Gamma_n \).
+    \item There exists a rank \( M \in \mathbb{N} \) such that, for all \( k \geq M \), the set \( \Gamma_k \) is finite.
+\end{itemize}
+With these results in the pocket, we obtain by induction that \( \left( \Gamma_i \right)_{i \in \mathbb{N}} \) is a decreasing nested sequence of non-empty subsets of \( \mathbb{Q}^{\times} \). Hence, this permits us to write:
+\[
+\Gamma = \bigcap_{n \in \mathbb{N}} \Gamma_n = \bigcap_{k \geq M} \Gamma_k.
+\]
+and we can conclude that the last intersection must be non-empty\footnote{If you are familiar with the \href{https://en.wikipedia.org/wiki/Finite_intersection_property}{finite intersection property}, then this follows easily from the fact that \( \Gamma_M \), being finite, is a compact subset of \( \mathbb{R} \). The set \( \mathcal{C} := \left\{ \Gamma_k \,\middle|\, k \geq M \right\} \) is included in \( \mathscr{P} \left( \Gamma_M \right) \) (because of the nested property) and is composed of finite subsets of \( \mathbb{R} \)—hence closed sets. It has the finite intersection property: the intersection over any finite subcollection \( \mathcal{C}' \subset \mathcal{C} \) is non-empty, since the poset \( \left( \mathcal{C}', \subset \right) \) has a unique minimal element \( \Gamma_u \), as the sets are decreasingly nested with respect to the natural order on \( \mathbb{N} \), and therefore their intersection is equal to \( \Gamma_u \). It is well known that a set is compact if and only if any collection of its closed subsets having the finite intersection property has a non-empty total intersection. Since \( \Gamma_M \) is compact, we may apply this result to obtain \( \Gamma = \bigcap \mathcal{C} \neq \varnothing \).}, because defining \( \forall k \geq M,\; t_k := \left| \Gamma_k \right| \), we have:
+\[
+1 \leq t_k \leq t_M < +\infty,
+\]
+so \( \left( t_k \right)_{k \geq M} \in \mathbb{N}^{\mathbb{N}_{\geq M}} \) and is clearly decreasing. Hence, the limit exists and is equal to \( t := \inf \left\{ t_k \,\middle|\, k \geq M \right\} \), which must satisfy \( t \geq 1 \). Since the set \( \left\{ t_k \,\middle|\, k \geq M \right\} \) is a subset of the finite set \(\left\llbracket1, t_{M}\right\rrbracket\), it is finite, hence closed; thus, the infimum is attained. This implies that the sequence \( \left( t_k \right)_{k \geq M} \) is eventually constant, and so must be the sequence \( \left( \Gamma_k \right)_{k \geq M} \) (because they are decreasingly nested and finite). That means that there exists \( k' \geq M \) such that \( \Gamma = \Gamma_{k'}\neq\varnothing \). This will conclude.
+\\\\
+Let us finish the problem by proving the three steps. We first carry out some preliminary work:
+\\\\
+Notice that for all \( i, j \in \mathbb{N} \), the numbers \( a_i'b_j' + a_j'b_i' \) must be integers, since they are sums of such:
+\[
+a_i'b_j' + a_j'b_i' = a_i'b_i' + a_j'b_j' - \left( a_i' - a_j' \right)\left( b_i' - b_j' \right).
+\]
+For all \( n \in \mathbb{N} \), the polynomial \( C_n(X) := A_n(X) B_n(X) \in \mathbb{Q}[X] \) is in fact in \( \mathbb{Z}[X] \), since for all \( k \leq n \), the \( k \)-th coefficient is:
+\[
+c_k\left( C_n(X) \right) = \sum_{j=0}^{k} a_j' b_{k-j}' = \left( \sum_{j=0}^{\left\lfloor \frac{k}{2} \right\rfloor - 1} \left( a_j' b_{k-j}' + a_{k-j}' b_j' \right) \right) + \mathbbm{1}_{2\mathbb{N}}(k) \cdot a_{\left\lfloor \frac{k}{2} \right\rfloor}' b_{\left\lfloor \frac{k}{2} \right\rfloor}',
+\]
+and is therefore an integer because it is a sum of all the elements in \( \left\{ a_i' b_{k-i}' + a_{k-i}' b_i' \,\middle|\, i \leq \left\lfloor \frac{k}{2} \right\rfloor \right\} \subset \mathbb{Z} \), and possibly (when \( k \) is even) one term \( a_{\left\lfloor \frac{k}{2} \right\rfloor}' b_{\left\lfloor \frac{k}{2} \right\rfloor}' \in \mathbb{Z} \). Hence, the polynomial \( C_n(X) \) has integer coefficients.
+\\\\
+Let \( N \in \mathbb{N} \) and a rational polynomial \( P(X) = \sum_{k=0}^{N} \frac{p_k}{q_k} X^{k} \in \mathbb{Q}[X] \). Suppose that for all \( k \leq N \), the elements \( p_k \in \mathbb{Z},\, q_k \in \mathbb{Z} \setminus \left\{ 0 \right\} \) are such that \( \gcd(p_k, q_k) = 1 \). Define \( l_{P(X)} := \operatorname{lcm}\left( \left( q_k \right)_{k \leq N} \right) \in \mathbb{N} \setminus \left\{ 0 \right\} \) and \( g_{P(X)} := \gcd\left( \left( p_k \right)_{k \leq N} \right) \in \mathbb{N} \). Notice that, in this way (by forcing positivity), we obtain two well-defined functions \( g_{\_}, l_{\_} : \mathbb{Q}[X] \rightarrow \mathbb{N} \). Now, suppose at least one of the coefficients of the polynomial is non-zero (i.e.\ \( P(X)\neq 0 \)), say for a certain \( k' \leq N \), \( p_{k'} \neq 0 \), then \( g_{P(X)} \neq 0 \), so we can define \( d_{P(X)} := \frac{l_{P(X)}}{g_{P(X)}} \in \mathbb{Q}_{>0} \). We claim:
+\begin{equation}
+\tag{1}
+\label{5.1}
+d_{P(X)} \mathbb{Z} \setminus \left\{ 0 \right\} = \left\{ \gamma \in \mathbb{Q}^{\times} \,\middle|\, \gamma P(X) \in \mathbb{Z}[X] \right\}.
+\end{equation}
+Indeed, the inclusion \( \subset \) is evident because \( \forall k \leq N,\, q_k \mid l_{P(X)} \) and \( g_{P(X)} \mid p_k \). Now, for the reverse inclusion \( \supset \): if we let \( \gamma \in \mathbb{Q}^{\times} \) with \( \gamma P(X) \in \mathbb{Z}[X] \), write \( \gamma = \frac{\gamma_1}{\gamma_2} \) with \( \gamma_1, \gamma_2 \in \mathbb{Z} \) and \( \gcd(\gamma_1, \gamma_2) = 1 \). One has for all \( k \leq N \), \( \gamma \frac{p_k}{q_k} = \frac{\gamma_1 p_k}{\gamma_2 q_k} \in \mathbb{Z} \), thus \( \exists t_k \in \mathbb{Z} \) with \( \gamma_1 p_k = t_k \gamma_2 q_k \), which implies \( \gamma_2 \mid \gamma_1 p_k \) and \( q_k \mid \gamma_1 p_k \). Since \( \gcd(\gamma_1, \gamma_2) = 1 = \gcd(p_k, q_k) \), we have \( \gamma_2 \mid p_k \) and \( q_k \mid \gamma_1 \). Since \( k \leq N \) is arbitrary, we get, by definition of the lcm and gcd, that \( \gamma_2 \mid g_{P(X)} \) and \( l_{P(X)} \mid \gamma_1 \). Hence \( \gamma_1 = l_{P(X)} r \) for a certain \( r \in \mathbb{Z} \) and \( g_{P(X)} = \gamma_2 s \) for a certain \( s \in \mathbb{Z} \). That is, \( \gamma = \frac{l_{P(X)} r s}{g_{P(X)}} = d_{P(X)} r s \in d_{P(X)} \mathbb{Z} \), and since \( \gamma \neq 0 \), we have \( \gamma \in d_{P(X)} \mathbb{Z} \setminus \left\{ 0 \right\} \). This concludes the equality. Notice that \(d_{P(X)} \mathbb{Z} \setminus \left\{ 0 \right\}\) is a discrete subspace of \(\mathbb{R}\).
+\\\\
+Clearly, \( \left\{ \gamma \in \mathbb{Q}^{\times} \,\middle|\, \gamma P(X) \in \mathbb{Z}[X] \right\} \) is in bijection with \( \left\{ \gamma \in \mathbb{Q}^{\times} \,\middle|\, \gamma^{-1} P(X) \in \mathbb{Z}[X] \right\} \) through the map \( \gamma \mapsto \gamma^{-1} \). This implies:
+\begin{equation}
+\tag{2}
+\label{5.2}
+\left(d_{P(X)} \mathbb{Z} \setminus \left\{ 0 \right\}\right)^{-1} = \left\{\left(d_{P(X)}\right)^{-1}\frac{1}{n} \,\middle|\, n \in \mathbb{Z} \setminus \left\{ 0 \right\} \right\} = \left\{ \gamma \in \mathbb{Q}^{\times} \,\middle|\, \gamma^{-1} P(X) \in \mathbb{Z}[X] \right\}.
+\end{equation}
+Notice that \(\left(d_{P(X)} \mathbb{Z} \setminus \left\{ 0 \right\}\right)^{-1} \subset \left[-\left(d_{P(X)}\right)^{-1}, \left(d_{P(X)}\right)^{-1}\right]\).
+\\\\
+With this in mind, we can prove the steps. Fix \( n \in \mathbb{N} \),
+\\\\
+\(\bullet\quad \Gamma_n \neq \varnothing\).
+\\\\
+If \( C_n(X) = 0 \), then since \( \mathbb{Q} \) is a domain, so is \( \mathbb{Q}[X] \). Hence, either \( A_n(X) = 0 \), in which case \( \Gamma_{A,n} = \mathbb{Q}^{\times} \) and so \( \Gamma_n = \Gamma_{B,n} \), or \( B_n(X) = 0 \), in which case also \( \Gamma_{B,n} = \mathbb{Q}^{\times} \) and \( \Gamma_n = \Gamma_{A,n} \). So it suffices to show that \( \Gamma_{A,n}, \Gamma_{B,n} \neq \varnothing \), which follows from the fact that for \( N \in \mathbb{N} \) and a rational polynomial
+\[
+P(X) = \sum_{k=0}^{N} \frac{p_k}{q_k} X^{k} \in \mathbb{Q}[X]
+\]
+with \( \gcd(p_k, q_k) = 1 \) for all \( k \leq N \), then, as we saw, \( l_{P(X)} \in \mathbb{N} \setminus \left\{ 0 \right\} \), and it is clear that
+\[
+l_{P(X)} \in \left\{ \gamma \in \mathbb{Q}^{\times} \,\middle|\, \gamma P(X) \in \mathbb{Z}[X] \right\}, \quad \frac{1}{l_{P(X)}} \in \left\{ \gamma \in \mathbb{Q}^{\times} \,\middle|\, \gamma^{-1} P(X) \in \mathbb{Z}[X] \right\}.
+\]
+Hence, in the case \( C_n(X) = 0 \), we have \( \Gamma_n \neq \varnothing \).
+\\\\
+Now suppose \( C_n\left( X \right) \neq 0 \). Then both \( A_n\left( X \right), B_n\left( X \right) \in \mathbb{Q}\left[ X \right] \setminus \left\{ 0 \right\} \), thus for \( d_1 := g_{\left( l_{A_n\left( X \right)} A_n\left( X \right) \right)} \in \mathbb{N} \), \( d_2 := l_{A_n\left( X \right)} \in \mathbb{N} \setminus \left\{ 0 \right\} \), \( d_3 := g_{\left( l_{B_n\left( X \right)} B_n\left( X \right) \right)} \in \mathbb{N} \), and \( d_4 := l_{B_n\left( X \right)} \in \mathbb{N} \setminus \left\{ 0 \right\} \), we have, because \( A_n\left( X \right), B_n\left( X \right) \neq 0 \), that \( d_1 \neq 0 \neq d_3 \), and we can write:
+\[
+A_n\left( X \right) = \frac{d_1}{d_2} \widetilde{A_n}\left( X \right), \quad B_n\left( X \right) = \frac{d_3}{d_4} \widetilde{B_n}\left( X \right),
+\]
+for certain non-zero integer polynomials \( \widetilde{A_n}\left( X \right), \widetilde{B_n}\left( X \right) \in \mathbb{Z}\left[ X \right] \setminus \left\{ 0 \right\} \). By construction, \( \widetilde{A_n}\left( X \right), \widetilde{B_n}\left( X \right) \) must be primitive and, by Gauss's Lemma I, \( \widetilde{A_n}\left( X \right) \widetilde{B_n}\left( X \right) \) is primitive.
+\\[1em]
+Since \( C_n\left( X \right) \in \mathbb{Z}\left[ X \right] \setminus \left\{ 0 \right\} \), we can write, with \( d_5 := g_{C_n\left( X \right)} \in \mathbb{N} \setminus \left\{ 0 \right\} \),
+\[
+C_n\left( X \right) = d_5 \widetilde{C_n}\left( X \right),
+\]
+for a certain \( \widetilde{C_n}\left( X \right) \in \mathbb{Z}\left[ X \right] \setminus \left\{ 0 \right\} \), which again by construction must be primitive.
+\\\\
+Then the product becomes:
+\[
+d_5 \widetilde{C_n}\left( X \right) = C_n\left( X \right) = A_n\left( X \right) B_n\left( X \right) = \frac{d_1 d_3}{d_2 d_4} \widetilde{A_n}\left( X \right) \widetilde{B_n}\left( X \right),
+\]
+implying (since \( d_5 \neq 0 \))
+\[
+\widetilde{C_n}\left( X \right) = \frac{d_1 d_3}{d_2 d_4 d_5} \widetilde{A_n}\left( X \right) \widetilde{B_n}\left( X \right).
+\]
+Since \( \widetilde{C_n}\left( X \right), \widetilde{A_n}\left( X \right) \widetilde{B_n}\left( X \right) \in \mathbb{Z}\left[ X \right] \), \( \widetilde{A_n}\left( X \right) \widetilde{B_n}\left( X \right) \) is primitive, and \( \frac{d_1 d_3}{d_2 d_4 d_5} \in \mathbb{Q} \), we obtain by Gauss’s Lemma II that \( \frac{d_1 d_3}{d_2 d_4 d_5} \in \mathbb{Z} \); and because \( \widetilde{C_n}\left( X \right) \) is primitive, we must even have \( \frac{d_1 d_3}{d_2 d_4 d_5} \in \mathbb{Z}^{\times} = \left\{ \pm 1 \right\} \). Hence, choosing (since \( d_1 \neq 0 \neq d_2 \))
+\[
+\gamma := \frac{d_2}{d_1} \in \mathbb{Q}^{\times}\text{, we obtain } \gamma A_n\left( X \right) = \widetilde{A_n}\left( X \right) \in \mathbb{Z}\left[ X \right],\, \gamma^{-1} B_n\left( X \right) \in \left\{ \pm d_5 \widetilde{B_n}\left( X \right) \right\} \subset \mathbb{Z}\left[ X \right].
+\]
+That is, \( \gamma \in \Gamma_n \), so in the case \( C_n\left( X \right) \neq 0 \) we have \( \Gamma_n \neq \varnothing \).
+\\\\
+In total, \( \Gamma_n \neq \varnothing \).
+\\\\
+\(\bullet\quad \Gamma_{n+1} \subset \Gamma_n\):
+\\\\
+For this, let \( \gamma \in \Gamma_{n+1} \). Then \( \gamma A_{n+1}(X) \in \mathbb{Z}[X] \) and \( \gamma^{-1} B_{n+1}(X) \in \mathbb{Z}[X] \), and thus, trivially,
+\[
+\gamma A_n(X) \in \mathbb{Z}[X], \quad \gamma^{-1} B_n(X) \in \mathbb{Z}[X],
+\]
+so \( \gamma \in \Gamma_n \).
+\\\\
+\(\bullet\) There exists a rank \( M \in \mathbb{N} \) such that for all \( k \geq M \), the set \( \Gamma_k \) is finite:
+\\\\
+Since \( \left( a'_n \right)_{n \in \mathbb{N}} \) and \( \left( b'_n \right)_{n \in \mathbb{N}} \) are non-constant, there must exist \( M', M'' \in \mathbb{N} \) such that \( a'_{M'} \neq 0 \) and \( b'_{M''} \neq 0 \). In particular, the corresponding polynomials from \( M := \max\left\{ M', M'' \right\} \in \mathbb{N} \) onward cannot be $0$, that is, for \( k \geq M \), satisfy \( A_k(X), B_k(X) \neq 0 \). In this case, we have seen that \( d_{A_k(X)}, d_{B_k(X)} \in \mathbb{Q}_{>0} \), and in \eqref{5.1} that
+\[
+\Gamma_{A_k,+} = d_{A_k(X)} \mathbb{Z} \setminus \left\{ 0 \right\} \text{ is discrete,}
+\]
+and in \eqref{5.2}
+\[
+\Gamma_{B_k,-} = \left( d_{B_k(X)} \mathbb{Z} \setminus \left\{ 0 \right\} \right)^{-1} \subset \left[ -\left( d_{B_k(X)} \right)^{-1}, \left( d_{B_k(X)} \right)^{-1} \right].
+\]
+Notice then that \( \Gamma_k \) is finite. This is because
+\begin{align*}
+\Gamma_k &= \Gamma_{A_k,+} \cap \Gamma_{B_k,-}\\ &\subset \left( d_{A_k(X)} \mathbb{Z} \setminus \left\{ 0 \right\} \right) \cap \left[ -\left( d_{B_k(X)} \right)^{-1}, \left( d_{B_k(X)} \right)^{-1} \right] \\
+&\subset \left\{d_{A_k(X)} s \in \mathbb{Q}^{\times} \,\middle|\, s \in \left\llbracket \left\lfloor -\left( d_{A_k(X)} d_{B_k(X)} \right)^{-1} \right\rfloor, \left\lceil \left( d_{A_k(X)} d_{B_k(X)} \right)^{-1} \right\rceil \right\rrbracket\right\},
+\end{align*}
+so that \( \Gamma_k \) is included in a finite set.
+\\\\
+This concludes the final steps and finishes the problem.
+\end{solution}

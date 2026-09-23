@@ -1,0 +1,26 @@
+% title:          Monge's theorem
+% area:           circles
+% methods:        homothety, extra-dimension
+% difficulty:
+% difficulty-ai:  medium
+% status:         partial
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         book
+% origin-date:    1799
+% origin-number:  Art. 44, pp. 54-55
+% also-in:
+% taken-from:
+% references:     G. Monge, Géométrie descriptive. Leçons données aux Écoles normales, l'an 3 de la République, Paris: Baudouin, an VII [1798/99], art. 44, pp. 54-55: the three-circle statement (external tangents) with a sphere/tangent-plane proof, then the internal-tangent version and the four-sphere generalisation - https://archive.org/details/bub_gb_Tg-L1dslDaUC; R. C. Archibald, 'Centers of Similitude of Circles and Certain Theorems Attributed to Monge. Were They Known to the Greeks?', Amer. Math. Monthly 22 (1915) 6-12: first edition pp. 54-55; N. Fuss (paper presented 4 July 1799, Nova Acta Petrop. 14, 1805) reports that the circle case circulated in Paris attributed to d'Alembert (Archibald found nothing in d'Alembert's Opuscules); Archibald argues it was implicitly known to the Greeks - https://archive.org/stream/jstor-2972054/2972054_djvu.txt; Wikipedia 'Monge's theorem' - https://en.wikipedia.org/wiki/Monge%27s_theorem; French Wikipedia (stated by d'Alembert, proved by Monge) - https://fr.wikipedia.org/wiki/Th%C3%A9or%C3%A8me_de_Monge_(g%C3%A9om%C3%A9trie_%C3%A9l%C3%A9mentaire); MathWorld 'Monge's Circle Theorem' (cites Petersen 1879 pp. 92-93, Graham 1959 Problem 62, Ogilvy 1990 pp. 115-117) - https://mathworld.wolfram.com/MongesCircleTheorem.html; cut-the-knot 'Monge's Theorem of three circles and common tangents' (3D proofs, including Bowler's equal-apex-angle cones, as in our solution) - https://www.cut-the-knot.org/proofs/threecircles.shtml. Club source: Sudakov & Milojević (ETH problem list, not found online).
+% history:        ai
+\begin{problem}
+Let $C_{1}, C_{2}, C_{3}$ be disjoint circles in the plane of different radii, and let $T_{ij}$ be the intersection point of the common tangent to $C_{i}$ and $C_{j}$ for all $1 \le i < j \le 3$. Show that the points $T_{12}$, $T_{23}$, and $T_{13}$ lie on a common line.
+\end{problem}
+\begin{solution}
+\[
+\substack{\textit{This solution needs to be written more formally}}
+\]
+Sketch: Embed the given planar configuration in $\mathbb{R}^3$ so that all three circles $C_{1}, C_{2}, C_{3}$ lie in some plane $\pi$. For each $i = 1,2,3$, construct a right circular cone $K_{i}$ in $\mathbb{R}^3$ whose base is the circle $C_i$ in the plane $\pi$ and whose apex is placed at a height equal to $r_i$, the radius of $C_i$. 
+\\\\
+Denote by $\alpha$ the plane determined by the three apexes $X_{1}, X_{2}, X_{3}$ of these cones. Observe that each line $T_{ij}$ (the line determined by the common tangent point in the plane) lifts to a line lying on the lateral surface of these cones. By similar triangles and symmetry, one shows that each $T_{ij}$ lies on the intersection of $\pi$ (the original plane) with $\alpha$ (the plane of the apexes). Hence $T_{12}, T_{23}, T_{13}$ all lie on the common line $\pi \cap \alpha$. It follows that they are collinear.
+\end{solution}

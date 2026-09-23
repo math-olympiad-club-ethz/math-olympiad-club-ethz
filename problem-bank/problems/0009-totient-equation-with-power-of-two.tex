@@ -1,0 +1,125 @@
+% title:          Totient equation with power of two
+% area:           arithmetic-functions, diophantine-equations
+% methods:        growth-rate-comparison, contradiction
+% difficulty:
+% difficulty-ai:  medium
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         silk-road
+% origin-date:    2019-03
+% origin-number:  3
+% also-in:
+% taken-from:
+% references:     Silk Road Mathematical Competition (XVIII, 2019), Problem 3, author K. Satylkhanov (Сатылханов К.) - https://matol.kz/olympiads/904; official solution (answer (2,1),(3,1),(3,3),(5,1)) and user solutions - https://matol.kz/comments/4201/show; competition held remotely on 11-12 March 2019 at al-Farabi KazNU, Almaty (jointly with APMO) - https://almaty.fizmat.kz/ru/news/aziatsko-tikhookeanskaya-matematichesk/
+% history:        ai
+\begin{problem}
+Find all pairs \( (a, n) \) of positive natural numbers such that \( \varphi \left( a^n + n \right) = 2^n \).
+
+(\( \varphi(n) \) is the Euler function, that is, the number of integers from \(1\) up to \( n \), relatively prime to \( n \).)
+\end{problem}
+\begin{solution}
+Using the estimation \(\varphi(b) > \sqrt{b}\) (classic) for all \(b > 6\), we first check the (finitely many) cases when a solution \((a,n)\) satisfies \(a^n + n \le 6\) to find that only:
+\[
+(a,n) \in \left\{ (2,1), (3,1), (5,1) \right\}
+\]
+works.
+\\\\
+Now for a solution \((a,n)\) with \(a^n + n > 6\) we get using the lower bound estimation:
+\[
+\varphi \left( a^n + n \right) \overset{\text{hyp}}{=} 2^n > \sqrt{a^n + n}.
+\]
+\(\bullet\) If \(a \ge 4\) the inequality cannot be true as then:
+\[
+2^n > \sqrt{a^n + n} \geq \sqrt{4^n + n} \geq \sqrt{2^{2n}} = 2^n,
+\]
+so we have to check the cases when \(a = 1, 2, 3\).
+\\\\
+\(\bullet\) If \(a = 1\) then using the trivial upper bound estimation \(\varphi(b) \leq b - 1\) we get \(n \geq \varphi(n + 1) = 2^n\), which never holds for \(n \geq 1\).
+\\
+\(\bullet\) If \(a = 2\) or \(a = 3\) this is more subtle. To have \(3^n + n > 6\) we need for \(a = 3\) that \(n \geq 2\) and for \(a = 2\) that \(n \geq 3\). We see that \((3,3)\) works: indeed \(\varphi(30) = 30 \left(1 - \frac{1}{2}\right) \left(1 - \frac{1}{3}\right) \left(1 - \frac{1}{5}\right) = 8 = 2^3\). Since \((3,2)\) and \((2,3)\) don't satisfy the property (easy to check) and \((3,3)\) does, we can assume \(n \geq 4\). Now we claim that there is no integer \(n \geq 4\) satisfying for \(a \in \{2,3\}\):
+\[
+\varphi \left( a^n + n \right) = 2^n.
+\]
+We proceed as follows:
+\\\\
+If an integer \( m \geq 2 \) satisfies
+\[
+\varphi(m) = 2^k,
+\]
+then every odd prime \( p \) dividing \( m \) must satisfy
+\[
+p - 1 = 2^j.
+\]
+Indeed, writing \(m = 2^k \cdot p_1^{e_1} \cdots p_r^{e_r}\) for some distinct odd primes \(p_i\), \(k \geq 0\) and \(e_1, \ldots, e_r \geq 1\), since \(\varphi(m) = 2^{k-1} \cdot p_1^{e_1 - 1} \cdots p_r^{e_r - 1} (p_1 - 1) \cdots (p_r - 1)\), the only way for \(\varphi(m)\) to be a power of \(2\) is that:
+\begin{itemize}
+    \item For each \(i \in \{1, \ldots, r\}\), we have \(e_i = 1\).
+    \item Every odd prime \(p_i\) satisfies \(p_i - 1 = 2^{a_i}\) for some \(a_i \geq 0\). In other words, every odd prime factor of \( m \) is a Fermat prime\footnote{A Fermat prime is a prime number of the form \(2^j + 1\). One can easily see (mental exercise) that \(j\) is necessarily \textbf{again} a power of \(2\). Indeed, if \(j\) is not a power of \(2\), then there is an odd prime \(p \mid j\) and \(2^j + 1 = \left(2^{\frac{j}{p}}\right)^p - (-1)^p = \left(2^{\frac{j}{p}} + 1\right) \left( \sum_{s=0}^{p-1} (-1)^{p-1-s} \left(2^{\frac{j}{p}}\right)^s \right)\), which is a non-trivial factorization of \(2^j + 1\) since \(1 < 2^{\frac{j}{p}} + 1 < 2^j + 1\), contradicting the fact that \(2^j + 1\) is a prime number. \textit{Nota bene}: the only known Fermat primes are \(3 = 2^{(2^0)} + 1\), \(5 = 2^{(2^1)} + 1\), \(17 = 2^{(2^{2})} + 1\), \(257 = 2^{(2^{3})} + 1\), and \(65537 = 2^{(2^{4})} + 1\), and we don't know if there are infinitely many of them.}.
+\end{itemize}
+Hence \(2^n = \varphi(m) = 2^{k-1} \prod_{i=1}^r 2^{a_i}\), and so the following equality holds:
+\[
+k - 1 + \sum_{i=1}^r a_i = n.
+\]
+If we let \(n \geq 4\), \(a \in \{2,3\}\), and
+\[
+m = a^n + n,
+\]
+with \(\varphi(m) = 2^n\), then with the same notation as before:
+\[
+a^n + n = 2^k \cdot p_1 \cdots p_r = 2^k \left(2^{a_1} + 1\right) \cdots \left(2^{a_r} + 1\right),
+\]
+for \(k \geq 0\) and some distinct odd primes \(p_i = 2^{a_i} + 1\) with \(a_i \geq 1\) (as \(p_i\) is odd) (the \(a_i\) are powers of \(2\), but this is not needed here). Moreover, the equality \(k - 1 + \sum_{i=1}^r a_i = n\) holds. Without loss of generality, order the exponents:
+\[
+1 \leq a_1 < \cdots < a_r.
+\]
+Now let us attack each case ($a=2$ or $a=3$ with $n\geq 4$) separately:
+\\\\
+-If \(a = 2\), then if \(6 < 2^n + n\) is a prime number, this means that \(k = 0\) and \(r = 1\), and \(-1 + a_1 = n\), so that \(2^n + n = 2^{a_1} + 1 = 2^{n+1} + 1\), and thus \(n = 2^n + 1 > 2^n > n\), which is a contradiction. Thus, \(2^n + n\) satisfying the property cannot be a prime number. Hence, it is composite. We have the following classical upper bound for the Euler totient for a composite natural number \(m\):
+\[
+\varphi(m) = m \prod_{p \mid m} \left(1 - \frac{1}{p}\right) \leq m \left(1 - \frac{1}{\min \left\{ p \in \mathbb{P} \mid p \mid m \right\}}\right) = m - \frac{m}{\min \left\{ p \in \mathbb{P} \mid p \mid m \right\}}.
+\]
+And since \(m\) is composite (we use it here), \(\min \left\{ p \in \mathbb{P} \mid p \mid m \right\} \leq \sqrt{m}\), so that:
+\[
+\varphi(m) \leq m - \sqrt{m}.
+\]
+Using this upper bound estimation, we get:
+\[
+2^n + n - \sqrt{2^n + n} \geq \varphi \left(2^n + n\right) = 2^n.
+\]
+Noticing that the function \(f\) defined on \(\mathbb{R}_+\) by \(f(x) = x - \sqrt{2^x + x}\) is always negative (because for all $x\geq 0$ we have $x(x-1)<x^2<2^x$ since $\ln(x)<\frac{x}{2}$), we conclude that the above inequality cannot hold for \(n \geq 1\). This shows that there is no integer \(n \geq 4\) such that \(\varphi(2^n + n) = 2^n\).
+\\\\
+-If \(a = 3\), then by induction, one has the following fact:
+\[
+t \geq 1 \implies 2^t + 1 \leq 3^t \text{ with equality only at } t = 1,
+\]
+\[
+t \geq 3 \implies 2^t < 2^t + 1 < 3^{t-1}.
+\]
+With this in mind, we obtain easily:
+\\\\
+If there exists \(a_i\) with \(a_i \geq 3\) (in particular, this occurs if \(r \geq 3\), as then for \(r \geq i > 2\) we have \(a_i \geq 3\)), then \(2^{a_i} + 1 < 3^{a_i - 1}\), which yields:
+\[
+3^n < 3^n + n = 2^k \left(2^{a_1} + 1\right) \cdots \left(2^{a_r} + 1\right) < 2^k 3^{a_i - 1} \prod_{\substack{t=1 \\ t \neq i}}^r 3^{a_t} = 2^k 3^{n - k} \leq 3^n,
+\]
+which is a contradiction. Thus, in particular, \(1 \leq r \leq 2\), and all \(a_i\) belong to \(\{1,2\}\).
+\\\\
+If \(k \geq 3\), then:
+\[
+3^n < 3^n + n = 2^k \left(2^{a_1} + 1\right) \cdots \left(2^{a_r} + 1\right) \leq 2^k 3^{a_1} \cdots 3^{a_r} \leq 2^k 3^{n + 1 - k} \leq 3^{k - 1} 3^{n + 1 - k} = 3^n,
+\]
+which is again a contradiction, so \(0 \leq k \leq 2\).
+\\\\
+Summarizing, we have that a solution $3^n+n$ must be in the following set:
+\[
+\left\{3^j + j \mid j \in \mathbb{N}, j \geq 4\right\} \cap \left\{2^k \left(2^a + 1\right)^{\epsilon_a} \left(2^b + 1\right)^{\epsilon_b} \mid k \in \{0,1,2\}, a,b \in \{1,2\}, \epsilon_a, \epsilon_b \in \{0,1\}, a \neq b \right\}
+\]
+\[
+= \left\{3^j + j \mid j \in \mathbb{N}, j \geq 4\right\} \cap \left\{2^k 3^{\epsilon} 5^{\epsilon'} \mid k \in \{0,1,2\}, \epsilon, \epsilon' \in \{0,1\} \right\}
+\]
+\[
+= \{85\} \cap \left\{1, 3, 5, 9, 15, 25, 2, 6, 10, 18, 30, 50, 4, 12, 20, 36, 60, 100\right\} = \varnothing.
+\]
+This shows that there is no integer \(n \geq 4\) such that \(\varphi(3^n + n) = 2^n\).
+\\\\
+To summarize, the only pairs that work are \(\left\{(2,1), (3,1), (3,3), (5,1)\right\}\), and this concludes.
+\end{solution}

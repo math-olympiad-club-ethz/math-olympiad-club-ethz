@@ -1,0 +1,34 @@
+% title:          Quadratic iteration covering residues mod 225
+% area:           congruences, recurrences
+% methods:        chinese-remainder, construction
+% difficulty:
+% difficulty-ai:  easy
+% status:         partial
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         icmc
+% origin-date:    2025-02-23
+% origin-number:  Round 2, Problem 3
+% also-in:
+% taken-from:
+% references:     ICMC 8 (2024-2025), Round Two, 23 February 2025, Problem 3 (proposed by Dylan Toh) - https://icmathscomp.org/files/2024-2025/ICMC_8.2_paper.pdf; official solutions (answer: yes, e.g. a = 150, b = 1, c = 1) - https://icmathscomp.org/files/2024-2025/ICMC_8.2_solutions.pdf; background: a special case of Coveyou's 1969 criterion for a quadratic map mod p^N to be a single cycle (checked mod p^3 for p = 2, 3, mod p^2 otherwise), as stated in V. Anashin, 'Non-Archimedean analysis, T-functions, and cryptography', Sect. 6.1 - https://arxiv.org/pdf/cs/0612038
+% history:        ai
+\begin{problem}
+Do there exist positive integers \( a, b, c < 225 \) such that, for the quadratic
+\( f(z) = az^2 + bz + c \), the sequence \( 0, f(0), f(f(0)), f(f(f(0))), \ldots \), leaves every possible
+remainder when divided by 225?
+\end{problem}
+\begin{solution}
+Notice that if such a polynomial exists, then \([a]_{225} \notin \left( \mathbb{Z} / 225 \mathbb{Z} \right)^{\times}\); otherwise, \([f(z)]_{225} = [a]_{225} \cdot \left( [z]_{225} - \alpha \right)^{2} + \beta\) for certain \(\alpha, \beta \in \mathbb{Z} / 225 \mathbb{Z}\) (by completing the square) but the squaring function over $\mathbb{Z}/n\mathbb{Z}$ is never bijective (because 1 and -1 are send to 1)\footnote{In general, the squaring function induces a group morphism \(\cdot^2|_{(\mathbb{Z}/n\mathbb{Z})^\times}: (\mathbb{Z}/n\mathbb{Z})^\times \longrightarrow (\mathbb{Z}/n\mathbb{Z})^\times, \quad x \mapsto x^2.\) Any element of \(\mathbb{Z}/n\mathbb{Z} \setminus (\mathbb{Z}/n\mathbb{Z})^\times\) cannot have its square in \((\mathbb{Z}/n\mathbb{Z})^\times\), otherwise the element itself would be invertible. Hence, the squaring function on \(\mathbb{Z}/n\mathbb{Z}\) misses at least as many elements as it does on the group of units, which, by the isomorphism theorem, is a number strictly larger than zero: 
+\[
+\varphi(n) - \frac{\varphi(n)}{\left|\ker\left(\cdot^2|_{(\mathbb{Z}/n\mathbb{Z})^\times}\right)\right|}\geq \varphi(n) - \frac{\varphi(n)}{2} = \frac{\varphi(n)}{2} > 0 \text{ where }\varphi\text{ is \href{https://en.wikipedia.org/wiki/Euler\%27s_totient_function}{Euler's totient function}}.
+\]
+One can analyse in more detail the squares in \(\mathbb{Z}/n\mathbb{Z}\) using the Chinese remainder theorem: 
+\[
+\mathbb{Z}/n\mathbb{Z} \simeq \prod_{p\in\mathbb{P},\, p|_{\mathbb{Z}}n} \mathbb{Z}\big/p^{v_p(n)}\mathbb{Z},
+\]
+reducing the study to the squares modulo prime powers where we can apply \href{https://en.wikipedia.org/wiki/Hensel\%27s_lemma}{Hensel's lemma}.} and so not all residue can be written as \( [a]_{225} \cdot \left( [z]_{225} - \alpha \right)^{2} + \beta\). However, it is well known that squaring in \(\mathbb{Z} / n \mathbb{Z}\) is never a bijection, so we shall not be able to reach all elements modulo \(225\). Therefore \(3 \mid_{\mathbb{Z}} a\) or \(5 \mid_{\mathbb{Z}} a\). Furthermore, we notice that we can, by induction, always factorise \([c]_{225}\) in each \([f^{\circ n}(0)]_{225}\), so that each residue can be written as a product of \([c]_{225}\) with an element of \(\mathbb{Z}/225\mathbb{Z}\). Since for all \(\alpha \in \mathbb{Z} / 225 \mathbb{Z}\), the map \(\alpha \cdot : \mathbb{Z} / 225 \mathbb{Z} \rightarrow \mathbb{Z} / 225 \mathbb{Z}\) is a bijection if and only if \(\alpha \in \left( \mathbb{Z} / 225 \mathbb{Z} \right)^{\times}\), we must have \([c]_{225}\in\left(\mathbb{Z}/225\mathbb{Z}\right)^{\times}\). This also means that, if \(a, b, c\) that work, then so does \(a', b', 1\), where \([a']_{225} = [c]_{225}^{-1} \cdot [a]_{225}\) and \([b']_{225} = [c]_{225}^{-1} \cdot [b]_{225}\). Hence, we can reduce our search to positive integer \(a, b<225\) such that \(3 \mid_{\mathbb{Z}} a\) or \(5 \mid_{\mathbb{Z}} a\). Let us take the simplest pair satisfying the condition, with \(a = 3\) and \(b = 1\), so that our function is \(f(x) = 3x^{2} + x + 1\).
+\\\\
+By the Chinese Remainder Theorem, \(\mathbb{Z} / 225 \mathbb{Z} \cong \mathbb{Z} / 9 \mathbb{Z} \times \mathbb{Z} / 25 \mathbb{Z}\), so it suffices to show that the sequence leaves all remainders when divided by \(9\) and all remainders when divided by \(25\), because then, since \(\gcd(9, 25) = 1\), we would be able to obtain each pair of remainders and, through the isomorphism above, therefore each remainder when divided by \(225\). This is indeed the case, as one can check:
+\textcolor{red}{to finish}
+\end{solution}

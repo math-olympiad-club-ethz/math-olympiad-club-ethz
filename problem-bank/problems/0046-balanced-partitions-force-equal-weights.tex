@@ -1,0 +1,176 @@
+% title:          Balanced partitions force equal weights
+% area:           vector-spaces, combinatorics
+% methods:        linear-algebra-method, determinant-argument, reduction-mod-p, invariants
+% difficulty:
+% difficulty-ai:  medium
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         moscow-mo
+% origin-date:    1949
+% origin-number:  Round 2, Grades 7-8, Problem 3
+% also-in:        putnam, book
+% taken-from:
+% references:     Moscow Mathematical Olympiad 1949 (XII), Round 2, Grades 7-8, Problem 3, also set as Grades 9-10, Problem 3 (13 integer weights; any 12 balance six against six). Source: Prasolov et al., Moskovskie matematicheskie olimpiady 1935-1957 (MCCME 2010), statement p. 32, solution pp. 214-215. The solution's comment extends it to non-integer weights through a Q-basis reduction - https://old.mccme.ru/free-books/olymp/mmo-35-57.pdf; Shklarsky, Chentzov, Yaglom, The USSR Olympiad Problem Book (1962), Introductory Problems, Problem 9 (thirteen gears), listed as XII Moscow Olympiad (1949), Type II - https://archive.org/download/shklarsky-chentzov-yaglom-the-ussr-olympiad-problem-book/Shklarsky%2C%20Chentzov%2C%20Yaglom%20-%20The%20USSR%20Olympiad%20Problem%20Book_djvu.txt; Sixty-odd years of Moscow Mathematical Olympiads, hint to Problem 12.2.7-8.3 - https://vdoc.pub/documents/60-odd-years-of-moscow-mathematical-olympiads-2rmkfebo0u7g; 34th Putnam 1973, B1, the general version with integers - https://prase.cz/kalva/putnam/psoln/psol737.html; Alfutova & Ustinov, Algebra i teoriya chisel (MCCME 2002), Problem 09.100, parts (a) integer, (b) rational, (c) real weights - https://www.problems.ru/view_problem_details_new.php?id=61350; legacy note: came from a discussion with Clement Hongler in Budapest (July 2024).
+% history:        ai
+\begin{problem}
+There is an odd number ($2 \cdot n + 1 > 0$) of stones with real weights satisfying the following property: if we remove any stone from the $2 \cdot n + 1$, then there is a way to partition the rest of the stones into two sets of size $n$, such that the sum of the weights of the stones in both sets is equal. Show that all stones have the same weight.
+\end{problem}
+\begin{solution}
+Reformulated with a first-order formula of two free variables $\mathbf{y}, n$ (obviously in an extension by definition of set theory for the new notation):
+$$
+\phi(\mathbf{y}, n):\begin{cases}
+n \in \mathbb{N} \\
+\wedge \\
+\mathbf{y}: 2 \cdot n + 1 \to \mathbb{R} \\
+\wedge \\
+\forall j \in 2 \cdot n + 1 \, \exists \tau_j: 2 \cdot n \overset{\text{bij}}{\rightarrow} 2 \cdot n + 1 \setminus \{j\} \, \sum_{k \in n} \mathbf{y}(\tau_j(k)) = \sum_{t \in 2 \cdot n \setminus n} \mathbf{y}(\tau_j(t))
+\end{cases}
+$$
+We need to show:
+$$
+\forall \mathbf{y} \forall n \, \phi(\mathbf{y}, n) \rightarrow | \operatorname{ran}(\mathbf{y}) | = 1
+$$
+
+
+\textit{Solution 1.} Define the weight vector $\mathbf{x}$ and the matrix \( M \in \left\{-1, 0, 1\right\}^{(2n+1) \times (2n+1)} \) whose rows are composed of the vectors \( v_i \), each consisting of \( n \) entries equal to \( 1 \), \( n \) entries equal to \( -1 \), and a single \( 0 \) in position \( i \), in such a way that each row corresponds to a valid stone removal permutation. Clearly, the vector \( \mathbf{1} \) lies in the kernel of \( M \), and by construction, so does the vector \( \mathbf{x} \).
+\\\\
+We claim that \( \dim_{\mathbb{R}}\left(\operatorname{Im}(M)\right) = 2n \), so that, by a dimensional argument, \( \ker(M) = \mathbb{R} \mathbf{1} \), hence there exists \( \lambda \in \mathbb{R} \) such that \( \lambda \mathbf{1} = \mathbf{x} \), as desired.
+\\\\
+From the above observation, we know that \( \dim_{\mathbb{R}}\left(\operatorname{Im}(M)\right) \leq 2n \). To prove equality, note that \( \dim_{\mathbb{R}}\left(\operatorname{Im}(M)\right) = \dim_{\mathbb{R}}\left(\operatorname{Im}\left(M^T\right)\right) \), so it suffices to show that \( \dim_{\mathbb{R}}\left(\operatorname{Im}\left(M^T\right)\right) = 2n \).
+\\\\
+Let us show that \( \operatorname{Im}\left(M^T\right) = \left\langle \left\{ v_i \mid 0\leq i < 2n+1 \right\} \right\rangle \) has dimension \( 2n \). Define \( v_i' := v_i + \mathbf{1} \); this new vector is composed of \( 0 \)s instead of \( -1 \)s, \( 1 \) instead of \( 0 \), and \( 2 \)s instead of \( 1 \).
+\\\\
+Consider the matrix \( \tilde{M} := M^T + \left( \mathbf{1}, \ldots, \mathbf{1} \right) \). Modulo \( 2 \), this matrix reduces to the identity matrix, i.e., \( \tilde{M} \equiv I \pmod{2} \). Therefore, (as \(\det_{\mathbb{R}}\left(\tilde{M}\right)\in\mathbb{Z}\)) we have \( \det_{\mathbb{R}}\left(\tilde{M}\right) \equiv 1 \pmod{2} \), implying that \( \det_{\mathbb{R}}\left(\tilde{M}\right) \neq 0 \) and hence \( \tilde{M} \) is invertible. Consequently, \( \mathbb{R}^{2n+1} = \operatorname{Im}\left(\tilde{M}\right) = \left\langle \left\{ v_i' \mid 0\leq i < 2n+1 \right\} \right\rangle_{\mathbb{R}} \).
+\\\\
+Since
+\[
+\left\{ v_i' \mid 0\leq i < 2n+1 \right\} \subset \left\langle \left\{ v_i \mid 0\leq i < 2n+1 \right\} \cup \left\{ \mathbf{1} \right\} \right\rangle_{\mathbb{R}},
+\]
+we have that:
+\[
+\mathbb{R}^{2n+1} = \mathbb{R} \mathbf{1} + \left\langle \left\{ v_i \mid i < 2n+1 \right\} \right\rangle_{\mathbb{R}}.
+\]
+We claim that the sum is direct. Suppose, for contradiction, that \( \mathbf{1} \in \left\langle \left\{ v_i \mid i < 2n+1 \right\} \right\rangle_{\mathbb{R}} \). Then \( \left\{ v_i' \mid i < 2n+1 \right\} \subset \left\langle \left\{ v_i \mid i < 2n+1 \right\} \right\rangle_{\mathbb{R}} \), which would imply \( \left\langle \left\{ v_i \mid i < 2n+1 \right\} \right\rangle_{\mathbb{R}} = \mathbb{R}^{2n+1} \). This implies
+\[
+2n+1 = \dim\left( \left\langle \left\{ v_i \mid i < 2n+1 \right\} \right\rangle_{\mathbb{R}}\right) = \dim\left( \operatorname{Im}\left(M^T\right) \right) \leq 2n,
+\]
+a contradiction. Therefore, \( \mathbf{1} \notin \left\langle \left\{ v_i \mid i < 2n+1 \right\} \right\rangle \). By vector space theory (i.e. module theory) we have:
+\[
+\dim_{\mathbb{R}}\left( \left\langle \left\{ v_i \mid i < 2n+1 \right\}\right\rangle_{\mathbb{R}}\right) = 2n,
+\]
+and hence \( \dim_{\mathbb{R}}\left( \operatorname{Im}(M) \right) = 2n \), as desired.
+\\\\
+\textit{Solution 2.}
+Notice that for any $\mathbf{x}: 2 \cdot n + 1 \to \mathbb{R}$ and $n \in \mathbb{N}$, the property $\phi(\mathbf{x}, n)$ is invariant under multiplication and shift, meaning that if $\alpha \in \mathbb{R}$, then:
+$$
+\phi(\mathbf{x}, n) \rightarrow \phi(\mathbf{x} + \alpha, n) \wedge \phi(\alpha \cdot \mathbf{x}, n)
+$$
+$\bullet$ We first start by showing an easier version of the problem:
+$$
+\forall \mathbf{y} \forall n \left( \operatorname{ran}(\mathbf{y}) \subset \mathbb{Q} \wedge \phi(\mathbf{y}, n) \right) \rightarrow | \operatorname{ran}(\mathbf{y}) | = 1
+$$
+Let us therefore fix $n \in \mathbb{N}$ and $\mathbf{x}: 2 \cdot n + 1 \to \mathbb{Q}$ with the property $\phi(\mathbf{x}, n)$.
+
+- If $n = 0$ then this is trivial as there is only one stone.
+
+- If $n \geq 1$ then we have two cases:
+
+1. If $\{x_i\}_{i \in 2 \cdot n + 1} = \{0\}$, then we are done.
+
+2. If not, then there is at least one non-zero $x_j \neq 0$ for some $j \in 2 \cdot n + 1$, i.e., say for a subset $\varnothing \neq A \subset 2 \cdot n + 1$ we can write $\{x_i = \frac{p_i}{q_i}\}_{i \in A} \subset \mathbb{Q} \setminus \{0\}$ with $p_i, q_i \in \mathbb{Z}^{*} \times \mathbb{N}^{*}$ and $\gcd(p_i, q_i) = 1$. Then the solution $\phi(\mathbf{x}, n)$ gives us an integer solution with at least one non-zero weight by considering:
+$$
+\phi(\mathbf{x}':= \text{lcm}(q_i)_{i \in A} \cdot \mathbf{x}, n)
+$$
+as $0 \neq x'_j \in \{x'_i \mid i \in A\} \subset \operatorname{ran}(\mathbf{x}') \subset \mathbb{N}$.
+\\
+This leads to a solution with at least one zero-weighted stone by considering:
+$$
+\phi(\mathbf{x}'' := \mathbf{x}' - \min \operatorname{ran}(\mathbf{x}'), n)
+$$
+say $x''_t = 0$ for some $t \in 2 \cdot n + 1$. This means $\{0\} \subset \operatorname{ran}(\mathbf{x}'')$.
+\\
+In fact, we claim $\{0\} = \operatorname{ran}(\mathbf{x}'')$ which will conclude: $\operatorname{ran}(\mathbf{x}) = \{\text{lcm}(q_i)_{i \in A}^{-1} \cdot \min \operatorname{ran}(\mathbf{x}')\}$ and so $\mathbf{x}$ will be a constant function. Therefore, suppose towards a contradiction that
+$$
+\operatorname{ran}(\mathbf{x}'') \cap \mathbb{Z} \setminus \{0\} \neq \varnothing
+$$
+This means that the following is well defined:
+$$
+0 \leq k := \max \left\{ k' \in \mathbb{N} \mid \forall x''_i \in \operatorname{ran}(\mathbf{x}''), 2^{k'} \mid_{\mathbb{Z}} x''_i \right\} \in \mathbb{N}
+$$
+We have that $\mathbf{z} := 2^{-k} \cdot \mathbf{x}''$ is by construction still an integer number solution with a zero-weighted stone $z_t = x''_t = 0$ and an odd-weighted stone $z_r = 2^{-k} \cdot x''_r \in \operatorname{ran}(\mathbf{z}) \cap 2 \cdot \mathbb{N} + 1$ for a certain (by construction of $k$) $t \neq r \in 2 \cdot n + 1 > 1$ with $2^{k+1} \nmid_{\mathbb{Z}} x''_r$:
+$$
+0 \in \operatorname{ran}(\mathbf{z}) \wedge \operatorname{ran}(\mathbf{z}) \cap 2 \cdot \mathbb{N} + 1 \neq \varnothing \wedge \phi(\mathbf{z}, n)
+$$
+From $\phi(\mathbf{z}, n)$ we have choosing $z_t = 0$ and $z_r \in 2 \cdot \mathbb{N} + 1$ respectively that $\exists \tau_t: 2 \cdot n \overset{\text{bij}}{\rightarrow} 2 \cdot n + 1 \setminus \{t\} \exists \tau_r: 2 \cdot n \overset{\text{bij}}{\rightarrow} 2 \cdot n + 1 \setminus \{r\}$ with:
+$$
+\sum_{l \in n} \mathbf{z}(\tau_t(l)) = \sum_{w \in 2 \cdot n \setminus n} \mathbf{z}(\tau_t(w)) =: E_1 \in \mathbb{N}
+$$
+and
+$$
+\sum_{l \in n} \mathbf{z}(\tau_r(l)) = \sum_{w \in 2 \cdot n \setminus n} \mathbf{z}(\tau_r(w)) =: E_2 \in \mathbb{N}
+$$
+In particular, the total weight of the stones must be at the same time even and odd:
+$$
+\sum_{i \in 2 \cdot n + 1} z_i = z_t + \sum_{l \in n} \mathbf{z}(\tau_t(l)) + \sum_{w \in 2 \cdot n \setminus n} \mathbf{z}(\tau_t(w)) = 0 + E_1 + E_1 = 2 \cdot E_1 \in 2 \cdot \mathbb{N}
+$$
+and
+$$
+\sum_{i \in 2 \cdot n + 1} z_i = z_r + \sum_{l \in n} \mathbf{z}(\tau_r(l)) + \sum_{w \in 2 \cdot n \setminus n} \mathbf{z}(\tau_r(w)) = z_r + E_2 + E_2 = z_r + 2 \cdot E_2 \in 2 \cdot \mathbb{N} + 1
+$$
+a contradiction with:
+$$
+\left(2 \cdot \mathbb{N}\right) \cap \left(2 \cdot \mathbb{N} + 1\right) = \varnothing
+$$
+Therefore $\{0\}=\operatorname{ran}(\textbf{x}'')$ i.e. $\textbf{x}$ is constant. Since $n$ and $\textbf{x}$ were arbitrary we indeed have $$\forall \textbf{x} \forall n \left( \operatorname{ran}(\textbf{x}) \subset \mathbb{Q} \wedge \phi(\textbf{x}, n) \right) \rightarrow |\operatorname{ran}(\textbf{x})| = 1$$
+\\\\
+$\bullet$ Having solved for rational weights, we now use this for the general case, i.e., $\operatorname{ran}(\textbf{x}) \subset \mathbb{R}$. The idea is to apply $dim_{\mathbb{Q}}(\langle \operatorname{ran}(\textbf{x}) \rangle_{\mathbb{Q}})$, the result for the rational case, to certain rational weights. We will express each $x_i$ as a unique $\mathbb{Q}$-linear combination of elements in a certain basis of $\operatorname{ran}(\textbf{x})$. Conceptually, this will form a matrix with rational coefficients, where the $i$-th row (indexed by the basis) corresponds to those unique weighted rational coefficients in the expression of $x_i$. By using the fact that $\textbf{x}$ satisfies the property, we will deduce that each column of this matrix gives us a set of rational weighted coefficients which also satisfies the property. Therefore, by applying the result for the rational case on each column, we deduce that each of them consists of only one rational number. From this, we then easily see that each $x_i$ must be equal. 
+\\\\
+We formalize this more properly: Let us therefore fix $n \in \mathbb{N}$ and $\mathbf{x}: 2 \cdot n + 1 \to \mathbb{R}$ with the property $\phi(\mathbf{x}, n)$.
+
+- If $n = 0$ then this is trivial as there is only one stone.
+
+- If $n \geq 1$ then we have two cases:
+
+1. If $\{x_i\}_{i \in 2 \cdot n + 1} = \{0\}$, then we are done.
+
+2. If not, then there is at least one non-zero $x_j \neq 0$ for some $j \in 2 \cdot n + 1$, in this case we choose a subset $\varnothing\subsetneq S \subset \{x_i\}_{i \in 2n + 1}$ with the property:
+\[
+\langle \{x_i\}_{i \in 2n + 1} \rangle_{\mathbb{Q}} = \bigoplus_{x_i \in S} \mathbb{Q} \cdot x_i
+\]
+(i.e., a $\mathbb{Q}$-basis of $\langle \{x_i\}_{i \in 2n + 1} \rangle_{\mathbb{Q}}$ within $\{x_i\}_{i \in 2n + 1}$. To do it more formally, we simply note that the set of free $\mathbb{Q}$-families in $\operatorname{ran}(\textbf{x})$ is non-empty as it contains $\{x_j\}$, and so it suffices to take one free family with maximal cardinality; such a family must be a basis).
+\\\\
+Now, for each $i \in 2n + 1$, we know by construction of the $\mathbb{Q}$-basis that there exists $\sigma_i: S \rightarrow \mathbb{Q}$ with
+\[
+x_i = \sum_{x_j \in S} \sigma_i(x_j) \cdot x_j
+\]
+i.e., $x_i$ is a $\mathbb{Q}$-linear combination of the elements of the $\mathbb{Q}$-basis $S$ (these represent the rows of the matrix). To get the columns of the matrix, we define for each $x_j \in S$:
+\[
+\Delta_{x_{j}}(i) := \sigma_i(x_j)
+\]
+Let us show that for each $x_h \in S$, $\phi(\Delta_{x_{h}}, n)$. Take $l \in 2n + 1$. Since $\phi(\textbf{x}, n)$, we have that $\exists \tau_l : 2n \overset{\text{bij}}{\rightarrow} 2n + 1 \setminus \{l\}$ with:
+\[
+\sum_{k \in n} x_{\tau_l(k)} = \sum_{t \in 2n \setminus n} x_{\tau_l(t)}
+\]
+which becomes, by definition, substitution, and switching the finite sums:
+\begin{align*}
+\sum_{x_j \in S} \sum_{k \in n} \Delta_{x_{j}}(\tau_{l}(k)) \cdot x_j &= \sum_{x_j \in S} \sum_{k \in n} \sigma_{\tau_{l}(k)}(x_j) \cdot x_j \\
+&= \sum_{k \in n} \sum_{x_j \in S} \sigma_{\tau_{l}(k)}(x_j) \cdot x_j \\
+&= \sum_{t \in 2n \setminus n} \sum_{x_j \in S} \sigma_{\tau_{l}(t)}(x_j) \cdot x_j \\
+&= \sum_{x_j \in S} \sum_{t \in 2n \setminus n} \sigma_{\tau_{l}(t)}(x_j) \cdot x_j \\
+&= \sum_{x_j \in S} \sum_{k \in 2n \setminus n} \Delta_{x_{j}}(\tau_{l}(k)) \cdot x_j
+\end{align*}
+Since $S$ is free, we must have the uniqueness of the coefficients, for each $x_j \in S$:
+\[
+\sum_{k \in n} \Delta_{x_{j}}(\tau_{l}(k)) = \sum_{k \in 2n \setminus n} \Delta_{x_{j}}(\tau_{l}(k))
+\]
+and since $l \in 2n + 1$ was arbitrary, we conclude $\forall x_j \in S$ that $\phi(\Delta_{x_{j}}, n)$. Since for each $x_j \in S$ we have $\operatorname{ran}(\Delta_{x_{j}}) \subset \mathbb{Q}$, we may apply $|S| = dim_{\mathbb{Q}}(\langle \operatorname{ran}(\textbf{x}) \rangle_{\mathbb{Q}})$ times the result for rational weights to obtain that each $\Delta_{x_{j}}$ is constant and therefore we have for each $d, e \in 2n + 1$:
+\[
+\sigma_d(x_j) = \Delta_{x_{j}}(d) = \Delta_{x_{j}}(e) = \sigma_e(x_j)
+\]
+Therefore, for each $d, e \in 2n + 1$:
+\[
+x_d - x_e = \sum_{x_j \in S} \sigma_{d}(x_j) \cdot x_j - \sum_{x_j \in S} \sigma_{e}(x_j) \cdot x_j = \sum_{x_j \in S} (\sigma_{d}(x_j) - \sigma_{e}(x_j)) \cdot x_j = 0
+\]
+So for each $d, e \in 2n + 1$ we have $x_e = x_d$. This concludes that $|\operatorname{ran}(\textbf{x})| = 1$.
+\end{solution}

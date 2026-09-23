@@ -1,0 +1,47 @@
+% title:          Interval length at least pi
+% area:           derivatives, analytic-inequalities
+% methods:        construction
+% difficulty:
+% difficulty-ai:  easy
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         imc
+% origin-date:    1994-07-29
+% origin-number:  Day 1, Problem 2
+% also-in:
+% taken-from:
+% references:     IMC 1994 (1st IMC, Plovdiv), Day 1, Problem 2, official problems & solutions - https://www.imc-math.org.uk/imc1994/prob_sol.pdf; Kalva archive, 1st IMC 1994, A2 - https://prase.cz/kalva/imc/imc94.html; reused as Problem 10.28 (1994) in M. A. Daas, 'A Brief IMC Training' (Emory Putnam notes) - http://www.cs.emory.edu/~mic/putnam/general/IMC.pdf
+% history:        ai
+\begin{problem}
+Let \( f \in C^1\left( \left]a, b\right[, \mathbb{R} \right) \) with \( \lim_{x \to a^+} f(x) = +\infty \), \( \lim_{x \to b^-} f(x) = -\infty \), and  
+\( f'(x) + f^2(x) \geq -1 \) for all \( x \in \left]a, b\right[ \). Prove that \( b - a \geq \pi \) and give an example where \( b - a = \pi \).
+\end{problem}
+\begin{solution}
+From the inequality, we obtain:
+\[
+\frac{\mathrm{d}}{\mathrm{d}x} \left( \arctan(f(x)) + x \right) = \frac{f'(x)}{1 + f^2(x)} + 1 \geq 0
+\]
+for all \( x \in \left]a, b\right[ \). Therefore, the function \( \arctan(f(x)) + x \) is non-decreasing on \( \left]a, b\right[ \). Taking limits as \( x \) approaches the endpoints, we get:
+\[
+\lim_{x\underset{>}{\to} a} \left( \arctan(f(x)) + x \right) = \frac{\pi}{2} + a, \quad \lim_{x\underset{<}{\to} b} \left( \arctan(f(x)) + x \right) = -\frac{\pi}{2} + b.
+\]
+Hence,
+\[
+\frac{\pi}{2} + a \leq -\frac{\pi}{2} + b,
+\]
+which implies \( b - a \geq \pi \).
+\\\\
+Equality is achieved when:
+\[
+f(x) = \cot(x) = \frac{\cos(x)}{\sin(x)}, \quad a = 0, \quad b = \pi,
+\]
+since for any \( x \in \left]0, \pi\right[ \), we have:
+\[
+f'(x) + f^2(x) = -\frac{1}{\sin^2(x)} + \frac{\cos^2(x)}{\sin^2(x)} = -\frac{\sin^2(x)}{\sin^2(x)} = -1,
+\]
+and the boundary conditions are satisfied:
+\[
+\lim_{x \underset{>}{\to} 0^+} \cot(x) = +\infty, \quad \lim_{ x\underset{<}{\to} \pi} \cot(x) = -\infty.
+\]
+\end{solution}

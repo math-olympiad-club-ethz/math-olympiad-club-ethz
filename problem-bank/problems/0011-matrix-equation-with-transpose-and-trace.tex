@@ -1,0 +1,88 @@
+% title:          Matrix equation with transpose and trace
+% area:           matrices, trace
+% methods:        contradiction, eigenvalue-arguments, trace-argument
+% difficulty:
+% difficulty-ai:  easy
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         imc
+% origin-date:    2011-07-30
+% origin-number:  Day 1, Problem 2
+% also-in:        course
+% taken-from:
+% references:     IMC 2011 (18th IMC, Blagoevgrad), Day 1, Problem 2, proposed by Moubinool Omarjee (Paris); official problems and solutions - https://www.imc-math.org.uk/imc2011/imc2011-day1-solutions.pdf; TCD mirror labelling it A2 - https://www.maths.tcd.ie/pub/Maths/IMC/IMC-2011.pdf; later: Math StackExchange question 2924555 (2018) - https://math.stackexchange.com/questions/2924555/real-matrix-a-3-times-3-such-that-operatornametra-0-and-a2at-i; Warwick IMC Problem Solving Seminar, 'IMC 2023 Training - Linear Algebra' (R. Visser, 25 Jan 2023), problem 28 - https://web.archive.org/web/20240630003258id_/https://warwick.ac.uk/fac/sci/maths/research/events/seminars/areas/imc/2022-23/imc_linear_algebra.pdf
+% history:        ai
+\begin{problem}
+Does there exist a real $3 \times 3$ matrix $A$ such that 
+\[
+\operatorname{tr}(A) = 0
+\quad\text{and}\quad
+A^2 + A^T = I_3,
+\]
+where $\operatorname{tr}(A)$ denotes the trace of $A$, $A^T$ is the transpose of $A$, and $I_3$ is the $3 \times 3$ identity matrix?
+\end{problem}
+\begin{solution}
+We claim that no such real $3 \times 3$ matrix $A$ exists. Suppose, for contradiction, that a matrix $A \in \mathbb{R}^{3\times 3}$ exists with $\operatorname{tr}(A) = 0$ and $A^2 + A^T = I_3$.
+Taking the transpose of the second equation, we obtain
+\[
+I_3 = I_3^T = \left(A^2 + A^T\right)^T = \left(A^2\right)^T + A
+= \left(A^T\right)^2 + A.
+\]
+Using the original assumption $A^2 + A^T = I_3$, we substitute:
+\[
+I_3 = \left(I_3 - A^2\right)^2 + A
+= I_3 - A^2 - A^2 + A^4 + A
+= A^4 - 2A^2 + A + I_3.
+\]
+Thus, we obtain the matrix polynomial equation
+\[
+P(A) = 0_3
+\quad\text{with}\quad P(X) := X^4 - 2X^2 + X \in \mathbb{R}[X],
+\]
+where $0_3$ denotes the $3\times 3$ zero matrix. We now factor the polynomial:
+\[
+P(X) = X^4 - 2X^2 + X
+= X(X-1)\left(X^2 - X - 1\right).
+\]
+It follows that the minimal polynomial of $A$ must divide $P(X)$, and hence the eigenvalues of $A$ must be among
+\[
+\left\{0, 1, \tfrac{-1\pm\sqrt{5}}{2}\right\}.
+\]
+Recalling that the trace of a matrix is the sum of its eigenvalues (counted with multiplicity), we obtain:
+\[
+0 = \operatorname{tr}(A)
+= \sum_{\lambda \in \sigma(A)} \dim_{\mathbb{R}}(\ker(A - \lambda I_3)) \cdot \lambda
+\]
+where $\sigma(A)$ denotes the spectrum of $A$. Moreover, taking the trace of both sides of $A^2 + A^T = I_3$ gives:
+\[
+3 = 3 - 0 = \operatorname{tr}(I_3) - \operatorname{tr}(A)
+= \operatorname{tr}\left(I_3 - A^T\right)
+= \operatorname{tr}\left(A^2\right).
+\]
+Thus,
+\[
+\operatorname{tr}(A^2)
+= \sum_{\mu \in \sigma(A^2)} \dim_{\mathbb{R}}\left(\ker\left(A^2 - \mu I_3\right)\right) \cdot \mu.
+\]
+Since $\sigma\left(A^2\right) = \left\{\lambda^2 \mid \lambda \in \sigma(A)\right\}$\footnote{In general, for any $n \times n$ matrix $B$ over $\mathbb{C}$ (or $\mathbb{R}$), write $B$ in its Jordan canonical form
+\[
+B = V J V^{-1},
+\]
+where $J$ is a block-diagonal matrix consisting of Jordan blocks corresponding to the eigenvalues $\lambda_1, \dots, \lambda_k$ of $B$, and $V$ is invertible. Applying a polynomial $f(X) \in \mathbb{C}[X]$ to $B$ gives:
+\[
+f(B)
+=
+f(V J V^{-1})
+=
+V f(J) V^{-1}.
+\]
+By a simple computation, the matrix $f(J)$ is a block-diagonal matrix consisting of Jordan blocks corresponding to the diagonal entries $f(\lambda_1), \dots, f(\lambda_k)$. By uniqueness of the Jordan form (up to block permutation), $f(J)$ is a block-diagonal matrix consisting of Jordan blocks corresponding to the eigenvalues of $f(B)$ showing that the eigenvalues of $f(B)$ are precisely $\{ f(\lambda) \mid \lambda \in \sigma(B)\}$, although the eigenvectors need not coincide.},
+we obtain:
+\[
+3 = \sum_{\lambda \in \sigma(A)} \dim_{\mathbb{R}}\left(\ker\left(A^2 - \lambda^2 I_3\right)\right) \lambda^2.
+\]
+By direct case-checking of the eigenvalues $\sigma(A) \subset \left\{0, 1, \frac{-1\pm\sqrt{5}}{2}\right\}$, one easily verifies that the two conditions on $\operatorname{tr}(A)$ and $\operatorname{tr}\left(A^2\right)$ cannot be simultaneously satisfied. This yields a contradiction.
+\\\\
+Hence, no real $3 \times 3$ matrix $A$ satisfies both $\operatorname{tr}(A) = 0$ and $A^2 + A^T = I_3$.
+\end{solution}

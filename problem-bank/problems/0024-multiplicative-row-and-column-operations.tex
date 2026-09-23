@@ -1,0 +1,60 @@
+% title:          Multiplicative row and column operations
+% area:           processes, determinant
+% methods:        invariants, determinant-argument
+% difficulty:
+% difficulty-ai:  easy
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         imc
+% origin-date:    2023-08-03
+% origin-number:  Day 2, Problem 6
+% also-in:
+% taken-from:
+% references:     IMC 2023, Day 2, Problem 6, proposed by Alex Avdiushenko (Neapolis University Paphos, Cyprus) - https://www.imc-math.org.uk/?year=2023&section=problems&item=prob6q; official Day 2 questions - https://www.imc-math.org.uk/imc2023/imc2023-day2-questions.pdf; official Day 2 solutions (logarithm/determinant invariant) - https://www.imc-math.org.uk/imc2023/imc2023-day2-solutions.pdf
+% history:        ai
+\begin{problem}
+Ivan writes the matrix
+\[
+A = \begin{bmatrix} 2 & 2 \\ 3 & 4 \end{bmatrix}
+\]
+on the board. Then he performs the following operation on the matrix several times:
+\begin{itemize}
+    \item He chooses a row or a column of the matrix, and
+    \item He multiplies or divides the chosen row or column entry-wise by the other row or column, respectively.
+\end{itemize}
+Can Ivan end up with the matrix
+\[
+B = \begin{bmatrix} 2 & 2 \\ 4 & 3 \end{bmatrix}
+\]
+after finitely many steps?
+\end{problem}
+\begin{solution}
+We show that starting from \( A = \begin{bmatrix} 2 & 2 \\ 3 & 4 \end{bmatrix} \), Ivan cannot reach the matrix \( B = \begin{bmatrix} 2 & 2 \\ 4 & 3 \end{bmatrix} \).
+\\\\
+Notice first that the allowed operations preserve the positivity of entries; all matrices Ivan can reach have only positive entries. The key insight is to recognize that the operations resemble standard row/column addition/subtraction operations (which preserve determinants), but here addition/subtraction is replaced by multiplication/division. This suggests the need for a group morphism. Hence, we define boldly for any matrix \( X = \begin{bmatrix} x_{11} & x_{12} \\ x_{21} & x_{22} \end{bmatrix} \in \mathbb{R}_{>0}^{2 \times 2} \) with positive entries, the following auxiliary logarithmic transformation matrix:
+\[
+L(X) = \begin{bmatrix} \log_2\left(x_{11}\right) & \log_2\left(x_{12}\right) \\ \log_2\left(x_{21}\right) & \log_2\left(x_{22}\right) \end{bmatrix}.
+\]
+By taking logarithms of the entries, which transform multiplication to addition (as it is a group morphism from \( (\mathbb{R}_{>0},\cdot) \) to \( (\mathbb{R},+) \)), Ivan's operations on \( L(X) \) translate to adding or subtracting a row or column of \( L(X) \) to itself. Such standard row and column operations are well known to preserve the determinant. Hence, if Ivan performs one operation on matrix \( X_0 \) to obtain \( X_1 \), then:
+\[
+{\det}_{\mathbb{R}}\left(L(X_0)\right)= {\det}_{\mathbb{R}}\left(L(X_1)\right).
+\]
+By a trivial induction, for any finite sequence of operations of length \( n \geq 0 \), applied recursively starting from \( X_0 \), we obtain the sequence of matrices \( X_0, \dots, X_n \) for which we have:
+\[
+{\det}_{\mathbb{R}}\left(L(X_0)\right)= {\det}_{\mathbb{R}}\left(L(X_n)\right).
+\]
+Thus, a necessary condition to reach \( B \) from \( A \) with a finite sequence of operations on \( A \) is that the corresponding logarithmic matrix satisfies:
+\[
+{\det}_{\mathbb{R}}\left(L(A)\right)= {\det}_{\mathbb{R}}\left(L(B)\right).
+\]
+However,
+\[
+{\det}_{\mathbb{R}}\left(L(A)\right) = \log_2\left(2\right) \cdot \log_2\left(4\right) - \log_2\left(2\right) \cdot \log_2\left(3\right) = \log_2\left(\frac{4}{3}\right) > \log_2\left(1\right) = 0,
+\]
+and
+\[
+{\det}_{\mathbb{R}}\left(L(B)\right) = \log_2\left(2\right) \cdot \log_2\left(3\right) - \log_2\left(2\right) \cdot \log_2\left(4\right) = \log_2\left(\frac{3}{4}\right) < \log_{2}\left(1\right) = 0.
+\]
+That is \( {\det}_{\mathbb{R}}\left(L(B)\right) < 0 < {\det}_{\mathbb{R}}\left(L(A)\right) \) and the two quantities cannot be equal. This proves that Ivan cannot transform \( A \) into \( B \).
+\end{solution}

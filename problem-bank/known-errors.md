@@ -1,0 +1,164 @@
+# Known errors in the problems
+
+Mistakes found in the statements and solutions of `problems/`, not fixed yet: only humans edit the LaTeX.
+Fix the file, then delete its line here. Delete this file when it is empty.
+Line numbers in the entries refer to the old 2025 files (now removed): search the problem file for the quoted text.
+
+## Errors in statements and solutions (142, found during the migration)
+
+- **0002** — (a) The case where Q_1 = (1,1,1,1) although Q_0 is not (e.g. Q_0 = (1/b, b, 1/b, b)) is not treated: the argument starts with 'if at least one number in Q_1 is not 1'. The missing case is trivial (the sequence is then constant and never returns to Q_0) but should be stated.
+- **0002** — (b) The formula for the first entry after r steps needs the indices a_{i+1} taken cyclically modulo 2^k; this is not said. The parity of binom(2^k, i) for 0 < i < 2^k is only hinted at ('the highest power of 2 dividing n is greater than that dividing i or n-i'); the actual deduction (e.g. binom(n,i) = (n/i) binom(n-1,i-1), or Kummer/Lucas) is not written out.
+- **0003** — polynomials_solutions.tex line 28: the expansion is written (11 - 10iz)(11 + 10iz) but the conjugate is (11 + 10i\bar{z}); the resulting value 121 + 100\|z\|^2 + 220 Im z is nevertheless correct.
+- **0003** — polynomials_solutions.tex line 46: 'Both cases is a contradiction' (grammar only).
+- **0006** — Solution (legacy solutions line 14): '$c^2=\frac{c^2}{2}+c$ $c=0$ or $c=2$' is missing the connector ('hence') between the two formulas.
+- **0006** — Final set-builder notation writes '\exists A \subset \mathbb{Z}' inside the set condition; should read 'A \subset \mathbb{Z} with all squares in A'. Mathematically clear, notation unusual.
+- **0007** — Solution, display 'a_n = prod_{i=N}^{n-1} a_{i+1}/a_i < 1/(a_N 2^{n-1-N}) = (a_N^{-1} 2^N + 1)/2^n': the product telescopes to a_n/a_N (the factor a_N is missing) and the last equality is false (1/(a_N 2^{n-1-N}) equals a_N^{-1} 2^{N+1}/2^n). The conclusion n a_n -> 0 still holds since a_n <= C 2^{-n}.
+- **0008** — Arithmetic slip (legacy solutions line 41): with s = -2+k one gets s^2-4s-12 = k^2-8k = k(k-8), not 'k^2-8k-16 = (k-4)^2' (and (k-4)^2 = k^2-8k+16 anyway). The conclusion (>= 0 for s <= -2, i.e. k <= 0) remains true.
+- **0008** — First sentence of the solution: 'we want to show that a/c + c/a + b^2/(ac) + ac/b^2' lacks '<= -12' before 'or equivalently'.
+- **0008** — Minor: 's >= -2 implies (a+b)^2/(ab) > 0' should be '>= 0'; the argument needs s > -2 and t > -2 strictly (the case s = -2 is already covered by the first case).
+- **0009** — The exponent bookkeeping 'k - 1 + sum a_i = n' comes from phi(m) = 2^(k-1) prod(p_i - 1), which is only valid for k >= 1 (m even); when m is odd (k = 0) the correct relation is sum a_i = n. This affects the prime case of a = 2 (n odd) and the a = 3 bounds with k = 0; the conclusions still hold with the corrected relation, but the written derivation is not right as stated.
+- **0009** — Justification of x(x-1) < 2^x via 'x^2 < 2^x since ln(x) < x/2' is wrong for 2 < x < 4 (e.g. 3^2 = 9 > 8) and ln(x) < x/2 gives x^2 < e^x, not 2^x. The inequality x(x-1) < 2^x needed for f(x) = x - sqrt(2^x + x) < 0 is nevertheless true for all x >= 0.
+- **0009** — The final intersection is written '{85} cap {...}' although {3^j + j : j >= 4} is infinite; it is only because every element of the second set is <= 100 that j = 4 is the sole candidate. Correct in effect, sloppy as written.
+- **0010** — Solution, wording only: 'the following set has non empty interior: [x + f'(x), x] disjoint-union [x, x + f'(x)]' followed by 'one of these interval is non empty and the second is empty' is sloppy (one of the two intervals is the empty interval depending on the sign of f'(x)); the argument itself is correct.
+- **0011** — Factorisation typo: P(X) = X^4 - 2X^2 + X = X(X-1)(X^2 + X - 1), not X(X-1)(X^2 - X - 1) as written. The eigenvalue set {0, 1, (-1 +- sqrt5)/2} stated right after is the correct one (roots of X^2 + X - 1).
+- **0011** — Minor rigour gap: tr(A) and tr(A^2) are written as sums over the spectrum weighted by geometric multiplicities dim ker(A - lambda I); this equals the trace only because A is diagonalisable (its minimal polynomial divides P, which has simple roots), which is not stated. Likewise the tr(A^2) formula would double-count if two eigenvalues had the same square (not the case here).
+- **0012** — Dangling cross-reference: the solution says the eigenvalues of A^2 are lambda_i^2 'for the same reason as the previous problem' -- this points to the footnote in legacy Linear Algebra 2 (now 0011), which is no longer adjacent once the problems are split.
+- **0012** — Stylistic: the closing remark reads 'The same result holds for Hermitian matrices as for Hermitian matrices, diagonal entries and eigenvalues are also real' (repeated phrase, missing comma).
+- **0013** — Solution, LaTeX only: 'ln' is typed without the backslash in 'lambda = f(lambda)(1 + ln(f(lambda)))' and in 'h'(t) = 2 + ln(t)' (renders as the italic product of variables l and n); interval notations '[1, +infty[' and '[1, infty)' are mixed. The mathematics is correct.
+- **0014** — Statement uses the unusual notation s(n) = sum_{N ni d \|_Z n} d for the divisor sum (compiles, but odd).
+- **0014** — Typo/redundancy: 'and p_1 cannot divide p_1 + 1, clearly p_1 doesn't divide p_1 + 1' says the same thing twice.
+- **0015** — Solution, definition of f: 'f(x) = 9^x + 4^x + 2^x - 8^x + 6^x + 1' has wrong signs; it should read 9^x + 4^x + 2^x - 8^x - 6^x - 1 (the subsequent computation of f' uses the correct signs).
+- **0015** — Solution, last display (h_8 h_6 h_1 f): the 4^x and 2^x terms carry a minus sign, but ln(4/8) ln(4/6) ln(4) and ln(2/8) ln(2/6) ln(2) are positive products that enter with a plus sign; the following sentence 'k_2, k_4, k_9 > 0' is consistent with the corrected signs, so the conclusion stands.
+- **0016** — Minor: 'there is p-(i+1) factor' should read 'factors'; the interval is written in French notation ]0;1[.
+- **0018** — Inconsistent indexing in the key computation: A is written (a_ij)_{1<=i,j<=n} but the sums run over 0<=i,j<=n-1, and the middle term is sum_{i=1}^n v_i^2 while the outer ones are sum_{i=0}^{n-1}; harmless but mixed 0-/1-based indices.
+- **0018** — Notation inconsistency: the all-ones vector is written both \underline{1} and 1_{F_2^n} in the same paragraph.
+- **0018** — The appendix begins with \appendix\section{}\label{A} inside the solution, producing an empty-titled section 'A' in the compiled single-problem file (compiles, looks odd).
+- **0020** — Solution l. 123: 'w.r.t to' (typo); 'c is not an infinitesimal element w.r.t to 1' is an odd phrasing of the Archimedean property, but the argument (sup over increasing g of inf_x (g(2x)-g(x)) equals 0) is correct.
+- **0020** — Solution uses both w and omega for the same element of Omega (l. 41 vs l. 68).
+- **0020** — Results listing (l. 236-257) prints 'Improvement over naive strategy:' whereas the code (l. 232) prints 'Improvement over naive:' — the listed output was not produced by the listed code as is.
+- **0020** — Results listing: the 'Exponential (t=1)' improvement (-0.18) is the theoretical gain minus the simulated naive gain, mixing a theoretical and an empirical quantity; harmless but confusing.
+- **0021** — False general claim: 'The minimal polynomial is irreducible over Q[X]' -- the minimal polynomial of a matrix is not irreducible in general (e.g. diag(1,2)). The intended (and valid) argument: P_min,B divides (X^4+1)^2 with X^4+1 irreducible, and deg P_min,B <= 4 since B is 4x4, so P_min,B = X^4+1.
+- **0021** — Typos: 'rationnal', 'divide all polynomials' (divides).
+- **0022** — polynomials_solutions.tex line 148: 'the only possible polynomials Q(X) ... are X, and otherwise they have degree 2 or 3' should refer to P(X) (Q is P/X and has degree n-1).
+- **0023** — duplicate \label{1} in the legacy algebra solutions (0023 and 0031; harmless once split) (maintainer)
+- **0023** — Duplicate '\label{1}' with the SFFT solution (0031) in the legacy algebra_solutions.tex (lines 61 and 173); harmless once split, reported as requested.
+- **0023** — A '\footnote{...}' is placed inside display math (legacy solutions line 88, inside '\[ ... \]'); LaTeX accepts it here but footnotes in display math are fragile (\footnotemark/\footnotetext would be the safe form).
+- **0023** — Equation (1) uses von Neumann ordinal notation ('\prod_{i \in k}', 'k = \{i \in \mathbb{N} \mid i < k\}'), unusual but explained in the text.
+- **0025** — Search-and-replace artefact: 'as desiblack' (legacy solutions line 269) should read 'as desired' (a red -> black replacement hit the word 'desired').
+- **0025** — Second solution, final chain 'A + B >= A - B >= 3(A + B) >= 3(A + B)' repeats the last term; the intended chain is A + B >= A - B >= 3(A + B), giving 1 >= 3.
+- **0025** — The statement uses numbered \subsection{...} headings inside the problem environment; in a standalone problem file they will print as '0.1 Problem 6 (IMO 1988)' and '0.2 Problem (Kevin Buzzard & Edward Crane)'. Cosmetic, not fixed.
+- **0027** — Solution 1, last sentence: the decomposition 'N_{>0} = disjoint union over N in 3N of [[N+1; 3N]]' is wrong as written (multiples of 3 give overlapping blocks); the intended index set is the powers of 3 (N = 3^k, k >= 0), and the integer 1 is not covered by these blocks (harmless).
+- **0027** — Footnote of the alternative solutions: 'Clearly, iota_N is a bijection' should read iota_{N+1}.
+- **0027** — Solution 3 ends with 'liminf of sum_{n=2}^N 1/n' although the bound just proved is with sum_{n=1}^N 1/n (harmless).
+- **0030** — Solution 2 (legacy solutions lines 538-546): \label{1} and \label{2} are placed AFTER \end{equation}, outside the equation environments, so the labels do not refer to the displayed congruences and the later \hyperref[1]{1} / \hyperref[2]{2} point to the wrong targets (the surrounding \section{}/\subsection{} counters instead of the equations).
+- **0030** — Appendix A.3 proof (legacy line 811): 'it suffices, in fact, to show 6. => 3.' should read '5. => 3.' (the lemma has only five items).
+- **0030** — Two \footnote commands sit inside display math (statement footnote on \pmod{m}, and the Legendre-formula footnote after 'v_p(i!) ='); LaTeX tolerates them but the mark/text placement is fragile.
+- **0031** — AIME 1998 solution is unfinished: it stops at 'p, (m-2)(n-2)-8 > 0' without determining the largest p.
+- **0031** — AIME 1998 solution (legacy solutions line 223): garbled equation 'p( mn - (m+2)(n+2)2m - 2n - 4 ) = ...'; should read p(mn - 2m - 2n - 4) = 2(m+2)(n+2).
+- **0031** — BMO 2005 solution block is empty (\solution[Solution:] followed by nothing).
+- **0031** — JBMO 2003 solution ends with 'Therefore, S is a perfect square' where S was never defined (should be A + 2B + 4).
+- **0031** — Duplicate '\label{1}' with the IMC 2005 solution (0023) in the legacy algebra_solutions.tex; harmless once split.
+- **0031** — Cosmetic: the problems file uses numbered \subsection{...} for the five sub-problems (prints as 0.1, 0.2, ...) while the solutions file uses \subsection* for the first one only.
+- **0033** — Statement: the polynomial sum_{i=0}^{n} c_i T^i has n+1 coefficients but the family is written (c_i)_{i in n} in Q^n (off by one); same in the solution l. 352. The indeterminate is T in the sum but the ring is written Q[X].
+- **0033** — Solution l. 274-276: leftover author's note 'This solution needs to be written more formally' typeset as a displayed substack.
+- **0033** — Solution l. 328-332: f_1((a_0,...,a_{k-1})) = prod p_i^{a_i+1} - 1 is injective but NOT surjective onto N (e.g. 2 = 3 - 1 is never attained because the exponent of p_0 = 2 is always >= 1), so it is not a bijection N^{<omega} -> N as claimed.
+- **0033** — Solution l. 334-338: f_2((a_0,...,a_{k-1})) = sum_j binom(a_j + j, j+1) is not injective (f_2((3)) = 3 = f_2((3,0))), so it is not a bijection either. Only f_3 (recursive Cantor pairing) is a genuine bijection; hence 'constructive bijections g_1, g_2, g_3' (l. 350) is wrong for g_1, g_2. The strategy only needs a surjection N -> Q^{<omega}, which g_3 provides.
+- **0034** — Solution: 'g(x) ;= 2^x - 2x' (typo ';=' for ':=').
+- **0034** — Solution, summary: 'A cap (Z x Z) = Delta(Z_{>0}) disjoint-union {(2,4),(4,2)}' should be Delta(Z_{>=0}): (0,0) belongs to A with the convention 0^0 = 1 stated in the footnote, and the earlier line correctly writes Delta(Z_{>=0}).
+- **0034** — Bonus solution: with t = y/x one has u = 1/(t-1) = x/(y-x) and v = t/(t-1) = y/(y-x), not 'u = y/(x-y)' and 'v = x/(x-y)'; likewise t = u^{-1} + 1 and t = (v-1)^{-1} + 1, not '(u-1)^{-1} + 1' and 'v^{-1} + 1'. These expressions are not used afterwards, the argument stands.
+- **0034** — Bonus solution, last display: the left-hand side reads 'A cap (Q^alg x Q^alg)' but what is summarised is the algebraic-integer intersection A cap (O x O) (copy-paste error).
+- **0034** — Appendix: the Gelfond-Schneider theorem is stated with 'Proof not yet written'.
+- **0034** — Minor: 'For related result results' (duplicated word); in the algebraicity computation the exponents 'sign(t_2 - t_1)(t_2 - t_1)' and 't_2 - t_1' are used inconsistently (both yield a rational power of t, so the conclusion holds); the statement's footnote sits inside a displayed equation.
+- **0035** — Off-by-one in the coefficient formula for C_n(X) = A_n(X) B_n(X): the pairing sum is written with upper index floor(k/2) - 1 for every k, which is empty for k = 1 and misses the pair (j, k-j) = (floor(k/2), ceil(k/2)) whenever k is odd; the upper index should be floor(k/2) for odd k and floor(k/2) - 1 for even k. The conclusion c_k in Z is unaffected.
+- **0035** — Notation drifts between Gamma_{A_n,+} / Gamma_{B_n,-} (definition) and Gamma_{A,n} / Gamma_{B,n} (step 1).
+- **0037** — Notational slip in the final verification (legacy solutions lines 547-555): 'f^{m}(Orb_eval(s))' etc. apply f^m to the orbit (a set) instead of to its chosen representative chi(Orb_eval(s)) as in the definitions of h-hat and k-hat just above.
+- **0038** — Statement (both files): 'the intersection point of the common tangent to C_i and C_j' is ambiguous — two disjoint circles have four common tangents; the intended point is the intersection of the two EXTERNAL common tangents (external homothety centre). With the internal tangents the statement is false in general.
+- **0038** — Solution sketch (geometry_solutions.tex line 19): 'each line T_{ij} (the line determined by the common tangent point in the plane)' — T_{ij} is a point, not a line; the lifted objects are the lines X_i X_j through the apexes, and the argument that they pass through T_{ij} (similar triangles in the vertical plane through the two centres) is only asserted, not carried out.
+- **0038** — The placeholder sentence 'This solution needs to be written more formally' is typeset inside display math with \substack{\textit{...}} (compiles thanks to amsmath, but it is a hack).
+- **0039** — Solution is only a heuristic sketch (states the pairing idea 'for every invisible point there is a matching visible point' without constructing the pairing); the legacy text itself says it needs to be written formally.
+- **0040** — Solution block is a placeholder: no proof, only a link to https://math.stackexchange.com/questions/969781 ; the sentence 'This solution needs to be written more formally' is typeset inside display math with \substack{\textit{...}} (compiles thanks to amsmath, but it is a hack).
+- **0041** — Statement (both files): 'polynomial with integer coefficient' should read 'coefficients' (grammar only).
+- **0041** — polynomials_solutions.tex line 320 (appendix statement of Capelli's lemma): 'irreducible over k(\alpha)[X]' has a lowercase k, should be K(\alpha)[X].
+- **0041** — polynomials_solutions.tex lines 286-289 (Solution 2): the factor (-1)^{2^n} is silently dropped when passing to 2^{2^{n+1}} P(-1/4); this is valid for n >= 1 only (for n = 0 the polynomial is X^2+X+1 and the claim is trivial), while Solution 1 fixes an arbitrary n in N.
+- **0041** — polynomials_solutions.tex: \tag{1} is used three times (labels 4.1, A.1.1, A.2.1), so equation numbers (1) are displayed several times; harmless for the labels, only the printed numbering is ambiguous.
+- **0044** — Part 2: 'x_{2n+1} = x_{2n-1}/3 + o(x_{2n-1}^3)' should read x_{2n+1} = x_{2n-1}^3/3 + o(x_{2n-1}^3) (u - sin u + sin(u - sin u) ~ u^3/3); the next line ('3 log(x_{2n-1}) + O(1)') is consistent with the corrected version.
+- **0044** — Part 1: the question asks for the RANGE of x_0 for which the limit exists; the solution shows convergence to 0 (for every x_0, via \|x_1\| <= 1) but never states the answer explicitly and ends with 'the argument ... is now easy to establish'.
+- **0044** — The recursion x_{n+1} = x_n + (-1)^n sin(x_n) is stated 'for n >= 2' but holds for n >= 1.
+- **0045** — Solution steps 'a = a^{m-(m-1)} = a^{n-(m-1)}' and 'g^{r-(r-1)} = g^{s-(r-1)}' silently cancel a^{m-1} (resp. g^{r-1}) using the injectivity hypothesis; when m = 1 (resp. r = 1) the exponent m-1 = 0 is not defined by the statement (the case is trivially fine since then a = a^n directly).
+- **0045** — Typos: 'We search and identity element' (an), 'monoid' spelled 'monoïd', notation '$a^{n-m>0}$' for a^{n-m} with n-m > 0.
+- **0046** — Solution 2, rational case: 'ran(x') subset N' is wrong (x' = lcm(q_i).x may have negative entries); only x'' = x' - min ran(x') has range in N. Harmless for the argument.
+- **0046** — Solution 2 writes dim_{\mathbb{Q}} as '$dim_{\mathbb{Q}}$' (no backslash), typeset as italic letters instead of \dim (twice).
+- **0047** — Statement grammar: 'any function ... satisfy the following propertie' (satisfies / property).
+- **0048** — C3 (b): floor should be ceiling (maintainer)
+- **0048** — Statement starts with a stray '1.' (numbering left over from the original Bernoulli paper), in both legacy files.
+- **0048** — (b) '\|C cap A_i\| <= floor(\|A_i\|/2)' should be the CEILING ceil(\|A_i\|/2) (a chain of odd length L allows (L+1)/2 elements, e.g. {1,4,16,64} in the chain 1,2,4,...,64); the same floor is repeated in 'We can ensure \|C cap A_i\| = floor(\|A_i\|/2)'. The final count 50 + 13 + 3 + 1 = 67 is the sum of ceilings and is correct. (Known fact from the maintainer, confirmed.)
+- **0048** — (b) Index mix-up: the chains are defined as A_m but then written A_i, and 'for all m' refers to the A_i.
+- **0049** — Statement (problems file): typo 'wheter'. Solutions-file statement is truncated ('where F(x)=-x, F(x)=exp(x), F(x)=x^2-2,') and omits the bonus.
+- **0049** — Bonus asks for g in {cos, sin}; the solution only handles cos. sin is never addressed.
+- **0049** — A \begin{lemma} block contains the text 'Spas ? it would be nice if you could make a lemma where such a g exists ...' (a note to a co-author, not a lemma) -- placeholder to remove or replace.
+- **0049** — Iterative-square-root lemma (strictly increasing f): the hypothesis 'f(x) > x or f(x) < x between adjacent fixed points' is automatic by the IVT; the construction uses f^{-1} and a two-sided orbit (x_n, n in Z), which needs f to map (a,b) onto itself -- not guaranteed when an endpoint is +/- infinity and f is not surjective (e.g. f(x) = -exp(-x)); the backward extension (n < 0) is not written and continuity at the fixed points is only asserted.
+- **0049** — Typography in the cos solution: cos, sin, lim, max, min, cte are typeset without backslash ($cos$, $sin$, ...); 'metrix space', 'tell us', 'unicity' (uniqueness). Sentence '(and the surjectivity of g as well over [0;1])' is loosely stated (g maps g([0,pi/2]) onto [0,1]).
+- **0050** — Problems-file statement: 'S := \mathbb{Q}\setminus\{-1,0-1\}' should be \{-1,0,1\} (not used, solutions version chosen).
+- **0050** — Solution, gcd argument: 'p \| m^2 + n^2' should read 'p \| m^2 - n^2' (the argument is unchanged).
+- **0050** — Solution: 'For m != 1, \|mn\| >= 2\|n\|' needs \|m\| >= 2 (m = -1 is not excluded); the case m = 1 stops mid-sentence ('\|1 - n^2\| >= 3 and then .'). Moreover the claimed monovariant d_{k+1} >= 2 d_k is FALSE when \|m\| = 1: f(1/n) = (1-n^2)/n keeps the denominator \|n\|. The correct statement is: the denominator never decreases and strictly increases at least every two steps (after \|m\| = 1 the new numerator has absolute value >= 3), which still gives the conclusion; the 2^k bound in the last paragraph should be adapted accordingly.
+- **0051** — Statement (solutions version) footnote: 'one has a pseudo-random number generators that is a random number generators' (garbled grammar).
+- **0051** — Solution l. 420: u is said to be uniform in ]0,1[ while the pseudo-code (l. 399) draws random_uniform[0,1]; harmless inconsistency.
+- **0051** — Solution l. 380: reservoir sampling is introduced as selecting 'k >= 1 items without replacement'; only the k = 1 case is presented and proved.
+- **0052** — Statement: 'domain containing the disc D; that is, D \subset U' -- f is evaluated on \partial D, so the CLOSED disc (closure of D) should be contained in U.
+- **0053** — Typo 'Galoi theory' for 'Galois theory' in the solution.
+- **0053** — The solution does not say which parity of n gives zeros and which gives nines ((5 - sqrt26)^n is negative for odd n, giving the nines); the statement only asks for 'either', so this is not a gap.
+- **0054** — Step 2 suddenly writes 'Let P_i be the characteristic polynomial of A_i' and 'P_i(A_i) = 0' with A_i never defined (should read A_1 = A, A_2 = B, or simply P_A, P_B). Notational slip only.
+- **0055** — Riddles 4: arithmetic error (maintainer)
+- **0055** — Solution l. 468-471 (the known arithmetic error): '100 * H_99 ~ 100 * ln(99) + gamma ~ 5180 days' is wrong three times over: 100*H_99 ~ 518 (not 5180); gamma should be inside the bracket, 100*(ln 99 + gamma); and 100*H_99 is the coupon-collector time until every prisoner has visited once, not the expected duration of the single-counter strategy, which is 100*H_99 + 99*100 ~ 10 418 days (about 28.5 years) for 100 prisoners.
+- **0055** — Solution l. 466: 'with certainty' means almost surely (probability 1); no strategy can guarantee success by a fixed day, so 'eventual success with certainty' in the statement should be read as 'with probability 1'.
+- **0055** — Statement l. 57: 'the best-known strategies achieve an average release time of approximately 3500 days' is given without a source.
+- **0056** — Solution (a), l. 484: the argument only shows probability ~ 1/4 for large N via '(almost) independent' events; it does not prove the required guarantee >= 1/4. The exact success probability of the half/half strategy is N/(4(N-1)) > 1/4.
+- **0056** — Solution (b), l. 501: 'sommer sur tous les p>n possibles' should read p > x (the sum runs over p = x+1, ..., n).
+- **0056** — Solution (b) switches from N (statement) to n in all formulas.
+- **0056** — Solution (b) optimises only within the family of threshold strategies (reject the first x, then take the first better one) and uses the approximation sum 1/p ~ log; optimality of this family among all strategies is asserted, not proved.
+- **0056** — Typos: 'préntendant' (l. 484), 'probabilté' (l. 514), 'peut etre' (l. 516).
+- **0056** — Solution l. 516-520: author's note 'Penser à peut etre faire une version du prophet inequality problem' and three raw URLs left inside the solution.
+- **0057** — Solution line 1081: 'positive derivative \|alpha\| x^{\|alpha\|}' -- the derivative of x^{\|alpha\|} is \|alpha\| x^{\|alpha\|-1}.
+- **0057** — Solution line 1093 (heuristic paragraph): '2\alpha=\exp(\alpha\ln 2)<...' and 'so that 2\alpha=1' should read 2^\alpha; and the sentence 'Cotninuing on this idea if 1<\alpha<2 then 1^\alpha=1 and' breaks off unfinished (the formal proof that follows is complete).
+- **0057** — Solution line 1103: the third-order difference is written (n+3)^a-3(n+2)^a+(n+1)^a-n^a; the coefficient of (n+1)^a should be +3; it is also claimed to lie in N^* whereas only membership in Z is justified.
+- **0057** — Solution line 1109: the coefficient is written prod_{i=0}^{floor(a)+1}(a-i) with exponent (a-(floor(a)+1)); the (floor(a)+1)-th derivative of x^a has coefficient prod_{i=0}^{floor(a)}(a-i) (as used correctly on line 1164).
+- **0057** — Solution lines 1157-1162: f(x)=x^alpha on R_+, 0 elsewhere is claimed to be C^infinity(R,R); this is false for non-integer alpha (derivatives of order > alpha blow up at 0). The argument is repairable by working on ]0,+infty[ since all evaluation points n+theta are positive, but as written the lemma is applied outside its hypotheses.
+- **0059** — NT8: perfect-power gap in the solution (maintainer)
+- **0059** — Perfect-power gap (confirmed): the bound {m^(1/n)} >= 1/(nm) is derived from '1 <= m - a^n', which fails when m is a perfect n-th power (then the fractional part is 0; this includes n = 1 and m = 1). The cases where m^(1/n) or n^(1/m) is an integer are not treated, although they are easy (the LHS is then either an integer >= 2 while 2 < RHS < 3, or at least 3 > RHS).
+- **0059** — LaTeX nits: '\lfloor{\sqrt[n]{m}\rfloor}' has misplaced braces and '\ => \' is plain '=>' typed in math mode (renders oddly); compiles.
+- **0062** — The claim 'irrational number but not a transcendental number' looks false as stated: the partial sums are rationals p/q with q = 9^(F_{n+2}) (powers of 3) and error about q^(-F_{n+3}/F_{n+2}) ~ q^(-1.618), so by Ridout's theorem (p-adic Roth) the sum is transcendental. The original problem presumably asks only for irrationality (or reads differently); to be checked against the source before anyone writes a solution.
+- **0062** — Grammar: 'is irrational number' (missing article).
+- **0063** — NT10: the example f(x) = 3x^2 + x + 1 is wrong (maintainer)
+- **0063** — Known and confirmed: the example f(x) = 3x^2 + x + 1 does NOT work; brute force shows its orbit of 0 reaches only 24 residues mod 225 (3 residues mod 9, 8 mod 25). A brute-force search shows that suitable (a, b, c) do exist, so the intended answer 'yes' stands, but the example and the final verification must be redone.
+- **0063** — The reduction to c = 1 is misstated: conjugating by z -> cz turns (a, b, c) into (ca, b, 1), not into (c^{-1} a, c^{-1} b, 1) as written (f = c g does not make the orbits of f and g correspond).
+- **0063** — The CRT step ('it suffices to cover all residues mod 9 and mod 25') silently uses that the orbits mod 9 and mod 25 are pure cycles of lengths 9 and 25 (so indices run over all pairs by CRT); this is true when f permutes the residues but is not spelled out.
+- **0063** — Uses \textcolor{red}{...} and \href (hyperref) in the solution body; compiles with the bank preamble.
+- **0065** — The game's name is misspelled 'inekcalaty' in the statement; the official IMO 2025 wording is 'inekoalaty'.
+- **0065** — Minor: 'If a player cannot choose a suitable x_m' (official wording: x_n).
+- **0069** — Solution unfinished: it ends with 'the first term tends to, the second to, the third one to. So we sum and obtain:' with no values and no final answer.
+- **0069** — Off-by-one in the third display: the sum from i = floor(sqrt n)+1 to floor(sqrt 2n) has floor(sqrt 2n) - floor(sqrt n) terms, but the factor written is 6(2n+1)(floor(sqrt 2n) - floor(sqrt n) - 1). Irrelevant for the limit, wrong as an identity.
+- **0069** — Typos: 'soltuions'; the letter n is reused for a generic integer ('writing n as the sum of two') while n is already the problem's parameter; 'writing n' has n outside math mode.
+- **0070** — Statement (problems version) does not exclude the zero polynomial, whereas the solution (l. 532, 537) assumes P non-zero (harmless: P(1) = 0 already forces P = 0).
+- **0070** — Statement Bonus says 'real number mode' (input a real number); the solution answers a reformulated 'computable mode' (input an algorithm computing a real r, receive an algorithm computing P(r)).
+- **0070** — Bonus solution l. 613: 'Hence s > 1' is false for P = 1 (then s = 1); only s >= 1 follows from a_n >= 1.
+- **0070** — Bonus solution l. 615: the bound 'n <= T-1', with T the first integer such that 3^T > q, is wrong — it uses e < 3, which is the wrong direction (e^n < q < 3^T only gives n < T ln 3). Counter-example: P = X, s = e, q = 2.9 gives T = 1 but n = 1. Powers of 2 would work (2 < e, so 2^n < q < 2^T gives n <= T-1).
+- **0070** — Bonus solution l. 623: 'we can certifies' (grammar); comparing 'decimal places' of s and Q(e) should rather be comparing rational approximations (digits of a computable real are not uniformly computable from an approximation algorithm; here it is fine since Q(e) is irrational for non-constant Q).
+- **0074** — Typos in the statement: 'cost pf the coloring' (of), 'a $n \times n$ square grid' (an).
+- **0075** — Statement says 'for every integer n'; it should read 'for every positive integer n' (the set {a+1, ..., a+n} and floor(n/4) make no sense for n <= 0).
+- **0075** — Typography: '$\{a+1,\ a+2\dots a+n\}$' lacks a comma before the dots and uses \dots where \ldots/\dotsc is meant; compiles.
+- **0079** — The two sums are written without parentheses around the summands ('\sum a_i^2 + \frac{1}{a_i^2}', '2\sum a_i + \frac{1}{a_i}'), so their scope is formally ambiguous; the intended reading is sum of (a_i^2 + 1/a_i^2) and 2 sum of (a_i + 1/a_i).
+- **0080** — Typos in the statement: 'subsets with for elements' (four); 'Fix an integer m' should be a positive integer.
+
+## Found during the history pass
+
+- **0062**: the "not transcendental" claim is likely false; *The Pentagon*'s own editor note (2024) says that part is unproved. Consider asking only for irrationality.
+- **0065**: typos "inekcalaty" → "inekoalaty", "suitable x_m" → "x_n" (official text).
+- **0074**: typo "cost pf". **0080**: m is a natural number in the original; typo "for elements".
+- **0052**: statement only assumes the closed disc in U.
+- **0021, 0024**: the club statement is the transpose of the official one (equivalent).
+- **0069**: solution unfinished (limits left blank).
+
+## Missing and partial solutions
+
+- no solution: 0052, 0060, 0061, 0062, 0065, 0066, 0067, 0068, 0071, 0072, 0073, 0074, 0075, 0076, 0077, 0078, 0079, 0080
+- partial: 0019, 0031, 0034, 0038, 0039, 0040, 0049, 0063, 0064, 0069

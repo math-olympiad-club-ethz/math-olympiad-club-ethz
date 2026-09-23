@@ -1,0 +1,63 @@
+% title:          Formal power series over F2
+% area:           digits-bases, finite-fields
+% methods:        generating-functions, freshmans-dream
+% difficulty:
+% difficulty-ai:  hard
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         paper
+% origin-date:    1976-05
+% origin-number:  Remark following Theorem 2, p. 598
+% also-in:        putnam
+% taken-from:
+% references:     First appearance: L. E. Baum, M. M. Sweet, Continued Fractions of Algebraic Power Series in Characteristic 2, Ann. of Math. (2) 103 (1976), no. 3, 593-610, remark following Theorem 2, p. 598 (the root f of f^3 + x^{-1} f + 1 = 0 over F_2 has f_n = 1 iff the binary expansion of n has only even-length blocks of zeros; this is the Putnam identity with x replaced by 1/x), doi:10.2307/1970953 - https://api.crossref.org/works/10.2307/1970953; attribution per https://en.wikipedia.org/wiki/Baum%E2%80%93Sweet_sequence and https://oeis.org/A086747; cubic x + y + x y^3 = 0 also quoted in D. P. Robbins, arXiv:math/9903092 - https://arxiv.org/pdf/math/9903092. Posed as competition problem: Putnam 1989, A6 (exam of 2 Dec 1989) - https://kskedlaya.org/putnam-archive/1989.pdf; Kalva - https://prase.cz/kalva/putnam/putn89.html; official report: Klosinski, Alexanderson, Larson, Amer. Math. Monthly 98 (1991), no. 4, 319-327, doi:10.1080/00029890.1991.12000760 - https://api.crossref.org/works/10.1080/00029890.1991.12000760; Kedlaya, Poonen, Vakil, The William Lowell Putnam Mathematical Competition 1985-2000, MAA 2002, 1989 A6, p. 107 ff. (remark: special case of Christol's theorem) - https://archive.org/details/Putnam19852000; solutions sheet - https://www.sfu.ca/~lockhart/richard/Putnam1989Sol.pdf. Coefficient sequence = Baum-Sweet sequence, OEIS A086747 - https://oeis.org/A086747; MathWorld - https://mathworld.wolfram.com/Baum-SweetSequence.html (cites Allouche, Shallit, Automatic Sequences, CUP 2003, Example 5.1.7, pp. 156-157).
+% history:        ai
+\begin{problem}
+Let 
+\[
+\alpha(X) = 1 + a_1 X + a_2 X^2 + \cdots \in \mathbb{F}_2[[X]]
+\]
+be a formal power series with coefficients in the field of two elements. Define the coefficients \( a_n \) as follows:
+
+\[
+a_n =
+\begin{cases} 
+1, & \text{if every block of zeros in the binary expansion of } n \text{ has an even number of zeros} \\
+0, & \text{otherwise}.
+\end{cases}
+\]
+
+For example, \( a_{36} = 1 \) because \( 36 = 100100_2 \), and \( a_{20} = 0 \) because \( 20 = 10100_2 \). 
+
+Prove that the power series satisfies the equation:
+
+\[
+\alpha(X)^3 + X \alpha(X) + 1 = 0.
+\]
+\end{problem}
+\begin{solution}
+We begin by analyzing the properties of the coefficients \( a_n \). Since the field has characteristic 2, we have \( \alpha(X)^2 = 1 + \sum a_n X^{2n} \). This is because squaring a power series in characteristic 2 eliminates the cross terms, and \( a_n^2 = a_n \) (as \( a_n \in \{0, 1\} \)).
+\\\\
+Next, consider \( \alpha(X)^3 \). Multiplying the given equation \( \alpha(X)^3 + X \alpha(X) + 1 = 0 \) by \( \alpha(X) \), we obtain:
+\[
+\alpha(X)^4 + X \alpha(X)^2 + \alpha(X) = 0.
+\]
+We now analyze \( \alpha(X)^4 + X \alpha(X)^2 + \alpha(X) \) by examining the coefficients of \( X^{4n} \), \( X^{4n+2} \), and \( X^{2n+1} \).
+\begin{itemize}
+    \item \textbf{Coefficient of \( X^{4n} \):} The coefficient is \( a_n + a_{4n} \). Since the binary expansion of \( 4n \) is the binary expansion of \( n \) with two zeros appended at the end, \( a_{4n} = a_n \). Thus, \( a_n + a_{4n} = 0 \) in characteristic 2. For \( n = 0 \), the coefficient is \( 1 + 1 = 0 \).
+    
+    \item \textbf{Coefficient of \( X^{4n+2} \):} The coefficient is \( a_{4n+2} \). The binary expansion of \( 4n+2 \) ends with \( \dots 10 \), so \( a_{4n+2} = 0 \).
+
+    \item \textbf{Coefficient of \( X^{2n+1} \):} The coefficient is \( a_{2n+1} + a_n \). The binary expansion of \( 2n+1 \) is the binary expansion of \( n \) with an extra 1 appended at the end. Thus, \( a_{2n+1} = a_n \), and \( a_{2n+1} + a_n = 0 \).
+\end{itemize}
+Since all coefficients of \( \alpha(X)^4 + X \alpha(X)^2 + \alpha(X) \) are zero, we have:
+\[
+\alpha(X)^4 + X \alpha(X)^2 + \alpha(X) = 0.
+\]
+Since \( \alpha(X) \neq 0 \) and $\mathbb{F}_{2}[[X]]$ is a domain as $\mathbb{F}_{2}$ is a domain, we must obtain:
+\[
+\alpha(X)^3 + X \alpha(X) + 1 = 0,
+\]
+as required.
+\end{solution}

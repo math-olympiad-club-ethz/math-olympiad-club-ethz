@@ -1,0 +1,22 @@
+% title:          Recursive sine sequence limit
+% area:           sequences
+% methods:        fixed-points
+% difficulty:
+% difficulty-ai:  easy
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         bulgaria-autumn
+% origin-date:    2023-11
+% origin-number:  12.1
+% also-in:
+% taken-from:
+% references:     Autumn Mathematical Tournament "Acad. Stefan Dodunekov" (Есенен математически турнир „Академик Стефан Додунеков“, Union of Bulgarian Mathematicians), Sofia, 17-19 November 2023, grade 12, Problem 12.1 - https://klasirane.com/api/competitions/EMT/All/2023/12%20%D0%BA%D0%BB/probs ; official solution with marking scheme - https://klasirane.com/api/competitions/EMT/All/2023/12%20%D0%BA%D0%BB/sol
+% history:        ai
+\begin{problem}
+Given the sequence $\{x_n\}_{n=0}^{+\infty}$, where $x_0 = 1$ and $x_{n+1} = \sin(x_n)+\frac{\pi}{2}-1$, prove that it converges, and find the limit.
+\end{problem}
+\begin{solution}
+$\sin x - x$ is decreasing between 0 and $\frac{\pi}{2}$ by a simple derivative test, so $\sin x_n - x_n \geq 1 - \frac{\pi}{2}$ (value at intermediate point vs. value at endpoint). This immediately implies $x_{n+1} \geq x_n$.\\
+$\frac{\pi}{2}$ is an easy upper bound for the sequence, so it converges by the Monotone Convergence theorem. The limit must be a fixed point, the unique solution between 0 and $\frac{\pi}{2}$ being $\frac{\pi}{2}$, which must be our limit.
+\end{solution}

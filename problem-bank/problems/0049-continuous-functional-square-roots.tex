@@ -1,0 +1,205 @@
+% title:          Continuous functional square roots
+% area:           functional-equations, limits-continuity
+% methods:        contradiction, intermediate-value-theorem, fixed-points, construction
+% difficulty:
+% difficulty-ai:  medium
+% status:         partial
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         book
+% origin-date:    1992
+% origin-number:  Problem X.1.2
+% also-in:
+% taken-from:
+% references:     B. M. Makarov, M. G. Goluzina, A. A. Lodkin, A. N. Podkorytov, Selected Problems in Real Analysis (Russian original: Izbrannye zadachi po veshchestvennomu analizu, Nauka, Moscow, 1992; English translation: AMS Translations of Mathematical Monographs 107, 1992), Chapter X (Iterates of transformations of an interval), §1 Topological dynamics, Problem X.1.2 a)-c). The book's hint for X.1.2 (Solutions part) is word for word the hints at the start of our solution - https://vdoc.pub/documents/selected-problems-in-real-analysis-6tffcklec310 ; AMS volume page (1992, vol. 107) - https://web.archive.org/web/2024/https://www.ams.org/books/mmono/107/ ; Russian 1992 Nauka edition - https://analysis.spbu.ru/bib_r.html. Background for part c): R. E. Rice, B. Schweizer, A. Sklar, 'When is f(f(z)) = az^2 + bz + c?', Amer. Math. Monthly 87 (1980) 252-263, which discusses x^2-2 and points to Monthly problem E984 (1951, p. 564) - http://yaroslavvb.com/papers/rice-when.pdf. The bonus (cos, sin) is the club's own addition.
+% history:        ai
+\begin{problem}
+For each function \(g\in\{-id_{\mathbb{R}}, \exp, x\mapsto x^2-2\}\), determine wheter there exists a continuous function $f:\mathbb{R}\rightarrow\mathbb{R}$ such that $f\circ f = g$.
+\\\\
+\textbf{Bonus:} Solve the same problem with $g\in\{\cos,\sin\}$.
+\end{problem}
+\begin{solution}
+\begin{itemize}
+    \item[(a)] No, first $f$ must be bijective.  Prove that \( f(0) = 0 \) and investigate the sign of \( f(x) \) for \( x > 0 \).
+    \item[(b)] Prove that \( f \) is strictly increasing and that \( \inf f = a \in (-\infty, 0) \), \( f(a) = 0 \). Fix an arbitrary strictly increasing function \( f_0 \in C([a,0]) \) satisfying the conditions \( f_0(a) = 0 \) and \( f_0(0) = e^a \), and extend it to \( \mathbb{R} \) by using the equation.
+    \item[(c)] Prove that \( f \) must be strictly increasing on \( [0, +\infty) \) and strictly decreasing on \( (-\infty, 0] \) and that \( f(0) \geq 0 \), which is impossible, because \( F \), and hence \( f \), takes negative values.
+\end{itemize}
+\textbf{Bonus:} If $F(x)=\cos(x)$ ?
+\subsection*{Solution:}
+To begin we do some preliminary work (some of the result are well known but for the sake of completeness we give the "proofs"):
+\\\\
+-The function $cos$ has a unique fixed point over $\mathbb{R}$ ($\exists!\alpha\in\mathbb{R}\,(cos(\alpha)=\alpha)$) which is moreover located between $]0,1[$. We define in a classical manner (for this kind of fixed point problem) the function:
+\[\begin{tikzcd}
+	{\varphi:} & {\mathbb{R}} & {\mathbb{R}} \\
+	& x & {x-cos(x)=x-\sum_{i\in\mathbb{N}}(-1)^{i}\cdot\frac{x^{2\cdot i}}{(2\cdot i)!}}
+	\arrow[from=1-2, to=1-3]
+	\arrow[maps to, from=2-2, to=2-3]
+\end{tikzcd}\]
+$\varphi$ is clearly $C^{\infty}(\mathbb{R})$ and even analytic. We study $\varphi$ and show that in fact it has only one zero: $|\varphi^{-1}[\{0\}]|=1$ which will conclude the existence and unicity of the fixed point over $\mathbb{R}$. Notice that $\frac{d}{dx}(\varphi)=1-sin\geq \underline{0}$. The theorem relating the type of monotonicity and the sign of the derivative tell us therefore that $\varphi$ is increasing. As $\varphi(0)=-1$ and $\varphi(1)=1-cos(1)\overset{1\in]0;\frac{\pi}{2}[}{>}0$, we have that:
+$$\varphi\big[]-\infty;0]\big]\subset]-\infty;-1]\subset]-\infty;0[$$ and $$\varphi\big[[1;+\infty[\big]\subset[\varphi(1);+\infty[\subset]0;+\infty[$$
+Thus $\varphi^{-1}[\{0\}]\subset]0;1[$
+and moreover we have by the intermediate value theorem (or the more general topological version: image of a connected set through a continuous function is connected and knowing that only the intervals are precisely the connected set of $(\mathbb{R},\mathcal{T}_{\mathbb{R}})$) that $0\in[-1;\varphi(1)]\subset\varphi\big[[0;1]\big]$. This shows that $|\varphi^{-1}[\{0\}]|\geq 1$. We know by the property of sin:
+$$\forall x\in\mathbb{R}\big((\frac{d}{dx}(\varphi))(x)=0\leftrightarrow x\in\frac{\pi}{2}+2\cdot\pi\mathbb{Z}\big)$$
+Therefore we have the refinement that $\varphi$ is strictly increasing over each connected component of $\mathbb{R}\setminus(\frac{\pi}{2}+2\cdot\pi\mathbb{Z})$. However $]\frac{\pi}{2}-2\cdot\pi;\frac{\pi}{2}[$ is one of the connected component. This means that $\varphi$ is strictly increasing over $]0;1[\subset]\frac{\pi}{2}-2\cdot\pi;\frac{\pi}{2}[$ in particular it is injective. We saw that $\varphi^{-1}[\{0\}]\subset]0;1[$ so this means that $|\varphi^{-1}[\{0\}]|=1$. This concludes that there is a unique fixed point of $cos$ over $\mathbb{R}$. For the culture, this fixed point is called the $\textit{Dottie}$ number.
+The decimal expansion of the Dottie number is
+$0.739085133215160641655312087673873404...$
+and one can show using some advanced techniques like the Lindemann–Weierstrass theorem that it is also a transcendental number. How can we attain such a number ? It is easy: $cos$ is a contraction on $[0;1]$ ! Indeed its derivative ($-sin$) is continuous therefore bounded over the compact $[0;1]$ and it appears that those bound are strictly less than $1$ ! To be more precise, let $a,b\in[0;1]$, when $a\neq b$ we have by the mean value theorem ($cos\in C^{\infty}(\mathbb{R})$) that $\exists c\in]a;b[$ such that $-sin(c)=(\frac{d}{dx}cos)(c)=\frac{cos(a)-cos(b)}{a-b}$. Therefore we obtain:
+$$|cos(a)-cos(b)|\leq max|-sin|\big[[0;1]\big]\cdot|a-b|$$
+$$\overset{sin\text{ is strictly increasing over } [0;\frac{\pi}{2}]}{=}sin(1)\cdot|a-b|$$
+This bounds (which works even for $a=b$) shows that $cos$ is a contraction over $[0;1]$ \textbf{provided} $sin(1)<1$ which is the case since $sin$ is strictly increasing over $[0;\frac{\pi}{2}]$ ($1<\frac{\pi}{2}$ so that $sin(1)<sin(\frac{\pi}{2})=1$). Therefore a common application of the Banach fixed point theorem for the complete metrix space $([0;1],|\cdot|)$ tell us not only that there is a unique fixed point of $cos$ over $[0;1]$ (we already know this information) but also the way the fixed point is constructed. Take any $x\in[0;1]$, the fixed point is the limit ($[0;1]$ is  complete) of the sequence $(cos^{\circ n}(x))_{n\in\mathbb{N}}\in[0;1]^{\mathbb{N}}$ where $cos^{\circ n}$ denotes the functional composition of $cos$ with itself $n$ times ($cos^{\circ 0}=Id$). This means that $lim _{n\rightarrow+\infty}(cos|_{[0;1]})^{\circ n}=cte_{\alpha}$ where $\alpha$ is the Dottie number. Apparently the generalized case 
+$cos(z)=z$ where $z\in\mathbb{C}$ has infinitely many solutions (it uses Picard's theorem).
+\\\\
+-Let us denote the Dottie number by $\alpha\in]0;1[$. We claim that any function $g:\mathbb{R}\rightarrow\mathbb{R}$ satisfying $g\circ g=cos$ share the same fixed point of $cos$ namely $\alpha$ and must be injective over $[0;\frac{\pi}{2}]$. Indeed suppose $g\circ g= cos$ then:
+$$cos(g(\alpha))=(g\circ g)(g(\alpha))=g((g\circ g)(\alpha))=g(cos(\alpha))=g(\alpha)$$
+Therefore $g(\alpha)$ is a fixed point of $cos$, by the unicity of the Dottie number we must have $g(\alpha)=\alpha$. The injectivity follows easily from the equality $g\circ g=cos$ and noting that $cos$ is a bijection from $[0;\frac{\pi}{2}]$ to $[0;1]$ we must have (classic) from the equality $g\circ g=cos$ the injectivity of $g$ over $[0;\frac{\pi}{2}]$ (and the surjectivity of $g$ as well over [0;1]).
+\\\\
+\begin{lemma}
+Let \( I \subset \mathbb{R} \) be a connected set (equivalently, \( I \) is an interval, that is,
+\(
+\forall x,y \in I,\ \left[ x,y \right] \cup \left[ y,x \right] \subset I
+\)).
+Let \( h : I \to \mathbb{R} \) be an injective continuous function. Then \( h \) is strictly monotone.
+\end{lemma}
+\begin{proof}
+We define the set of ordered pairs from the domain \( I \) as follows:
+\[
+    D = <_{I\times I}=\{ (x,y) \in I \times I \mid x < y \} \subset I \times I .
+\]
+Since \( I \) is an interval, the set \( D \) is convex. Indeed, let
+\( A = (x_1,y_1) \) and \( B = (x_2,y_2) \) be points in \( D \), and let
+\( \lambda \in \left[ 0,1 \right] \). Since \( x_1 < y_1 \), \( x_2 < y_2 \), and
+\( \lambda, 1-\lambda \geq 0 \), the convex combination satisfies
+\[
+    \lambda x_1 + (1-\lambda)x_2
+    <
+    \lambda y_1 + (1-\lambda)y_2 .
+\]
+Moreover, since \( I \) is an interval, equivalently a convex set, we have
+\[
+    \lambda x_1 + (1-\lambda)x_2 \in I
+    \quad \text{and} \quad
+    \lambda y_1 + (1-\lambda)y_2 \in I .
+\]
+Thus,
+\(
+\lambda A + (1-\lambda)B \in D
+\),
+and hence \( D \) is convex. In particular, \( D \) is path-connected and therefore connected.
+\\\\
+We now define a difference function \( g : D \to \mathbb{R} \) by
+\[
+    g(x,y) = h(y) - h(x).
+\]
+Since \( h \) is continuous on \( I \), the function \( g \) is continuous on \( D \),
+being the composition
+\[
+    D \xhookrightarrow{\ \iota\ } I \times I
+    \xrightarrow{\, h \times h \,} \mathbb{R} \times \mathbb{R}
+    \xrightarrow{\ -\ } \mathbb{R}.
+\]
+Moreover, since \( h \) is injective, the function \( g \) never vanishes, that is,
+\( 0 \notin g\left[ D \right] \).
+Recall that the image of a connected set under a continuous map is connected; therefore,
+\( g\left[ D \right] \) is a connected subset of \( \mathbb{R} \), hence an interval.
+Consequently,
+\[
+    g\left[ D \right] \subset \mathbb{R}_{>0},
+\]
+in which case \( h \) is strictly increasing, or
+\[
+    g\left[ D \right] \subset \mathbb{R}_{<0},
+\]
+in which case \( h \) is strictly decreasing. This concludes the proof.
+\end{proof}
+
+
+-Now we can prove the result: we argue by contradiction. Let us fix a real continuous function $f:(\mathbb{R},\mathcal{T}_{\mathbb{R}})\longrightarrow(\mathbb{R},\mathcal{T}_{\mathbb{R}})$ with the property that $f\circ f=cos$. Then we know by our second result that $f(\alpha)=\alpha$ and $f|_{[0;\frac{\pi}{2}]}$ is an injection. Since $f$ is continuous, $f|_{[0;\frac{\pi}{2}]}$ must be a continuous injection. By our third result $f|_{[0;\frac{\pi}{2}]}$ is strictly monotone. Since $f(\alpha)=\alpha\in]0;1[\subset [0;\frac{\pi}{2}]$, and $f|_{[0;\frac{\pi}{2}]}$ is continuous we have that $\alpha\in (f|_{[0;\frac{\pi}{2}]})^{-1}\big[]0;1[\big]=:U\in\mathcal{T}_{[0;\frac{\pi}{2}]}^{\mathbb{R}}$. In this case, the composition $f\circ f$ must be strictly increasing over $U$; for if $x,y\in U\subset [0;\frac{\pi}{2}]$ with $x<y$ then by construction of $U$ we have $f(x),f(y)\in [0;\frac{\pi}{2}]$ (important). Now by the strict monotonicity of $f|_{[0;\frac{\pi}{2}]}$, we have two cases. If $f|_{[0;\frac{\pi}{2}]}$ is strictly increasing then $f(x)<f(y)$ so that again we have $f(f(x))<f(f(y))$. If $f|_{[0;\frac{\pi}{2}]}$ is strictly decreasing then $f(x)>f(y)$ and so $f(f(x))<f(f(y))$. In all case $(f\circ f)(x)<(f\circ f)(y)$. Therefore $cos|_U=(f\circ f)|_U$ is strictly increasing. This is a contradiction with the fact that $cos$ is strictly decreasing over $[0;\frac{\pi}{2}]\supset U$ \textbf{if} $U$ contains at least $2$ elements. The latter is true: by construction $U$ is of the form $[0;\frac{\pi}{2}]\cap V$ with $V$ an open set of $\mathbb{R}$, in particular (and by construction of $\mathcal{T}_{\mathbb{R}}$) $V$ contains a basis element (which is an open interval $]c,d[$ of positive length) containing $\alpha$. Therefore:
+$$\alpha\in ]c,d[\cap]0;1[\subset]c,d[\cap[0;\frac{\pi}{2}]\subset U$$
+so $\varnothing\subsetneq[\alpha;min\{d,1\}[\subset U$, and $U$ necessarily contains infinitely many points.
+\\\\
+\textit{Remark:} If \( f \) were differentiable at \( \alpha = f(\alpha) \), then the third part would be much easier. Indeed,
+\[
+    0 \overset{\alpha \in \left] 0,1 \right[}{>} -\sin(\alpha)
+    = \left( \frac{\mathrm{d}}{\mathrm{d}x} \cos \right)(\alpha)= \left( \frac{\mathrm{d}}{\mathrm{d}x} \left( f \circ f \right) \right)(\alpha)
+\]
+\[
+= \left( \frac{\mathrm{d}}{\mathrm{d}x} f \right)\!\left( f(\alpha) \right)
+      \cdot \left( \frac{\mathrm{d}}{\mathrm{d}x} f \right)(\alpha)
+    = \left( \frac{\mathrm{d}}{\mathrm{d}x} f \right)(\alpha)^{2}
+    \geq 0,
+\]
+which is a contradiction.
+\\\\
+\begin{lemma} Let $f: \mathbb{R}\to \mathbb{R}$ be a continuous function. Suppose there exists a connected open set $U \subset \mathbb{R}$ such that $\left.f \right|_{U}$ is strictly decreasing. If $f$ has a unique fixed point $\alpha\in\mathbb{R}$ which in addition satisfies $\alpha \in U$, then there is no continuous function $g: \mathbb{R} \to \mathbb{R}$ such that $f = g \circ g$.
+\end{lemma}
+\begin{proof}
+Suppose, for contradiction, that there exists a continuous function $g: \mathbb{R} \to \mathbb{R}$ such that $g \circ g = f$. Consider the fixed point $\alpha \in U$. We have
+\[
+g(\alpha) = g\bigl( f(\alpha) \bigr) = g\bigl( g\bigl( g(\alpha) \bigr) \bigr) = f\bigl( g(\alpha) \bigr).
+\]
+Thus $g(\alpha)$ is a fixed point of $f$, and by its uniqueness we obtain $g(\alpha) = \alpha \in U$. In particular, by continuity of $g$, there exists an open interval $I$ with $\alpha \in I \subset U$ such that $g[I] \subset U$.  
+\\\\
+Now observe that since $\left. f \right|_{U} = \left. ( g \circ g ) \right|_{U}=g \circ \left(\left. g \right|_{U}\right)$ is strictly decreasing, it is injective. Thus $\left. g \right|_{U}$ is injective. Since $g$ is continuous and injective on the connected set $U$, $\left. g \right|_{U}$ must be strictly monotone, and hence $\left. g \right|_{I}$ is also strictly monotone.
+\begin{enumerate}
+    \item If $\left. g \right|_{I}$ is strictly increasing, then $\left. g \right|_{U}$ is strictly increasing (as $I\subset U$), and since $g[I] \subset U$ we have that $\left. ( g \circ g ) \right|_{I}$ is strictly increasing.
+    \item If $\left. g \right|_{I}$ is strictly decreasing, then $\left. g \right|_{U}$ is strictly decreasing (as $I\subset U$), and since $g[I] \subset U$ we have that $\left. ( g \circ g ) \right|_{I}$ is strictly increasing.
+\end{enumerate}
+In all cases, $\left. f \right|_{I} = \left. \left( g \circ g \right) \right|_{I}$ must be strictly increasing. This contradicts the initial assumption that $\left. f \right|_{U}$ is strictly decreasing, and hence that $\left. f \right|_{I}$ is strictly decreasing: indeed, $\alpha \in I$ and $I$ is an interval, hence $I$ contains at least $2$ elements (in fact uncountably many), which provide the intended contradiction\footnote{If $S \subseteq \mathbb{R}$ and $h : S \to \mathbb{R}$ is a function then: $h$ is both strictly increasing and strictly decreasing if and only if $\left\lvert S \right\rvert \leq 1$}. Therefore, no such continuous $g$ exists.
+\end{proof}
+
+\begin{lemma}
+Spas ? it would be nice if you could make a lemma where such a g exists (remember about your inductive construction) and try to optimize the assumptions on the function f for such a g to exists
+\end{lemma}
+
+\begin{lemma}
+Let $f: \mathbb{R} \to \mathbb{R}$ be a strictly increasing continuous function. Suppose that on any interval $(a, b)$ where $a$ and $b$ are adjacent fixed points (i.e., $f(a)=a, f(b)=b$ and $f(x) \neq x$ for $x \in (a, b)$), the function satisfies either $f(x) > x$ or $f(x) < x$. Then there exists a continuous strictly increasing function $g: \mathbb{R} \to \mathbb{R}$ such that $g \circ g = f$.
+\end{lemma}
+
+\begin{proof}
+Since $f$ is strictly increasing we could consider $\pm \infty$ as fixed point. So there is always fixed point, We provide the construction for an interval $(a, b)$ of fixed point $a<b$ where $f(x) > x$. The case for $f(x) < x$ is analogous, and the global function is formed by the union of such constructions and the identity on the set of fixed points.
+
+\begin{enumerate}
+    \item \textbf{Fundamental Interval:} Pick an arbitrary point $x_0 \in (a, b)$. Let $x_1 = f(x_0)$. Since $f(x) > x$, we have $x_0 < x_1$. We define the sequence $x_{n+1} = f(x_n)$ for all $n \in \mathbb{Z}$.
+    
+    \item \textbf{Seed Map:} Choose a value $c$ such that $x_0 < c < x_1$. Define $g$ on the interval $[x_0, c]$ as any strictly increasing continuous function such that $g(x_0) = c$ and $g(c) = x_1$. 
+    
+    \item \textbf{Functional Extension:} For $x \in [c, x_1]$, we are forced by the requirement $g(g(x)) = f(x)$ to define:
+    $$g(x) = f(g^{-1}(x))$$
+    Because $g: [x_0, c] \to [c, x_1]$ is a bijection, $g^{-1}$ is well-defined. This defines $g$ on the entire "fundamental interval" $[x_0, x_1]$.
+    
+    \item \textbf{Inductive Propagation:} We extend $g$ to the rest of $(a, b)$ using the identity:
+    $$g(x) = f(g(f^{-1}(x)))$$
+    If $g$ is defined on $[x_n, x_{n+1}]$, this relation defines it on $[x_{n+1}, x_{n+2}]$. Since $f$ and $f^{-1}$ are continuous and strictly increasing, $g$ remains continuous and strictly increasing across the nodes $x_n$.
+    
+    \item \textbf{Boundary Conditions:} Set $g(a) = a$ and $g(b) = b$. Since $\lim_{n \to -\infty} x_n = a$ and $\lim_{n \to \infty} x_n = b$, the monotonic nature of the construction ensures continuity at the fixed points.
+\end{enumerate}
+Thus, $g$ is a continuous iterative square root of $f$.
+\end{proof}
+\begin{lemma}
+If $f: \mathbb{R} \to \mathbb{R}$ is continuous and there exist $n > 0$ and $a \in \mathbb{R}$ such that $f^{\circ n}(a) = a$, then $f$ admits a fixed point.
+\end{lemma}
+
+\begin{proof}
+Consider the function $g(x) = f(x) - x$, which is continuous. Assume by contradiction that $f$ has no fixed point. Then $g(x)$ never vanishes, and by the Intermediate Value Theorem, it must maintain a constant sign on $\mathbb{R}$. 
+
+Without loss of generality, assume $g(x) > 0$ for all $x \in \mathbb{R}$. This implies that $f(x) > x$ for all $x$. Applying this inequality inductively to the iterates of $a$, we get:
+\[
+f(a) > a
+\]
+\[
+f^{\circ 2}(a) > f(a)
+\]
+\[
+\vdots
+\]
+\[
+f^{\circ n}(a) > f^{\circ n-1}(a)
+\]
+
+Combining these inequalities yields:
+\[
+a = f^{\circ n}(a) > f^{\circ n-1}(a) > \dots > f(a) > a
+\]
+This results in $a > a$, which is a contradiction. Thus, $f$ must admit a fixed point.
+\end{proof}
+\end{solution}

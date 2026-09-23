@@ -1,0 +1,122 @@
+% title:          Polynomial machine with two queries
+% area:           information-puzzles, integer-polynomials, digits-bases
+% methods:        induction, reduction-mod-p
+% difficulty:
+% difficulty-ai:  easy
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         journal
+% origin-date:    2005-03
+% origin-number:  Vol. 36, No. 2, p. 100 (solution p. 159)
+% also-in:
+% taken-from:
+% references:     I. B. Keene, 'A Perplexing Polynomial Puzzle', College Math. J. 36(2), March 2005, p. 100, solution p. 159 (primary page not opened; cited by the sources below) - https://gurmeet.net/puzzles/perplexing-polynomial/ ; F. Bornemann & S. Wagon, 'A perplexing polynomial puzzle revisited', College Math. J. 36(4) (2005) 288: one evaluation at pi, which is the Bonus (as cited by Dierckx and Richmond) ; B. Richmond, 'On a Perplexing Polynomial Puzzle', College Math. J. 41(5) (2010), also cites D. Kalman, Uncommon Mathematical Excursions: Polynomia and Related Realms, MAA Dolciani 35, 2009 - https://csclub.uwaterloo.ca/~n3parikh/On%20a%20Perplexing%20Polynomial%20Puzzle.pdf ; J. Dierckx, 'An Extension of the Perplexing Polynomial Puzzle', College Math. J. (2023), with a history of the puzzle - https://repository.uantwerpen.be/docstore/d:irua:19549 ; Y. Zhao, MOP 2007 Black Group handout 'Integer Polynomials' (29 June 2007), Problem 5 - https://yufeizhao.com/olympiad/intpoly.pdf ; MathOverflow 'Math puzzles for dinner', answer by Gjergji Zaimi, 2010-06-29 - https://mathoverflow.net/questions/29323/math-puzzles-for-dinner ; Math.SE 446130 (2013), answers P(1) then P(P(1)+1), and P(pi) - https://math.stackexchange.com/questions/446130/quickest-way-to-determine-a-polynomial-with-positive-integer-coefficients ; related variant with P(2) and P(P(2)), from a St. Petersburg school olympiad, 11th grade (per Math.SE 3423) - https://math.stackexchange.com/questions/3423 ; the wording (machine, battery for two inputs, Bonus with one real input) is almost the same as K. Berlow & K. Wrobel, 'Logic Riddles', riddle 8 'Number Machine' (8.1 Two values, 8.2 One value) - https://math.berkeley.edu/~katalin/Riddles.pdf
+% history:        ai
+\begin{problem}
+You're given a machine to which you can input an integer and it outputs an integer. You know the machine just plugs your number into a polynomial and outputs the result, but you don't know which polynomial. You do know that the coefficients are all non-negative integers. The machine is at low battery, and only has energy left for two inputs. How can you guess the polynomial?
+\textbf{Bonus:}
+Alternatively, you can switch the machine to real number mode, where you can input a real number. This takes twice the battery. Can you guess the polynomial this way?
+\end{problem}
+\begin{solution}
+We recast the puzzle as a two--move game.
+\begin{itemize}
+  \item A polynomial $P(X)\in\mathbb{N}[X]\setminus\left\{0_{\mathbb{N}[X]}\right\}$ is fixed, and unknown to us.
+  \item We choose $a\in\mathbb{N}$ and get to know $P(a)$.
+  \item We then choose $b\in\mathbb{N}$ and get to know $P(b)$.
+  \item We \emph{lose} if we cannot algorithmically recover the polynomial.
+\end{itemize}
+Let $n=\deg P(X)\in \mathbb{N}\cup\{-\infty\}$, since $P(X)\neq 0_{\mathbb{N}[X]}$ we get that $n\in\mathbb{N}$. Now there exists $a\in\mathbb{N}^{n+1}$ such that
+\[
+  P(X)=\sum_{i\in n+1}a_iX^i
+\]
+with $a_n \geq 1$. We first observe that for any $b\in\mathbb{N}\setminus\{0,1\}$,
+\[
+  P(b)=\sum_{i\in n+1}a_i b^i,
+\]
+which we recognise as the base-$b$ expansion of the number $P(b)$ --- \emph{provided}
+that $a_i\in b$ for every $i\in n+1$. Since the expansion in a given base is unique
+(proved below), computing the $b$-ary expansion of $P(b)$ would return $a$ and so we would know $P(X)$. So it suffices to find
+a base $b\in\mathbb{N}\setminus\{0,1\}$ with $a_i<b$ for all $i$; this is exactly what the first query buys us.
+\\\\
+Indeed, every coefficient is non-negative, so querying with $a=1$ gives us
+\[
+  P(1)=\sum_{i\in n+1}a_i\;\ge\;a_j\qquad\text{for every }j\in n+1 .
+\]
+Notice that $P(1)\geq a_n\geq 1$. Hence, taking as second query
+\[
+  b:=P(1)+1,
+\]
+we secure both $b\in\mathbb{N}\setminus\{0,1\}$ and $a_i<b$ for all $i$. Therefore running the usual base-decomposition algorithm on $P(b)=P\bigl(P(1)+1\bigr)$ in base $b= P(1)+1$ gives us $a$.
+\\\\
+It remains to recall why that expansion is unique.
+\begin{lemma}[Uniqueness of the base-$b$ expansion]
+Let $b\in\mathbb{N}$ with $b\ge 2$, let $k\in\mathbb{N}$, and let $c,d\in b^{\,k}$. If
+\[
+  \sum_{i\in k}c_i b^i=\sum_{i\in k}d_i b^i,
+\]
+then $c=d$.
+\end{lemma}
+
+\begin{proof}
+We induct on $k\in\mathbb{N}$. For $k=0$ the set $b^{\,0}=\{\varnothing\}$ is a singleton, and for $k=1$ the
+hypothesis reads $c_0=d_0$ directly; both cases are immediate.
+\\\\
+Assume the statement holds for some $k\in\mathbb{N}$, and let $c,d\in b^{\,k+1}$ satisfying
+\[
+  \sum_{i\in k+1}c_i b^i=\sum_{i\in k+1}d_i b^i .
+\]
+Reducing modulo $b$, every term with $i\ge 1$ vanishes, so the two sides are congruent to
+$c_0$ and to $d_0$ respectively; hence $c_0\equiv d_0\pmod b$. As $c_0,d_0\in\{0,\dots,b-1\}$
+we have $|c_0-d_0|_{\mathbb{R}}<b$ while $b\mid_{\mathbb{Z}}(c_0-d_0)$, which forces $c_0=d_0$. Subtracting this common value from both sides leaves
+$\sum_{i=1}^{k}c_i b^{i}=\sum_{i=1}^{k}d_i b^{i}$. Each side is divisible by $b\neq 0$ so we must have for $c'=c\circ\_+1\in b^{\, k}$ and $d'=d\circ\_+1\in b^{\, k}$ that
+\[
+  \sum_{i\in k}c'_i b^i=\sum_{i\in k}d'_i b^{i}.
+\]
+By the induction hypothesis $c'=d'$, so $c=d$, completing the induction.
+\end{proof}
+\begin{remark}
+Two rational queries are optimal, i.e., no single-query strategy solves the game. For every $c\in\mathbb{Q}$, the evaluation map
+$P\mapsto P(c)$ fails to be injective on $\mathbb{N}[X]\setminus\{0_{\mathbb{N}[X]}\}$. Indeed, we can always exhibit two distinct non-zero polynomials in $\mathbb{N}[X]$ that agree at $c$:
+\begin{itemize}
+  \item If $c > 0$, write $c = p/q$ with $p,q \in \mathbb{Z}_{>0}$. The constant polynomial $p$ and the monomial $qX$ both take the value $p$ at $c$.
+  \item If $c = 0$, the polynomials $1$ and $1+X$ both take the value $1$ at $0$.
+  \item If $c < 0$, write $c = -p/q$ with $p,q \in \mathbb{Z}_{>0}$. The polynomials $1$ and $1+p+qX$ both take the value $1$ at $c$.
+\end{itemize}
+In every case, two different polynomials with non-negative integer coefficients produce the exact same output. Therefore, a single rational query cannot possibly distinguish them.
+\end{remark}
+\textbf{Bonus.}
+Alternatively, switch the machine to \emph{computable mode}: rather than feeding it an integer, you may input a deterministic algorithm that computes a specific real number $r\in\mathbb{R}$ to any requested degree of precision. In return, the machine provides you with an algorithm that computes the exact value $P(r)$ to any requested precision. (Note that because evaluating a polynomial with integer coefficients requires only finite additions and multiplications, if $r$ is computable, $P(r)$ is computable as well, guaranteeing that the machine can output such an algorithm.) Because evaluating functions on arbitrary-precision streams is demanding, this query drains \emph{twice} the battery, limiting you to a single query. Can you design an algorithm that recover $P(X)$ in finitely many steps ?
+
+\subsection*{Solution}
+
+Query a computable positive transcendental number, say $r=e$. We do this by providing the machine with an explicit algorithm that computes $e$ (for example, generating the sequence of rational partial sums $\sum_{k=0}^{N} \frac{1}{k!}$ until the error term is sufficiently small).
+
+\begin{lemma}\label{lem:transc}
+If $r\in\mathbb{R}$ is transcendental, then $\operatorname{ev}_r\colon\mathbb{N}[X]\to\mathbb{R}$,
+$P\mapsto P(r)$, is injective; in particular $P(r)$ determines $P$ uniquely.
+\end{lemma}
+\begin{proof}
+If $P(r)=Q(r)$ then $R:=P-Q\in\mathbb{Z}[X]$ satisfies $R(r)=0$; as $r$ is transcendental,
+$R=0$, i.e.\ $P=Q$.
+\end{proof}
+This settles the \emph{information} --- $P$ is the unique element of
+$\mathbb{N}[X]$ taking the value $s:=P(e)$ --- and it remains only to extract it by an
+algorithm. Recall that $n=\deg P$ and $a\in\mathbb{N}^{n+1}$ satisfies $P=\sum_{i=0}^{n}a_iX^i$ with $a_n\ge 1$. Hence $s>1$.
+\\\\
+Now, we can compute a rational $q$ with $s<q$ (which is possible since we may request $s$ to any precision). Since $a_n\ge 1$, and $e>0$, we have $e^{n}\le a_n e^{n}\le P(e)=s<q$, hence $n\leq\lfloor\log(q)\rfloor$ and $q\geq 1$. We can compute a sufficiently close approximation of $\log(q) \geq \log(1) = 0$ such that taking its floor yields $\lfloor\log(q)\rfloor\geq 0$. We could also bound $n$ without computing approximations of $e$ and $\log(q)$: simply compute recursively $3^0, 3^1, \dots, 3^k, \dots$ until finding the first $T\in\mathbb{N}$ that satisfies $3^T > q$. Because $e < 3$, this guarantees $e^n < 3^T$, so we know $0\leq n \leq T-1$. In either case, there is an explicitly computable integer $B_q$ depending on $q$ (which could be optimized) such that $0\leq n \leq B_q$. 
+\\\\
+Now as $e>0$, for every $0\leq i\leq n$, we have $a_ie^{i}\le P(e)=s<q$ so that $a_i\leq\left\lfloor\frac{q}{e^i}\right\rfloor$, which is computable. To avoid computing approximations of $e$, we could also directly bound $a_i\leq \left\lfloor \frac{q}{2^i} \right\rfloor$. Therefore, the sequence of coefficients $a$ lies in the finite, computable set $\mathcal{A}_q$ depending on $q$:
+\[
+  \mathcal{A}_{q}:=\left\{a'\in \mathbb{N}^{B_q + 1} \;\middle|\; \forall i \in \operatorname{dom}(a'),\, a'_i\leq\left\lfloor\frac{q}{e^i}\right\rfloor\right\}.
+\]
+
+For each candidate $a'\in \mathcal{A}_{q}$, consider the corresponding polynomial
+$Q(X) = \sum_{i\in \operatorname{dom}(a')} a'_i X^i\in\mathbb{N}[X]$. Now assume that $a'\neq a$, we have $Q(X)\neq P(X)$, and by Lemma \ref{lem:transc}, $Q(e)\neq s$. Thus, there must exist a decimal place where their expansions differ. Since both $s$ and $Q(e)$ are readable to arbitrary precision (one algorithm is given by the oracle, and there are algorithms to compute the first $k$ exact decimals of $Q(e)$), we can certifies this inequality in finitely many steps, allowing $a'$ to be discarded. 
+\\\\
+Crucially, because we do not know which sequence $a'$ is the correct one in advance, and because testing the true sequence $a$ for equality ($P(e) = s$) will never halt, we must carry out these inequality tests for all candidates $a'\in\mathcal{A}_q$ in \textbf{parallel} (which is computationally trivial since there are only finitely many of them). This ensures we \textbf{eventually} eliminate every incorrect candidate in finite time. Once exactly $|\mathcal{A}_q| - 1$ tests have terminated, the single non-halting process corresponds to the true sequence $a$. Thus, $a$ is the unique survivor of this process, and our algorithm halts.
+
+\begin{remark}
+If $\mathcal{A}_q$ were countably infinite, one might suggest parallelizing the tests recursively via \href{https://en.wikipedia.org/wiki/Dovetailing_(computer_science)}{dovetailing}: i.e., performing a "triangle of computation" where, with each new decimal lookup step, we introduce a new sequence into the parallel check. However, this strategy would still not suffice. Even though every incorrect candidate would individually halt and be eliminated in finite time, at any finite moment $t\in\mathbb{N}$, there would always be infinitely many candidates that have not yet halted or are not yet in the computation line. We would never reach a definitive state where exactly one candidate remains, meaning the algorithm would never terminate.
+\end{remark}
+\end{solution}

@@ -1,0 +1,29 @@
+% title:          Integer-valued function on the rationals
+% area:           extremal-combinatorics, limits-continuity
+% methods:        pigeonhole, contradiction
+% difficulty:
+% difficulty-ai:  medium
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         imc
+% origin-date:    2024-08-08
+% origin-number:  Day 2, Problem 6
+% also-in:
+% taken-from:
+% references:     IMC 2024, Second Day (August 8, 2024), Problem 6, proposed by Mehdi Golafshan & Markus A. Whiteland (University of Liège) - https://www.imc-math.org.uk/?year=2024&section=problems&item=prob6q; questions PDF - https://www.imc-math.org.uk/imc2024/imc2024-day2-questions.pdf; official solutions (two solutions) - https://imc-math.org.uk/?item=prob6s&section=problems&year=2024 and https://www.imc-math.org.uk/imc2024/imc2024-day2-solutions.pdf
+% history:        ai
+\begin{problem}
+Show that any function $f:\mathbb{Q}\longrightarrow\mathbb{Z}$ satisfy the following propertie:
+$$\exists a,b,c\in\mathbb{Q}\text{ with } a<b<c \text{ such that } f(a), f(c)\leq f(b)$$
+\end{problem}
+\begin{solution}
+If $\exists a,b,c \in \mathbb{Q}$ such that $a < b < c$ and $f(a) = f(b) = f(c)$, then we are done. Otherwise, suppose that $\forall a,b,c \in \mathbb{Q}$ with $a < b < c$, we do not have $f(a) = f(b) = f(c)$. We show that such $f$ must be unbounded on $[0,1] \cap \mathbb{Q}$. Indeed, if this is not the case, then $\exists K \in \mathbb{Z}_{\geq0}$ such that $f\left[[0,1] \cap \mathbb{Q}\right] \subset \llbracket -K, K \rrbracket$. Since $[0,1] \cap \mathbb{Q} = \bigsqcup_{j \in \llbracket -K, K \rrbracket} \left(f|_{[0,1] \cap \mathbb{Q}}\right)^{-1}[\{j\}]$ is a finite union and $[0,1] \cap \mathbb{Q}$ is countably infinite, there exists $j \in \llbracket -K, K \rrbracket$ such that $f^{-1}[\{j\}]$ is countably infinite. Pick pairwise distinct $a,b,c \in f^{-1}[\{j\}]$ and, without loss of generality, $a < b < c$. Then $j = f(a) = f(b) = f(c)$, a contradiction to our assumptions on $f$. Thus, $f|_{[0,1] \cap \mathbb{Q}}$ is unbounded. In particular, there exists $b \in ]0,1[ \cap \mathbb{Q}$ such that $f(0), f(1) \leq f(b)$. Take $a = 0$ and $c = 1$, then $a < b < c$ and $f(a), f(c) \leq f(b)$, as desired.
+\\\\
+\textit{Remark:} 
+Notice that we did not use all the properties of $\left\langle\mathbb{Q},<\right\rangle$; in particular, we did not use any property of its elements, nor the fact that its order $<$ has neither a first nor a last element. In fact, one easily adapts the above proof to any partial strict \href{https://en.wikipedia.org/wiki/Dense_order}{dense order} $\left\langle S,<_S\right\rangle$ with at least two $<_S$-comparable elements: any $f : S \to \mathbb{Z}$ has the property that $\exists a,b,c \in S$ such that $a <_S b <_S c$ with $f(a), f(c) \leq f(b)$. Again, we may assume, for the sake of contradiction, that $\forall a,b,c \in S$ with $a <_S b <_S c$, $f(a) = f(b) = f(c)$ does not hold. Take two $<_S$-comparable elements $a,c \in S$ with $a <_S c$. By the axiom of countable choice, one easily obtains a countable $<_S$-chain $\mathbf{x} : \mathbb{N} \hookrightarrow S$ such that for all $i \in \mathbb{N}_{>0}$, 
+\[
+a <_S \mathbf{x}(i+1) <_S \mathbf{x}(i) <_S \mathbf{x}(0) <_S c.
+\] 
+Hence, for the same reason as before, $f|_{\operatorname{ran}(\mathbf{x})}$ is unbounded. In particular, there exists $i \in \mathbb{N}$ such that \(f(a), f(c) \leq f(\mathbf{x}(i))\). Then define $b := \mathbf{x}(i) \in S$. We have \(a <_S b <_S c\), and \(f(a), f(c) \leq f(b)\), as desired.
+\end{solution}

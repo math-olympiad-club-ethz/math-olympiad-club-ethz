@@ -1,0 +1,30 @@
+% title:          Integer functional equation with squares
+% area:           functional-equations
+% methods:        substitution
+% difficulty:
+% difficulty-ai:  easy
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         pan-african
+% origin-date:    2018-06-27
+% origin-number:  1
+% also-in:
+% taken-from:
+% references:     Pan African MO (PAMO) 2018, 26th edition, Nairobi, Day 1 (27 June 2018), Problem 1 - official paper from the former AMU site (Wayback): https://web.archive.org/web/20220901163539/http://africamathunion.org/PAMO_2018_Problems_En.pdf (French version: https://web.archive.org/web/20220901163512/http://africamathunion.org/PAMO_2018_Problems_Fr.pdf); reproduced in the ssmrmh.ro collection 'Pan African Mathematics Olympiad problems 2009-2019', p. 4 - https://ecoledz.weebly.com/uploads/3/1/0/6/31060631/pan-african-mathematics-olympiad..pdf
+% history:        ai
+\begin{problem}
+Find all functions $f : \mathbb Z \to \mathbb Z$ such that $$(f(x + y))^2 = f(x^2) + f(y^2)$$ for all $x, y \in \mathbb Z$.
+\end{problem}
+\begin{solution}
+Plug in $y=-x$, and let $c=f(0)$. We have $f(x^2) = \frac{c^2}{2}$. Plugging in $y=0$, we have $f(x)^2 = \frac{c^2}{2} + c$. Plugging in $x=0$ in this gives $c^2=\frac{c^2}{2}+c$ $c=0$ or $c=2$. Now if $c=0$, $f \equiv 0$ is the only solution. Else we have $f(x) = \pm 2$ for all $x$. This means $f(x^2) + f(y^2) = 4$, always, so for all $x$ being perfect squares, $f(x)=2$. So the solution in this case becomes $f(x) = 2$ for all perfect square $x$ and $\pm 2$ for all other $x$.
+It is easy to check that the solutions mentioned above work. Thus:
+\[
+\left\{ f : \mathbb{Z} \to \mathbb{Z} \,\middle|\, \forall x,y \in \mathbb{Z} \ (f(x + y))^2 = f(x^2) + f(y^2) \right\}
+\]
+\[
+=
+\left\{ \underline{0} \right\} \cup \left\{ 2\mathbbm{1}_{A} - 2\mathbbm{1}_{\mathbb{Z} \setminus A} \,\middle|\, \exists A \subset \mathbb{Z}, \ \square_{\mathbb{N}} \subset A \right\}
+\]
+where \(\square_{\mathbb{N}} := \{ n^2 \mid n \in \mathbb{N} \}\).
+\end{solution}

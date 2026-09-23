@@ -1,0 +1,310 @@
+% title:          Commutativity of exponentiation
+% area:           diophantine-equations, real-analysis, irrationality
+% methods:        substitution, symmetry, gelfond-schneider, contradiction
+% difficulty:
+% difficulty-ai:  hard
+% status:         partial
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         historical
+% origin-date:    1728-06-29
+% origin-number:  Lettre XXIX, p. 262
+% also-in:        book, putnam
+% taken-from:
+% references:     First known appearance: Daniel Bernoulli, letter to Goldbach, St Petersburg, 29 June 1728 (Lettre XXIX in P.-H. Fuss, Correspondance mathématique et physique, vol. 2, 1843, p. 262): find two unequal numbers with x^y = y^x; the only integer case is 2, 4, with infinitely many fractional solutions. Goldbach's reply, Moscow, 31 January 1729 (Lettre XXXV, same volume), gives the general solution - https://archive.org/download/bub_gb_P2ThmkmB-UkC/bub_gb_P2ThmkmB-UkC_djvu.txt; Euler, Introductio in analysin infinitorum, vol. 2, 1748, ch. XXI, §519 (graph = line y = x plus a curve through (e, e); rational solutions) - https://archive.org/download/bub_gb_ryM0Kh6yLkwC/bub_gb_ryM0Kh6yLkwC_djvu.txt (1797 reprint); Dickson, History of the Theory of Numbers, vol. II, 1920, p. 687, 'Rational solutions of x^y = y^x' - https://archive.org/download/historyoftheoryo02dickuoft/historyoftheoryo02dickuoft_djvu.txt; Putnam 1960, B1 (unequal integers m, n with m^n = n^m) - https://prase.cz/kalva/putnam/putn60.html; Putnam 1961, A1 (where the curve meets the line y = x) - https://prase.cz/kalva/putnam/putn61.html; Hausner, Algebraic number fields and the Diophantine equation m^n = n^m, Amer. Math. Monthly 68 (1961) 856-861, as cited on https://en.wikipedia.org/wiki/Equation_xy_%3D_yx; Bonus (algebraic solutions): Mahler & Breusch, Amer. Math. Monthly Problem 5101 (70 (1963) 571, solution 71 (1964) 564), as cited in Sondow & Marques, Prop. 3.4 - https://arxiv.org/pdf/1108.6096; Bennett & Reznick, Positive rational solutions to x^y = y^{mx} - https://arxiv.org/abs/math/0209072
+% history:        ai
+\begin{problem}
+Define 
+\[
+A := \left\{(x,y)\in\mathbb{R}_{\geq 0}\times\mathbb{R}_{\geq 0} \,:\, x^y = y^x\right\}\footnote{Recall that the exponentiation $a^b:=\exp(b \cdot \log(a))$ where $a > 0$ and $b \in \mathbb{R}$ can be extended to $a = 0$ and $b \geq 0$ by:
+    \[
+    0^b = \begin{cases}
+        0 & (b > 0), \\
+        1 & (b = 0).
+    \end{cases}
+    \]
+and extended in the obvious way for $a \in \mathbb{R}^{\times}$ with $b \in \mathbb{Z}$.}
+\]
+and find:
+\[
+A,\quad A\cap\left(\mathbb{Q}\times\mathbb{Q}\right)\quad \text{and} \quad A\cap\left(\mathbb{Z}\times\mathbb{Z}\right).
+\]
+\textbf{Bonus:}  
+Find \( A \cap \left( \mathbb{Q}^{\mathrm{alg}} \times \mathbb{Q}^{\mathrm{alg}} \right) \) and \( A \cap \left( \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z}) \times \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z}) \right) \).
+\end{problem}
+\begin{solution}
+For general culture: knowing the construction of \(\mathbb{R}\) using equivalence classes of rational Cauchy sequences, recall that one can unambiguously define the power \(a^b\) (for \(a > 0\) and \(b \in \mathbb{R}\)) in two equivalent ways.
+\\\\
+The first method uses the theory of power series and their convergence (which must be developed); using the exponential and logarithmic functions, we define \(a^b := \exp\left( b \cdot \log\left( a \right) \right)\).
+\\\\
+The second method is a constructive, step-by-step approach: one first defines \(a^b\) where \(b\) is an integer, then extends to the rationals, and finally to the real numbers.
+\\\\
+Since \(\exp\) is a group morphism with \(\exp\left(1\right) > 0\), we can show for all \(x \in \mathbb{R}\) the equality \(\exp\left( x \right) = \exp\left(1\right)^x\), where the left-hand side uses power series and the right-hand side uses the constructive approach. Thus, we can easily show that the two definitions of exponentiation yield the same result. The exponentiation \(a^b\), where \(a > 0\) and \(b \in \mathbb{R}\), can be extended to \(a = 0\) and \(b \geq 0\), and to \(a \in \mathbb{R}^{\times}\) with \(b \in \mathbb{Z}\), as mentioned in the hyperlink (and \(0^x\) is continuous at \(x\), except at \(x = 0\)). For more information, see the article on \href{https://en.wikipedia.org/wiki/Exponentiation}{Exponentiation}, where you can find the proofs in Terence Tao’s book \textit{Analysis I}.
+\\\\
+Let us now solve the form of \(A\): notice that \((x,y) \in A \Leftrightarrow (y,x) \in A\). Clearly, \(\Delta\left( \mathbb{R}_{\geq 0} \right) = \left\{ \left( x,x \right) \in \mathbb{R}_{\geq 0} \right\} \subset A\). We now determine \(A \setminus \Delta\left( \mathbb{R}_{\geq 0} \right)\).
+\\\\
+Let \((x,y) \in A \setminus \Delta\left( \mathbb{R}_{\geq 0} \right)\). Then there exists \(t \in \mathbb{R}_{\geq 0}\) such that \(y = t x\). By hypothesis, \(t \neq 1\). If \(y = 0\), then since \(0 \leq x \neq y\), we have \(x > 0\), but \(x^y = y^x\) implies in this case \(1 \overset{x > 0}{=} x^0 = 0^x \overset{x > 0}{=} 0\), which is a contradiction. Thus, \(y > 0\). Also, if \(t = 0\), then \(y = 0\), a contradiction. So \(t \in \mathbb{R}_{>0} \setminus \{1\}\). Now, if \(x = 0\), then \(y = 0\), which is also excluded by hypothesis. Therefore, \(x, y > 0\). Knowing this, from \(x^y = y^x\) we compute:
+\[
+x^{t x} = (t x)^x \Rightarrow t^x = x^{(t - 1)x} = \left(x^{t - 1}\right)^x.
+\]
+Since \(x > 0\), the map \(a \mapsto a^x\) on \(\mathbb{R}_{\geq 0}\) is bijective. This implies from the above equality that \(x^{t - 1} = t\). Since \(t \neq 1\), this implies that \(x = t^{\frac{1}{t - 1}}\). Therefore:
+\[
+(x,y) = \left(t^{\frac{1}{t - 1}},\ t \cdot t^{\frac{1}{t - 1}}\right) = \left(t^{\frac{1}{t - 1}},\ t^{\frac{t}{t - 1}}\right).
+\]
+This shows that:
+\[
+A \setminus \Delta\left(\mathbb{R}_{\geq 0}\right) \subset \left\{ \left(t^{\frac{1}{t - 1}},\ t^{\frac{t}{t - 1}} \right) \,\middle|\, t \in \mathbb{R}_{> 0} \setminus \{1\} \right\}.
+\]
+We define in consequence the set
+\[
+S := \left\{ \left(t^{\frac{1}{t - 1}},\ t^{\frac{t}{t - 1}} \right) \,\middle|\, t \in \mathbb{R}_{>0} \setminus \{1\} \right\} \subset \mathbb{R}_{> 0} \times \mathbb{R}_{> 0}.
+\]
+The map $f$ defined over \( \mathbb{R}_{>0} \setminus \{1\} \) by
+\[
+t \mapsto \left(t^{\frac{1}{t - 1}},\ t^{\frac{t}{t - 1}} \right)
+\]
+is clearly injective onto \(S\) and satisfies the identity
+\[
+\left(t^{\frac{1}{t - 1}},\ t^{\frac{t}{t - 1}} \right) = \left(\left( \frac{1}{t} \right)^{\frac{1}{1 - t}},\ \left( \frac{1}{t} \right)^{\frac{t}{1 - t}} \right)
+= \left( \left( \frac{1}{t} \right)^{\frac{\frac{1}{t}}{\frac{1}{t} - 1}},\ \left( \frac{1}{t} \right)^{\frac{1}{\frac{1}{t} - 1}} \right),
+\]
+that is, it swaps coordinates under precomposition with the involution \(\_^{-1}: t \mapsto \frac{1}{t}\) of \(\mathbb{R}_{>0} \setminus \{1\}\): 
+\[
+f = \mathrm{swap} \circ f\circ\_^{-1}.
+\]
+For the reverse inclusion \( S \subset A \setminus \Delta\left(\mathbb{R}_{\geq 0}\right) \), let \( t \in \mathbb{R}_{> 0} \setminus \{1\} \). It suffices to check that we have:
+\[
+\left(t^{\frac{1}{t-1}}\right)^{\left(t^{\frac{t}{t-1}}\right)}=\left(t^{\frac{t}{t-1}}\right)^{\left(t^{\frac{1}{t-1}}\right)} \text{ and } t^{\frac{1}{t-1}} \neq t^{\frac{t}{t-1}}=t\cdot  t^{\frac{1}{t-1}} 
+\]
+Indeed, using the properties of powers:
+\[
+\left(t^{\frac{1}{t-1}}\right)^{\left(t^{\frac{t}{t-1}}\right)} = t^{\left(\frac{1}{t-1} \cdot \left(t^{\frac{t}{t-1}}\right)\right)} = t^{\frac{\left(t^{\frac{t}{t-1}}\right)}{t-1}},
+\]
+and
+\[
+\left(t^{\frac{t}{t-1}}\right)^{\left(t^{\frac{1}{t-1}}\right)} = t^{\left(\frac{t}{t-1} \cdot \left(t^{\frac{1}{t-1}}\right)\right)} = t^{\frac{t \cdot \left(t^{\frac{1}{t-1}}\right)}{t-1}} = t^{\frac{\left(t^{\frac{t}{t-1}}\right)}{t-1}}.
+\]
+Both are equal, therefore:
+\[
+\left(t^{\frac{t}{t-1}}\right)^{\left(t^{\frac{1}{t-1}}\right)} = \left(t^{\frac{1}{t-1}}\right)^{\left(t^{\frac{t}{t-1}}\right)},
+\]
+and if $t^{\frac{1}{t-1}}=t^{\frac{t}{t-1}} $ then since $t > 0$ we have $t^{\frac{1}{t-1}}>0$ so that we can divide by $t^{\frac{1}{t-1}}$ and obtain that $t=1$ a contradiction to $t\in\mathbb{R}_{>0}\setminus\{1\}$.
+All of this shows the nice decomposition of $A$ into two symmetric (with respect to swapping the variable) set. Namely the identity line and a symmetric (with respect to the line) curve:
+\[
+A=\Delta(\mathbb{R}_{\geq 0}) \sqcup S.
+\]
+Now it remains to find \(A\cap\left(\mathbb{Q}\times\mathbb{Q}\right)\) and \(A\cap\left(\mathbb{N}\times\mathbb{N}\right)\).
+\\\\
+Clearly:
+\[
+\Delta(\mathbb{R}_{\geq 0})\cap\left(\mathbb{Q}\times\mathbb{Q}\right)=\Delta(\mathbb{Q}_{\geq 0})\text{ and } \Delta(\mathbb{R}_{\geq 0})\cap\left(\mathbb{Z}\times\mathbb{Z}\right)=\Delta(\mathbb{Z}_{\geq 0}).
+\]
+We first find \( S \cap \left( \mathbb{Z} \times \mathbb{Z} \right) \) without relying on the more complicated set \( S \cap \left( \mathbb{Q} \times \mathbb{Q} \right) \).  
+We can quickly understand why:  
+\[
+S \cap \left( \mathbb{Z} \times \mathbb{Z} \right) = \left\{ \left( 2,4 \right), \left( 4,2 \right) \right\}.
+\]
+Indeed, the inclusion \( \supset \) is clear. Now, for a pair \( \left( n,m \right) \in S \cap \left( \mathbb{Z} \times \mathbb{Z} \right) \), we may assume that \( n < m \) (since the set is symmetric with respect to swapping the variables). If we show that \( \left( n,m \right) = \left( 2,4 \right) \), we are done, as this proves \( \subset \). So, without further ado, since \( n,m > 0 \):  
+\[
+n \cdot \log\left( m \right) = m \cdot \log\left( n \right) \Rightarrow \frac{\log\left( n \right)}{n} = \frac{\log\left( m \right)}{m}.
+\]
+Let us consider the function \( f\left( x \right) = \frac{\log\left( x \right)}{x} \) for \( x > 0 \). Its derivative is  
+\[
+f'\left( x \right) = \frac{1 - \log\left( x \right)}{x^2},
+\]
+which vanishes at \( e \), is positive on \( \left] 0,e \right[ \), and negative on \( \left] e,+\infty \right[ \). Therefore, by standard theorems relating monotonicity and derivatives, \( f \) strictly increases on \( \left] 0,e \right[ \), strictly decreases on \( \left] e,+\infty \right[ \), and thus attains a maximum at \( e \) (with value \( \frac{1}{e} < 0.5 \)). In particular, the functions \( f|_{\left] 0,e \right[} \) and \( f|_{\left] e,+\infty \right[} \) are bijective. This means that for \( f(n) = f(m) \), we must have (since \( n < m \) and \( n,m \neq e \)) that \( n \in \left] 0,e \right[ \) and \( m \in \left] e,+\infty \right[ \).  
+\\\\
+Hence, \( n \in \left\{ 1,2 \right\} \). If \( n = 1 \), then \( m^1 = 1^m \Rightarrow m = 1 \), which contradicts \( n \neq m \). So \( n = 2 \). Then \( m^2 = 2^m \). Since both sides are integers and \( \mathbb{Z} \) is a UFD, \( m \) must be a power of \( 2 \): \( m = 2^k \) for some \( k \in \mathbb{N} \setminus \left\{ 0,1 \right\} \) (as \( m > e > 2 \)). Then, by unique factorisation into primes:  
+\[
+2^{2k} = 2^{2^k} \Rightarrow 2k = 2^k.
+\]
+We want to restrict the possible values of \( k\geq 2 \) for this equality. Consider the function $g$ defined for all \( x \in \mathbb{R} \), by \( g(x) ;= 2^x - 2x \). Its derivative is  
+\[
+g'\left( x \right) = \log(2) \cdot 2^x - 2.
+\]
+We ask for which \( x \in \mathbb{R} \), \( 2^x = 2x \). Since \( 2^x \) is strictly increasing, we find that \( g'(x) > 0 \) if and only if  
+\[
+x > \log_2\left( \frac{2}{\log(2)} \right) = 1 - \log_2\left( \log(2) \right),
+\]
+and this value lies strictly between \( 1 \) and \( 2 \), since \( -1 = \log_2\left( \frac{1}{2} \right) < \log_2\left( \log(2) \right) < \log_2(1) = 0 \), as \( \frac{1}{2} < \log(2) < 1 \), and \( \log_2 \) is strictly increasing. Hence, by standard theorems relating monotonicity and derivatives, \( g \) is at least strictly increasing on \( [2,+\infty) \). Since \( g(2) = 0 \), we have \( g(x) > 0 \) for \( x > 2 \), implying that \( k = 2 \) is the only solution.  
+\\\\
+Therefore, \( m = 2^2 = 4 \), and so \( \left( n,m \right) = \left( 2,4 \right) \). This concludes the argument.  
+\\\\
+To finish the problem, we compute \( S \cap \left( \mathbb{Q} \times \mathbb{Q} \right) \).
+\\\\
+This is a Diophantine equation that has evoked considerable attention since the days of Euler, who treated it in \href{https://en.wikipedia.org/wiki/Introductio_in_analysin_infinitorum}{\textit{Introductio in Analysin Infinitorum}} II, page 294. He noticed that if \( s \in \mathbb{Z}_{>0} \), then \( t(s) := 1 + \frac{1}{s} \in \mathbb{Q}_{>0} \setminus \left\{ 1 \right\} \) was such that, through the parametrisation \( f\left( t(s) \right) \in S \), we have \( f\left( t(s) \right) \in \mathbb{Q} \times \mathbb{Q} \). Indeed,
+\[
+\frac{1}{t(s) - 1} = s \quad \text{and} \quad \frac{t(s)}{t(s) - 1} = 1 + \frac{1}{t(s) - 1} = 1 + s,
+\]
+thus:
+\[
+f\left( t(s) \right) = \left( t(s)^{s}, t(s)^{1 + s} \right) = \left( \left(1 + \frac{1}{s} \right)^{s}, \left(1 + \frac{1}{s} \right)^{s + 1} \right)
+\]
+is certainly a pair of rational numbers.
+\\\\
+For now, the problem of such “commutativity of exponentiation” has been active in various settings. The problem appeared in both the 1960 and 1961 Putnam Prize Competitions. There is Banach's result that the same equation has infinitely many solutions in transfinite cardinals, and Jacobsthal's theorem on the general solution in transfinite ordinal numbers. A description of all complex algebraic solutions appears to be unknown. For related result results, see the proposed papers, \cite{bennett2002reznick}, and \cite{alvin1961hausner}.
+\\\\
+By symmetry with respect to swapping coordinates of \( S \), and what we have shown previously, we get:
+\[
+\left\{ \left( \left(1 + \frac{1}{s} \right)^{s+\tau}, \left(1 + \frac{1}{s} \right)^{s + 1-\tau} \right) \,\middle|\, s \in \mathbb{Z}_{>0},\, \tau \in \left\{ 0, 1 \right\} \right\} \subset S \cap \left( \mathbb{Q} \times \mathbb{Q} \right).
+\]
+We shall show that the reverse inclusion \( \supset \) holds by reproducing the full solution given in \cite{solomon1967Hurwitz}.
+\\
+Let \( \left( n, m \right) \in S \cap \left( \mathbb{Q} \times \mathbb{Q} \right) \), and suppose that \( \left(n, m\right) \notin \mathbb{Z} \times \mathbb{Z} \), otherwise we already know that \( \left(n, m\right) \in \left\{ (2, 4), (4, 2) \right\} \). The goal is to show that \( \exists s \in \mathbb{Z}_{>0} \) and $\tau\in\{0,1\}$ with \( m = \left(1 + \frac{1}{s} \right)^{1+s-\tau} \) and \( n = \left(1 + \frac{1}{s} \right)^{s+\tau} \). Since the set is symmetric with respect to swapping the variables, we may again assume that \( n < m \) so that in fact $\tau$ needs to be $0$.
+\\\\
+Notice that $n>1$ since if \( n \leq 1 \), then 
+\[
+n^m \overset{\text{hyp}}{=} m^n \overset{m > n}{>} n^n \overset{\substack{1 \geq n \\ m > n}}{\geq} n^m,
+\]
+a contradiction to \( (n, m) \in S \). Thus \( m > n > 1 \). Now, write \( m = \frac{a}{b} \), \( n = \frac{c}{d} \) for \( a, b, c, d \in \mathbb{Z}_{>0} \) with \( \gcd(a, b) = \gcd(c, d) = 1 \). Then \( m > n > 1 \) implies \( a > b > 0 \), \( c > d > 0 \), and \( ad > bc \). Write \( 1 < \frac{ad}{bc} = \frac{\lambda}{\mu} \) for \( \lambda, \mu \in \mathbb{Z}_{>0} \) with \( \gcd(\lambda, \mu) = 1 \) and \( \lambda > \mu \).
+\\
+If \( \left( \frac{a}{b} \right)^{\frac{c}{d}} = \left( \frac{c}{d} \right)^{\frac{a}{b}} \), then \( \left( \frac{a}{b} \right)^{bc} = \left( \frac{c}{d} \right)^{ad} \), and so \( a^{bc} d^{ad} = c^{ad} b^{bc} \). Now, because \( \gcd(a, b) = \gcd(c, d) = 1 \) and \( a, b, c, d > 0 \), we have
+\begin{equation} \label{4.1}
+    a^{bc} = c^{ad} \quad \text{and} \quad b^{bc} = d^{ad},
+\end{equation}
+since \( \mathbb{Z} \) is a UFD. We have that \( a \) and \( c \) share the same primes in their canonical representations as products of powers of primes, and so must \( b \) and \( d \). That is, there exist \( k_1, k_2 \in \mathbb{N} \) with distinct prime factors \( p \colon k_1 \hookrightarrow \mathbb{P} \), \( q \colon k_2 \hookrightarrow \mathbb{P} \)
+with \( \operatorname{ran}(p) \cap \operatorname{ran}(q) = \varnothing \), \( \forall i \in k_1,\ v_{p_i}(a), v_{p_i}(c) \geq 1 \), \( \forall j \in k_2,\ v_{q_j}(b), v_{q_j}(d) \geq 1 \), and:
+\[
+    a = \prod_{i \in k_1} p_i^{v_{p_i}(a)},\quad c = \prod_{i \in k_1} p_i^{v_{p_i}(c)},\quad
+    b = \prod_{j \in k_2} q_j^{v_{q_j}(b)},\quad d = \prod_{j \in k_2} q_j^{v_{q_j}(d)}.
+\]
+In the case of \( a \) and \( c \), these are certainly not empty products since \( a > b > 0 \) and \( c > d > 0 \), so \( a > 1,\, c > 1 \), that is, \( k_1 \geq 1 \). If \( k_2 = 0 \), then \( b = 1 = d \), so \( m = a \) and \( n = c \), thus \( (m, n) \in \mathbb{N} \times \mathbb{N} \), a contradiction to the choice of \( (m, n) \notin \mathbb{N} \times \mathbb{N} \). Therefore, we must also have that the case of \( b \) and \( d \) involves non-empty products.
+\\\\
+It follows from \eqref{4.1} and the fact that the primes are distinct that for each \( i \in k_1 \) and \( j \in k_2 \), \( v_{p_i}(a)\, bc = v_{p_i}(c)\, ad \) and \( v_{q_j}(b)\, bc = v_{q_j}(d)\, ad \), so that (since everything is strictly greater than \( 0 \)):
+\[
+\frac{v_{p_i}(a)}{v_{p_i}(c)} = \frac{ad}{bc} = \frac{\lambda}{\mu} \text{, and } \frac{v_{q_j}(b)}{v_{q_j}(d)} = \frac{ad}{bc} = \frac{\lambda}{\mu}.
+\]
+Furthermore, we see that \( \mu v_{p_i}(a) = \lambda v_{p_i}(c) \) and \( \mu v_{q_j}(b) = \lambda v_{q_j}(d) \). Since \( \gcd(\lambda, \mu) = 1 \), we conclude that \( \lambda \mid v_{p_i}(a) \), \( \lambda \mid v_{q_j}(b) \), \( \mu \mid v_{p_i}(c) \), \( \mu \mid v_{q_j}(d) \). We define in consequence, for each \( i \in k_1 \) and \( j \in k_2 \), the following integers:
+\[
+    \rho_i := \frac{v_{p_i}(a)}{\lambda} = \frac{v_{p_i}(c)}{\mu} \in \mathbb{Z}_{>0},\quad \text{and} \quad \tilde{\rho}_j := \frac{v_{q_j}(b)}{\lambda} = \frac{v_{q_j}(d)}{\mu} \in \mathbb{Z}_{>0},
+\]
+and define the corresponding products \( r := \prod_{i \in k_1} p_i^{\rho_i} \in \mathbb{Z}_{>0} \), \( s := \prod_{j \in k_2} q_j^{\tilde{\rho}_j} \in \mathbb{Z}_{>0} \). Then \( r, s > 1 \) since \( k_1, k_2 \geq 1 \) and \( \rho_i, \tilde{\rho}_j > 0 \) respectively. By construction,
+\[
+    a = r^\lambda,\quad c = r^\mu,\quad b = s^\lambda,\quad d = s^\mu.
+\]
+Hence
+\[
+    \frac{\lambda}{\mu} = \frac{ad}{bc} = \frac{r^{\lambda}s^{\mu}}{s^{\lambda}r^{\mu}} = \frac{r^{\lambda - \mu}}{s^{\lambda - \mu}} \Rightarrow \mu r^{\lambda - \mu} = \lambda s^{\lambda - \mu}.
+\]
+Since \( \lambda > \mu > 0 \), we get that \( \lambda - \mu \in \mathbb{Z}_{>0} \), and so \( r^{\lambda - \mu},\, s^{\lambda - \mu} \in \mathbb{Z}_{>0} \). The fact that \( \gcd(\lambda, \mu) = 1 \) implies that \( \lambda \mid r^{\lambda - \mu} \) and \( \mu \mid s^{\lambda - \mu} \). Since \( \gcd(r, s) = 1 \), we have \( \gcd\left(r^{\lambda - \mu}, s^{\lambda - \mu}\right) = 1 \), which implies that \( r^{\lambda - \mu} \mid \lambda \) and \( s^{\lambda - \mu} \mid \mu \). Since everything is positive, the only possibility is that
+\begin{equation} \label{4.2}
+    \lambda = r^{\lambda - \mu}, \quad \mu = s^{\lambda - \mu} \text{ thus } \lambda - \mu = r^{\lambda - \mu} - s^{\lambda - \mu}.
+\end{equation}
+But \eqref{4.2} can hold only if \( \lambda - \mu = 1 \). For, suppose that \( \lambda - \mu > 1 \). Since \( r > s \),
+\begin{align*}
+    r^{\lambda - \mu} &\overset{r \geq s + 1}{\geq} (s + 1)^{\lambda - \mu} \\
+    &= \sum_{k = 0}^{\lambda - \mu} \binom{\lambda - \mu}{k} s^{\lambda - \mu - k} \\
+    &\overset{\lambda - \mu \geq 2}{=} s^{\lambda - \mu} + (\lambda - \mu) s^{\lambda - \mu - 1} + \sum_{k = 2}^{\lambda - \mu} \binom{\lambda - \mu}{k} s^{\lambda - \mu - k} \\
+    &\overset{s > 0}{>} s^{\lambda - \mu} + (\lambda - \mu) s^{\lambda - \mu - 1} \\
+    &\overset{s > 1}{\geq} s^{\lambda - \mu} + \lambda - \mu.
+\end{align*}
+It follows that \( r^{\lambda - \mu} - s^{\lambda - \mu} > \lambda - \mu \), which is a contradiction since \( \lambda - \mu = r^{\lambda - \mu} - s^{\lambda - \mu} \). Thus \( \lambda - \mu \leq 1 \), and since \( \lambda - \mu \in \mathbb{Z}_{>0} \), we get \( \lambda - \mu = 1 \).
+\\\\
+Equation \eqref{4.2} rewrites as:
+\[
+    \lambda = r, \quad \mu = s \text{ and } 1 = r - s.
+\]
+From \( \lambda = r = 1 + s \), we get
+\[
+    a = r^{\lambda} = (1 + s)^{1 + s}, \quad c = r^{\mu} = (1 + s)^s, \quad
+    b = s^{\lambda} = s^{1 + s}, \quad d = s^{\mu} = s^s.
+\]
+Getting back to \( m \) and \( n \), we obtain:
+\[
+    m = \frac{a}{b} = \left(1 + \frac{1}{s}\right)^{1 + s}, \quad n = \frac{c}{d} = \left(1 + \frac{1}{s}\right)^s.
+\]
+This concludes since \(s\in\mathbb{Z}_{>0}\).
+\\\\
+Summarising, we get:
+\[
+    A\cap(\mathbb{Z} \times \mathbb{Z}) = \Delta(\mathbb{Z}_{>0}) \sqcup \left\{(2,4), (4,2)\right\}
+\]
+and
+\[
+    A \cap (\mathbb{Q} \times \mathbb{Q}) = \Delta(\mathbb{Q}_{\geq 0}) \sqcup \left\{ \left( \left(1 + \frac{1}{s} \right)^{s + \tau}, \left(1 + \frac{1}{s} \right)^{s + 1 - \tau} \right) \,\middle|\, s \in \mathbb{Z}_{>0},\, \tau \in \{0,1\} \right\}.
+\]
+\begin{remark}
+Notice that as \( \mathbb{Z}_{>0}\ni s \to +\infty \), we have \( \left(1 + \frac{1}{s} \right)^{s} \nearrow e \) and \( \left(1 + \frac{1}{s} \right)^{s+1} \searrow e \), where \( e \) is the Euler constant (transcendental), by a standard result in analysis.
+\end{remark}
+
+\begin{remark}
+    One could pose the same question over \( \mathbb{C} \) or \( \mathbb{R} \), restricting to pairs for which the exponentiation is well-defined. In the real case, one may analyse the possible quadrants for \((x,y)\), such as when the signs are compatible or when a sign change occurs. In the complex case: one must restrict to a branch of the logarithm, typically the principal branch, and exclude points where \(\log\) is undefined, e.g., at \(0\). Branch cuts and multivaluedness must be acknowledged: \(x^y\) is generally not single-valued in \( \mathbb{C} \), so the equation must be interpreted either as equality of principal values, as set equality up to branch multiples, or as a non-empty set intersection. This has been partially addressed in the rational case in \cite{solomon1967Hurwitz}. In both case, one can similarly ask the intersection question with \( \mathbb{Z} \times \mathbb{Z} \) and \( \mathbb{Q} \times \mathbb{Q} \), and obtain almost the same result (for negative rationals and negative integers). This does not require significantly more work, but care is needed since we are working in a domain where exponentiation is sparsely defined.
+\end{remark}
+\textbf{Bonus:}  
+Find \( A \cap \left( \mathbb{Q}^{\mathrm{alg}} \times \mathbb{Q}^{\mathrm{alg}} \right) \) and \( A \cap \left( \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z}) \times \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z}) \right) \).
+
+\subsection*{Solution:}
+Clearly, \( \Delta\left( \mathbb{R}_{\geq 0} \right) \cap \left( \mathbb{Q}^{\mathrm{alg}} \times \mathbb{Q}^{\mathrm{alg}} \right) = \Delta\left( \mathbb{Q}^{\mathrm{alg}} \cap \mathbb{R}_{\geq 0} \right) \)  
+and  
+\( \Delta\left( \mathbb{R}_{\geq 0} \right) \cap \left( \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z}) \times \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z}) \right) = \Delta\left( \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z}) \cap \mathbb{R}_{\geq 0} \right) \).
+\\\\
+We now compute \( S \cap \left( \mathbb{Q}^{\mathrm{alg}} \times \mathbb{Q}^{\mathrm{alg}} \right) \) and \( S \cap \left( \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z}) \times \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z}) \right) \) by following the solutions provided in \cite{sato1972algebraic}, which make use of the parametrisation of \( S \) by \( f \).
+\\\\
+For the computation of \( S \cap \left( \mathbb{Q}^{\mathrm{alg}} \times \mathbb{Q}^{\mathrm{alg}} \right) \), let \( t \in \mathbb{Q}_{>0} \setminus \{1\} \); then certainly \( f(t) \in S \). Write \( t = \frac{t_1}{t_2} \) for \( t_1, t_2 \in \mathbb{Z}_{>0} \) with \( \gcd(t_1, t_2) = 1 \). Then
+\[
+\frac{1}{t - 1} = \frac{t_2}{t_1 - t_2} \in \mathbb{Q}, \quad \text{and} \quad \frac{t}{t - 1} = 1 + \frac{1}{t - 1} = \frac{t_1}{t_1 - t_2} \in \mathbb{Q}.
+\]
+We get that \( t^{\frac{1}{t - 1}} = t^{\frac{t_2}{t_1 - t_2}} \) and \( t^{\frac{t}{t - 1}} = t^{\frac{t_1}{t_1 - t_2}} \); thus, for \( \operatorname{sign}(t_2 - t_1)(t_2 - t_1) \in \mathbb{Z}_{>0} \), we get
+\[
+\left( t^{\frac{1}{t - 1}} \right)^{\operatorname{sign}(t_2 - t_1)(t_2 - t_1)} = t^{\operatorname{sign}(t_2 - t_1)t_2} \in \mathbb{Q},
+\]
+and
+\[
+\left( t^{\frac{t}{t - 1}} \right)^{t_2 - t_1} = t^{\operatorname{sign}(t_2 - t_1)t_1} \in \mathbb{Q}.
+\]
+This shows that \( t^{\frac{1}{t - 1}} \) and \( t^{\frac{t}{t - 1}} \) are respectively the roots of the following rational polynomials:
+\[
+X^{\operatorname{sign}(t_2 - t_1)(t_2 - t_1)} - t^{\operatorname{sign}(t_2 - t_1)t_2} \in \mathbb{Q}[X], \quad \text{and} \quad X^{\operatorname{sign}(t_2 - t_1)(t_2 - t_1)} - t^{\operatorname{sign}(t_2 - t_1)t_1} \in \mathbb{Q}[X].
+\]
+This shows that \( f(t) \in \mathbb{Q}^{\mathrm{alg}} \times \mathbb{Q}^{\mathrm{alg}} \). In total, we get
+\[
+f\left[ \mathbb{Q}_{>0} \setminus \{1\} \right] = \left\{ \left( t^{\frac{1}{t - 1}}, t^{\frac{t}{t - 1}} \right) \,\middle|\, t \in \mathbb{Q}_{>0} \setminus \{1\} \right\} \subset S \cap \left( \mathbb{Q}^{\mathrm{alg}} \times \mathbb{Q}^{\mathrm{alg}} \right).
+\]
+We shall show that the reverse inclusion \( \supset \) holds. Let \( (x, y) \in S \cap \left( \mathbb{Q}^{\mathrm{alg}} \times \mathbb{Q}^{\mathrm{alg}} \right) \); then \( x, y > 0 \) and \( x, y \) are algebraic. Since the set is symmetric, we may again assume that \( x < y \). Recalling our construction of the parametrisation, we know that for \( t := \frac{y}{x} \in \mathbb{R}_{>0} \setminus \{1\} \), we have \( f(t) = f\left( \frac{y}{x} \right) = (x, y) \). Since \( \mathbb{Q}^{\mathrm{alg}} \) is a field, \( t \in \mathbb{Q}^{\mathrm{alg}} \), and the following constants \( u := \frac{1}{t - 1} = \frac{y}{x - y} \neq 0 \) and \( v := \frac{t}{t - 1} = \frac{x}{x - y} \neq 0,1 \) are such that \( u, v \in \mathbb{Q}^{\mathrm{alg}} \), and \( t^{u} = x \), \( t^{v} = y \). If \( t \) is irrational (i.e. \( t \in \mathbb{R} \setminus \mathbb{Q} \)), then so are \( u \) and \( v \). (If either \( u \) or \( v \) were rational, then \( t = (u - 1)^{-1} + 1 \) or \( t = v^{-1} + 1 \) would be rational, a contradiction.)
+\\\\
+But this is impossible because, by the \href{https://en.wikipedia.org/wiki/Gelfond–Schneider_theorem}{Gelfond–Schneider theorem}, as \( t \in \mathbb{Q}^{\mathrm{alg}} \setminus \{0,1\} \) and \( u \in \mathbb{Q}^{\mathrm{alg}} \setminus \mathbb{Q} \), it follows that \( t^{u} = x \) is transcendental—a contradiction to \( x \in \mathbb{Q}^{\mathrm{alg}} \). For a proof of the Gelfond–Schneider theorem see the Appendix [\hyperref[A]{A}]. Thus, \( t \) must be rational and so \( (x, y) = f(t) \in f\left[ \mathbb{Q}_{>0} \setminus \{1\} \right] \).
+\\\\
+Hence:
+\[
+A \cap \left( \mathbb{Q}^{\mathrm{alg}} \times \mathbb{Q}^{\mathrm{alg}} \right) = \Delta\left( \mathbb{Q}^{\mathrm{alg}} \cap \mathbb{R}_{\geq 0} \right) \sqcup \left\{ \left( t^{\frac{1}{t - 1}}, t^{\frac{t}{t - 1}} \right) \,\middle|\, t \in \mathbb{Q}_{>0} \setminus \left\{ 1 \right\} \right\}.
+\]
+Knowing this, since \( \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z}) \subset \mathbb{Q}^{\mathrm{alg}} \), we obtain immediately:
+\[
+S \cap \left( \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z}) \times \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z}) \right) \subset \left\{ \left( t^{\frac{1}{t - 1}}, t^{\frac{t}{t - 1}} \right) \,\middle|\, t \in \mathbb{Q}_{>0} \setminus \left\{ 1 \right\} \right\}.
+\]
+Let \( (x,y) \in S \cap \left( \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z}) \times \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z}) \right) \). Then \( x,y > 0 \) and \( x,y \) are algebraic integers (i.e., each is annihilated by a monic polynomial in \( \mathbb{Z}[X] \)). Since the set is symmetric, we may again assume that \( x < y \).
+By our inclusion, we get that \( \exists t \in \mathbb{Q}_{>0} \setminus \left\{ 1 \right\} \) such that \( f(t) = (x, y) \). Write \( t = \frac{m}{n} \) for \( m,n \in \mathbb{Z} \), with \( \gcd(m,n) = 1 \) and \( m > n \). Since \( x \in \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z}) \), which is a ring (a classical property), and \( m - n \in \mathbb{Z}_{>0} \), we get \( x^{m-n} \in \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z}) \). But:
+\[
+x^{m-n} = \left( t^{\frac{1}{t-1}} \right)^{m-n} =  t^{\frac{m-n}{t-1}} = t^{\frac{n(m-n)}{m-n}} = t^{n} = \frac{m^{n}}{n^{n}}.
+\]
+So \( \frac{m^{n}}{n^{n}} \in \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z}) \), but \( \frac{m^{n}}{n^{n}} \in \mathbb{Q} \), thus \( \frac{m^{n}}{n^{n}} \in \mathcal{O}_{\mathbb{Q}}(\mathbb{Z}) = \mathbb{Z} \) (because \( \mathbb{Z} \) is a UFD, hence normal). Since \( \gcd(m,n) = 1 \) and \( m,n\in\mathbb{Z}_{>0}\), we have \( \gcd(m^n,n^n) = 1 \) this implies \( n^{n} = 1 \), hence \( n = 1 \) and $m>n=1$. Thus \( t = m \in \mathbb{Z}_{>1} \), and we get:
+\[
+x = m^{\frac{1}{m-1}}, \quad y = m^{\frac{m}{m-1}}.
+\]
+Hence:
+\begin{align*}
+S \cap \left( \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z}) \times \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z}) \right)&\subset \left\{ \left( m^{\frac{1}{m-1}}, m^{\frac{m}{m-1}} \right) \,\middle|\, m \in \mathbb{Z}_{>1} \right\}\\&= \left\{ \left( (1+k)^{\frac{1}{k}}, (1+k)^{\frac{k+1}{k}} \right) \,\middle|\, k \in \mathbb{Z}_{>0} \right\}.
+\end{align*}
+The reverse inclusion \( \supset \) is easy to verify, since for each \( m \in \mathbb{Z}_{>1} \subset \mathbb{R}_{>0} \setminus \left\{ 1 \right\} \), we have \( f(m) \in S \), and clearly \( m^{\frac{1}{m-1}}, m^{\frac{m}{m-1}} \) are respectively the roots of the monic integer polynomials:
+\[
+X^{m-1} - m, \quad X^{m-1} - m^{m} \in \mathbb{Z}[X].
+\]
+Hence:
+\[
+A \cap \left( \mathbb{Q}^{\mathrm{alg}} \times \mathbb{Q}^{\mathrm{alg}} \right) = \Delta\left( \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z}) \cap \mathbb{R}_{\geq 0} \right) \sqcup \left\{ \left( (1+k)^{\frac{1}{k}}, (1+k)^{\frac{k+1}{k}} \right) \,\middle|\, k \in \mathbb{Z}_{>0} \right\}.
+\]
+\begin{remark}
+   If one asks the same question over \( \mathbb{C} \), with the known subtleties of this generalisation, the intersection with \( \mathbb{Q}^{\mathrm{alg}} \times \mathbb{Q}^{\mathrm{alg}} \subset \mathbb{C} \times \mathbb{C} \) appears in the literature to lack a complete characterisation.
+\end{remark}
+
+
+\appendix
+\section{}
+\label{A}
+\begin{theorem}[Gelfond-Schneider theorem]
+Let \( \alpha \) and \( \beta \) be algebraic numbers (i.e., \( \alpha, \beta \in \mathbb{Q}^{\mathrm{alg}} \)) such that \( \alpha \neq 0, 1 \) and \( \beta \) is irrational. Then any value of \( \alpha^\beta \) is transcendental.
+\end{theorem}
+\[
+\substack{\textit{Proof not yet written}}
+\]
+\end{solution}

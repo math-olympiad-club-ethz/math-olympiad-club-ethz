@@ -1,0 +1,64 @@
+% title:          Cancellative periodic semigroup is a group
+% area:           other-structures, group-theory
+% methods:        pigeonhole
+% difficulty:
+% difficulty-ai:  easy
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         book
+% origin-date:    1961
+% origin-number:  Exercise 6(c), Section 1.7
+% also-in:        putnam
+% taken-from:
+% references:     A.H. Clifford & G.B. Preston, The Algebraic Theory of Semigroups, Vol. I (AMS Mathematical Surveys 7), 1961, Section 1.7, Exercise 6(c): 'Every cancellative periodic semigroup is a group' (Google Books id zZ-KAwAAQBAJ, full-text search excerpt) - https://www.google.com/books/feeds/volumes?q=%22Every+cancellative+periodic+semigroup+is+a+group%22&max-results=20 ; M. Petrich, Introduction to Semigroups, 1973, exercise 'periodic cancellative semigroup is a group' - https://www.google.com/books/feeds/volumes?q=%22periodic+cancellative%22&max-results=20 ; Putnam 1989 (50th), B2 - https://kskedlaya.org/putnam-archive/1989.pdf ; Kalva solution - https://prase.cz/kalva/putnam/psoln/psol898.html ; J. Gallian, Contemporary Abstract Algebra, 1994, end-of-chapter exercise (the one before exercise 28), credited to the Putnam Competition - https://www.google.com/books/feeds/volumes?q=%22Must+S+be+a+group%22+%22Putnam%22+Gallian ; MathSE question 2360138 (Putnam B2, Kalva proof) - https://math.stackexchange.com/questions/2360138 ; finite case and cancellative epigroups: Wikipedia, Cancellative semigroup - https://en.wikipedia.org/wiki/Cancellative_semigroup
+% history:        ai
+\begin{problem}
+Let $(S,\cdot)$ be a non-empty magma; that is $S$ be a non-empty set, and:
+\begin{align*}
+\cdot:S\times S &\longrightarrow S\\
+(a,b) &\mapsto \cdot((a,b))\overset{not}{=}a\cdot b
+\end{align*}
+be a function (an internal binary operation).
+\\\\
+Suppose it satisfies the following:\\
+\\
+-$(S,\cdot)$ forms a semi-group i.e $\cdot$ is associative; $$\forall a,b,c\in S,\cdot((a,\cdot((b,c)))=\cdot((\cdot(a,b),c))\ i.e.\  a\cdot(b\cdot c)=(a\cdot b)\cdot c$$
+-$\cdot$ is injective in left and right coordinate $\forall a,b,c\in S$;\\ $$\cdot((a,b))=\cdot((a,c))\Rightarrow b=c\ i.e.\  a\cdot b=a\cdot c\Rightarrow b=c$$ $$\cdot((b,a))=\cdot((c,a))\Rightarrow b=c\ i.e.\ b\cdot a=c\cdot a\Rightarrow b=c$$\\
+-$\forall a\in S, a^{\mathbb{N}_{\geq 1}}:=\{a^n |\ n\in\mathbb{N}_{\geq 1}\}$ is finite, where,
+$$a^1:=a\ and\ for\ n>1,\ a^n=a\cdot a^{n-1}$$
+Note that this definition is independent where we start to compute since $\cdot$ is associative.\\\\
+Show $(S,\cdot)$ is a group.
+\end{problem}
+\begin{solution}
+In order to show $(S,\cdot)$ is a group we need to start by showing that $(S,\cdot)$ is a monoïd; that is a semi-group where there exist an identity element for $\cdot$ .
+We know $(S,\cdot)$ is a semi-group. We search and identity element.\\\\
+Let $a\in S$ which exists since it is non-empty, now we know $a^{\mathbb{N}_{\geq 1}}$ is not infinite which means the following statement is true:
+$$
+\neg(\forall m',n'\in\mathbb{N}_{\geq 1}, m'< n'\rightarrow a^{m'}\neq a^{n'})
+$$
+Which means $\exists m,n\in\mathbb{N}_{\geq 1}, m< n\wedge a^m=a^n$. We define:
+$$e_S:=a^{n-m>0}\in S$$
+We see that since $\cdot$ is an associative binary operation that: $$a=a^1=a^{m-(m-1)}=a^{n-(m-1)}=a\cdot a^{n-m}=a\cdot e_S$$
+Therefore again for the same reason we have:  
+$$a\cdot e_S^2=a\cdot (e_S\cdot e_S)=(a\cdot e_S)\cdot e_S=a\cdot e_S$$
+Using injectivity in left coordinate:
+$$e_S^2=e_S$$
+This identity will be the key in our context to show $e_S$ is the identity element for $(S,\cdot)$ i.e. $\forall b\in S, e_S\cdot b=b=b\cdot e_S$.\\\\
+Let $b\in S$, one has using that $S$ is a semi group: $$b\cdot e_S=b\cdot e_S^2=(b\cdot e_S)\cdot e_S$$
+and $$e_S\cdot b=e_S^2\cdot b=e_S\cdot(e_S\cdot b)$$
+using injectivity in the right and left coordinate respectively:
+$b=b\cdot e_S$ and $b=e_S\cdot b$
+as desired.\\
+We have therefore shown $(S,\cdot,e_S)$ is a monoïd, to show it is a group we need to show $\forall g\in S,\exists h\in S,g\cdot h=e_S=h\cdot g$ (each element have right and left inverse which are the same).
+Let $g\in S$:\\
+if $g=e_S$ we have $e_S^2=e_S$ so $e_S$ has an inverse which is itself.
+\\
+If $g\neq e_S$ then $\exists r,s\in\mathbb{N}_{\geq 1}, r< s\wedge g^r=g^s$:
+$$e_S\cdot g=g=g^1=g^{r-(r-1)}=g^{s-(r-1)}=g^{s-r}\cdot g$$
+using injectivity in right coordinate:
+$g^{s-r}=e_S$ we know $s-r\geq 1$ if $s-r=1$ then $g=e_S$ a contradiction therefore $s-r\geq 2$ so that $s-r-1\geq 1$ and we have:
+$$g\cdot g^{s-r-1}=e_S=g^{s-r-1}\cdot g$$
+so that $g$ has an inverse which is $g^{s-r-1}$.
+Hence $(S,\cdot,e_S)$ is a group.
+\end{solution}

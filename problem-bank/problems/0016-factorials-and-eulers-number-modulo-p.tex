@@ -1,0 +1,60 @@
+% title:          Factorials and Euler's number modulo p
+% area:           congruences, sums
+% methods:        taylor-expansion, bijection
+% difficulty:
+% difficulty-ai:  medium
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         paper
+% origin-date:    1995
+% origin-number:
+% also-in:        bernoulli
+% taken-from:
+% references:     Earliest opened appearance of the statement (as a lemma of the Kurepa left-factorial literature, !p = 0!+1!+...+(p-1)!): A. Ivić & Ž. Mijajlović, On Kurepa's problems in number theory, Publ. Inst. Math. (Beograd) N.S. 57(71), 1995, 19-28, formula (2.5.7) '!p ≡ [(p-1)!/e] + 1 (mod p)' - https://arxiv.org/pdf/math/0312202; same identity restated: V. Andrejić & M. Tatarević, Searching for a counterexample to Kurepa's conjecture, 2014, eq. (2.2) 'using the theory of derangements, !p ≡ ⌊(p-1)!/e⌋ + 1 (mod p)' - https://arxiv.org/pdf/1409.0800; Bernoulli Competition (EPFL Bernoulli Center) 2023, Problem 2 (checked in the club's copy of the official solutions (Bernoulli 2023-2026 solutions PDF, not online)) (competition held 5 June 2023, 4 problems; official paper not published online) - https://memento.epfl.ch/event/bernoulli-competition-2023
+% history:        ai
+\begin{problem}
+Let \( e \) be Euler’s number. Show that for any odd prime \( p \), the integer
+\[
+1! + 2! + 3! + \cdots + (p-1)! - \left\lfloor \frac{(p-1)!}{e} \right\rfloor
+\]
+is divisible by \( p \).
+\end{problem}
+\begin{solution}
+First note that:
+\[
+\frac{1}{e} = 1 - \frac{1}{1!} + \frac{1}{2!} - \frac{1}{3!} + \cdots = \sum_{i=0}^{+\infty} \frac{(-1)^i}{i!}.
+\]
+Thus, we have
+\[
+\left\lfloor \frac{(p-1)!}{e} \right\rfloor = \left\lfloor \sum_{i=0}^{+\infty} \frac{(-1)^i (p-1)!}{i!} \right\rfloor
+\]
+Notice that:
+$$\sum_{i=0}^{p-2} \frac{(-1)^i (p-1)!}{i!}\in\mathbb{Z}$$
+We argue that the tail $\sum_{i=p-1}^{+\infty} \frac{(-1)^i (p-1)!}{i!}\in]0;1[$, indeed since $p$ is odd:
+\[
+\sum_{i=p-1}^{+\infty} \frac{(-1)^i (p-1)!}{i!}= \sum_{j=0}^{+\infty} \left(\frac{(p-1)!}{(p-1+2j)!}-\frac{(p-1)!}{(p+2j)!}\right).
+\]
+is certainly bigger than $0$ since each term $\left(\frac{(p-1)!}{(p-1+2j)!}-\frac{(p-1)!}{(p+2j)!}\right)=\frac{(p-1)!}{(p-1+2j)!}\left(1-\frac{1}{p+2j}\right)>0$. Similarly since $p$ is odd:
+\[
+\sum_{i=p-1}^{+\infty} \frac{(-1)^i (p-1)!}{i!}=1-\sum_{j=0}^\infty \left(\frac{(p-1)!}{(p+2j)!}-\frac{(p-1)!}{(p+2j+1)!}\right).
+\]
+is certainly smaller than $1$ since each term $\left(\frac{(p-1)!}{(p+2j)!}-\frac{(p-1)!}{(p+2j+1)!}\right)=\frac{(p-1)!}{(p+2j)!}(1-\frac{1}{p+2j+1})>0$.
+\\\\
+Therefore,
+\[
+\left\lfloor \frac{(p-1)!}{e} \right\rfloor = \sum_{i=0}^{p-2} \frac{(-1)^i (p-1)!}{i!}.
+\]
+Now note that for each $0\leq j\leq p-1$ we have $j\equiv -(p-j)\pmod{p}$ and thus for fixed $0\leq i < p-1$:
+\[
+\frac{(-1)^i (p-1)!}{i!} = (-1)^i (i+1)(i+2)\cdots(p-1) \]
+\[
+\equiv (-1)^i (p-(i+1))(p-(i+2))\cdots 2 \cdot 1 \cdot (-1)^{p-(i+1)} \equiv (p-(i+1))! \pmod{p},
+\]
+where we used that there is $p-(i+1)$ factor in $\frac{(p-1)!}{i!}$ and the fact that \( p \) is odd again. Hence, we have
+\[
+\left\lfloor \frac{(p-1)!}{e} \right\rfloor \equiv \sum_{i=0}^{p-2} (p-(i+1))! \equiv \sum_{i=1}^{p-1} i! \pmod{p},
+\]
+since $i\mapsto p-(i+1)$ is a bijection from $\llbracket 0,p-2\rrbracket$ to $\llbracket 1,p-1\rrbracket$.
+This shows the problem’s statement.
+\end{solution}

@@ -1,0 +1,56 @@
+% title:          Series of consecutive ratios
+% area:           sequences, series
+% methods:        telescoping, induction
+% difficulty:
+% difficulty-ai:  easy
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         imc
+% origin-date:    2012-07-29
+% origin-number:  Day 2, Problem 2
+% also-in:
+% taken-from:
+% references:     IMC 2012 (19th IMC, Blagoevgrad, Bulgaria), Day 2 (29 July 2012), Problem 2, proposed by Christophe Debry (KU Leuven, Belgium) - https://www.imc-math.org.uk/imc2012/IMC2012-day2-questions.pdf ; official solution - https://www.imc-math.org.uk/imc2012/IMC2012-day2-solutions.pdf ; index page - https://www.imc-math.org.uk/?year=2012&item=problems
+% history:        ai
+\begin{problem}
+Define the sequence \( a_0, a_1, \dots \) inductively by \( a_0 = 1 \), \( a_1 = \frac{1}{2} \) and
+\[
+a_{n+1} = \frac{n a_n^2}{1 + (n+1)a_n} \quad \text{for } n \geq 1.
+\]
+Show that the series 
+\[
+\sum_{k=0}^{\infty} \frac{a_{k+1}}{a_k}
+\]
+converges and determine its value.
+\end{problem}
+\begin{solution}
+By induction, we establish that \( a_i > 0 \) for all \( i \geq 0 \), ensuring that the partial sums are well defined and form an increasing sequence. Furthermore, we observe that  
+\[
+k a_k = \frac{(1 + (k+1)a_k) a_{k+1}}{a_k} = \frac{a_{k+1}}{a_k} + (k+1)a_{k+1} \quad \text{for all } k \geq 1.
+\]
+Summing from \( k = 0 \) to \( n \), we obtain  
+\[
+\sum_{k=0}^{n} \frac{a_{k+1}}{a_k} = \frac{a_1}{a_0} + \sum_{k=1}^{n} (k a_k - (k+1)a_{k+1}) = \frac{1}{2} + 1 \cdot a_1 - (n+1)a_{n+1} = 1 - (n+1)a_{n+1}
+\]
+for all \( n \geq 1 \). A quick verification confirms that this equality also holds for \( n = 0 \).  
+\\\\
+Since \( (n+1)a_{n+1} > 0 \), we deduce that for each \( n \geq 0 \),  
+\[
+\sum_{k=0}^{n} \frac{a_{k+1}}{a_k} = 1 - (n+1)a_{n+1} < 1.
+\]
+This implies that the partial sums are bounded, and thus, the series \( \sum_{k=0}^{\infty} \frac{a_{k+1}}{a_k} \) is convergent (converging to the supremum of the partial sums). Consequently, the sequence \( \frac{a_{k+1}}{a_k} \) must tend to zero. In particular, there exists an index \( N \in \mathbb{N} \) such that \( \frac{a_{n+1}}{a_n} < \frac{1}{2} \) for all \( n > N \).  
+\\\\
+For all \( n > N \), we then have  
+\[
+a_n = \prod_{i=N}^{n-1} \frac{a_{i+1}}{a_i} < \frac{1}{a_N 2^{n-1-N}} = \frac{a_N^{-1} 2^N + 1}{2^n}.
+\]
+In particular, for all \( n > N \),  
+\[
+n a_n < \left( a_N^{-1} 2^N + 1 \right) \left( \frac{n}{2^n} \right).
+\]
+Since \( \frac{n}{2^n} \to 0 \) as \( n \to +\infty \), it follows that \( n a_n \to 0 \) as $ n \to +\infty$. Therefore,  
+\[
+\sum_{k=0}^{\infty} \frac{a_{k+1}}{a_k} = \lim_{n \to \infty} \sum_{k=0}^{n} \frac{a_{k+1}}{a_k} = \lim_{n \to \infty} \left( 1 - (n+1)a_{n+1} \right) = 1.
+\]
+\end{solution}

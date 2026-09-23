@@ -1,0 +1,74 @@
+% title:          Alternating sine recursion limits
+% area:           sequences, asymptotics
+% methods:        stolz-cesaro, squeeze, taylor-expansion
+% difficulty:
+% difficulty-ai:  medium
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         bernoulli
+% origin-date:    2024-06-03
+% origin-number:  3
+% also-in:
+% taken-from:
+% references:     Bernoulli Competition (EPFL Bernoulli Center), 3 June 2024, Problem 3 (checked in the club's copy of the official solutions (Bernoulli 2023-2026 solutions PDF, not online)) - https://bernoulli.epfl.ch/youth-at-bernoulli/bernoulli-competition/
+% history:        ai
+\begin{problem}
+Suppose \( x_0 \in \mathbb{R} \) and \( x_{n+1} = \sum_{i=0}^{n} (-1)^i \sin(x_i) \) for \( n \geq 1 \).\\
+1) What is the range for the \( x_0 \) such that \( \lim_{n \to \infty} x_n \) exists? What is the value of the limit depending on \( x_0 \) in the range?\\
+2) Suppose \( x_0 = 1/4 \). Find \( \lim_{n \to \infty} \dfrac{\log\left(\left| \log(x_n) \right|\right)}{n} \).
+\end{problem}
+\begin{solution}
+1) First, note that \( x_1 = \sin(x_0) \), as such \( \left| x_1 \right| \leq 1 \). Second, note that
+\[
+x_{n+1} = x_n + (-1)^n \sin(x_n), \quad n \geq 2.
+\]
+Using this recurrent formula, we shall obtain the results.
+
+Notice that \( f(x) = x - \sin(x) \) has the same sign as \( x \), thus the sign of \( x_n \) will be the same as the sign of \( x_1 \). \( x_n \) and \( -x_n \) obey the same recurrent law, so we could assume that \( x_1 \geq 0 \).
+
+Now, given that \( x_{2n-1} \leq 1 \), 
+\begin{align*}
+x_{2n+1} &= x_{2n} + \sin(x_{2n}) = x_{2n-1} - \sin(x_{2n-1}) + \sin\left(x_{2n-1} - \sin(x_{2n-1})\right) \leq x_{2n-1}
+\end{align*}
+as such \( x_{2n+1} \) is bounded from above and below, thus there exists a limit. \( x = x - \sin(x) + \sin(x - \sin(x)) \) implies \( \sin(x) = \sin(x - \sin(x)) \), with the limit being between \( 0 \) and \( 1 \). But if \( 1 \geq x > 0 \), \( \sin(x) > \sin(x - \sin(x)) \), thus \( \sin(x) = 0 \), which means \( x = 0 \).
+
+For \( x_{2n}, x_{2n+1} \geq x_{2n} \), thus the second half of the sequence also tends to 0.
+
+Overall, the argument that \( x_n \) tends to 0 is now easy to establish.
+
+2) Notice that 
+\[
+x_{2n+1} = \dfrac{x_{2n-1}}{3} + o\left(x_{2n-1}^3\right).
+\]
+One may use the following theorem:
+
+\textbf{Theorem:} Suppose \( \{a_n - a_{n-1}\}_{n \geq 1} \) is a sequence that has a finite limit \( A \). Then for the sequence \( \left\{ \dfrac{a_n}{n} \right\}_{n \geq 1} \), there exists a finite limit \( A \). 
+
+\textbf{Proof:} Assume \( b_n = a_n - a_{n-1}, \, n \geq 1 \), then \( \dfrac{b_1 + b_2 + \dots + b_n}{n} = \dfrac{a_n - a_0}{n} \) is the Cesàro mean of \( b_n \), and since \( b_n \) has a finite limit \( A \), the Cesàro mean of \( b_n \) also has a finite limit \( A \), which implies \( \dfrac{a_n}{n} \) tends to \( A \).
+
+Using this theorem, notice that:
+\begin{align*}
+\log\left( \left| \log(x_{2n+1}) \right| \right) - \log\left( \left| \log(x_{2n-1}) \right| \right) &= \log\left( \left( \dfrac{ \left| \log(x_{2n+1}) \right| }{ \left| \log(x_{2n-1}) \right| } \right) \right) \\
+&= \log\left( \dfrac{3 \log(x_{2n-1}) + O(1)}{\log(x_{2n-1})} \right) = \log(3) \text{ (since } \log(x_{2n-1}) \to -\infty \text{)}
+\end{align*}
+Thus 
+\[
+\lim_{n \to \infty} \dfrac{\log\left( \left| \log(x_{2n+1}) \right| \right)}{2n+1} = \dfrac{\log(3)}{2}
+\]
+Notice that \( x_{2n+1} = x_{2n} + \sin(x_{2n}) \leq 2x_{2n} \).
+
+Finally, using \( x_{2n+1} \geq x_{2n} \geq \dfrac{x_{2n+1}}{2} \), we have 
+\[
+\left| \log(x_{2n+1}) \right| \leq \left| \log(x_{2n}) \right| \leq \left| \log\left( \dfrac{x_{2n+1}}{2} \right) \right|
+\]
+for large \( n \), and all these sequences tend to plus infinity, thus
+\[
+\dfrac{\log\left( \left| \log(x_{2n+1}) \right| \right)}{2n} \leq \dfrac{\log\left( \left| \log(x_{2n}) \right| \right)}{2n} \leq \dfrac{\log\left( \left| \log\left( \dfrac{x_{2n+1}}{2} \right) \right| \right)}{2n}
+\]
+for large \( n \).
+
+Both left and right sequences tend to \( \dfrac{\log(3)}{2} \), hence the limit applies to \( \dfrac{\log\left( \left| \log(x_{2n}) \right| \right)}{2n} \).\\
+
+Finally, \( y_n = \dfrac{\log\left( \left| \log(x_n) \right| \right)}{n} \), and \( N_1 \) such that \( y_{2n} \) is in \( \varepsilon \)-neighbourhood of \( \dfrac{\log(3)}{2} \) for \( n > N_1 \), \( y_{2n+1} \) is in \( \varepsilon \)-neighbourhood of \( \dfrac{\log(3)}{2} \) for \( n > N_2 \), thus for \( n > \max(2N_1, 2N_2 + 1) \), \( y_n \) is in the \( \varepsilon \)-neighbourhood of \( \dfrac{\log(3)}{2} \), as such the entire sequence tends to \( \dfrac{\log(3)}{2} \).
+\end{solution}

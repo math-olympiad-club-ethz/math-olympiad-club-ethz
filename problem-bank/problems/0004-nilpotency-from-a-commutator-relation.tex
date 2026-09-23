@@ -1,0 +1,58 @@
+% title:          Nilpotency from a commutator relation
+% area:           matrices
+% methods:        induction, eigenvalue-arguments
+% difficulty:
+% difficulty-ai:  easy
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         imc
+% origin-date:    1994-07-29
+% origin-number:  Day 1, Problem 4
+% also-in:
+% taken-from:
+% references:     IMC 1994 (1st IMC, Plovdiv), Day 1, Problem 4, official problems & solutions - https://www.imc-math.org.uk/imc1994/prob_sol.pdf; Kalva archive, 1st IMC 1994, A4 - https://prase.cz/kalva/imc/imc94.html; reused as Problem 9.12 (1994) in M. A. Daas, 'A Brief IMC Training' (Emory Putnam notes) - http://www.cs.emory.edu/~mic/putnam/general/IMC.pdf; alpha=1 case as a standard exercise, MathSE 811160 (2014) - https://math.stackexchange.com/questions/811160/ab-ba-a-implies-a-is-singular-and-a-is-nilpotent; underlying theorem: Jacobson's lemma ([A,[A,B]]=0 implies [A,B] nilpotent), N. Jacobson, Ann. of Math. 36 (1935), 875-881, as stated in J. Bracic, 'On the Jacobson's lemma' - https://jankobracic.wordpress.com/wp-content/uploads/2011/02/on-the-jacobsons-lemma.pdf
+% history:        ai
+\begin{problem}
+Let \( \alpha \in \mathbb{R} \setminus \{0\} \) and suppose that \( F \) and \( G \) are linear maps (operators) from \( \mathbb{R}^n \) into \( \mathbb{R}^n \) satisfying 
+\[
+F \circ G - G \circ F = \alpha F.
+\]
+
+a) Show that for all \( k \in \mathbb{N} \) one has 
+\[
+F^k \circ G - G \circ F^k = \alpha k F^k.
+\]
+
+b) Show that there exists \( k \geq 1 \) such that \( F^k = 0 \).
+\end{problem}
+\begin{solution}
+\begin{enumerate}
+    \item[(a)] We prove the result by induction on $k$. The base case $k = 1$ is given by the assumption. Assume that the formula holds for some $k \geq 1$, i.e.,
+    \[
+    F^k \circ G - G \circ F^k = \alpha k F^k.
+    \]
+    We compute:
+    \begin{align*}
+        F^{k+1} \circ G - G \circ F^{k+1} 
+        &= F^k \circ(F \circ G) - G \circ F^k \circ F \\
+        &= F^k \circ(G \circ F + \alpha F) - G \circ F^k\circ F \\
+        &= F^k\circ G \circ F + \alpha F^{k+1} - G \circ F^{k}\circ F \\
+        &= (F^k \circ G - G\circ F^k) \circ F + \alpha F^{k+1} \\
+        &= (\alpha k F^k) \circ F + \alpha F^{k+1} \\
+        &= \alpha k F^{k+1} + \alpha F^{k+1} \\
+        &= \alpha (k+1) F^{k+1}.
+    \end{align*}
+    This completes the induction step, proving the result.
+
+    \item[(b)] Consider the linear operator $L$ defined on the space of $n \times n$ matrices by
+    \[
+    L(F) = F \circ G - G \circ F.
+    \]
+    By the given assumption, we have $L(F) = \alpha F$. Also using part (a), we obtain
+    \[
+    L(F^k) = \alpha k F^k.
+    \]
+    The operator $L$ acts on an $n^2$-dimensional space and can have at most $n^2$ distinct eigenvalues. However, if $F^k \neq 0$ for all $k$, then $L$ has infinitely many eigenvalues $\alpha k$, which contradicts the fact that the space is finite-dimensional. Hence, there must exist some $k \geq 1$ such that $F^k = 0$.
+\end{enumerate}
+\end{solution}

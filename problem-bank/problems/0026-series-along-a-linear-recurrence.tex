@@ -1,0 +1,58 @@
+% title:          Series along a linear recurrence
+% area:           series, recurrences
+% methods:        telescoping, recursion
+% difficulty:
+% difficulty-ai:  medium
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         imc
+% origin-date:    2015-07-29
+% origin-number:  Day 1, Problem 3
+% also-in:
+% taken-from:
+% references:     IMC 2015 (Blagoevgrad), Day 1, Problem 3, proposed by Gerhard Woeginger (Eindhoven University of Technology) - https://www.imc-math.org.uk/?year=2015&section=problems&item=prob3q; official paper and solutions (F(n) = 2^n - 2^{-n}, sum = 1) - https://www.imc-math.org.uk/imc2015/imc2015-day1-questions.pdf, https://www.imc-math.org.uk/imc2015/imc2015-day1-solutions.pdf; underlying identity sum_{n>=0} x^{2^n}/(1-x^{2^{n+1}}) = x/(1-x) for 0<x<1 is Putnam 1977 A4 (the IMC problem is the case x = 1/2, used in official Solution 2) - https://prase.cz/kalva/putnam/putn77.html, https://prase.cz/kalva/putnam/psoln/psol774.html
+% history:        ai
+\begin{problem}
+Let $F(0) = 0$, $F(1) =\frac{3}{2}$, and
+\[
+F(n) = \frac{5}{2}F(n-1) - F(n-2) \quad \text{for } n \geq 2.
+\]
+Determine whether or not
+\[
+\sum_{n=0}^{\infty} \frac{1}{F(2^n)}
+\]
+is a rational number.
+\end{problem}
+\begin{solution}
+The characteristic polynomial of the linear recurrence is:
+\[
+X^2 - \frac{5}{2}X + 1,
+\]
+which has roots $\{2,\frac{1}{2}\}$. Thus, the general form of $F(n)$ is given by:
+\[
+F(n) = a \cdot 2^n + b \cdot \left(\frac{1}{2}\right)^n
+\]
+for some constants $a$ and $b$. Using the initial conditions $F(0) = 0$ and $F(1) = \frac{3}{2}$, we obtain the system:
+\[
+a + b = 0,
+\]
+\[
+2a + \frac{b}{2} = \frac{3}{2}.
+\]
+Solving for $a$ and $b$, we get $a = 1$, $b = -1$. Therefore,
+\[
+F(n) = 2^n - 2^{-n}
+\]
+which is strictly greater than $0$ as long as $n\geq 1$.
+Now, we can rewrite the summand:
+\[
+\frac{1}{F(2^n)} = \frac{1}{2^{2^n} - 2^{-2^n}} = \frac{2^{2^n}}{(2^{2^n})^2 - 1}=\frac{1}{2^{2^n} - 1} - \frac{1}{2^{2^{n+1}} - 1},
+\]
+where we use in the last equality the fact that for $a\in\mathbb{R}\setminus\{\pm 1\}$ we have: $$\frac{a}{a^2-1}=\frac{a}{a+1}\frac{1}{a-1}=\left(1-\frac{1}{a+1}\right)\frac{1}{a-1}=\frac{1}{a-1}-\frac{1}{a^2-1}.$$
+We obtain clearly a telescoping sum:
+\[
+\sum_{n=0}^{\infty} \frac{1}{F(2^n)} = \sum_{n=0}^{\infty} \left( \frac{1}{2^{2^n} - 1} - \frac{1}{2^{2^{n+1}} - 1} \right) = \frac{1}{2^{2^0} - 1} = 1.
+\]
+Since $1$ is rational, the sum is rational.
+\end{solution}

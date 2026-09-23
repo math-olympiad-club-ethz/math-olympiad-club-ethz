@@ -1,0 +1,23 @@
+% title:          Sum of two radicals near 2
+% area:           diophantine-equations
+% methods:
+% difficulty:
+% difficulty-ai:  easy
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         bulgaria-autumn
+% origin-date:    2023-11
+% origin-number:  12.3
+% also-in:
+% taken-from:
+% references:     Autumn Mathematical Tournament "Acad. Stefan Dodunekov" (Есенен математически турнир „Академик Стефан Додунеков“, Union of Bulgarian Mathematicians), Sofia, 17-19 November 2023, grade 12, Problem 12.3 - https://klasirane.com/api/competitions/EMT/All/2023/12%20%D0%BA%D0%BB/probs ; official solution (no solutions in natural numbers) with marking scheme - https://klasirane.com/api/competitions/EMT/All/2023/12%20%D0%BA%D0%BB/sol
+% history:        ai
+\begin{problem}
+Find all solutions in the natural numbers to the equation: $\sqrt[n]{m} + \sqrt[m]{n} = 2 + \frac{2}{mn(m+n)^{\frac{1}{m} + \frac{1}{n}}}$
+\end{problem}
+\begin{solution}
+For all natural n and m, $\lfloor{\sqrt[n]{m}\rfloor} \geq 1$, we will prove that $\{\sqrt[n]{m}\} \geq \frac{1}{nm}$. Let us call the floor value a, and the fractional value x:\\
+$1\leq m-a^n = (m^\frac{1}{n})^n - a^n = x \sum_{i=0}^{n-1} m^{\frac{i}{n}} a^{n-1-i} \leq xnm \ => \ x \geq \frac{1}{nm}$\\
+We get  $\sqrt[n]{m} + \sqrt[m]{n} \geq 2 + \frac{2}{nm} > 2 + \frac{2}{mn(m+n)^{\frac{1}{m} + \frac{1}{n}}}$, so there are no integer solutions.
+\end{solution}

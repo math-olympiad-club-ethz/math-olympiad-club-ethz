@@ -1,0 +1,29 @@
+% title:          Shadowed area on spherical planets
+% area:           solid-geometry, combinatorial-geometry
+% methods:        bijection, symmetry
+% difficulty:
+% difficulty-ai:  hard
+% status:         partial
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         imo-shortlist
+% origin-date:    1981
+% origin-number:  18
+% also-in:        book
+% taken-from:
+% references:     IMO Shortlist 1981, Problem 18 (USSR), The IMO Compendium, Section 3.22.2 (Kalva numbers it 11) - https://archive.org/stream/compendium_201807/compendium_djvu.txt ; https://prase.cz/kalva/short/sh81.html ; https://imogeometry.blogspot.com/p/imo-shortlist.html; Gelca & Andreescu, Putnam and Beyond (Springer 2007), Section 1.4, Example, pp. 17-18 (solution credited to I. Cuculescu's IMO book, 1984) - https://archive.org/stream/X87QHX87XQSH8XQ8HHXQSH8HQH8Q8H/Razvan%20Gelca,%20Titu%20Andreescu-Putnam%20and%20beyond-Springer%20(2007)_djvu.txt; special case (6 planets of radius 1 on a regular octahedron of side 3, answer 4 pi) in the UGA Math Tournament team round, Problem 2 'Planets' - https://web.archive.org/web/20220627151646/https://www.math.uga.edu/sites/default/files/PDFs/undergrad/MathTournament/teacher-team04.pdf; the club took the problem from Sudakov & Milojević.
+% history:        ai
+\begin{problem}
+Several spherical planets, each of radius $R$, are placed in a greenhouse. On each planet, Mark colors in black the regions that are not visible from any other planet by a single straight-line segment. Prove that the total area of the colored regions, summed over all planets, is exactly $4\pi R^{2}$.
+\end{problem}
+\begin{solution}
+\[
+\substack{\textit{This solution needs to be written more formally}}
+\]
+The key insight is that for each planet of radius $R$, the ``invisible'' zones (where no direct line of sight from another planet can reach) collectively contribute an area equal to the surface area of \emph{one entire sphere} of radius $R$. Intuitively, imagine taking each planet in turn and considering all lines of sight originating from other planets. The geometry of occlusion ensures each planet has a portion that is fully ``shadowed.'' Summing over all planets leads to the remarkable simplification that the total ``shadowed'' area is $4\pi R^2$. 
+\\\\
+In more technical terms, one can show that for every point on a planet’s surface that is claimed to be invisible, there is a matching visible point on some other planet’s surface, and these pairings add up in such a way that the net invisible area across all planets matches the surface area of one full sphere of radius $R$. Hence the total blackened area is 
+\[
+4\pi R^2.
+\]
+\end{solution}

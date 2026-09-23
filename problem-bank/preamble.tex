@@ -1,0 +1,204 @@
+% preamble.tex — shared LaTeX preamble of the Math Olympiad Club ETHZ problem bank.
+%
+% Used in two modes:
+%   * AUTHOR / CI mode (default): a single problem file is wrapped by problems/_preview.tex
+%     (or by build.py) and compiled with pdflatex + biber.  TikZ and biblatex are loaded so
+%     inline figures and \cite work exactly as written.
+%   * STITCHED mode (\BankStitched defined before \input{preamble}): the website assembles
+%     many problems into one document and compiles it in the browser.  TikZ figures have been
+%     externalised to PDF by CI and citations pre-resolved to plain text, so tikz/pgfplots and
+%     biblatex are NOT loaded (they are the slow part of a compile).  This preamble is also
+%     what the precompiled format file contains.
+%
+% Problem files contain NO preamble.  They use only the environments/macros defined here.
+
+% ===== Page layout =====
+\usepackage[a4paper,top=2cm,bottom=2cm,left=3cm,right=3cm]{geometry}
+\usepackage{microtype}
+
+% ===== Float spacing =====
+\setlength{\intextsep}{1.5ex}
+\setlength{\textfloatsep}{1.5ex}
+\setlength{\floatsep}{1.5ex}
+
+% ===== Fonts & encoding =====
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{lmodern}
+% Greek letters typed directly (in titles, tag names, or math) print as the math letters.
+\DeclareUnicodeCharacter{03B1}{\ensuremath{\alpha}}\DeclareUnicodeCharacter{03B2}{\ensuremath{\beta}}
+\DeclareUnicodeCharacter{03B3}{\ensuremath{\gamma}}\DeclareUnicodeCharacter{03B4}{\ensuremath{\delta}}
+\DeclareUnicodeCharacter{03B5}{\ensuremath{\varepsilon}}\DeclareUnicodeCharacter{03B6}{\ensuremath{\zeta}}
+\DeclareUnicodeCharacter{03B7}{\ensuremath{\eta}}\DeclareUnicodeCharacter{03B8}{\ensuremath{\theta}}
+\DeclareUnicodeCharacter{03B9}{\ensuremath{\iota}}\DeclareUnicodeCharacter{03BA}{\ensuremath{\kappa}}
+\DeclareUnicodeCharacter{03BB}{\ensuremath{\lambda}}\DeclareUnicodeCharacter{03BC}{\ensuremath{\mu}}
+\DeclareUnicodeCharacter{03BD}{\ensuremath{\nu}}\DeclareUnicodeCharacter{03BE}{\ensuremath{\xi}}
+\DeclareUnicodeCharacter{03BF}{\ensuremath{o}}\DeclareUnicodeCharacter{03C0}{\ensuremath{\pi}}
+\DeclareUnicodeCharacter{03C1}{\ensuremath{\rho}}\DeclareUnicodeCharacter{03C2}{\ensuremath{\varsigma}}
+\DeclareUnicodeCharacter{03C3}{\ensuremath{\sigma}}\DeclareUnicodeCharacter{03C4}{\ensuremath{\tau}}
+\DeclareUnicodeCharacter{03C5}{\ensuremath{\upsilon}}\DeclareUnicodeCharacter{03C6}{\ensuremath{\varphi}}
+\DeclareUnicodeCharacter{03C7}{\ensuremath{\chi}}\DeclareUnicodeCharacter{03C8}{\ensuremath{\psi}}
+\DeclareUnicodeCharacter{03C9}{\ensuremath{\omega}}\DeclareUnicodeCharacter{03D1}{\ensuremath{\vartheta}}
+\DeclareUnicodeCharacter{03D5}{\ensuremath{\phi}}\DeclareUnicodeCharacter{03D6}{\ensuremath{\varpi}}
+\DeclareUnicodeCharacter{03F1}{\ensuremath{\varrho}}\DeclareUnicodeCharacter{03F5}{\ensuremath{\epsilon}}
+\DeclareUnicodeCharacter{0391}{\ensuremath{\mathrm{A}}}\DeclareUnicodeCharacter{0392}{\ensuremath{\mathrm{B}}}
+\DeclareUnicodeCharacter{0393}{\ensuremath{\Gamma}}\DeclareUnicodeCharacter{0394}{\ensuremath{\Delta}}
+\DeclareUnicodeCharacter{0395}{\ensuremath{\mathrm{E}}}\DeclareUnicodeCharacter{0396}{\ensuremath{\mathrm{Z}}}
+\DeclareUnicodeCharacter{0397}{\ensuremath{\mathrm{H}}}\DeclareUnicodeCharacter{0398}{\ensuremath{\Theta}}
+\DeclareUnicodeCharacter{0399}{\ensuremath{\mathrm{I}}}\DeclareUnicodeCharacter{039A}{\ensuremath{\mathrm{K}}}
+\DeclareUnicodeCharacter{039B}{\ensuremath{\Lambda}}\DeclareUnicodeCharacter{039C}{\ensuremath{\mathrm{M}}}
+\DeclareUnicodeCharacter{039D}{\ensuremath{\mathrm{N}}}\DeclareUnicodeCharacter{039E}{\ensuremath{\Xi}}
+\DeclareUnicodeCharacter{039F}{\ensuremath{\mathrm{O}}}\DeclareUnicodeCharacter{03A0}{\ensuremath{\Pi}}
+\DeclareUnicodeCharacter{03A1}{\ensuremath{\mathrm{P}}}\DeclareUnicodeCharacter{03A3}{\ensuremath{\Sigma}}
+\DeclareUnicodeCharacter{03A4}{\ensuremath{\mathrm{T}}}\DeclareUnicodeCharacter{03A5}{\ensuremath{\Upsilon}}
+\DeclareUnicodeCharacter{03A6}{\ensuremath{\Phi}}\DeclareUnicodeCharacter{03A7}{\ensuremath{\mathrm{X}}}
+\DeclareUnicodeCharacter{03A8}{\ensuremath{\Psi}}\DeclareUnicodeCharacter{03A9}{\ensuremath{\Omega}}
+% A character the current font does not have is an error (pdfTeX >= 1.40.22), not a silent gap in the PDF:
+% e.g. $\mathscr{f}$ (rsfs has no lowercase letters).
+\tracinglostchars=3
+
+% ===== Mathematics =====
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
+\usepackage{stmaryrd}      % \llbracket \rrbracket
+\usepackage{mathrsfs}      % \mathscr
+\usepackage{bbm}           % \mathbbm{1}
+\usepackage{algorithmicx}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+% ===== Graphics =====
+\usepackage{graphicx}
+\ifdefined\BankStitched
+  % Stitched mode has no TikZ (figures arrive as PDFs): TikZ/pgfplots settings written outside a
+  % picture do nothing here, so a problem that uses them still compiles in the browser.
+  \providecommand{\usetikzlibrary}[1]{}
+  \providecommand{\tikzset}[1]{}
+  \providecommand{\pgfplotsset}[1]{}
+  \providecommand{\pgfdeclarelayer}[1]{}
+  \providecommand{\pgfsetlayers}[1]{}
+  \providecommand{\pgfmathdeclarefunction}[3]{}
+  \providecommand{\usepgfplotslibrary}[1]{}
+  \providecommand{\tikzcdset}[1]{}
+  \def\tikzstyle#1=#2[#3]{}      % \tikzstyle{name}=[...] and \tikzstyle{name} = [...]
+\else
+  \usepackage{tikz}
+  \usepackage{tikz-cd}
+  \usepackage{pgfplots}
+  \pgfplotsset{compat=1.18}
+  \usetikzlibrary{trees}
+  \usetikzlibrary{decorations.markings}
+\fi
+
+% ===== Bibliography (author / CI mode only; the site pre-resolves citations) =====
+\ifdefined\BankStitched\else
+  \usepackage[backend=biber]{biblatex}
+  \addbibresource{references.bib}
+\fi
+% Pre-resolved reference list emitted by build.py after a problem's solution.
+\newenvironment{problemreferences}
+  {\par\medskip\noindent{\small\textbf{References}}\par\nopagebreak
+   \begin{list}{}{\setlength{\leftmargin}{2em}\setlength{\itemsep}{0pt}\small}}
+  {\end{list}}
+\newcommand{\refitem}[1]{\item[{[#1]}]}
+
+% ===== Colours =====
+\usepackage[dvipsnames]{xcolor}
+\definecolor{linkcolour}{rgb}{0.5,0,0}
+
+% ===== Hyperlinks =====
+\usepackage[hypertexnames=false,bookmarks=false]{hyperref}
+\usepackage{cleveref}
+\hypersetup{
+    colorlinks,
+    breaklinks,
+    urlcolor=linkcolour,
+    linkcolor=linkcolour,
+    citecolor=linkcolour
+}
+
+% ===== Deterministic PDF output (same input => byte-identical PDF) =====
+% Measured with pdfTeX 1.40.29 (BusyTeX): \pdftrailerid{} (empty) still derives the /ID from the
+% start time, so two compiles seconds apart differ in the trailer.  A non-empty argument fixes the
+% /ID to the MD5 of that text.  The browser worker additionally sets SOURCE_DATE_EPOCH=0.
+\ifdefined\pdfinfoomitdate
+  \pdfinfoomitdate=1
+  \pdftrailerid{Math Olympiad Club ETHZ problem bank}
+  \pdfsuppressptexinfo=-1
+\fi
+
+% ===== Problem-bank environments =====
+% Every problem file is:  header comments, \begin{problem}...\end{problem}, optional
+% \begin{solution}...\end{solution}.  The wrapper (preview or stitched) prints the heading.
+\newenvironment{problem}{\par\noindent\ignorespaces}{\par}
+\newenvironment{solution}{\par\medskip\noindent\textbf{Solution.}\enspace\ignorespaces}{\par}
+% Heading printed by the wrappers:  \bankproblem{<number in this PDF>}{<title>}{<origin, may be empty>}{<ID>}
+% gives "Problem 3. Title" and, if known, the origin in grey below.  The ID (order of arrival in the repository)
+% means nothing to readers: the website's PDFs (stitched mode) never print it; local previews and the CI proofs
+% (author mode) show it as "Problem 3 (#0042). Title" so maintainers can find the file.
+\ifdefined\BankStitched\newcommand{\bankidtag}[1]{}\else\newcommand{\bankidtag}[1]{ (\##1)}\fi
+\newcommand{\bankproblem}[4]{%
+  \par\addvspace{1.5\baselineskip}\penalty-300%
+  \setcounter{equation}{0}\setcounter{theorem}{0}\setcounter{lemma}{0}\setcounter{definition}{0}%
+  \setcounter{figure}{0}\setcounter{table}{0}\setcounter{footnote}{0}%
+  \setcounter{section}{0}\setcounter{subsection}{0}\renewcommand{\thesection}{\arabic{section}}%
+  \noindent{\Large\bfseries Problem #1\bankidtag{#4}.\ #2}\par\nopagebreak
+  \ifx\relax#3\relax\else\noindent{\small\textcolor{gray}{#3}}\par\nopagebreak\fi
+  \addvspace{0.5\baselineskip}}
+% Optional line under the heading when the user asked to show the methods (spoilers, off by default).
+\newcommand{\bankmethods}[1]{\noindent{\small\textcolor{gray}{Methods: #1}}\par\nopagebreak\addvspace{0.3\baselineskip}}
+% "Not solved yet." marker used by the solutions PDF for unsolved / partial problems.
+\newcommand{\banknosolution}{\par\medskip\noindent\textit{Not solved yet.}\par}
+
+% ===== Theorem environments =====
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem*{claim}{Claim}
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+% ===== Code listings =====
+\usepackage{listings}
+\definecolor{backcolour}{rgb}{0.98,0.98,0.96}
+\definecolor{bluekeywords}{rgb}{0,0,0.8}
+\definecolor{greencomments}{rgb}{0,0.5,0}
+\definecolor{redstrings}{rgb}{0.8,0,0}
+\definecolor{codegray}{rgb}{0.3,0.3,0.3}
+\lstdefinestyle{mypython}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{greencomments},
+    keywordstyle=\color{bluekeywords},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{redstrings},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2,
+    frame=single,
+    rulecolor=\color{black},
+    framesep=5pt,
+    language=Python,
+    morekeywords={as, assert, lambda, None, with, yield, import, from, def, class, return, print, True, False}
+}
+
+% ===== Comment environment =====
+\usepackage{comment}
+% Optional BibTeX entries used only by this problem, at the end of a problem file:
+%   \begin{bibentries}
+%   @article{key, author = {...}, title = {...}, journal = {...}, year = {...}}
+%   \end{bibentries}
+% LaTeX skips the block; the build reads it next to references.bib (\begin/\end on their own lines).
+\excludecomment{bibentries}

@@ -1,0 +1,1050 @@
+# tags.yml — the ONLY list of allowed tags of the Math Olympiad Club ETHZ problem bank.
+#
+# Adding a tag or an origin = one entry here (slug + name is enough; description and aliases are
+# optional). Slugs are lowercase ASCII with hyphens and must be unique within their type.
+#   area        what a problem is ABOUT (shown on the site). Tree of at most 3 levels; selecting a
+#               node also matches every descendant.
+#   methods     what a SOLUTION uses (hidden by default on the site: spoilers). Flat; "group" is
+#               only for display.
+#   difficulty  exactly easy / medium / hard / extreme (the rubric is in the descriptions).
+#   origin      where a problem comes from (competition, book, journal, ...), with a kind.
+# Aliases are lowercase search words that are never displayed.
+
+area:
+  - slug: analysis
+    name: Analysis
+    description: Real, complex and functional analysis, calculus, ODEs, measure theory and topology.
+    aliases: [calculus, mathematical analysis, real and complex analysis]
+    children:
+      - slug: real-analysis
+        name: Real analysis
+        description: Functions of one real variable, sequences, series, limits, derivatives and integrals.
+        aliases: [calculus, single variable, real functions]
+        children:
+          - slug: sequences
+            name: Sequences & recursive sequences
+            description: Convergence and limits of real sequences, including recursively defined ones.
+            aliases: [sequence, recursive sequence, recursively defined sequence, convergence of sequences, iteration]
+          - slug: series
+            name: Series
+            description: Infinite series and their convergence or sums.
+            aliases: [infinite series, infinite sum, convergent series, divergent series]
+          - slug: sums
+            name: Finite sums & products
+            description: Closed forms, bounds and identities for finite sums and products.
+            aliases: [finite sum, finite product, summation, closed form]
+          - slug: limits-continuity
+            name: Limits & continuity
+            description: Limits of functions, continuity, uniform continuity and related properties.
+            aliases: [limit, continuous function, continuity, uniform continuity, intermediate values]
+          - slug: derivatives
+            name: Derivatives
+            description: Differentiability, derivatives and their zeros, differential inequalities.
+            aliases: [derivative, differentiation, differentiable, differential inequality, smooth functions]
+          - slug: integrals
+            name: Integrals
+            description: Definite and improper integrals, their evaluation and estimation.
+            aliases: [integral, integration, definite integral, improper integral, riemann integral, dominated convergence, interchange of limit and integral, fubini theorem]
+          - slug: asymptotics
+            name: Asymptotics & growth rates
+            description: Asymptotic behaviour, growth rates, big-O estimates and asymptotic expansions.
+            aliases: [asymptotic, growth rate, big o, order of growth, asymptotic expansion]
+          - slug: convex-functions
+            name: Convex functions
+            description: Convexity and concavity of functions and their consequences.
+            aliases: [convex, concave, convexity, concavity]
+      - slug: complex-analysis
+        name: Complex analysis
+        description: Functions of a complex variable.
+        aliases: [complex variable, complex function, holomorphic, analytic functions]
+        children:
+          - slug: holomorphic-functions
+            name: Holomorphic functions
+            description: Analytic and holomorphic functions and their basic properties.
+            aliases: [holomorphic, analytic function, cauchy-riemann, complex differentiable]
+          - slug: power-series
+            name: Power series
+            description: Power series (real or complex), radius of convergence and analytic continuation.
+            aliases: [taylor series, radius of convergence, laurent series]
+          - slug: residues
+            name: Contour integrals & residues
+            description: Contour integration, Cauchy's theorem and the residue theorem.
+            aliases: [residue theorem, contour integral, contour integration, cauchy integral formula]
+          - slug: conformal-maps
+            name: Conformal & injective maps
+            description: Conformal, injective (univalent) and Möbius maps of the plane.
+            aliases: [conformal map, injective holomorphic, univalent, mobius transformation, schwarz lemma]
+          - slug: entire-functions
+            name: Entire functions & zeros
+            description: Entire functions, their growth and the distribution of zeros of analytic functions.
+            aliases: [entire function, zeros of analytic functions, liouville, picard]
+          - slug: several-complex-variables
+            name: Several complex variables
+            description: Holomorphic functions of several complex variables.
+            aliases: [multivariable complex analysis, several complex variables, holomorphic in several variables]
+      - slug: multivariable-calculus
+        name: Multivariable calculus
+        description: Functions of several real variables, partial derivatives, multiple integrals, vector calculus.
+        aliases: [multivariate calculus, partial derivatives, multiple integrals, vector calculus, gradient]
+      - slug: differential-equations
+        name: Differential equations
+        description: Ordinary and partial differential equations and qualitative behaviour of their solutions.
+        aliases: [ode, pde, ordinary differential equation, partial differential equation, dynamical systems]
+      - slug: measure-theory
+        name: Measure & integration theory
+        description: Measures, measurable sets and functions, Lebesgue integration.
+        aliases: [measure, lebesgue, lebesgue integral, measurable, sigma algebra]
+      - slug: functional-analysis
+        name: Functional analysis
+        description: Normed and Banach spaces, Hilbert spaces, linear operators.
+        aliases: [banach space, hilbert space, operator, normed space, linear operators]
+      - slug: topology
+        name: Topology & metric spaces
+        description: Metric spaces, compactness, connectedness and point-set topology.
+        aliases: [metric space, compact, compactness, connected, open sets, continuity in metric spaces]
+  - slug: linear-algebra
+    name: Linear algebra
+    description: Matrices, determinants, linear maps, eigenvalues and vector spaces.
+    aliases: [matrix, matrices, linear maps, vector space]
+    children:
+      - slug: matrices
+        name: Matrices & matrix equations
+        description: Matrix identities, matrix equations, commutators, nilpotent and idempotent matrices.
+        aliases: [matrix, matrix equation, commutator, nilpotent, idempotent, matrix identity, matrix product, inverse, inverse matrix, invertible, unitary]
+      - slug: determinant
+        name: Determinants
+        description: Determinants, their computation and properties.
+        aliases: [determinant, det, vandermonde, cofactor]
+      - slug: trace
+        name: Trace
+        description: Problems about the trace of matrices.
+        aliases: [trace of a matrix]
+      - slug: rank
+        name: Rank, kernel & linear maps
+        description: Rank, kernel, image and dimension formulas for linear maps.
+        aliases: [rank of a matrix, kernel, null space, image, linear map, linear transformation, rank-nullity]
+      - slug: eigenvalues
+        name: Eigenvalues & diagonalisation
+        description: Eigenvalues, eigenvectors, characteristic polynomials, diagonalisation and Jordan form.
+        aliases: [eigenvalue, eigenvector, diagonalization, diagonalisation, characteristic polynomial, jordan form, spectrum]
+      - slug: bilinear-forms
+        name: Bilinear & quadratic forms, symmetric matrices
+        description: Bilinear and quadratic forms, symmetric and positive definite matrices, inner products.
+        aliases: [bilinear form, quadratic form, symmetric matrix, positive definite, inner product, orthogonal, hermitian, positive semidefinite, psd, gram matrix]
+      - slug: vector-spaces
+        name: Vector spaces & dimension
+        description: Vector spaces, subspaces, bases, dimension arguments and linear independence.
+        aliases: [vector space, subspace, basis, dimension, linear independence, linearly independent, span]
+      - slug: matrices-finite-fields
+        name: Matrices over finite fields
+        description: Linear algebra over finite fields and counting matrices with given properties.
+        aliases: [finite field matrices, gl n f q, matrices mod p, linear algebra over f p]
+  - slug: algebra
+    name: Algebra
+    description: Groups, rings, fields and other algebraic structures, functional equations and identities.
+    aliases: [abstract algebra, algebraic structures]
+    children:
+      - slug: group-theory
+        name: Group theory
+        description: Groups, subgroups, homomorphisms and group structure.
+        aliases: [group, groups, subgroup, abelian, homomorphism, order of an element, lagrange theorem]
+        children:
+          - slug: finite-groups
+            name: Finite groups
+            description: Structure and counting arguments in finite groups, orders of elements and subgroups.
+            aliases: [finite group, order of a group, sylow, cyclic group, p-group]
+          - slug: permutation-groups
+            name: Permutation groups
+            description: Symmetric and alternating groups, cycles and permutation representations.
+            aliases: [symmetric group, permutation group, alternating group, cycle decomposition, s n]
+          - slug: group-actions
+            name: Group actions
+            description: Actions of groups on sets, orbits and stabilisers.
+            aliases: [group action, orbit, stabilizer, stabiliser, orbit-stabilizer, burnside lemma]
+          - slug: free-groups
+            name: Free groups & commutators
+            description: Free groups, words, relations and commutator identities.
+            aliases: [free group, commutator, word problem, generators and relations, presentation]
+      - slug: rings-fields
+        name: Rings & fields
+        description: Rings, ideals, fields, field extensions and Galois theory.
+        aliases: [ring, field, commutative algebra]
+        children:
+          - slug: ring-theory
+            name: Rings & ideals
+            description: Rings, ideals, quotients, units, zero divisors and polynomial rings.
+            aliases: [ring, ideal, quotient ring, unit, zero divisor, integral domain, noncommutative ring]
+          - slug: field-theory
+            name: Fields & field extensions
+            description: Fields, field extensions, algebraic and transcendental elements.
+            aliases: [field, field extension, algebraic element, degree of an extension, minimal polynomial]
+          - slug: galois-theory
+            name: Galois theory
+            description: Galois groups, splitting fields and solvability.
+            aliases: [galois group, splitting field, galois extension, solvable by radicals]
+          - slug: finite-fields
+            name: Finite fields
+            description: Structure and arithmetic of finite fields.
+            aliases: [finite field, galois field, f p, f q, gf(q)]
+      - slug: other-structures
+        name: Semigroups & other structures
+        description: Semigroups, monoids, lattices, Boolean algebras and other algebraic structures.
+        aliases: [semigroup, monoid, lattice, boolean algebra, magma, binary operation]
+      - slug: functional-equations
+        name: Functional equations
+        description: Equations whose unknowns are functions.
+        aliases: [functional equation, cauchy equation, find all functions, fe]
+      - slug: recurrences
+        name: Recurrences & integer sequences
+        description: Exact terms and closed forms of recurrences and integer sequences.
+        aliases: [recurrence, recurrence relation, recursion, integer sequence, fibonacci, linear recurrence]
+      - slug: algebraic-identities
+        name: Identities & systems of equations
+        description: Algebraic identities, manipulations and systems of algebraic equations.
+        aliases: [identity, system of equations, algebraic manipulation, algebraic identity, simplify]
+  - slug: polynomials
+    name: Polynomials
+    description: Polynomials in one or several variables.
+    aliases: [polynomial, polynomial equation]
+    children:
+      - slug: polynomial-roots
+        name: Roots & Vieta's formulas
+        description: Roots of polynomials, their location and Vieta's relations between roots and coefficients.
+        aliases: [roots, zeros of a polynomial, vieta, vieta's formulas, real roots, complex roots, location of roots]
+      - slug: irreducibility
+        name: Irreducibility
+        description: Irreducible polynomials and factorisation over various fields.
+        aliases: [irreducible, irreducible polynomial, factorization of polynomials, factorisation of polynomials, eisenstein]
+      - slug: integer-polynomials
+        name: Integer & rational coefficients
+        description: Polynomials with integer or rational coefficients and their arithmetic properties.
+        aliases: [integer polynomial, integer coefficients, rational coefficients, "z[x]", "q[x]", gauss lemma]
+      - slug: symmetric-polynomials
+        name: Symmetric polynomials
+        description: Symmetric polynomials, elementary symmetric functions and Newton's identities.
+        aliases: [symmetric polynomial, elementary symmetric, newton identities, power sums]
+      - slug: interpolation
+        name: Interpolation & finite differences
+        description: Lagrange interpolation, finite differences and polynomials through given points.
+        aliases: [lagrange interpolation, finite difference, interpolating polynomial, difference operator]
+  - slug: inequalities
+    name: Inequalities & optimisation
+    description: Proving inequalities and finding extremal values.
+    aliases: [inequality, optimization, optimisation, maximum, minimum, extremal value, bound]
+    children:
+      - slug: algebraic-inequalities
+        name: Algebraic inequalities
+        description: Inequalities between real numbers and algebraic expressions.
+        aliases: [algebraic inequality, polynomial inequality, symmetric inequality, am-gm inequality, schur, muirhead, nesbitt]
+      - slug: analytic-inequalities
+        name: Integral & functional inequalities
+        description: Inequalities involving integrals, derivatives, sums of functions or function values.
+        aliases: [integral inequality, functional inequality, analytic inequality, inequality for functions]
+      - slug: geometric-inequalities
+        name: Geometric inequalities
+        description: Inequalities between lengths, angles, areas and volumes.
+        aliases: [geometric inequality, isoperimetric, area inequality]
+      - slug: optimisation
+        name: Extremal values & optimisation
+        description: Finding maxima and minima, extremal configurations and optimal constants.
+        aliases: [optimization, optimisation, extremum, maximize, minimize, maximise, minimise, best constant, optimal, lagrange multipliers]
+  - slug: number-theory
+    name: Number theory
+    description: Integers, divisibility, primes, congruences and Diophantine equations.
+    aliases: [arithmetic, integers, elementary number theory, nt]
+    children:
+      - slug: divisibility
+        name: Divisibility & gcd
+        description: Divisibility, greatest common divisors, least common multiples and factorisations.
+        aliases: [divisible, divisor, gcd, greatest common divisor, lcm, least common multiple, coprime, euclidean algorithm, bezout]
+      - slug: primes
+        name: Primes
+        description: Prime numbers, their distribution and properties.
+        aliases: [prime, prime number, prime factorization, prime factorisation, primality]
+      - slug: congruences
+        name: Congruences & modular arithmetic
+        description: Residues, congruences and arithmetic modulo an integer.
+        aliases: [modular arithmetic, modulo, mod, congruence, remainder, chinese remainder theorem, residue class, residues mod n]
+      - slug: orders-residues
+        name: Orders, primitive roots & quadratic residues
+        description: Multiplicative orders, primitive roots, quadratic residues and reciprocity.
+        aliases: [order modulo, primitive root, quadratic residue, legendre symbol, quadratic reciprocity, multiplicative order]
+      - slug: diophantine-equations
+        name: Diophantine equations
+        description: Equations to be solved in integers or rationals.
+        aliases: [diophantine, integer solutions, pell equation, solve in integers, rational solutions]
+      - slug: arithmetic-functions
+        name: Arithmetic functions (φ, σ, τ, perfect numbers)
+        description: Euler's totient, divisor sums and counts, perfect numbers and other arithmetic functions.
+        aliases: [euler phi, totient, euler totient, sigma function, number of divisors, sum of divisors, perfect number, multiplicative function, mobius function]
+      - slug: p-adic-valuations
+        name: p-adic valuations
+        description: Exponent of a prime in an integer, p-adic valuations and Legendre's formula.
+        aliases: [p-adic, valuation, v p, exponent of a prime, legendre formula, lifting the exponent]
+      - slug: digits-bases
+        name: Digits & bases
+        description: Decimal and other base representations, digit sums and digit manipulations.
+        aliases: [digits, digit sum, base representation, decimal representation, binary, base b]
+      - slug: irrationality
+        name: Irrationality & transcendence
+        description: Proving numbers irrational or transcendental, rational approximation.
+        aliases: [irrational, irrationality, transcendental, algebraic number, rational approximation, diophantine approximation]
+      - slug: analytic-number-theory
+        name: Analytic number theory
+        description: Number theory through analysis, e.g. distribution of primes, Dirichlet series, densities.
+        aliases: [prime number theorem, density of primes, dirichlet series, zeta function, counting primes]
+      - slug: additive-number-theory
+        name: Additive number theory
+        description: Sums of sets of integers, sumsets, representations as sums (squares, primes, ...).
+        aliases: [sumset, additive combinatorics, sum of squares, representations as sums, partitions of integers]
+  - slug: combinatorics
+    name: Combinatorics
+    description: Counting, arrangements, configurations, games and graphs.
+    aliases: [combinatorial, discrete mathematics, discrete math]
+    children:
+      - slug: enumeration
+        name: Counting & enumeration
+        description: Counting objects, configurations or outcomes.
+        aliases: [counting, count, how many, enumeration, number of ways, catalan, catalan numbers, stars and bars]
+      - slug: binomial-coefficients
+        name: Binomial coefficients & identities
+        description: Binomial coefficients, combinatorial identities and sums involving them.
+        aliases: [binomial coefficient, binomial theorem, combinatorial identity, pascal triangle, choose, stirling numbers]
+      - slug: extremal-combinatorics
+        name: Extremal combinatorics & set systems
+        description: Largest or smallest families of sets or configurations with a given property.
+        aliases: [extremal, set system, families of sets, sperner, erdos-ko-rado, intersecting family, hypergraph]
+      - slug: games
+        name: Combinatorial games & strategies
+        description: Two-player games, winning strategies and positions.
+        aliases: [game, winning strategy, two-player game, nim, combinatorial game theory]
+      - slug: colourings
+        name: Colourings
+        description: Problems about colouring cells, points or objects.
+        aliases: [coloring, colouring, chessboard coloring, chessboard colouring, two-coloring, checkerboard]
+      - slug: tilings
+        name: Tilings
+        description: Tiling regions with given pieces, dominoes and polyominoes.
+        aliases: [tiling, domino, polyomino, tromino, tetromino, cover a board]
+      - slug: permutations
+        name: Permutations & arrangements
+        description: Permutations, arrangements and their statistics such as cycles, fixed points and inversions.
+        aliases: [permutation, arrangement, derangement, fixed point of a permutation, cycle structure, inversions of a permutation]
+      - slug: processes
+        name: Processes & operations on configurations
+        description: Repeated moves or operations on a configuration and what states can be reached.
+        aliases: [process, operation, moves, reachable configurations, transformation, token game, chip firing]
+      - slug: combinatorial-geometry
+        name: Combinatorial geometry
+        description: Finite point sets, lines, convex hulls, lattice points and discrete geometric configurations.
+        aliases: [discrete geometry, points in the plane, lattice points, convex hull, geometric configuration]
+      - slug: graph-theory
+        name: Graph theory
+        description: Graphs, vertices and edges.
+        aliases: [graph, graphs, vertex, edge, network, degree of a vertex, bipartite, planar, planar graph, euler formula]
+        children:
+          - slug: trees
+            name: Trees
+            description: Trees, forests and spanning trees.
+            aliases: [tree, forest, spanning tree, acyclic graph, leaves]
+          - slug: graph-colouring
+            name: Graph colouring
+            description: Colouring vertices or edges of graphs, chromatic numbers.
+            aliases: [graph coloring, graph colouring, chromatic number, proper coloring, edge coloring, edge colouring]
+          - slug: paths-cycles
+            name: Paths & cycles
+            description: Paths, cycles, Hamiltonian and Eulerian tours, connectivity.
+            aliases: [path, cycle, hamiltonian, eulerian, connectivity, connected graph, walk, eulerian circuit]
+          - slug: matchings
+            name: Matchings
+            description: Matchings, Hall's theorem and systems of distinct representatives.
+            aliases: [matching, perfect matching, hall theorem, hall's marriage theorem, bipartite matching, konig theorem]
+          - slug: tournaments
+            name: Tournaments & directed graphs
+            description: Directed graphs, tournaments and orientations.
+            aliases: [tournament, directed graph, digraph, orientation, out-degree, in-degree]
+          - slug: extremal-graphs
+            name: Extremal graph theory
+            description: Maximum or minimum number of edges or substructures under constraints, Ramsey-type results.
+            aliases: [extremal graph, turan theorem, ramsey, ramsey theory, mantel theorem, forbidden subgraph]
+  - slug: probability
+    name: Probability
+    description: Random variables, expectations, random processes and limit theorems.
+    aliases: [random, probabilistic, chance, stochastic, statistics]
+    children:
+      - slug: discrete-probability
+        name: Discrete probability
+        description: Probabilities of events in finite or countable sample spaces.
+        aliases: [discrete probability, coin, dice, cards, random choice, sample space, conditional probability, bayes]
+      - slug: expected-value
+        name: Expected value
+        description: Expectations, linearity of expectation and related computations.
+        aliases: [expectation, expected value, mean, linearity of expectation, average, variance]
+      - slug: continuous-probability
+        name: Continuous random variables
+        description: Random variables with densities, uniform and other continuous distributions.
+        aliases: [continuous random variable, density, uniform distribution, normal distribution, gaussian, exponential distribution]
+      - slug: geometric-probability
+        name: Geometric probability
+        description: Probabilities of geometric events, random points in regions.
+        aliases: [geometric probability, random points, buffon needle, random point in a square]
+      - slug: random-processes
+        name: Random walks & Markov chains
+        description: Random walks, Markov chains, stopping times and hitting probabilities.
+        aliases: [random walk, markov chain, stopping time, hitting time, gambler's ruin, martingale, stochastic process]
+      - slug: limit-theorems
+        name: Limit theorems & concentration
+        description: Laws of large numbers, central limit theorem and concentration inequalities.
+        aliases: [law of large numbers, central limit theorem, clt, concentration, chernoff bound, large deviations, chebyshev inequality]
+  - slug: geometry
+    name: Geometry
+    description: Euclidean, analytic, projective and differential geometry.
+    aliases: [geometric, euclidean geometry, plane geometry, polygon, quadrilateral, area]
+    children:
+      - slug: triangles
+        name: Triangle geometry
+        description: Triangles, their centres, cevians and classical triangle theorems.
+        aliases: [triangle, incenter, circumcenter, orthocenter, centroid, ceva, menelaus, triangle centers, similar triangles, angle bisector, median, altitude]
+      - slug: circles
+        name: Circles & tangency
+        description: Circles, tangent lines and circles, cyclic quadrilaterals and radical axes.
+        aliases: [circle, tangent, tangency, cyclic quadrilateral, radical axis, inscribed angle, concyclic]
+      - slug: projective-geometry
+        name: Projective geometry
+        description: Cross-ratios, poles and polars, harmonic divisions and projective transformations.
+        aliases: [projective, cross ratio, pole and polar, desargues, pascal theorem, pappus, harmonic division, harmonic conjugate]
+      - slug: analytic-geometry
+        name: Coordinates, vectors & complex numbers
+        description: Geometry via coordinates, vectors, barycentric coordinates or complex numbers.
+        aliases: [coordinates, coordinate geometry, vectors, complex numbers in geometry, barycentric coordinates, cartesian]
+      - slug: solid-geometry
+        name: Solid geometry
+        description: Three-dimensional geometry, polyhedra, spheres and volumes.
+        aliases: [3d geometry, three-dimensional, polyhedron, polyhedra, sphere, volume, tetrahedron, cube, space geometry]
+      - slug: convex-geometry
+        name: Convex geometry
+        description: Convex sets and bodies, convex hulls, Helly-type theorems.
+        aliases: [convex set, convex body, convex hull, helly theorem, convex polygon, width]
+      - slug: trigonometry
+        name: Trigonometry
+        description: Trigonometric functions, identities and equations.
+        aliases: [trigonometric, sine, cosine, tangent function, trigonometric identity, trig]
+      - slug: differential-geometry
+        name: Curves & surfaces
+        description: Curves and surfaces, curvature, arc length and differential-geometric arguments.
+        aliases: [curve, surface, curvature, arc length, differential geometry, geodesic]
+  - slug: puzzles
+    name: Riddles & puzzles
+    description: Riddles, brainteasers and recreational problems.
+    aliases: [riddle, riddles, puzzle, brainteaser, brain teaser, recreational mathematics, quant puzzle]
+    children:
+      - slug: logic-puzzles
+        name: Logic & deduction
+        description: Pure logic and deduction puzzles, knights and knaves, truth-tellers.
+        aliases: [logic puzzle, deduction, knights and knaves, liars, logicians, common knowledge]
+      - slug: hat-prisoner-puzzles
+        name: Hat & prisoner puzzles
+        description: Hat-guessing and prisoner puzzles about coordinated strategies with limited information.
+        aliases: [hat puzzle, hat problem, prisoners, prisoner puzzle, light bulb, guessing hats, hats]
+      - slug: information-puzzles
+        name: Weighing, guessing & information puzzles
+        description: Weighing coins, guessing numbers and other puzzles about extracting information.
+        aliases: [weighing, coins, balance scale, guessing game, twenty questions, information, counterfeit coin]
+      - slug: strategy-puzzles
+        name: Strategy & decision puzzles
+        description: Choosing a strategy under uncertainty, stopping problems and decision puzzles.
+        aliases: [strategy, decision, optimal stopping, secretary problem, game strategy, betting]
+      - slug: topological-puzzles
+        name: Knots, strings & picture hanging
+        description: Puzzles about knots, ropes, strings, linking and picture hanging.
+        aliases: [knot, rope, string, picture hanging, linking, borromean, untangle, topology puzzle]
+      - slug: mathemagic
+        name: Card tricks & mathemagic
+        description: Card tricks and magic tricks with a mathematical explanation.
+        aliases: [card trick, magic trick, mathematical magic, magic, cards, shuffle, faro shuffle]
+      - slug: estimation
+        name: Estimation & Fermi problems
+        description: Order-of-magnitude estimates and Fermi problems.
+        aliases: [fermi problem, fermi, fermi estimate, order of magnitude, back of the envelope]
+  - slug: computer-science
+    name: Algorithms & information
+    description: Algorithms, complexity, information and coding theory.
+    aliases: [computer science, cs, algorithmic, theoretical computer science]
+    children:
+      - slug: algorithms
+        name: Algorithms & complexity
+        description: Designing and analysing algorithms, complexity and computability.
+        aliases: [algorithm, complexity, sorting, searching, data structure, computability, turing machine, running time]
+      - slug: information-coding
+        name: Information & coding theory
+        description: Entropy, information, error-correcting codes and compression.
+        aliases: [information theory, entropy, coding theory, error correcting code, hamming code, compression, bits]
+  - slug: physics
+    name: Physics
+    description: Physics problems and physical reasoning.
+    aliases: [physical, physics olympiad, mechanics and electromagnetism]
+    children:
+      - slug: mechanics
+        name: Mechanics
+        description: Classical mechanics, kinematics, dynamics, statics and rotation.
+        aliases: [classical mechanics, kinematics, dynamics, statics, newton laws, rigid body, energy conservation]
+      - slug: electromagnetism
+        name: Electromagnetism
+        description: Electrostatics, circuits, magnetism and electromagnetic fields.
+        aliases: [electrostatics, electric field, magnetic field, circuit, charge, coulomb, maxwell, electric circuit]
+      - slug: thermodynamics
+        name: Thermodynamics
+        description: Heat, entropy, gases and thermodynamic processes.
+        aliases: [heat, entropy, ideal gas, thermodynamic, statistical mechanics, temperature]
+      - slug: optics-waves
+        name: Optics & waves
+        description: Light, lenses, interference and wave phenomena.
+        aliases: [optics, light, lens, wave, interference, diffraction, refraction, reflection]
+      - slug: physical-proofs
+        name: Math proofs via physics
+        description: Mathematical statements proved with physical reasoning such as equilibrium, energy or centre of mass.
+        aliases: [physical proof, physics argument, center of mass argument, centre of mass, mathematical mechanic, equilibrium argument]
+
+methods:
+  - group: Proof strategies
+    tags:
+      - slug: induction
+        name: Induction
+        description: Proof by (strong or structural) induction.
+        aliases: [mathematical induction, inductive proof, strong induction, induction on n]
+      - slug: contradiction
+        name: Contradiction
+        description: Assume the opposite and derive a contradiction.
+        aliases: [proof by contradiction, reductio ad absurdum, indirect proof, assume not]
+      - slug: infinite-descent
+        name: Infinite descent
+        description: Fermat's method of infinite descent / minimal counterexample.
+        aliases: [descent, fermat descent, minimal counterexample, well-ordering]
+      - slug: extremal-principle
+        name: Extremal principle
+        description: Look at a largest, smallest or otherwise extremal object.
+        aliases: [extremal, extremal argument, consider the largest, consider the smallest, maximal element]
+      - slug: pigeonhole
+        name: Pigeonhole principle
+        description: More objects than boxes forces a collision (Dirichlet's principle).
+        aliases: [pigeonhole principle, dirichlet principle, drawer principle, box principle, php]
+      - slug: invariants
+        name: Invariants & monovariants
+        description: A quantity that never changes, or changes monotonically, under the allowed moves.
+        aliases: [invariant, monovariant, semi-invariant, potential function, parity argument, parity]
+      - slug: construction
+        name: Constructions & counterexamples
+        description: Explicit construction of an example, configuration or counterexample.
+        aliases: [construction, explicit example, counterexample, existence by construction]
+      - slug: symmetry
+        name: Symmetry & WLOG
+        description: Exploit symmetry or reduce to a canonical case without loss of generality.
+        aliases: [wlog, without loss of generality, symmetric argument, symmetry argument]
+      - slug: generalisation
+        name: Generalise / strengthen the claim
+        description: Prove a more general or stronger statement that is easier to handle.
+        aliases: [generalization, generalisation, strengthen the statement, stronger induction hypothesis, generalise]
+      - slug: orbit-stabiliser
+        name: Orbit–stabiliser / counting orbits
+        description: Orbit-stabiliser theorem and Burnside-type orbit counting.
+        aliases: [orbit stabilizer, orbit-stabilizer theorem, orbit counting, burnside counting]
+  - group: Counting
+    tags:
+      - slug: double-counting
+        name: Double counting
+        description: Count the same quantity in two ways.
+        aliases: [count in two ways, counting in two ways, fubini principle, incidence counting]
+      - slug: bijection
+        name: Bijection
+        description: A bijective correspondence between two sets to compare their sizes.
+        aliases: [bijective proof, one-to-one correspondence, bijective correspondence, injection, surjection]
+      - slug: inclusion-exclusion
+        name: Inclusion–exclusion
+        description: The inclusion–exclusion principle.
+        aliases: [inclusion exclusion, pie, sieve formula]
+      - slug: generating-functions
+        name: Generating functions
+        description: Ordinary or exponential generating functions.
+        aliases: [generating function, formal power series, ogf, egf, snake oil]
+      - slug: recursion
+        name: Recursion
+        description: Set up and solve a recurrence for the quantity in question.
+        aliases: [recurrence, recursive counting, recurrence relation, set up a recursion]
+      - slug: probabilistic-method
+        name: Probabilistic method
+        description: Prove existence by showing a random object works with positive probability or in expectation.
+        aliases: [probabilistic, random construction, expectation argument, alteration method, lovasz local lemma]
+      - slug: linear-algebra-method
+        name: Linear algebra method
+        description: Dimension or rank arguments applied to a combinatorial problem.
+        aliases: [linear algebra in combinatorics, dimension argument, rank argument, polynomial space, oddtown]
+      - slug: roots-of-unity-filter
+        name: Roots of unity filter
+        description: Extract every k-th coefficient of a polynomial with roots of unity.
+        aliases: [filter, multisection, series multisection]
+  - group: Algebra & number theory
+    tags:
+      - slug: sfft
+        name: Simon's favourite factoring trick
+        description: Factor xy + ax + by + ab as (x + b)(y + a).
+        aliases: [simon's favorite factoring trick, simons favorite factoring trick, sfft, factoring trick, add and factor]
+      - slug: vieta-jumping
+        name: Vieta jumping
+        description: Root flipping / descent on a quadratic Diophantine equation via Vieta's formulas.
+        aliases: [vieta jumping, root flipping, root jumping, vieta descent]
+      - slug: lte
+        name: Lifting the exponent
+        description: The lifting-the-exponent lemma for p-adic valuations of a^n ± b^n.
+        aliases: [lifting the exponent, lte lemma, lte, v p of a^n - b^n]
+      - slug: chinese-remainder
+        name: Chinese remainder theorem
+        description: Combine congruences modulo coprime moduli.
+        aliases: [chinese remainder theorem, crt, simultaneous congruences]
+      - slug: fermat-little-theorem
+        name: Fermat's little theorem
+        description: a^(p-1) ≡ 1 (mod p) for a prime p not dividing a, and its consequences.
+        aliases: [fermat little theorem, flt, fermat's little theorem, little fermat]
+      - slug: euler-theorem
+        name: Euler's theorem
+        description: a^φ(n) ≡ 1 (mod n) for gcd(a, n) = 1.
+        aliases: [euler theorem, euler's theorem, euler totient theorem, euler fermat]
+      - slug: reduction-mod-p
+        name: Reduction modulo p
+        description: Reduce the problem modulo a prime (or a well-chosen integer).
+        aliases: [mod p, reduce modulo p, modulo a prime, work mod p, reduction modulo a prime]
+      - slug: substitution
+        name: Substitution
+        description: A change of variables that simplifies the problem.
+        aliases: [change of variables, substitute, clever substitution, variable change]
+      - slug: complex-numbers
+        name: Complex numbers as a tool
+        description: Use complex numbers (roots of unity, modulus, argument) in a real or combinatorial problem.
+        aliases: [complex numbers, roots of unity, complex number trick, argand, de moivre]
+      - slug: polynomial-method
+        name: Polynomial method
+        description: Encode the problem in a polynomial (degree, zeros, Combinatorial Nullstellensatz).
+        aliases: [polynomial method, combinatorial nullstellensatz, polynomial argument, degree argument, zeros of polynomials]
+      - slug: eisenstein-criterion
+        name: Eisenstein's criterion
+        description: Eisenstein's irreducibility criterion (possibly after a shift).
+        aliases: [eisenstein criterion, eisenstein, eisenstein's criterion, irreducibility criterion]
+      - slug: capelli-lemma
+        name: Capelli's lemma
+        description: Capelli's lemma on irreducibility of compositions of polynomials.
+        aliases: [capelli lemma, capelli, capelli's lemma, composition of polynomials irreducible]
+      - slug: legendre-formula
+        name: Legendre's formula
+        description: "v_p(n!) = sum of floor(n/p^k): the exponent of a prime in a factorial."
+        aliases: [legendre formula, exponent of p in n factorial, de polignac]
+      - slug: cyclotomic-polynomials
+        name: Cyclotomic polynomials
+        description: Use of cyclotomic polynomials and roots of unity in factorisation or irreducibility.
+        aliases: [cyclotomic polynomial, cyclotomic]
+      - slug: freshmans-dream
+        name: Freshman's dream
+        description: (a + b)^p = a^p + b^p in characteristic p.
+        aliases: ["freshman's dream", freshmans dream, binomial theorem mod p, characteristic p]
+      - slug: field-norm
+        name: Field norm
+        description: Norm (or trace) map of a field extension as a multiplicative invariant.
+        aliases: [norm of an extension, norm map, algebraic norm]
+      - slug: bezout
+        name: Bézout's identity
+        description: gcd(a, b) = au + bv; extended Euclidean algorithm.
+        aliases: [bezout, bezout lemma, bezout identity, extended euclidean algorithm, bachet-bezout]
+      - slug: gauss-lemma
+        name: Gauss's lemma
+        description: A primitive integer polynomial that factors over Q factors over Z (content of polynomials).
+        aliases: [gauss lemma, "gauss's lemma", content of a polynomial, primitive polynomial]
+      - slug: algebraic-conjugates
+        name: Algebraic conjugates
+        description: Use the conjugate(s) of an algebraic number, e.g. (a + b sqrt d)^n + (a - b sqrt d)^n is an integer.
+        aliases: [conjugate surd, conjugates, conjugate trick, irrational conjugate]
+  - group: Linear algebra
+    tags:
+      - slug: trace-argument
+        name: Trace argument
+        description: Use properties of the trace (linearity, tr(AB) = tr(BA), trace of powers).
+        aliases: [trace argument, trace trick, tr ab = tr ba, trace of powers]
+      - slug: determinant-argument
+        name: Determinant argument
+        description: Use the determinant (multiplicativity, det of powers, Vandermonde).
+        aliases: [determinant argument, determinant trick, det, multiplicativity of the determinant]
+      - slug: pseudoinverse
+        name: Pseudoinverse
+        description: Generalised (Moore–Penrose) inverses.
+        aliases: [pseudo-inverse, moore penrose, generalized inverse, generalised inverse]
+      - slug: cayley-hamilton
+        name: Cayley–Hamilton theorem
+        description: A matrix satisfies its own characteristic polynomial.
+        aliases: [cayley hamilton, cayley-hamilton theorem, characteristic polynomial of a matrix]
+      - slug: spectral-theorem
+        name: Spectral theorem
+        description: Diagonalisation of symmetric / Hermitian / normal matrices in an orthonormal basis.
+        aliases: [spectral theorem, orthogonal diagonalization, orthogonal diagonalisation, symmetric matrices diagonalizable, hermitian]
+      - slug: eigenvalue-arguments
+        name: Eigenvalue arguments
+        description: Look at eigenvalues and eigenvectors (spectrum, Jordan form, minimal polynomial).
+        aliases: [eigenvalues, eigenvector argument, spectrum argument, jordan form, minimal polynomial]
+      - slug: rank-nullity
+        name: Rank–nullity theorem
+        description: dim ker + dim im = dim domain, and rank inequalities.
+        aliases: [rank nullity, rank-nullity theorem, dimension formula, sylvester rank inequality, frobenius rank inequality]
+      - slug: spectral-mapping
+        name: Spectral mapping theorem
+        description: Eigenvalues of f(A) are f(eigenvalues of A), with multiplicities.
+        aliases: [spectral mapping theorem, eigenvalues of a polynomial in a matrix]
+      - slug: orthogonal-complement
+        name: Orthogonal complement
+        description: Dimension and double-complement arguments for a (non-degenerate) bilinear form.
+        aliases: [orthogonal complement, perpendicular subspace, double orthogonal complement]
+  - group: Inequalities
+    tags:
+      - slug: am-gm
+        name: AM–GM inequality
+        description: Arithmetic mean – geometric mean (and power mean) inequalities.
+        aliases: [am-gm, am gm, amgm, arithmetic geometric mean, power mean, hm-gm-am-qm]
+      - slug: cauchy-schwarz
+        name: Cauchy–Schwarz inequality
+        description: Cauchy–Schwarz, Hölder and Engel-form (Titu) inequalities.
+        aliases: [cauchy schwarz, cauchy-schwarz, c-s, holder inequality, hölder, titu's lemma, engel form, sedrakyan]
+      - slug: jensen
+        name: Jensen's inequality
+        description: Jensen's inequality for convex or concave functions.
+        aliases: [jensen inequality, jensen's inequality, convexity inequality, karamata, tangent line trick]
+      - slug: rearrangement
+        name: Rearrangement inequality
+        description: The rearrangement inequality and Chebyshev's sum inequality.
+        aliases: [rearrangement inequality, chebyshev sum inequality, chebyshev inequality for sums, ordered sequences]
+      - slug: smoothing
+        name: Smoothing / mixing variables
+        description: Move variables towards each other or to the boundary without decreasing the target (incl. SOS / uvw).
+        aliases: [smoothing, mixing variables, smoothing argument, sos method, uvw method]
+  - group: Analysis
+    tags:
+      - slug: telescoping
+        name: Telescoping
+        description: Write terms as differences so that a sum or product collapses.
+        aliases: [telescoping sum, telescoping product, telescope, collapsing sum]
+      - slug: mean-value-theorem
+        name: Mean value theorem
+        description: Lagrange's or Cauchy's mean value theorem.
+        aliases: [mean value theorem, mvt, lagrange mean value theorem, cauchy mean value theorem]
+      - slug: intermediate-value-theorem
+        name: Intermediate value theorem
+        description: A continuous function takes every value between two of its values.
+        aliases: [intermediate value theorem, ivt, bolzano theorem, darboux]
+      - slug: rolle-theorem
+        name: Rolle's theorem
+        description: Rolle's theorem (zeros of the derivative between zeros of the function).
+        aliases: [rolle theorem, rolle's theorem, rolle]
+      - slug: taylor-expansion
+        name: Taylor expansion
+        description: Taylor's formula with remainder, Taylor series.
+        aliases: [taylor expansion, taylor formula, taylor series, taylor's theorem, maclaurin]
+      - slug: integration-by-parts
+        name: Integration by parts
+        description: Integration by parts.
+        aliases: [integration by parts, partial integration, by parts]
+      - slug: integration-tricks
+        name: Integration tricks
+        description: Substitutions, symmetry (x ↦ a − x), Feynman's trick, differentiation under the integral sign.
+        aliases: [integration trick, feynman trick, differentiation under the integral sign, symmetry of the integral, king property, substitution in integrals]
+      - slug: squeeze
+        name: Squeeze theorem
+        description: Bound a quantity between two others with the same limit.
+        aliases: [squeeze theorem, sandwich theorem, squeeze, sandwich]
+      - slug: stolz-cesaro
+        name: Stolz–Cesàro theorem
+        description: The Stolz–Cesàro theorem for limits of quotients of sequences.
+        aliases: [stolz cesaro, stolz-cesaro, cesaro, cesàro mean, cesaro mean]
+      - slug: compactness
+        name: Compactness
+        description: Compactness arguments, Bolzano–Weierstrass, extreme value theorem.
+        aliases: [compactness argument, bolzano weierstrass, extreme value theorem, heine borel, compact set argument]
+      - slug: fixed-points
+        name: Fixed points
+        description: Fixed-point arguments, contraction mapping, Brouwer.
+        aliases: [fixed point, fixed point theorem, banach fixed point, contraction mapping, brouwer]
+      - slug: abel-summation
+        name: Abel summation
+        description: Summation by parts / Abel's summation formula.
+        aliases: [abel summation, summation by parts, partial summation, abel transformation]
+      - slug: growth-rate-comparison
+        name: Growth rate comparison
+        description: Compare rates of growth (exponential vs polynomial, dominant terms).
+        aliases: [growth rate, growth comparison, dominant term, exponential beats polynomial]
+      - slug: rouche-theorem
+        name: Rouché's theorem
+        description: Rouché's theorem on counting zeros of holomorphic functions.
+        aliases: [rouche theorem, rouché, rouche, argument principle, counting zeros]
+      - slug: maximum-modulus
+        name: Maximum modulus principle
+        description: The maximum modulus principle for holomorphic functions.
+        aliases: [maximum modulus principle, maximum principle, max modulus, schwarz lemma]
+      - slug: gelfond-schneider
+        name: Gelfond–Schneider theorem
+        description: a^b is transcendental for algebraic a ≠ 0, 1 and irrational algebraic b.
+        aliases: [gelfond schneider, gelfond-schneider theorem, transcendence of a^b, hilbert seventh problem]
+      - slug: lhopital-rule
+        name: L'Hôpital's rule
+        description: Limits of indeterminate quotients via derivatives.
+        aliases: ["l'hopital", lhopital, "l'hôpital's rule", hopital, indeterminate form]
+      - slug: finite-differences
+        name: Finite differences
+        description: Difference operators, Newton forward differences, polynomial degree via differences.
+        aliases: [finite difference method, difference operator, newton forward difference]
+  - group: Geometry
+    tags:
+      - slug: angle-chasing
+        name: Angle chasing
+        description: Track angles around the figure (inscribed angles, cyclic quadrilaterals).
+        aliases: [angle chasing, angle chase, angles, inscribed angle theorem]
+      - slug: power-of-a-point
+        name: Power of a point
+        description: Power of a point with respect to a circle, radical axes and centres.
+        aliases: [power of a point, radical axis, radical center, radical centre, intersecting chords]
+      - slug: inversion
+        name: Inversion
+        description: Inversion in a circle.
+        aliases: [inversion, circle inversion, inversive geometry, invert about a circle]
+      - slug: homothety
+        name: Homothety
+        description: Homotheties, spiral similarities and other similarity transformations.
+        aliases: [homothety, dilation, spiral similarity, similarity transformation, scaling]
+      - slug: coordinate-bash
+        name: Coordinate bash
+        description: Brute-force computation with Cartesian, barycentric or complex coordinates.
+        aliases: [coordinate bash, coordinates, complex bash, bary bash, barycentric bash, analytic computation]
+      - slug: monge-theorem
+        name: Monge's theorem
+        description: Monge's theorem on the collinearity of the three external homothety centres of three circles.
+        aliases: [monge theorem, monge's theorem, monge d'alembert, three circles theorem]
+      - slug: extra-dimension
+        name: Add a dimension
+        description: Solve a planar problem by lifting it to three dimensions (or a higher one).
+        aliases: [extra dimension, lift to 3d, go up a dimension, higher dimension trick]
+
+difficulty:
+  - slug: easy
+    name: Easy
+    description: IMC P1–2, Putnam A1/B1, early national-MO problems; at most 30 minutes for an ETH student.
+    aliases: [beginner, simple, warm-up, warmup, quick]
+  - slug: medium
+    name: Medium
+    description: IMC P3–4, Putnam A2–3/B2–3, IMO P1/P4.
+    aliases: [intermediate, moderate]
+  - slug: hard
+    name: Hard
+    description: Late IMC problems (P5 and the hardest P4), Putnam A5–6/B5–6, IMO P2/P5.
+    aliases: [difficult, tough, advanced]
+  - slug: extreme
+    name: Extreme
+    description: IMO P3/P6, hardest IMC, Schweitzer, research-flavoured or open-ended problems.
+    aliases: [very hard, extremely hard, research level, open-ended, open problem, hardest]
+
+origin:
+  # ---- university competitions ----
+  - slug: imc
+    name: IMC
+    kind: university
+    description: International Mathematics Competition for University Students (since 1994).
+    aliases: [international mathematics competition, international mathematics competition for university students, imc-math]
+  - slug: putnam
+    name: Putnam
+    kind: university
+    description: William Lowell Putnam Mathematical Competition (USA and Canada, undergraduate).
+    aliases: [william lowell putnam, putnam competition, putnam exam]
+  - slug: icmc
+    name: ICMC
+    kind: university
+    description: Imperial College Mathematics Competition (UK, university students).
+    aliases: [imperial college mathematics competition, imperial, imperial mathematics competition]
+  - slug: jarnik
+    name: Vojtěch Jarník Competition
+    kind: university
+    description: Vojtěch Jarník International Mathematical Competition (Ostrava, university students).
+    aliases: [vojtech jarnik, jarnik, vjimc, ostrava]
+  - slug: bernoulli
+    name: Bernoulli Competition
+    kind: university
+    description: The Bernoulli Competition for university students (Switzerland).
+    aliases: [bernoulli competition, bernoulli, swiss university competition]
+  - slug: schweitzer
+    name: Miklós Schweitzer
+    kind: university
+    description: Miklós Schweitzer Memorial Competition (Hungary, research-level university problems).
+    aliases: [miklos schweitzer, schweitzer competition, schweitzer]
+  - slug: simon-marais
+    name: Simon Marais
+    kind: university
+    description: Simon Marais Mathematics Competition (Asia-Pacific, university students).
+    aliases: [simon marais mathematics competition, marais]
+  - slug: seemous
+    name: SEEMOUS
+    kind: university
+    description: South Eastern European Mathematical Olympiad for University Students.
+    aliases: [south eastern european mathematical olympiad, seemous olympiad]
+  - slug: obm-u
+    name: OBM-U
+    kind: university
+    description: Brazilian Mathematical Olympiad, university level (OBM Universitária).
+    aliases: [obm universitaria, brazilian mo university, brazilian olympiad university, obmu]
+  # ---- high-school competitions ----
+  - slug: imo
+    name: IMO
+    kind: high-school
+    description: International Mathematical Olympiad.
+    aliases: [international mathematical olympiad, international math olympiad]
+  - slug: egmo
+    name: EGMO
+    kind: high-school
+    description: European Girls' Mathematical Olympiad.
+    aliases: [european girls mathematical olympiad, european girls olympiad]
+  - slug: balkan-mo
+    name: Balkan MO
+    kind: high-school
+    description: Balkan Mathematical Olympiad.
+    aliases: [balkan mathematical olympiad, balkan olympiad, bmo balkan, bmo]
+  - slug: jbmo
+    name: JBMO
+    kind: high-school
+    description: Junior Balkan Mathematical Olympiad.
+    aliases: [junior balkan mathematical olympiad, junior balkan]
+  - slug: apmo
+    name: APMO
+    kind: high-school
+    description: Asian Pacific Mathematics Olympiad.
+    aliases: [asian pacific mathematics olympiad, asia pacific olympiad]
+  - slug: usamo
+    name: USAMO
+    kind: high-school
+    description: USA Mathematical Olympiad (and USAJMO).
+    aliases: [usa mathematical olympiad, usajmo, american olympiad, us olympiad]
+  - slug: aime
+    name: AIME
+    kind: high-school
+    description: American Invitational Mathematics Examination.
+    aliases: [american invitational mathematics examination, aime exam]
+  - slug: amc
+    name: AMC
+    kind: high-school
+    description: American Mathematics Competitions (AMC 10 / AMC 12).
+    aliases: [american mathematics competitions, amc 10, amc 12, amc10, amc12]
+  - slug: bmo-uk
+    name: British MO
+    kind: high-school
+    description: British Mathematical Olympiad (BMO Round 1 and 2).
+    aliases: [british mathematical olympiad, bmo uk, uk mo, bmo1, bmo2, british olympiad, bmo]
+  - slug: all-russian
+    name: All-Russian MO
+    kind: high-school
+    description: All-Russian Mathematical Olympiad (and its Soviet predecessors).
+    aliases: [all-russian mathematical olympiad, all russian, russian olympiad, russian mathematical olympiad, soviet olympiad, all-union]
+  - slug: romania-tst
+    name: Romania TST
+    kind: high-school
+    description: Romanian IMO Team Selection Tests.
+    aliases: [romanian tst, romanian team selection test, romania team selection, romanian imo selection]
+  - slug: iran-tst
+    name: Iran TST
+    kind: high-school
+    description: Iranian IMO Team Selection Tests.
+    aliases: [iranian tst, iran team selection test, iranian team selection]
+  - slug: bulgaria-nmo
+    name: Bulgarian NMO
+    kind: high-school
+    description: Bulgarian National Mathematical Olympiad.
+    aliases: [bulgarian national mathematical olympiad, bulgarian nmo, bulgaria national olympiad, bulgarian olympiad]
+  - slug: bulgaria-autumn
+    name: Bulgarian Autumn Competition
+    kind: high-school
+    description: Autumn Mathematical Competition (Bulgaria).
+    aliases: [autumn math competition bulgaria, autumn mathematical competition, bulgarian autumn, autumn tournament bulgaria]
+  - slug: pan-african
+    name: Pan-African MO
+    kind: high-school
+    description: Pan-African Mathematics Olympiad.
+    aliases: [pan african mathematics olympiad, pan-african olympiad, pamo, pan african]
+  - slug: silk-road
+    name: Silk Road
+    kind: high-school
+    description: Silk Road Mathematics Competition.
+    aliases: [silk road mathematics competition, silk road competition, srmc]
+  - slug: baltic-way
+    name: Baltic Way
+    kind: high-school
+    description: Baltic Way team competition.
+    aliases: [baltic way competition, baltic]
+  - slug: swiss-mo
+    name: Swiss MO
+    kind: high-school
+    description: Swiss Mathematical Olympiad (SMO / imosuisse).
+    aliases: [swiss mathematical olympiad, smo, imosuisse, schweizer mathematik-olympiade, olympiades suisses de mathematiques]
+  # ---- other sources ----
+  - slug: book
+    name: Book
+    kind: book
+    description: Taken from a book (named in the references field).
+    aliases: [textbook, problem book, from a book, putnam and beyond, selected problems]
+  - slug: journal
+    name: Journal
+    kind: journal
+    description: Problem section of a journal (American Mathematical Monthly, Crux Mathematicorum, ...).
+    aliases: [amm, american mathematical monthly, monthly, crux, crux mathematicorum, mathematics magazine, journal problem]
+  - slug: oral-exam
+    name: Oral exam
+    kind: exam
+    description: Oral entrance examination (X-ENS and other French grandes écoles).
+    aliases: [x-ens, ens, polytechnique, oral, oraux, grandes ecoles, oral examination, entrance exam]
+  - slug: course
+    name: Course
+    kind: course
+    description: Exercise or example from a lecture course.
+    aliases: [lecture, lecture notes, exercise sheet, homework, seminar, class]
+  - slug: folklore
+    name: Folklore
+    kind: folklore
+    description: Well-known problem without a clear first source.
+    aliases: [classic, classical, well-known, well known, traditional, unknown source]
+  - slug: original
+    name: Original
+    kind: original
+    description: Composed by a club member.
+    aliases: [club-made, club made, own problem, our own, composed by the club, homemade]
+  - slug: interview
+    name: Interview
+    kind: interview
+    description: Quantitative-finance or tech interview question.
+    aliases: [quant interview, quant, job interview, brainteaser, trading interview, interview question]
+  # ---- added by the history pass (2026-09-22) ----
+  - slug: romania-nmo
+    name: Romanian NMO
+    kind: high-school
+    description: Romanian National Mathematical Olympiad (Olimpiada Națională de Matematică), final round; one paper per grade (IX-XII), problems labelled grade.problem, e.g. 11.3.
+    aliases: [romanian national olympiad, romania national olympiad, romanian mathematical olympiad, olimpiada nationala de matematica, onm]
+  - slug: imo-shortlist
+    name: IMO Shortlist
+    kind: high-school
+    description: Problems shortlisted for the International Mathematical Olympiad (ISL), including those not set at the contest.
+    aliases: [isl, imo shortlisted problems, shortlist]
+  - slug: tournament-of-towns
+    name: Tournament of Towns
+    kind: high-school
+    description: "International Mathematics Tournament of Towns (since 1980): Fall and Spring rounds, O-Level and A-Level papers, Junior and Senior."
+    aliases: [tot, turgor, tournament of the towns, turnir gorodov]
+  - slug: moscow-mo
+    name: Moscow MO
+    kind: high-school
+    description: Moscow Mathematical Olympiad (MMO), the Moscow city olympiad for school students, held since 1935.
+    aliases: [mmo, moscow olympiad, moscow math olympiad, moscow city olympiad]
+  - slug: historical
+    name: Historical source
+    kind: book
+    description: Classical result or challenge first found in a historical text (ancient treatise, published letter or manuscript of a named mathematician). The work and the edition consulted go in the references field.
+    aliases: [history of mathematics, treatise, letter, correspondence, manuscript, ancient source, collected works, oeuvres]
+  - slug: paper
+    name: Research paper
+    kind: journal
+    description: Research article in which the result first appeared (for problem sections of journals use journal). Named in the references field.
+    aliases: [research paper, research article, article]

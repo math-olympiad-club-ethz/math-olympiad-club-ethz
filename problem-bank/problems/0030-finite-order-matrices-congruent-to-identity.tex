@@ -1,0 +1,558 @@
+% title:          Finite order matrices congruent to identity
+% area:           matrices, congruences, finite-groups
+% methods:        eigenvalue-arguments, cayley-hamilton, trace-argument, contradiction, legendre-formula, spectral-mapping
+% difficulty:
+% difficulty-ai:  medium
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         paper
+% origin-date:    1887
+% origin-number:  §1
+% also-in:        bernoulli
+% taken-from:
+% references:     First appearance: H. Minkowski, Ueber den arithmetischen Begriff der Aequivalenz und über die endlichen Gruppen linearer ganzzahliger Substitutionen, J. reine angew. Math. 100 (1887), 449-458, §1 (modulus 4) - https://gdz.sub.uni-goettingen.de/download/pdf/PPN243919689_0100/LOG_0041.pdf; H. Minkowski, Zur Theorie der positiven quadratischen Formen, J. reine angew. Math. 101 (1887), 196-202, §1 (every odd prime modulus; together the two papers cover every m >= 3) - https://gdz.sub.uni-goettingen.de/download/pdf/PPN243919689_0101/LOG_0010.pdf; both reprinted in Minkowski, Gesammelte Abhandlungen, Bd. I (Teubner 1911), pp. 203-218, where Hilbert's memorial address states the theorem for any modulus >= 3 - https://archive.org/details/gesammelteabhand00minkuoft; J.-P. Serre, Bounds for the orders of the finite subgroups of G(k), §1.2 'Minkowski's lemma', Lemma 1 - https://arxiv.org/pdf/1011.0346; later: Bernoulli Competition (EPFL), 3 June 2024, Problem 4 (checked in the club's copy of the official solutions (Bernoulli 2023-2026 solutions PDF, not online); without the m = 2 part; paper not published online) - https://bernoulli.epfl.ch/youth-at-bernoulli/bernoulli-competition/
+% history:        ai
+\begin{problem}
+Let \( n, m \in \mathbb{N}_{>0} \) be positive integers, with \( m \geq 3 \), and let \( A \in \mathbb{Z}^{n \times n} \). Suppose \( A \) has finite order (\( \exists k \in \mathbb{N}_{>0},\, A^k = I_n \)) and satisfies
+\[
+A \equiv I_n \pmod{m} \footnote{For an integer \( u \in \mathbb{Z} \), \( \equiv \pmod{u} \) is the relation on the set of integer matrices \( \bigcup_{r,l \in \mathbb{N}^{*}} \mathbb{Z}^{r \times l} \), where \( C \equiv D \pmod{u} \Leftrightarrow \exists r,l\in\mathbb{N}^{*}\,,  C,D\in\mathbb{Z}^{r \times l}  \,,\forall \left(i,j\right) \in r \times l,\, u \mid \left(C - D\right)\left(i,j\right) \). It is an equivalence relation.}.
+\]
+Prove that \( A = I_n \), and find counterexamples when \( m = 2 \).
+\end{problem}
+\begin{solution}
+\textit{Solution 1. of $A=I_n$}
+\\\\
+Since \( A \equiv I_n \pmod{m} \), there exists \( B \in \mathbb{Z}^{n \times n} \) such that \( A = I_n + mB \). Then we have the following equality of characteristic polynomials:
+\[
+P_{\text{char},A}\left(X\right) = {\det}_{\mathbb{Q}\left(X\right)}\left(XI_n - A\right) = {\det}_{\mathbb{Q}\left(X\right)}\left(\left(X - 1\right)I_n - mB\right) = P_{\text{char},mB}\left(X - 1\right).
+\]
+Therefore, \( \alpha \in \mathbb{C} \) is an eigenvalue of \( A \) if and only if \( \alpha - 1 \) is an eigenvalue of \( mB \); that is (since \( m \neq 0 \)), if and only if \( \frac{\alpha - 1}{m} \) is an eigenvalue of \( B \).
+\\\\
+Since \( \exists k \in \mathbb{N}_{>0}\) with \(A^k = I_n \), any eigenvalue \( \alpha \in \mathbb{C} \) of \( A \) satisfies \( \alpha^k = 1 \); thus, they are \( k \)-th roots of unity and lie on the unit circle \( \mathbb{S}^{1} \), i.e., \( \left|\alpha\right|_{\mathbb{C}} = 1 \). Any eigenvalue \( \beta \in \mathbb{C} \) of \( B \) then satisfies (here \( m \geq 3 \) is crucial):
+\[
+\left|\beta\right|_{\mathbb{C}} = \left| \frac{\alpha - 1}{m} \right|_{\mathbb{C}} \leq \frac{\left|\alpha\right|_{\mathbb{C}} + 1}{m} = \frac{2}{m} < 1.
+\]
+Now we prove that \( 0 \) is the only eigenvalue of \( B \): \(\sigma\left(B\right)=\left\{0\right\}\).
+\\\\
+From this point, there are multiple ways to proceed; we present two approaches here.
+\\\\
+\textit{Using Vieta’s formula.}
+\\\\
+Since \( \mathbb{Z} \) is a unique factorisation domain (UFD), so is \( \mathbb{Z}\left[X\right] \), and we can factor the characteristic polynomial of \( B \) (which is of degree \( n \geq 1 \)), \( P_{\text{char},B}\left(X\right) := \det_{\mathbb{Q}\left(X\right)}\left(XI_n - B\right) \in \mathbb{Z}\left[X\right] \), as a product of \( l \in \mathbb{N}^{*} \) unique irreducible polynomials (up to invertible elements, which here are \(\pm 1\)). Since \( P_{\text{char},B}\left(X\right) \) is monic, the irreducible polynomials must have leading coefficients in \( \mathbb{Z}^{\times} = \left\{\pm 1\right\} \). Therefore, they must have degree at least one (without this information they could have been irreducible elements of \( \mathbb{Z} \subset \mathbb{Z}\left[X\right] \)—namely, the primes up to sign). Hence, we may assume them to be monic (by multiplying, \textit{ubi opus est}, by \( -1 \)). That is,
+\[
+\exists \left\{P_i\left(X\right) \mid \forall i \in l,\, P_i\left(X\right) \text{ is irreducible and monic} \right\} \subset \mathbb{Z}_{\text{irr}}\left[X\right] \setminus \mathbb{Z}
+\]
+such that
+\[
+P_{\text{char},B}\left(X\right) = \prod_{i \in l} P_i\left(X\right).
+\]
+Now, let \( \beta \) be an eigenvalue of \( B \), i.e., \( \beta \in \mathrm{Root}_{P_{\text{char},B}\left(X\right)}\left(\mathbb{C}\right) \). Hence, there exists \( j \in l \) such that \( \beta \in \mathrm{Root}_{P_j\left(X\right)}\left(\mathbb{C}\right) \). For a certain \( s_j \in \mathbb{N}_{>0} \) and distinct complex numbers \( \left\{\,_{j}\beta_i \mid i \in s_j \right\} \subset \mathbb{C} \), we have
+\[
+\mathrm{Root}_{P_j\left(X\right)}\left(\mathbb{C}\right) = \left\{\,_{j}\beta_i \mid i \in s_j \right\}.
+\]
+As we have seen above,
+\[
+\mathrm{Root}_{P_{\text{char},B}\left(X\right)}\left(\mathbb{C}\right) \subset \mathbb{D},
+\]
+so \( \left\{\,_{j}\beta_i \mid i \in s_j \right\} \subset \mathbb{D} \).
+However, since these are the roots of \( P_j\left(X\right) \), we must have, by Vieta’s formula, that their product equals (up to a sign) the constant term of \( P_j\left(X\right) \):
+\[
+\prod_{i\in s_j} \,_{j}\beta_i \in\left\{\pm P_j\left(0\right)\right\}.
+\]
+Then
+\[
+\left|P_j\left(0\right)\right|_{\mathbb{C}} = \left| \prod_{i\in s_j} \,_{j}\beta_i \right|_{\mathbb{C}} = \prod_{i\in s_j} \left| \,_{j}\beta_i \right|_{\mathbb{C}} < 1.
+\]
+Since \( P_{j}\left(X\right) \in \mathbb{Z}\left[X\right] \), we must have \( P_j\left(0\right) \in \mathbb{Z} \), and because \( \left|P_j\left(0\right)\right|_{\mathbb{C}} < 1 \) we must have \( P_j\left(0\right) = 0 \). Therefore, \( 0 \) is a root of \( P_j \), and thus \( X \) divides \( P_j\left(X\right) \) in \( \mathbb{Z}\left[X\right] \). Since \( P_j\left(X\right) \) has degree at least \( 1 \) and is irreducible in \( \mathbb{Z}\left[X\right] \), this cannot happen unless \( P_j\left(X\right) \) has degree \( 1 \). So \( P_j\left(X\right) = kX \) for a certain \( k \in \mathbb{Z} \setminus \left\{0\right\} \). Since \( P_j\left(X\right) \) is monic, \( k = 1 \), and we conclude \( P_j\left(X\right) = X \). Hence \( \beta = 0 \), since it is a root of \( P_j\left(X\right) \) by choice of \( j \). As \(\beta\in\sigma\left(B\right)\) was arbitrary we conclude \(\sigma\left(B\right)=\left\{0\right\}\) (because \(\sigma\left(B\right)\neq\varnothing\)).
+\\\\
+\textit{Using the following equivalence.}
+\begin{lemma}
+One has \(\sigma\left(B\right) = \left\{0\right\} \Leftrightarrow \exists t \in \mathbb{N}, \forall k \in \left\llbracket 1, n \right\rrbracket, \text{tr}\left(B^{t+k}\right) = 0\).
+\end{lemma}
+This equivalence, along with several others, is proven in a generic form in Appendix [\hyperref[A3]{A.3}].
+\\\\
+It thus suffices to show that \(\exists M \in\mathbb{N}\,,\forall N\in\mathbb{N}_{\geq M}\,, \text{tr}\left(B^N\right)=0\).
+\\\\
+As shown earlier, all eigenvalues of \( B \) lie inside the unit disc: \( \mathrm{Root}_{P_{\text{char},B}\left(X\right)}\left(\mathbb{C}\right) \subset \mathbb{D} \). Let \( \boldsymbol{\beta} \in \mathbb{D}^n \) be any vector (the order in this vector doesn't matter) of exactly all the eigenvalues of \( B \), counted with their respective algebraic multiplicities, so that \( \sigma\left(B\right) = \mathrm{Root}_{P_{\text{char},B}\left(X\right)}\left(\mathbb{C}\right) = \left\{ \beta_i \mid i \in n \right\} \). By the Spectral Mapping Theorem [\hyperref[A1]{A.1}], one has that \(\forall k\in\mathbb{N}\):
+\[
+\text{tr}\left(B^k\right)=\sum_{i\in n}\beta_i^k.
+\]
+Let \( \gamma \in \sigma\left(B\right) \) be an eigenvalue of \( B \). Since \( \left|\gamma\right|_{\mathbb{C}} < 1 \), we have \( \gamma^N \underset{\mathbb{N}\ni N \to +\infty}{\overset{\left|\cdot\right|_{\mathbb{C}}}{\longrightarrow}} 0 \). Therefore:
+\[
+\text{tr}\left(B^N\right) \underset{\mathbb{N}\ni N \to +\infty}{\overset{\left|\cdot\right|_{\mathbb{C}}}{\longrightarrow}} 0,
+\]
+as it is a finite sum comprising a total of \( n \) summands tending to zero. However, as \( B \in \mathbb{Z}^{n \times n} \), we have \(\forall k \in \mathbb{N}, \, B^k \in \mathbb{Z}^{n \times n}\), so for all \( k \in \mathbb{N} \), \( \text{tr}\left(B^k\right) \in \mathbb{Z} \). Hence (standard), there exists \( M\in\mathbb{N} \) such that for all \( N \in \mathbb{N}_{\geq M} \), \( \text{tr}\left(B^N\right) = 0 \), as desired.
+\\\\
+This concludes the two different approaches to show that \( \sigma\left( B \right) = \left\{ 0 \right\} \). We can now quickly finish the problem. All the eigenvalues of \( B \) are \( 0 \); this is clearly equivalent to \( P_{\text{char},B}\left( X \right) = X^n \). According to the Cayley-Hamilton theorem, \( B^n = \mathbf{0}_{n\times n} \), so \( B \) is nilpotent and thus \( mB \) is nilpotent. Now, use the following
+\begin{lemma}
+Let \(\mathbb{F}\) be a field of characteristic \(\operatorname{char}(\mathbb{F}) = 0\), \( l \in \mathbb{N}_{>0} \), and \( N \in \mathbb{F}^{l \times l} \) be a nilpotent matrix. If \( I_{l} + N \) has finite order, then \( N = \mathbf{0}_{l \times l} \).
+\end{lemma}
+The proof can be found in a slightly generalised framework in Appendix [\hyperref[A6]{A.6}].
+\\\\
+Apply this result to the field $\mathbb{Q}$ with \( n \geq 1 \); since \( mB \in \mathbb{Q}^{n \times n} \) is nilpotent and \( A = I_n + mB \) has finite order, we conclude that \( mB = \mathbf{0}_{n \times n} \). Hence, \( A = I_n \), and this concludes the proof.
+\\\\
+\textit{Solution 2. of $A=I_n$}
+\\\\
+Assume for contradiction that \( A \neq I_n \). Since \( m \geq 3 \), \( m \) must be divisible by some prime power greater than 2, that is, there exists \( p \in \mathbb{P} \) a prime number and \( c \geq 1 \) such that \( p^c \mid m \) and \( p^c > 2 \) (if \( p = 2 \), then \( c \geq 2 \) necessarily). In particular, from \( A \equiv I_n \pmod{m} \), we must have \( A \equiv I_n \pmod{p^c} \).
+\\\\
+Since \( A \neq I_n \), there is \( \left( i,j \right) \in n \times n \) such that \( \left( A - I_n \right)\left( i,j \right) \neq 0 \), and so 
+\[
+c \leq v_p\left( \left( A - I_n \right)\left( i,j \right) \right) \neq +\infty,
+\]
+where \( v_p \colon \mathbb{Q} \rightarrow \mathbb{Z} \cup \left\{ +\infty \right\} \) denotes the \( p \)-adic valuation. We can thus let 
+\[
+c' := \min\left\{ v_p\left( \left( A - I_n \right)\left( i,j \right) \right) \,\middle\vert\, \left( i,j \right) \in n \times n \right\} \geq c.
+\]
+Then \( c' \in \mathbb{N}_{\geq c} \) is (by construction) the largest integer such that \( A \equiv I_n \pmod{p^{c'}} \). Consequently, we define 
+\[
+B := \frac{1}{p^{c'}} \left( A - I_n \right) \in \mathbb{Q}^{n\times n},
+\]
+for which (by definition of \( c' \)), \( B \in \mathbb{Z}^{n \times n} \) and \( B \not\equiv \mathbf{0}_{n \times n} \pmod{p} \).
+\\
+Since \( A \) has finite order, there exists \( k \in \mathbb{N}^{*} \) with \( A^k = I_n \); furthermore, \( k \geq 2 \) because \( A \neq I_n \). We want to expand:
+\[
+I_n = A^k = \left( I_n + p^{c'} B \right)^k.
+\]
+This can be done (happily) by the binomial theorem since \( I_n \) and \( p^{c'} B \) commute, and we obtain:
+\[
+I_n = \sum_{i=0}^{k} \binom{k}{i} p^{i c'} B^i.
+\]
+This implies:
+\[
+\sum_{i=1}^{k} \binom{k}{i} p^{i c'} B^i = \mathbf{0}_{n \times n},
+\]
+or equivalently (since \( k \geq 2 \)), we obtain the equation:
+\[
+\sum_{i=2}^{k} \binom{k}{i} p^{i c'} B^i = -k p^{c'} B.
+\]
+We shall show that this leads to a contradiction. Let \( c'' := v_p\left( k \right) \geq 0 \). We prove:
+\begin{equation}
+-k p^{c'} B \not\equiv \mathbf{0}_{n \times n} \pmod{p^{c' + c'' + 1}},
+\end{equation}
+\label{1}
+whilst
+\begin{equation}
+\sum_{i=2}^{k} \binom{k}{i} p^{i c'} B^i \equiv \mathbf{0}_{n \times n} \pmod{p^{c' + c'' + 1}},
+\end{equation}
+\label{2}
+which is impossible by the derived equation above.
+\\
+For (\hyperref[1]{1}): because \( v_p\left( k p^{c'} \right) = c' + c'' \) and \( B \not\equiv \mathbf{0}_{n \times n} \pmod{p} \), we have \( -k p^{c'} B \not\equiv \mathbf{0}_{n \times n} \pmod{p^{c' + c'' + 1}} \) (but obviously \( k p^{c'} B \equiv \mathbf{0}_{n \times n} \pmod{p^{c' + c''}} \)).
+\\
+For (\hyperref[2]{2}): let \( 2 \leq i \leq k \), note that \( i! \binom{k}{i} = \frac{k!}{\left( k-i \right)!} \) is divisible by \( k \), hence by \( p^{c''} \), whilst the largest power of \( p \) dividing \( i! \) is classically bounded above by the famous \href{https://en.wikipedia.org/wiki/Legendre%27s_formula}{Legendre's formula}:
+\[
+v_p\left( i! \right) =\footnote{A quick proof of this formula for \( p \in \mathbb{P} \) and \( i \geq 1 \) proceeds as follows: define \( M := \max\left\{ v_{p}\left( t \right) \,\middle\vert\, 1 \leq t \leq i \right\} \), then:
+\(v_p\left( i! \right) = \sum_{t=1}^{i} v_p\left( t \right) = \sum_{t=1}^{i} \left( \sum_{\substack{j=1 \\ p^j \mid_{\mathbb{Z}} t}}^{M} 1 \right) = \sum_{\substack{\left( t,j \right) \in \left\llbracket 1, i \right\rrbracket \times \left\llbracket 1, M \right\rrbracket \\ p^{j} \mid_{\mathbb{Z}} t}} 1 = \sum_{j=1}^{M} \left( \sum_{\substack{t=1 \\ p^j \mid_{\mathbb{Z}} t}}^{i} 1 \right) = \sum_{j=1}^{M} \left\lvert \left\{ t \in \left\llbracket 1, i \right\rrbracket \,\middle\vert\, p^j \mid_{\mathbb{Z}} t \right\} \right\rvert = \sum_{j=1}^{M} \left\lvert \left\{ p^j s \leq i \,\middle\vert\, s \in \mathbb{N}_{>0} \right\} \right\rvert = \sum_{j=1}^{M} \left\lvert \left\{ s \in \mathbb{N}_{>0} \,\middle\vert\, p^j s \leq i \right\} \right\rvert = \sum_{j=1}^{M} \left\lfloor \frac{i}{p^j} \right\rfloor = \sum_{j=1}^{+\infty} \left\lfloor \frac{i}{p^j} \right\rfloor.
+\) Here, we use the total multiplicativity of \( v_p \) for the first equality; the interchange of sums is justified by their finiteness. The final equality follows from the definition of \( M \), since if \( j \in \mathbb{N} \) is such that \( j > M \), then \( j > v_p\left( i \right) \), hence \( \frac{i}{p^{j}} < 1 \), and thus \( \left\lfloor \frac{i}{p^{j}} \right\rfloor = 0 \). The remaining equalities follow from elementary counting.} \sum_{j=1}^{+\infty} \left\lfloor \frac{i}{p^j} \right\rfloor < \sum_{j=1}^{+\infty} \frac{i}{p^j} = \frac{i}{p - 1}.
+\]
+We claim that \( v_p\left( i! \right) \leq \left\lfloor \frac{i-1}{p-1} \right\rfloor \). Assume for the sake of contradiction that \( \left\lfloor \frac{i-1}{p-1} \right\rfloor < v_p\left( i! \right) \). Since both are integers, \( \left\lfloor \frac{i-1}{p-1} \right\rfloor + 1 \leq v_p\left( i! \right) \). As \( v_p\left( i! \right) < \frac{i}{p-1} \) and \( i \geq 2 \Rightarrow \left\lfloor \frac{i-1}{p-1} \right\rfloor + 1 \geq 1 \), we obtain:
+\[
+\left\lfloor \frac{i-1}{p-1} \right\rfloor + 1 < \frac{i}{p-1} \Rightarrow \left( p-1 \right)\left( \left\lfloor \frac{i-1}{p-1} \right\rfloor + 1 \right) < i.
+\]
+Again, since \( i, \left( p-1 \right)\left( \left\lfloor \frac{i-1}{p-1} \right\rfloor + 1 \right) \) are integers, we have:
+\[
+\left( p-1 \right)\left( \left\lfloor \frac{i-1}{p-1} \right\rfloor + 1 \right) + 1 \leq i.
+\]
+However, by definition of the floor function:
+\[
+\frac{i-1}{p-1} < \left\lfloor \frac{i-1}{p-1} \right\rfloor + 1 \Rightarrow i < \left( p-1 \right)\left( \left\lfloor \frac{i-1}{p-1} \right\rfloor + 1 \right) + 1.
+\]
+Combining:
+\[
+i < \left( p-1 \right)\left( \left\lfloor \frac{i-1}{p-1} \right\rfloor + 1 \right) + 1 \leq i,
+\]
+that is, \( i < i \), a contradiction. Thus, \( v_p\left( i! \right) \leq \left\lfloor \frac{i-1}{p-1} \right\rfloor \). So:
+\[
+v_p\left( \binom{k}{i} p^{i c'} \right) = v_p\left( \frac{i! \binom{k}{i}}{i!} p^{i c'} \right) = v_p\left( p^{i c'} \right) + v_p\left( i! \binom{k}{i} \right) - v_p\left( i! \right) \geq i c' + c'' - \left\lfloor \frac{i-1}{p-1} \right\rfloor.
+\]
+If \( p = 2 \), then \( c' \geq c \geq 2 \) and \( \frac{i-1}{p-1} = i - 1 \), so:
+\[
+i c' + c'' - \left\lfloor \frac{i-1}{p-1} \right\rfloor = i\left( c' - 1 \right) + c'' + 1
+\]
+\[\geq 2\left( c' - 1 \right) + c'' + 1 = c' + c'' + \left( c' - 2 \right) + 1 \geq c' + c'' + 1.
+\]
+If \( p \geq 3 \), then \( \frac{i-1}{p-1} \leq \frac{i-1}{2} \), so that \( \left\lfloor \frac{i-1}{p-1} \right\rfloor \leq \left\lfloor \frac{i-1}{2} \right\rfloor \), and thus:
+\[
+i c' + c'' - \left\lfloor \frac{i-1}{p-1} \right\rfloor \geq i c' + c'' - \left\lfloor \frac{i-1}{2} \right\rfloor
+\]
+\[= c' + c'' + \left( i - 1 \right)c' - \left\lfloor \frac{i-1}{2} \right\rfloor \geq c' + c'' + \left( i - 1 \right) - \left\lfloor \frac{i-1}{2} \right\rfloor
+\]
+\[= c' + c'' + \left\lceil \frac{i-1}{2} \right\rceil \geq c' + c'' + 1,
+\]
+where we used the fact that for an integer \( r \in \mathbb{Z} \), we have \( r - \left\lfloor \frac{r}{2} \right\rfloor = \left\lceil \frac{r}{2} \right\rceil \) (for this equality, break \( r \) into two cases based on its parity: \( 2t \) or \( 2t + 1 \)) and that \( i - 1 > 0 \).
+\\
+In all cases for $p$:
+\[
+v_p\left( \binom{k}{i} p^{i c'} \right) \geq c' + c'' + 1,
+\]
+and so \( p^{c' + c'' + 1} \) divides \( \binom{k}{i} p^{i c'} \). As $2\leq i\leq k$ was arbitrary, we get that:
+\[
+\sum_{i=2}^{k} \binom{k}{i} p^{i c'} B^i \equiv \mathbf{0}_{n \times n} \pmod{p^{c' + c'' + 1}}.
+\]
+This shows our desired contradiction. Thus, our initial assumption must be false and \( A = I_n \). This concludes the proof.
+\\\\
+A counterexample for general $n\geq 1$ is easy to find, for example, $-I_n$. If we want to find one that is not a diagonal matrix, we split the cases between even and odd dimensions. When $n=2k>0$, we place \( k \) copies of a \( 2 \times 2 \) counterexample block (which satisfies the condition) along the diagonal; when $n=2k+1>0$, we place \( k \) copies of the same \( 2 \times 2 \) block and a final $\pm 1$ on the diagonal:
+\[
+\begin{pmatrix}
+1 & 2 & 0 & \cdots & 0 & 0 \\
+0 & -1 & 0 & \cdots & 0 & 0 \\
+0 & 0 & 1 & 2 & \cdots & 0 \\
+0 & 0 & 0 & -1 & \cdots & 0 \\
+\vdots & \vdots & \vdots & \vdots & \ddots & \vdots \\
+0 & 0 & 0 & 0 & \cdots & \begin{matrix} 1 & 2 \\ 0 & -1 \end{matrix}
+\end{pmatrix} \in \mathbb{Z}^{2k \times 2k},
+\]
+\[
+\begin{pmatrix}
+1 & 2 & 0 & \cdots & 0 & 0 & 0 \\
+0 & -1 & 0 & \cdots & 0 & 0 & 0 \\
+0 & 0 & 1 & 2 & \cdots & 0 & 0 \\
+0 & 0 & 0 & -1 & \cdots & 0 & 0 \\
+\vdots & \vdots & \vdots & \vdots & \ddots & \vdots & \vdots \\
+0 & 0 & 0 & 0 & \cdots & \begin{matrix} 1 & 2 \\ 0 & -1 \end{matrix} & 0 \\
+0 & 0 & 0 & 0 & \cdots & 0 & \pm 1
+\end{pmatrix} \in \mathbb{Z}^{\left( 2k+1 \right) \times \left( 2k+1 \right)}.
+\]
+\appendix
+\section{}
+\subsection{}
+\label{A1}
+We recall the following important theorem:
+\begin{theorem}[Spectral Mapping Theorem]
+Let \( \mathbb{F} \) be a field, \( r \in \mathbb{N}_{>0} \), and \( A \in \mathbb{F}^{r \times r} \). Let \( \mathbb{F}^{\text{alg}} \supset \mathbb{F} \) be the algebraic closure of \( \mathbb{F} \). Let \( Q \in \mathbb{F}^{\text{alg}}\left[X\right] \). Let \( \sigma\left(A\right) = \operatorname{Root}_{P_{\text{char}, A}\left(X\right)}\left(\mathbb{F}^{\text{alg}}\right) \) be the set of all eigenvalues of \( A \), and for each \( \lambda \in \sigma\left(A\right) \), let \( m_\lambda := m_{P_{\text{char}, A}\left(X\right)}\left(\lambda\right) \) be the algebraic multiplicity of \( \lambda \) in \( P_{\text{char}, A}\left(X\right) \). The Spectral Mapping Theorem (easy to prove once one knows that every matrix in \( \left(\mathbb{F}^{\text{alg}}\right)^{r \times r} \) is similar to an upper triangular matrix over \( \mathbb{F}^{\text{alg}} \)) states precisely that \( P_{\text{char}, Q\left(A\right)}\left(X\right) = \prod_{\lambda \in \sigma\left(A\right)} \left(X - Q\left(\lambda\right)\right)^{m_\lambda} \). Recall that \( 0_{\mathbb{F}}^{0} := 1_{\mathbb{F}} \).
+In particular:
+\[
+\sigma\left(Q\left(A\right)\right) = \left\{ Q\left(\lambda\right) \,\middle|\, \lambda \in \sigma\left(A\right) \right\}\subset \mathbb{F}^{\text{alg}},
+\]
+\[
+\forall \kappa \in \mathbb{F}^{\text{alg}}, \ m_{P_{\text{char}, Q\left(A\right)}\left(X\right)}\left(\kappa\right) = \sum_{\substack{\mu \in \sigma\left(A\right) \\ Q\left(\mu\right) = \kappa}} m_{\mu}.
+\]
+If we let \( \lambda \in \left(\mathbb{F}^{\text{alg}}\right)^r \) be any vector (the order in this vector doesn't matter) of exactly all the eigenvalues of \( A \) counted with their respective algebraic multiplicities, then \( Q(\lambda)\in \left(\mathbb{F}^{\text{alg}}\right)^r  \) (each coordinate is evaluated through \(Q\)) is a vector of exactly all the eigenvalues of \( Q\left(A\right) \) with their respective algebraic multiplicities. Hence (by standard formula linking its trace and determinant to its eigenvalues):
+\[
+\operatorname{tr}\left(Q\left(A\right)\right) = \sum_{i\in r} Q\left(\lambda_i\right),
+\]
+\[
+\operatorname{det}_{\mathbb{F}^{\text{alg}}}\left(Q\left(A\right)\right) = \prod_{i\in r} Q\left(\lambda_i\right).
+\]
+\end{theorem}
+\subsection{}
+\label{A2}
+The following lemma is helpful.
+\begin{lemma}
+Let \( R \) be a commutative unital ring which is a domain, together with the canonical morphism \( \mathrm{can}_R \colon \mathbb{Z} \to R \), and write for any integer \( k \): \( k_R := \mathrm{can}_R\left(k\right) \). Then for all \( m \in \mathbb{N}_{\geq 1} \) such that \( \operatorname{char}\left(R\right) = 0 \) or \( m < \operatorname{char}\left(R\right) \), the set
+\[
+S_m := \left\{ \boldsymbol{\lambda} \colon m \to R \,\middle|\, \exists t \in \mathbb{N}, \forall k \in \left\llbracket 1, m \right\rrbracket, \sum_{i \in m} \lambda_i^{t+k} = 0_{R} \right\}
+\]
+is equal to the singleton set \( \left\{0_m\right\} \), where \( 0_m \colon m \to R \) is defined by \( i \mapsto 0_{R} \) and where \( x^0 = 1_R \) even if \( x = 0_R \).
+\end{lemma}
+\begin{proof}
+This is proven by induction on \( m \in \mathbb{N}_{\geq 1} \), assuming \( \operatorname{char}\left(R\right) = 0 \) or \( m < \operatorname{char}\left(R\right) \).
+\\\\
+Base case \( m = 1 \): The condition \( \operatorname{char}\left(R\right) = 0 \) or \( 1 < \operatorname{char}\left(R\right) \) holds because if \( \operatorname{char}\left(R\right) \neq 0 \), it must be a prime number (since \( R \) is a domain), meaning \( \operatorname{char}\left(R\right) \geq 2 > 1 \). We then have:
+\[
+S_1 = \left\{ \boldsymbol{\lambda} \colon 1 \to R \,\middle|\, \exists t \in \mathbb{N}, \forall k \in \left\llbracket 1, 1 \right\rrbracket, \sum_{i \in 1} \lambda_i^{t+k} = 0_{R} \right\} \overset{\text{clear}}{=} \left\{ \boldsymbol{\lambda} \colon 1 \to R \,\middle|\, \exists t \in \mathbb{N}, \lambda_0^{t+1} = 0_{R} \right\}.
+\]
+Clearly, since \( R \) is a domain, \( \lambda_0^{t+1} = 0_{R} \Rightarrow \lambda_0 = 0_{R} \) (trivial induction). Hence, \( S_1 = \left\{0_1\right\} \), which establishes the base case.
+\\\\
+Induction step: Assume the statement holds for some \( m \in \mathbb{N}_{\geq 1} \), so that \( S_m = \left\{0_m\right\} \). We want to show it holds for \( m + 1 \in \mathbb{N}_{> 1} \) (assuming \( \operatorname{char}\left(R\right) = 0 \) or \( m + 1 < \operatorname{char}\left(R\right) \)).
+\\\\
+Clearly, \( \left\{0_{m+1}\right\} \subset S_{m+1} \). To show the converse, let any \( \boldsymbol{\lambda} \in S_{m+1} \), we first show that \( \exists k \in m+1 \) such that \( \lambda_k = 0_{R} \). This can be proven in (at least) three ways: The first one (the simplest) uses a direct computation, the second (quite related to the first) uses Newton's identities (with a full proof of them), finally the last one uses the Vandermonde matrix (whose determinant is proven in Appendix [\hyperref[A5]{A.5}]):
+\\\\
+\textit{Direct computation.}
+\\\\
+Fix \( n \in \mathbb{N}_{>0} \). For \( k \in \mathbb{N} \), let the \( k \)-th power sum polynomials in \( n \) variables be
+\[
+p_k\left(\mathbf{X}\right) := \sum_{i \in n} X_i^k \in \mathbb{Z}\left[\mathbf{X}\right],
+\]
+and the \( k \)-th elementary symmetric polynomials in \( n \) variables be
+\[
+e_k\left(\mathbf{X}\right) := \sum_{\substack{A \in \mathscr{P}\left(n\right)\\\left|A\right| = k}} \prod_{a \in A} X_a \in \mathbb{Z}\left[\mathbf{X}\right]\footnote{That is:
+\[
+e_0\left(\mathbf{X}\right) = 1,\, e_1\left(\mathbf{X}\right) = \sum_{i \in n} X_i,\, e_2\left(\mathbf{X}\right) = \sum_{0 \leq i < j < n} X_i X_j,\, \ldots,\, e_n\left(\mathbf{X}\right) = \prod_{i \in n} X_i,
+\]
+and \( e_k\left(\mathbf{X}\right) = 0 \) for \( k > n \).}.
+\]
+In our case, where the number of variables is \( m+1 \geq 1 \), we define, for all \( k \geq 0 \), the \( k \)-th power sum and the \( k \)-th elementary symmetric polynomial in the vector \( \boldsymbol{\lambda} \), respectively:
+\[
+p_k := p_k\left(\boldsymbol{\lambda}\right) = \sum_{i \in m+1} \lambda_i^k,\quad e_k := e_k\left(\boldsymbol{\lambda}\right) = \sum_{\substack{A \in \mathscr{P}\left(m+1\right)\\\left|A\right| = k}} \prod_{a \in A} \lambda_a.
+\]
+By the condition \( \boldsymbol{\lambda} \in S_{m+1} \), it is clear that there exists a minimal \( t_{\boldsymbol{\lambda}} \in \mathbb{N} \) such that \( p_{t_{\boldsymbol{\lambda}}+k} = 0_{R} \) for all \( k \in \left\llbracket 1, m+1 \right\rrbracket \). Consider the polynomial whose roots are the coordinates of \( \boldsymbol{\lambda} \):
+\[
+P\left(X\right) = \prod_{i \in m+1} \left(X - \lambda_i\right) = \sum_{j=0}^{m+1} \left(-1\right)_R^j e_j X^{m+1-j} \in R\left[X\right].
+\]
+One has for all \( i \in m+1 \), \( 0_{R} = P\left(\lambda_i\right) \), so that:
+\[
+0_{R} = \lambda_i^{t_{\boldsymbol{\lambda}}} \cdot P\left(\lambda_i\right) = \sum_{j=0}^{m+1} \left(-1\right)_R^j e_j \lambda_i^{t_{\boldsymbol{\lambda}}+m+1-j}.
+\]
+Summing this identity over all \( i \in m+1 \) gives:
+\[
+0_{R} = \sum_{i \in m+1} 0_{R} = \sum_{i \in m+1}\sum_{j=0}^{m+1} \left(-1\right)_R^j e_j \lambda_i^{t_{\boldsymbol{\lambda}}+m+1-j} = \sum_{j=0}^{m+1} \left(-1\right)_R^j e_j p_{t_{\boldsymbol{\lambda}}+m+1-j}
+\]
+\[
+= \sum_{j=0}^{m} 0_{R} + \left(-1\right)_R^{m+1} e_{m+1} p_{t_{\boldsymbol{\lambda}}} \Rightarrow 0_{R} = e_{m+1} p_{t_{\boldsymbol{\lambda}}} = p_{t_{\boldsymbol{\lambda}}} \cdot \prod_{i \in m+1} \lambda_i,
+\]
+where we used that \( p_{t_{\boldsymbol{\lambda}}+k} = 0_{R} \) for all \( k \in \left\llbracket 1, m+1 \right\rrbracket \). 
+By minimality of \( t_{\boldsymbol{\lambda}} \), \( p_{t_{\boldsymbol{\lambda}}} \neq 0_{R} \). Indeed, if \( t_{\boldsymbol{\lambda}} = 0 \), then \( p_{t_{\boldsymbol{\lambda}}} = \left(m+1\right)_{R} \), which is not zero by hypothesis on the characteristic. Else \( t_{\boldsymbol{\lambda}} \geq 1 \), then assuming \( p_{t_{\boldsymbol{\lambda}}} = 0_{R} \) yields a contradiction to the minimality of \( t_{\boldsymbol{\lambda}}\) because then one could take \( t_{\boldsymbol{\lambda}}-1 \in \mathbb{N} \) and the condition would still hold for this integer.
+\\\\
+This implies (as \( R \) is a domain) that there exists \( k \in m+1 \) such that \( \lambda_k = 0_{R} \).
+\\\\
+\textit{Using Newton's identities.}
+\\\\
+In the same settings as above, for \( n \in \mathbb{N}_{>0} \) and \( k \in \mathbb{N} \), the previous direct computation proof above hints that some of the \( k \)-th power sum polynomials in \( n \) variables and some of the \( k \)-th elementary symmetric polynomials in \( n \) variables are related. Indeed, they are related by the so-called \href{https://en.wikipedia.org/wiki/Newton%27s_identities}{Newton's identities} (valid for \( 1\leq k \leq n \)) over \( R\left[X_0,\dots,X_{n-1}\right] = R\left[\mathbf{X}\right] \):
+\[
+k_R e_k\left(\mathbf{X}\right) = \sum_{i=1}^k \left(-1\right)_R^{i-1} e_{k-i}\left(\mathbf{X}\right) p_i\left(\mathbf{X}\right).
+\]
+For a short combinatorial proof of these identities, see [\hyperref[A4]{A.4}].
+\\\\
+By the condition \( \boldsymbol{\lambda} \in S_{m+1} \), there exists \( t_{\boldsymbol{\lambda}} \in \mathbb{N} \) such that \( p_{t_{\boldsymbol{\lambda}}+k} = 0_{R} \) for all \( k \in \left\llbracket 1, m+1 \right\rrbracket \). In our case, where the number of variables is \( m+1 \geq 1 \), we define, for all \( k \geq 0 \), the \( k \)-th power sum and the \( k \)-th elementary symmetric polynomial as before but this time in the vector \( \boldsymbol{\lambda}^{t_{\boldsymbol{\lambda}}} \) (each coordinate of this vector is raised to the power \( t_{\boldsymbol{\lambda}} \)), respectively:
+\[
+\tilde{p}_k := p_k\left(\boldsymbol{\lambda}^{t_{\boldsymbol{\lambda}}}\right) = \sum_{i \in m+1} \left(\lambda_i^{t_{\boldsymbol{\lambda}}}\right)^k,\quad \tilde{e}_k := e_k\left(\boldsymbol{\lambda}^{t_{\boldsymbol{\lambda}}}\right) = \sum_{\substack{A \in \mathscr{P}\left(m+1\right)\\\left|A\right| = k}} \prod_{a \in A} \lambda_a^{t_{\boldsymbol{\lambda}}}.
+\]
+Notice that \( \tilde{p}_k = p_{t_{\boldsymbol{\lambda}} + k}\left(\boldsymbol{\lambda}\right) \) and thus, for each \( i \in \left\llbracket 1, m+1 \right\rrbracket \), \( \tilde{p}_i = 0_{R} \). Newton's identities (for \( 1\leq k = m+1\leq m+1 \)) when evaluated at \( \boldsymbol{\lambda}^{t_{\boldsymbol{\lambda}}} \) give:
+\[
+0_{R} = \sum_{i=1}^{m+1} \left(-1\right)_R^{i-1} \tilde{e}_{m+1-i} \tilde{p}_{i} = \left(m+1\right)_{R} \tilde{e}_{m+1} = \left(m+1\right)_{R} \prod_{i \in m+1} \lambda_i^{t_{\boldsymbol{\lambda}}}.
+\]
+Since \( m+1 \geq 2 \) and \( \operatorname{char}\left(R\right) = 0 \) or \( m+1 < \operatorname{char}\left(R\right) \), we obtain \( \left(m+1\right)_{R} \neq 0_{R} \).
+\\\\
+This implies (as \( R \) is a domain) that there exists \( k \in m+1 \) such that \( \lambda_k = 0_{R} \).
+\\\\
+\textit{Using the Vandermonde matrix.}
+\\\\
+It is clear that there exists a bijection \( \alpha^{\boldsymbol{\lambda}} \colon r \xrightarrow{\text{bij}} \operatorname{ran}\left(\boldsymbol{\lambda}\right) \subset R \), where \( r := \left|\operatorname{ran}\left(\boldsymbol{\lambda}\right)\right| \).
+\\\\
+(Note that \( \boldsymbol{\lambda} \neq \varnothing \) and \( \operatorname{dom}\left(\boldsymbol{\lambda}\right) = m+1 \) so that \( r \in \left\llbracket 1, m+1 \right\rrbracket \)). By hypothesis on \( \boldsymbol{\lambda} \), there exists \( t_{\boldsymbol{\lambda}} \in \mathbb{N} \) such that for all \( k \in \left\llbracket 1, m+1 \right\rrbracket \):
+\[
+0_{R} \overset{\text{hyp}}{=} \sum_{i \in m+1} \lambda_i^{t_{\boldsymbol{\lambda}}+k} \overset{\text{clear}}{=} \sum_{j \in r} \left|\boldsymbol{\lambda}^{-1}\left(\left\{\alpha^{\boldsymbol{\lambda}}\left(j\right)\right\}\right)\right|_{R} \cdot \left(\alpha^{\boldsymbol{\lambda}}\left(j\right)\right)^{t_{\boldsymbol{\lambda}}} \cdot \left(\alpha^{\boldsymbol{\lambda}}\left(j\right)\right)^k,
+\]
+where the multiplicity \( \left|\boldsymbol{\lambda}^{-1}\left(\left\{\alpha^{\boldsymbol{\lambda}}\left(j\right)\right\}\right)\right| \neq 0 \) by construction, so that:
+\[
+\left|\boldsymbol{\lambda}^{-1}\left(\left\{\alpha^{\boldsymbol{\lambda}}\left(j\right)\right\}\right)\right|_{R} \neq 0_{R}
+\]
+either because \( \operatorname{char}\left(R\right) = 0 \) or because the multiplicity is bounded by \( m+1 < \operatorname{char}\left(R\right) \).
+\\\\
+Since \( r \leq m+1 \), we get the following system of equations:
+\[
+M_{\alpha^{\boldsymbol{\lambda}}} \cdot v_{\alpha^{\boldsymbol{\lambda}}} = \mathbf{0}_{r},
+\]
+where \( M_{\alpha^{\boldsymbol{\lambda}}} \in R^{r \times r} \) is defined by \( \left(i,j\right) \mapsto \left(\alpha^{\boldsymbol{\lambda}}\left(j\right)\right)^{i+1} \) for \( i,j \in r \), i.e.,
+\[
+M_{\alpha^{\boldsymbol{\lambda}}} = \begin{pmatrix}
+\left(\alpha^{\boldsymbol{\lambda}}\left(0\right)\right)^1 & \dots & \left(\alpha^{\boldsymbol{\lambda}}\left(r-1\right)\right)^1 \\
+\vdots & \ddots & \vdots \\
+\left(\alpha^{\boldsymbol{\lambda}}\left(0\right)\right)^r & \dots & \left(\alpha^{\boldsymbol{\lambda}}\left(r-1\right)\right)^r
+\end{pmatrix},
+\]
+and \( v_{\alpha^{\boldsymbol{\lambda}}} \in R^{r \times 1} \) is the well-defined column vector given by \( j \mapsto \left|\boldsymbol{\lambda}^{-1}\left(\left\{\alpha^{\boldsymbol{\lambda}}\left(j\right)\right\}\right)\right|_{R} \cdot \left(\alpha^{\boldsymbol{\lambda}}\left(j\right)\right)^{t_{\boldsymbol{\lambda}}} \).
+\\\\
+Assume now towards a contradiction that \( 0_{R} \notin \operatorname{ran}\left(\boldsymbol{\lambda}\right) \). Then \( v_{\alpha^{\boldsymbol{\lambda}}} \in \operatorname{ker}\left(M_{\alpha^{\boldsymbol{\lambda}}}\right) \setminus \left\{\mathbf{0}_{r}\right\} \) (since there exists \( j \in r \) with \( \alpha^{\boldsymbol{\lambda}}\left(j\right) \neq 0_{R} \), which implies \( \left(\alpha^{\boldsymbol{\lambda}}\left(j\right)\right)^{t_{\boldsymbol{\lambda}}} \neq 0_{R} \) even if \( t_{\boldsymbol{\lambda}}=0 \)). Thus, \( M_{\alpha^{\boldsymbol{\lambda}}} \) is a matrix for which its associated \(R\)-linear operator is not injective. As is true in any commutative ring, we must have:
+\[
+0_{R} = \operatorname{det}_{R}\left(M_{\alpha^{\boldsymbol{\lambda}}}\right) = \left( \prod_{j \in r} \alpha^{\boldsymbol{\lambda}}\left(j\right) \right) \operatorname{det}_{R}\left(V_{\alpha^{\boldsymbol{\lambda}}}^T\right),
+\]
+where \( \operatorname{det}_R \) is defined via the Leibniz formula (permutation summation formula), ensuring that all standard properties, such as being a monoid morphism, or being multilinear over the ring \( R \) hold. We used the multilinear property in the last equality to extract from each column \( j \) the factor \( \alpha^{\boldsymbol{\lambda}}\left(j\right) \), and where \( V_{\alpha^{\boldsymbol{\lambda}}} \in R^{r \times r} \) is the Vandermonde matrix of \( \alpha^{\boldsymbol{\lambda}} \), with entries \( V_{\alpha^{\boldsymbol{\lambda}}}\left(i,j\right) = \left(\alpha^{\boldsymbol{\lambda}}\left(i\right)\right)^j \).
+\\\\
+By the lemma in Appendix [\hyperref[A5]{A.5}]:
+\[
+\operatorname{det}_{R}\left(V_{\alpha^{\boldsymbol{\lambda}}}^T\right) = \operatorname{det}_{R}\left(V_{\alpha^{\boldsymbol{\lambda}}}\right) = \prod_{0 \leq i < j < r} \left(\alpha^{\boldsymbol{\lambda}}\left(j\right) - \alpha^{\boldsymbol{\lambda}}\left(i\right)\right) \neq 0_{R},
+\]
+because \( \alpha^{\boldsymbol{\lambda}} \) is injective, and \( R \) is a domain! (Even if \( r=1 \), the empty product is \( 1_{R} \neq 0_{R} \)).
+\\\\
+So we must have \( \prod_{j \in r} \alpha^{\boldsymbol{\lambda}}\left(j\right) = 0_{R} \), which implies because \( R \) is a domain that there exists \( j \in r \) such that \( \alpha^{\boldsymbol{\lambda}}\left(j\right) = 0_{R} \), meaning \( 0_{R} \in \operatorname{ran}\left(\boldsymbol{\lambda}\right) \), a contradiction. Thus our assumption is false and we must have \( 0_{R} \in \operatorname{ran}\left(\boldsymbol{\lambda}\right) \).
+\\\\
+Hence, there exists \( k \in m+1 \) such that \( \lambda_k = 0_{R} \).
+\\\\
+So all of these three proofs showed that \( \exists k \in m+1,\, \lambda_k = 0_{R} \). Now define then \( \boldsymbol{\lambda}' \colon m \to R \) by:
+\[
+i \mapsto \begin{cases}
+\lambda_i & \text{if } i < k \\
+\lambda_{i+1} & \text{if } i \geq k
+\end{cases}
+\]
+From \( \lambda_k = 0_{R} \) and \(\boldsymbol{\lambda}\in S_{m+1}\), it must be true that \( \boldsymbol{\lambda}' \in S_m = \left\{0_m\right\} \) (use the same \(t\) and the fact that \( m \leq m+1 \)). So that in total (clear), \( \boldsymbol{\lambda} = 0_{m+1} \) and hence \( S_{m+1} \subset \left\{0_{m+1}\right\} \).
+\\\\
+This concludes the converse and finishes the induction step.
+\end{proof}
+\subsection{}
+\label{A3}
+\begin{lemma} 
+For $r \in \mathbb{N}_{>0}$ and any field $\mathbb{F}$ such that $\operatorname{char}\left(\mathbb{F}\right) = 0$ or $\operatorname{char}\left(\mathbb{F}\right) > r$, let $M \in \mathbb{F}^{r \times r}$ be a matrix. The following are equivalent:
+\begin{enumerate}
+    \item $M^r = \mathbf{0}_{r \times r}$,
+    \item $M$ is nilpotent,
+    \item $\sigma\left(M\right) = \left\{0_{\mathbb{F}}\right\}$ where $\sigma\left(M\right) := \operatorname{Root}_{P_{\text{char}, M}\left(X\right)}\left(\mathbb{F}^{\text{alg}}\right)$,
+    \item $\forall k \in \mathbb{N}_{>0}, \operatorname{tr}\left(M^k\right) = 0_{\mathbb{F}}$,
+    \item $\exists t \in \mathbb{N}, \forall k \in \llbracket 1, r \rrbracket, \operatorname{tr}\left(M^{t+k}\right) = 0_{\mathbb{F}}$.
+\end{enumerate}
+One cannot reduce the set of powers for which the trace is $0_{\mathbb{F}}$ to an arbitrary set $S \subset \mathbb{N}_{>0}$ of size $r$. If $\operatorname{char}\left(\mathbb{F}\right) \neq 0$, then one cannot relax the requirement that $\operatorname{char}\left(\mathbb{F}\right) > r$.
+\end{lemma}
+
+\begin{proof}
+For the equivalences, it suffices to prove that each statement $i.$ implies $i+1.$ (for $i \in \left\{ 1, 2, 3, 4\right\}$) and that 5. implies 1.
+\\\\
+$1. \Rightarrow 2.$: This is trivial as $r > 0$ so it satisfies the definition of being nilpotent (in the ring $\mathbb{F}^{r \times r}$).
+\\\\
+$2. \Rightarrow 3.$: Let $k \in \mathbb{N}_{>0}$ be the index of nilpotency of $M$ (we could take any power $t \in \mathbb{N}_{>0}$ that satisfies $M^{t} = \mathbf{0}_{r \times r}$). Any $\lambda \in \sigma\left(M\right)$ must (standard) satisfy the equation $\lambda^k = 0_{\mathbb{F}}$. Since $\mathbb{F}$ is a domain and $k > 0$, this implies that $\lambda = 0_{\mathbb{F}}$ thus $\sigma\left(M\right) = \left\{0_{\mathbb{F}}\right\}$ (because $\sigma\left(M\right) \neq \varnothing$).
+\\\\
+$3. \Rightarrow 4.$: Let $\boldsymbol{\lambda} \in \left(\mathbb{F}^{\text{alg}}\right)^r$ be any vector (the order in this vector doesn't matter) of exactly all the eigenvalues of $M$ counted with their respective algebraic multiplicities. By the Spectral Mapping Theorem [\hyperref[A1]{A.1}] one has that for all $k \in \mathbb{N}_{>0}$:
+$$\operatorname{tr}\left(M^k\right) = \sum_{i \in r} \lambda_i^k.$$
+Because $\sigma\left(M\right) = \left\{0_{\mathbb{F}}\right\}$, we must have $\operatorname{ran}\left(\boldsymbol{\lambda}\right) = \left\{0_{\mathbb{F}}\right\}$. Hence (as $k > 0$), $\operatorname{tr}\left(M^k\right) = \sum_{i \in r} 0_{\mathbb{F}} = 0_{\mathbb{F}}$.
+\\\\
+$4. \Rightarrow 5.$: This is trivial (use $t = 0$).
+\\\\
+To finish, we need to show that $5. \Rightarrow 1.$. Now, notice that $3. \Rightarrow 1.$: indeed, the characteristic polynomial has degree $r$, so $P_{\text{char}, M}\left(X\right) = \prod_{\lambda \in \sigma\left(M\right)} \left(X - \lambda\right)^{m_{P_{\text{char}, M}\left(X\right)}\left(\lambda\right)} \overset{\sigma\left(M\right)=\left\{0_{\mathbb{F}}\right\}}{=} X^r$. We have by the Cayley-Hamilton theorem (valid over any field) that $M^r = \mathbf{0}_{r \times r}$. Hence $1.\Leftrightarrow 3.$, and so it suffices, in fact, to show $6.\Rightarrow 3.$. This relies on the lemma [\hyperref[A2]{A.2}]. Let $\boldsymbol{\lambda} \in \left(\mathbb{F}^{\text{alg}}\right)^r$ be any vector (the order in this vector doesn't matter) of exactly all the eigenvalues of $M$ counted with their respective algebraic multiplicities. By the Spectral Mapping Theorem [\hyperref[A1]{A.1}], for all $k \in \mathbb{N}_{\geq 1}$, $\operatorname{tr}\left(M^k\right) = \sum_{i \in r} \lambda_i^k$. Hence if there exists $t \in \mathbb{N}$ such that $\forall k \in \llbracket 1, r \rrbracket, \operatorname{tr}\left(M^{t+k}\right) = 0_{\mathbb{F}}$, then by our lemma [\hyperref[A2]{A.2}], we have $\forall i \in r, \lambda_i = 0_{\mathbb{F}}$. Hence $\sigma\left(M\right) = \left\{0_{\mathbb{F}}\right\}$ (since $\sigma\left(M\right) \neq \varnothing$).
+\\\\
+To show that a general set of powers $S \subset \mathbb{N}_{>0}$ of size equal to the dimension of the matrix does not suffice:
+\\\\
+Let $r=3$ and consider the field $\mathbb{C}$. Let $\omega = e^{2\pi i / 3}$ be a primitive third root of unity, and define the diagonal matrix:
+$$M = \begin{pmatrix} 1 & 0 & 0 \\ 0 & \omega & 0 \\ 0 & 0 & \omega^2 \end{pmatrix}$$
+The eigenvalues of $M$ are $1, \omega,$ and $\omega^2$. Since none are zero, $M$ is not nilpotent. However, if we look at the non-consecutive set of powers $S = \left\{1, 2, 4\right\}$ (note $\left|S\right| = 3 = r$), we find (because $X^3-1 = \left(X-1\right)\left(X^2+ X + 1\right)$):
+\begin{itemize}
+    \item $\operatorname{tr}\left(M^1\right) = 1 + \omega + \omega^2 = 0$
+    \item $\operatorname{tr}\left(M^2\right) = 1^2 + \omega^2 + \omega^4 = 1 + \omega^2 + \omega = 0$
+    \item $\operatorname{tr}\left(M^4\right) = 1^4 + \omega^4 + \omega^8 = 1 + \omega + \omega^2 = 0$
+\end{itemize}
+Thus, $r$ distinct and strictly positive powers can all have zero trace without the matrix being nilpotent.
+\\\\
+To show that the characteristic must be $0$ or strictly greater than $r$:
+\\\\
+Let $p$ be a prime and consider the field $\mathbb{F}_p$. Now take $r=p$ and take the identity matrix $I_r$. Then $I_r$ is not nilpotent since $I_r^k = I_r \neq \mathbf{0}_{r \times r}$. However, $\operatorname{tr}\left(I_r^k\right) = \operatorname{tr}\left(I_r\right) = \sum_{i\in r}1_{\mathbb{F}_p} = 0_{\mathbb{F}_p}$ (because $r=p$ and we are in characteristic $p$).
+\end{proof}
+\begin{remark}
+Although one cannot use any set of $r$ distinct powers for which the trace is \(0_{\mathbb{F}}\), one can still apply this theorem in certain other special cases. One example is that for any \(l \in \mathbb{N}_{>0}\) and \(t\in\mathbb{N}\), the \(r\) distinct powers \(\left\{ l\cdot \left(t+k\right) \,\middle|\, k \in \llbracket1,r\rrbracket \right\}\) suffice: simply apply the theorem to \(M^l\) to deduce that \(M^l\) is nilpotent and hence \(M\) is nilpotent.
+\end{remark}
+\subsection{}
+\label{A4}
+\begin{theorem}[Newton's Identities]
+Let \( R \) be a commutative unital ring together with the canonical morphism \( \mathrm{can}_R \colon \mathbb{Z} \to R \), and write for any integer \( k \): \( k_R := \mathrm{can}_R\left(k\right) \). For positive integers \( 1\leq k \leq n \), the following identity holds over the ring \( R\left[X_0,\ldots,X_{n-1}\right] = R\left[\mathbf{X}\right] \):
+\[
+k_R\left(\sum_{\substack{A \in \mathscr{P}\left(n\right) \\ \left|A\right| = k}} \prod_{a \in A} X_{a}\right)
+- \sum_{i=1}^{k} \left(-1\right)_R^{i-1} \left(\sum_{\substack{A \in \mathscr{P}\left(n\right) \\ \left|A\right| = k-i}} \prod_{a \in A} X_{a}\right)
+\left(\sum_{j \in n} X_j^{i}\right) = 0_{R\left[\mathbf{X}\right]}.
+\]
+\end{theorem}
+The following short combinatorial proof is due to Doron Zeilberger (1983).
+\begin{proof}
+The left hand side of the identity is equal to:
+\begin{equation}
+\label{eq:star}
+\tag{*}
+\left(\sum_{\substack{A \in \mathscr{P}\left(n\right) \\ \left|A\right| = k}} \sum_{j \in A} \left(-1\right)_R^{0}
+\left(\prod_{a \in A} X_a\right) X_j^0\right)
++ \left(\sum_{i=1}^{k} \sum_{\substack{A \in \mathscr{P}\left(n\right) \\ \left|A\right| = k-i}} \sum_{j \in n} \left(-1\right)_R^{i}
+\left(\prod_{a \in A} X_a\right) X_j^i\right).
+\end{equation}
+We establish the identity by defining a sign-reversing involution on a combinatorial structure.
+\\\\
+Define the set of \( 3 \)-tuples:
+\[
+\mathcal{A}\left(n, k\right) := \left\{ \left\langle A, j, i \right\rangle \,\middle|\, 
+\begin{array}{l}
+A \in \mathscr{P}\left(n\right),\ \left|A\right| \leq k,\ j \in n,\ i = k - \left|A\right|,\ \\
+\text{and if } i = 0 \text{ then } j \in A
+\end{array}
+\right\}.
+\]
+The \emph{weight} \( w \colon \mathcal{A}\left(n, k\right) \rightarrow R\left[\mathbf{X}\right] \) is defined by 
+\( \left\langle A, j, i \right\rangle \mapsto \left(-1\right)_R^{i} \left(\prod_{a \in A} X_a\right) X_j^i \in R\left[\mathbf{X}\right] \setminus \left\{0_{R\left[\mathbf{X}\right]}\right\} \).
+The sum of the weights of all elements in \( \mathcal{A}\left(n, k\right) \), namely \( \sum_{e \in \mathcal{A}\left(n, k\right)} w\left(e\right) \), is readily seen to be equal to \hyperref[eq:star]{(*)}. To show this sum is zero, define the function \( T \colon \mathcal{A}\left(n, k\right) \to \mathcal{A}\left(n, k\right) \) as:
+\[
+T\left(\left\langle A, j, i \right\rangle\right) =
+\begin{cases}
+\left\langle A \setminus \left\{j\right\}, j, i + 1 \right\rangle, & \text{if } j \in A, \\
+\left\langle A \cup \left\{j\right\}, j, i - 1 \right\rangle, & \text{if } j \notin A.
+\end{cases}
+\]
+With a mental exercise, we see that \( T \) is well defined and satisfies:
+\[
+w \circ T = -w, \quad T \circ T = \mathrm{id}_{\mathcal{A}\left(n, k\right)}.
+\]
+Thus, every element \( \left\langle A, j, i \right\rangle \) uniquely pairs with its image under \( T \) (since it is an involution (which has no fixed point)) and their weights cancel. Hence, the total sum is zero. Formally\footnote{Any involution \( \tau \) on a set \( S \) induces a relation on \( S \): \( \sim_{\tau} \subset S \times S \) defined by \( x \sim y \Leftrightarrow y = \tau\left(x\right) \). This is an equivalence relation and the equivalence class of \( x \in S \) is \( \left[x\right]_{\sim_{\tau}} = \left\{x, \tau\left(x\right)\right\} \) (which can have size \( 1 \) if \( x \) is a fixed point of \( \tau \)). Recall that the set of equivalence classes partitions \( S \). This implies (for an arbitrary set by the axiom of choice) (for a finite set by induction) that \( \exists P \subset S \) with \( S = \bigsqcup_{p \in P} \left[p\right]_{\sim_{\tau}} \).} \( \exists P \subset \mathcal{A}\left(n, k\right) \) such that \( \mathcal{A}\left(n, k\right) = \bigsqcup_{p \in P} \left\{p, T\left(p\right)\right\} \) (and for each \( p \in P \), the set \( \left\{p, T\left(p\right)\right\} \) has size \( 2 \)) so that:
+\[
+\sum_{e \in \mathcal{A}\left(n, k\right)} w\left(e\right) = \sum_{p \in P} \left(w\left(p\right) + w\left(T\left(p\right)\right)\right) = \sum_{p \in P} \left(w\left(p\right) - w\left(p\right)\right) = \sum_{p \in P} 0_{R\left[\mathbf{X}\right]} = 0_{R\left[\mathbf{X}\right]}
+\]
+(even if \( T \) had a fixed point the equation \( w \circ T = -w \) would imply that the weight of it is \( 0_{R\left[\mathbf{X}\right]} \) so it wouldn't matter).
+\end{proof}
+\subsection{}
+\label{A5}
+\begin{lemma}[Vandermonde Determinant]
+Let \( R \) be a commutative unital ring and \( n \in \mathbb{N}_{>0} \). For any vector \( \boldsymbol{x} \in R^n \), let \( V_{\boldsymbol{x}} \in R^{n \times n} \) be the Vandermonde matrix defined by \( \left(i,j\right) \mapsto x_i^j \) for \( i, j \in n \) (where \( x^0 = 1_R \) even if \( x = 0_R \)), i.e.,
+\[
+V_{\boldsymbol{x}} = \begin{pmatrix}
+1_R & x_0 & \dots & x_0^{n-1} \\
+1_R & x_1 & \dots & x_1^{n-1} \\
+\vdots & \vdots & \ddots & \vdots \\
+1_R & x_{n-1} & \dots & x_{n-1}^{n-1}
+\end{pmatrix}.
+\]
+Then:
+\[
+\operatorname{det}_R\left(V_{\boldsymbol{x}}\right) = \prod_{0 \leq i < j < n} \left(x_j - x_i\right).
+\]
+\end{lemma}
+\begin{proof}
+We proceed by induction on \( n \in \mathbb{N}_{>0} \), quantifying over all vectors \( \boldsymbol{x} \in R^n \).
+\\\\
+Base case \( n = 1 \): Let any \( \boldsymbol{x} \in R^1 \). The matrix is \( V_{\boldsymbol{x}} = \begin{pmatrix} 1_R \end{pmatrix} \). Its determinant is \( 1_R \), which matches the empty product \( \prod_{0 \leq i < j < 1} \left(x_j - x_i\right) = 1_R \).
+\\\\
+Induction step: Assume the statement holds for some \( n \in \mathbb{N}_{>0} \). We wish to prove it for \( n+1 \). Let any \( \boldsymbol{x} \in R^{n+1} \). We perform elementary column operations, which do not alter the determinant over a commutative ring. For each column index \( j \) from \( n \) down to \( 1 \), we subtract \( x_0 \) times column \( j-1 \) from column \( j \). Formally, the new columns \( C'_j \) are given by \( C'_j := C_j - x_0 C_{j-1} \) for \( j \in \llbracket 1, n \rrbracket \), and \( C'_0 := C_0 \).
+\\\\
+The entries of the new matrix \( V'_{\boldsymbol{x}} \) are:
+\[
+V'_{\boldsymbol{x}}\left(i, j\right) = 
+\begin{cases}
+1_R & \text{if } j = 0 \\
+x_i^j - x_0 x_i^{j-1} = x_i^{j-1}\left(x_i - x_0\right) & \text{if } j > 0
+\end{cases}
+\]
+In the first row (\( i = 0 \)), for \( j > 0 \), the entries are \( x_0^{j-1}\left(x_0 - x_0\right) = 0_R \). Thus, the first row is exactly \( \begin{pmatrix} 1_R & 0_R & \dots & 0_R \end{pmatrix} \).
+\\\\
+Expanding the determinant along the first row (using the Laplace expansion, which is valid over any commutative ring), we get:
+\[
+\operatorname{det}_R\left(V_{\boldsymbol{x}}\right) = \operatorname{det}_R\left(V'_{\boldsymbol{x}}\right) = \left(-1_R\right)^{0+0} \cdot \operatorname{det}_R\left(\left(V'_{\boldsymbol{x}}\right)_{(0\mid0)}\right) = \operatorname{det}_R\left(\left(V'_{\boldsymbol{x}}\right)_{(0\mid0)}\right),
+\]
+where \( \left(V'_{\boldsymbol{x}}\right)_{(0\mid0)} \in R^{n \times n} \) is the submatrix obtained by deleting row \( 0 \) and column \( 0 \).
+\\\\
+By the multilinearity of the determinant with respect to the rows, we can factor out the common scalar \( \left(x_{r+1} - x_0\right) \) from each row \( r \in n \) of \( \left(V'_{\boldsymbol{x}}\right)_{(0\mid0)} \), to obtain:
+\[
+\operatorname{det}_R\left(\left(V'_{\boldsymbol{x}}\right)_{(0\mid0)}\right) = \left( \prod_{r\in n}\left(x_{r+1} - x_0\right) \right) \operatorname{det}_R\left(V_{\boldsymbol{x}'}\right) = \left( \prod_{0<j<n+1} \left(x_{j} - x_0\right) \right) \operatorname{det}_R\left(V_{\boldsymbol{x}'}\right),
+\]
+where \( \boldsymbol{x}' \colon n \to R \) is defined by \( k \mapsto x_{k+1} \). Hence, by the induction hypothesis, \( \operatorname{det}_R\left(V_{\boldsymbol{x}'}\right) = \prod_{0 \leq i < j < n} \left(x_{j+1} - x_{i+1}\right) = \prod_{1 \leq i < j < n+1} \left(x_{j} - x_{i}\right) \).
+\\\\
+Therefore:
+\[
+\operatorname{det}_R\left(V_{\boldsymbol{x}}\right) = \left( \prod_{0<j<n+1} \left(x_{j} - x_0\right) \right) \prod_{1 \leq i < j < n+1} \left(x_{j} - x_{i}\right) = \prod_{0 \leq i < j < n+1} \left(x_j - x_i\right).
+\]
+This completes the induction step and the proof.
+\end{proof}
+\subsection{}
+\label{A6}
+\begin{lemma}
+Let \( l \in \mathbb{N}_{>0} \) and \( R \) be a commutative unital ring together with the canonical morphism \( \operatorname{can}_{R} \colon \mathbb{Z} \rightarrow R \) and write for any integer \( k \): \( k_R := \mathrm{can}_R\left(k\right) \). Let \( N \in R^{l\times l} \) be a nilpotent matrix. If \( I_{l} + N \) has finite order \( r \in \mathbb{N}_{>0} \) (where \( I_l \) is the identity matrix in \( R^{l\times l} \)) such that \( r_{R} \in R^{\times} \) is invertible, then \( N = \mathbf{0}_{R^{l\times l}} \).
+\end{lemma}
+
+\begin{proof}
+Let \( r := \operatorname{ord}_{R^{l\times l}}\left(I_{l} + N\right) \in \mathbb{N}_{>0} \) be the order of \( I_{l} + N \). Then, by the binomial theorem (noting that \( I_{l} \) and \( N \) commute),
+\[
+I_l = \left(I_l + N\right)^r = \sum_{j=0}^{r} \binom{r}{j}_{R} N^{j} = I_l + \sum_{j=1}^{r} \binom{r}{j}_{R} N^{j},
+\]
+It follows that
+\[
+\mathbf{0}_{R^{l\times l}} = \sum_{j=1}^{r} \binom{r}{j}_{R} N^{j}.
+\]
+and because \( R \) is commutative, we can factor \( N \) to obtain:
+\[
+\mathbf{0}_{R^{l\times l}} = N \left( \sum_{j=1}^{r} \binom{r}{j}_{R} N^{j-1} \right) = N \left( r_{R} I_{l} + \sum_{j=2}^{r} \binom{r}{j}_{R} N^{j-1} \right).
+\]
+Let \( S := r_{R} I_{l} + \sum_{j=2}^{r} \binom{r}{j}_{R} N^{j-1} \in R^{l\times l} \) be the right-hand factor in this product, and define \( E := \sum_{j=2}^{r} \binom{r}{j}_{R} N^{j-1} \in R^{l\times l} \) (the sum is possibly empty if \( r = 1 \), in which case it is the empty sum and \( E = \mathbf{0}_{l\times l} \)). So \( S = r_{R} I_l + E \), and we claim that \( S \) is invertible.
+\\\\
+Indeed, \( N \) is nilpotent, and so are all of its powers. Since \( R \) is commutative, any scalar multiple \( \lambda N^k \) with \( \lambda \in R \) and \( k \in \mathbb{N}_{>0} \) is nilpotent. Moreover, for any (possibly non-commutative) unital ring \( A \) (here \( R^{l \times l} \)), the set of nilpotent elements \( \operatorname{Nil}\left( A \right) \) is closed\footnote{For the finite product, the index of nilpotency is bounded above by the minimum of the respective indices of nilpotency (use the commutativity of the factors). For the finite sum, the index of nilpotency is bounded above by 1 plus the sum of the nilpotency indices minus the number of summands. To see this, use the multinomial theorem (which is valid since the summands commute) and use the pigeonhole principle.} under finite sums and products, provided that the terms commute pairwise. Because \( R \) is commutative, we get that for any \( \lambda, \lambda' \in R \) and \( k, k' \in \mathbb{N}_{>0} \), the elements \( \lambda N^k \) and \( \lambda' N^{k'} \) commute. Hence \( E \in \operatorname{Nil}\left(R^{l\times l}\right) \).
+\\\\
+Now \( r_{R} \in R^{\times} \), so we must have \( r_{R} I_{l} \in \left(R^{l\times l}\right)^{\times} \). As \( E \) is nilpotent and \( E \) commutes with \( r_{R} I_{l} \) (since \( R \) is commutative), the element \( S := r_{R} I_{l} + E \), being the sum of an invertible element of \( R^{l\times l} \) and a nilpotent one, must be invertible\footnote{This is a general fact about any (possibly non-commutative) unital ring \( A \): if \( a \in A^{\times} \), \( b \in \operatorname{Nil}\left(A\right) \), and \( ab = ba \), then \( a + b \in A^{\times} \). Indeed, let \( v \in \mathbb{N}_{>0} \) be the index of nilpotency of \( b \). Then, since \( a \) and \( b \) commute, so do \( a^{-1} \) and \( b \), and we have \( \left(ba^{-1}\right)^v = b^va^{-v} = 0_{A} \). A simple computation (using the fact that \( \pm 1_{A} \) commutes with every element, and that \( a \), \( b \), and \( a^{-1} \) commute with one another, as do their powers) shows that the element
+\[
+a^{-1} \left( \sum_{k=0}^{v-1} \left(-1_{A}\right)^k \left(b a^{-1}\right)^k \right)\in A,
+\]
+is both a left and right inverse of \( a + b = a \left(1_{A} + a^{-1} b\right)=\left(1_{A} + ba^{-1}\right)a \), and so \( a+b\in A^{\times} \)}.
+\\\\
+Thus, multiplying on the right by \( S^{-1} \) on both sides of the equation \( \mathbf{0}_{R^{l\times l}} = N S \) yields \( N = \mathbf{0}_{R^{l\times l}} \).
+\end{proof}
+\end{solution}

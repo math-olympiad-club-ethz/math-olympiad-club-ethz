@@ -1,0 +1,135 @@
+% title:          Commuting probability of finite groups
+% area:           finite-groups, discrete-probability
+% methods:        construction, orbit-stabiliser
+% difficulty:
+% difficulty-ai:  medium
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         paper
+% origin-date:    1973-11
+% origin-number:
+% also-in:
+% taken-from:
+% references:     W. H. Gustafson, 'What is the probability that two group elements commute?', Amer. Math. Monthly 80(9) (Nov. 1973) 1031-1034, doi:10.1080/00029890.1973.11993437, 5/8 bound on p. 1032 (bibliographic data from Crossref, paper itself paywalled) - https://api.crossref.org/works/10.1080/00029890.1973.11993437; attribution to Gustafson: H. N. Nguyen et al. - https://www.math.uakron.edu/~hungnguyen/papers/paper13.pdf and arXiv 2308.00260 (cites [Gustafson, p. 1032]) - https://arxiv.org/pdf/2308.00260; Background: Erdős-Turán, 'On some problems of a statistical group-theory IV', Acta Math. Acad. Sci. Hungar. 19 (1968) 413-435, Theorem IV: #commuting pairs = N·k(G), no 5/8 bound - https://users.renyi.hu/~p_erdos/1968-11.pdf; Later: D. Rusin, Pacific J. Math. 82 (1979) 237-247 (groups with Pr(G)=5/8) - https://msp.org/pjm/1979/82-1/pjm-v82-n1-p20-p.pdf; Wikipedia 'Commuting probability' (the '5/8 theorem') - https://en.wikipedia.org/wiki/Commuting_probability; J. Baez, 'The 5/8 Theorem', Azimuth blog, 2018 (comment by S. Eberhard: Erdős-Turán did not note the bound) - https://johncarlosbaez.wordpress.com/2018/09/16/the-5-8-theorem/; French X-ENS oral / MP* exercise: video 'Oraux X-ENS - 11 - Le Problème 5/8' - https://www.youtube.com/watch?v=FbQPLKfJbG4, R. Panis, MP* exercises, Exercice 11 'Inégalité de Dixon' - https://www.unige.ch/~panisr/prepa/Poly%20exercices%20MPE.pdf
+% history:        ai
+\begin{problem}
+Let \(\left(G,\cdot,e_G\right)\) be a finite non-commutative group. Show that the probability that two elements \(x,y\in G\) chosen uniformly at random commute is less than or equal to \(\frac{5}{8}\), and show that this bound is tight, i.e., provide an example where the bound is attained.
+\end{problem}
+\begin{solution}
+Take the probability space:
+\[
+\left(\Omega,\mathcal{F},\mathbb{P}\right) := \left(G\times G,\mathscr{P}(G\times G),\frac{|\cdot|}{|G|^2}\right).
+\]
+Define the event \(C = \left\{ \left(x,y\right)\in\Omega \mid x\cdot y = y\cdot x \right\} \in \mathcal{F}\). We need to show \(\mathbb{P}(C)\leq \frac{5}{8}\). To study the commutativity of an element, one (left) group action is particularly useful—namely, the conjugation action:
+\[
+\phi : G \longrightarrow \mathrm{Aut}_{\mathrm{Ens}}(G),
+\]
+where \( \phi(a) : G \longrightarrow G \) is defined by \( \phi(a)(g) = a \cdot g \cdot a^{-1} \).
+\\\\
+Under this group action \(\phi\), we can rewrite:
+\begin{align*}
+C &= \left\{ \left( x, y \right) \in \Omega \mid x \cdot y \cdot x^{-1} = y \right\} \nonumber \\
+&= \left\{ \left( x, y \right) \in \Omega \mid \phi(x)(y) = y \right\} \nonumber \\
+&= \left\{ \left( x, y \right) \in \Omega \mid y \in \mathrm{Stab}_{\phi}(x) \right\}.
+\end{align*}
+Therefore:
+\[
+C = \bigsqcup_{x\in G} \left\{ x \right\} \times \mathrm{Stab}_{\phi}(x).
+\]
+To compute \(\mathbb{P}(C)\), we need to compute \(|C|\), which is equal to the sum of the cardinalities of the stabilisers under the conjugation action \(\phi\). But we can do better:
+\\\\
+Fix \(\tilde{x}\in G\). Then either \(\tilde{x}\) commutes with all elements—i.e., \(\tilde{x}\in Z(G) \Leftrightarrow \mathrm{Stab}_{\phi}(\tilde{x}) = G\)—or it does not—i.e., \(\tilde{x}\in G \setminus Z(G) \Leftrightarrow \mathrm{Stab}_{\phi}(\tilde{x}) \subsetneq G\). Thus, we can further decompose \(C\) as:
+\[
+C = \left( \bigsqcup_{x\in Z(G)} \left\{ x \right\} \times G \right) \sqcup \left( \bigsqcup_{x\in G \setminus Z(G)} \left\{ x \right\} \times \mathrm{Stab}_{\phi}(x) \right)
+\]
+\[
+= \left(Z(G)\times G\right) \sqcup \left( \bigsqcup_{x\in G \setminus Z(G)} \left\{ x \right\} \times \mathrm{Stab}_{\phi}(x) \right).
+\]
+Let us compute \(|C|\):
+\begin{equation}
+\label{1.1}
+\tag{*}
+|C| = |Z(G)\times G| + \sum_{x\in G \setminus Z(G)} |\left\{ x \right\} \times \mathrm{Stab}_{\phi}(x)| = |Z(G)|\cdot |G| + \sum_{x\in G \setminus Z(G)} |\mathrm{Stab}_{\phi}(x)|.
+\end{equation}
+This equation is valid for any finite group \(G\).  
+Now, since for every group action the stabiliser is a subgroup of the group, by Lagrange's theorem \(|\mathrm{Stab}_{\phi}(x)| \mid |G|\). Moreover, the orbit–stabiliser theorem gives:
+\[
+|G| = \left|\mathrm{Orb}_{\phi}(x)\right| \cdot \left|\mathrm{Stab}_{\phi}(x)\right| \Rightarrow \left|\mathrm{Stab}_{\phi}(x)\right| = \frac{|G|}{\left|\mathrm{Orb}_{\phi}(x)\right|}.
+\]
+For \(x\notin Z(G)\), we have (by the finiteness of \(G\)) that \(\left|\mathrm{Stab}_{\phi}(x)\right| < |G|\), so:
+\begin{equation}
+\label{1.2}
+\tag{1}
+\left|\mathrm{Stab}_{\phi}(x)\right| = \frac{|G|}{\left|\mathrm{Orb}_{\phi}(x)\right|} \leq\frac{|G|}{2}.
+\end{equation}
+This equation is valid for any finite non-commutative group.
+\\\\
+Therefore:
+\[
+|C| \leq |Z(G)|\cdot |G| + \sum_{x\in G \setminus Z(G)} \frac{|G|}{2} = |G|\cdot\left( |Z(G)| + \frac{|G| - |Z(G)|}{2} \right) = |G|\cdot \frac{|G| + |Z(G)|}{2}.
+\]
+Since \(G\) is non-commutative, \(Z(G)\subsetneq G\). Take \(\hat{x} \in G \setminus Z(G)\). Then since \(\hat{x} \in \mathrm{Stab}_{\phi}(\hat{x})\) and \(\hat{x} \notin Z(G)\), we must have:
+\[
+Z(G)\subsetneq \mathrm{Stab}_{\phi}(\hat{x}) \subsetneq G.
+\]
+Because everything is finite, we have by Lagrange’s theorem (all of them are strict subgroups):
+\begin{equation}
+\label{1.3}
+\tag{2}
+|Z(G)| \leq \frac{|\mathrm{Stab}_{\phi}(\hat{x})|}{2} \leq \frac{\frac{|G|}{2}}{2} = \frac{|G|}{4}.
+\end{equation}
+This equation is also valid for any finite non-commutative group.
+\\\\
+We conclude:
+\[
+|C| \leq |G|\cdot\frac{|G| + \frac{|G|}{4}}{2} = |G|^2 \cdot \frac{5}{8} \Rightarrow \mathbb{P}(C) \leq \frac{5}{8},
+\]
+as desired.
+\\\\
+To show that the bound is tight, consider the non-commutative quaternion group \( Q_8 \)\footnote{We can realise \( Q_8 \) concretely as a subgroup of \( GL_4\left( \mathbb{Q} \right) \), where
+\[
+1 = I_4, \quad
+i := \begin{pmatrix}
+0 & 1 & 0 & 0 \\
+-1 & 0 & 0 & 0 \\
+0 & 0 & 0 & 1 \\
+0 & 0 & -1 & 0
+\end{pmatrix}, \quad
+j := \begin{pmatrix}
+0 & 0 & 1 & 0 \\
+0 & 0 & 0 & -1 \\
+-1 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0
+\end{pmatrix}, \quad
+k := \begin{pmatrix}
+0 & 0 & 0 & 1 \\
+0 & 0 & 1 & 0 \\
+0 & -1 & 0 & 0 \\
+-1 & 0 & 0 & 0
+\end{pmatrix},
+\]
+or abstractly as the quotient group
+\[
+\left\langle x, y \mid x^4 = 1 = y^4,\, x^2 = y^2,\, y^{-1} x y = x^{-1} \right\rangle := F\left( \left\{ x, y \right\} \right) / \left\langle\!\left\langle x^4,\, y^4,\, x^2 y^{-2},\, y^{-1} x y x \right\rangle\!\right\rangle,
+\]
+where \( F\left( \left\{ x, y \right\} \right) \) is the free group on two generators and \( \left\langle\!\left\langle x^4,\, y^4,\, x^2 y^{-2},\, y^{-1} x y x \right\rangle\!\right\rangle \) is the normal subgroup generated by the relations \( x^4 = y^4 = 1 \), \( x^2 = y^2 \), and \( y^{-1} x y = x^{-1} \). The generators \( x \) and \( y \) correspond to any two distinct elements of \( Q_8 \), interpreted as \( i \) and \( j \) (in any order), while the element \( k \) can be defined as \( i j^{-1} \) in the chosen interpretation for \( i, j \).} of \(8\) elements:
+\[
+Q_8 = \left\{ \pm 1, \pm i, \pm j, \pm k \right\}, \quad i^2 = j^2 = k^2 = ijk = -1.
+\]
+As seen in \eqref{1.3}, the size of \( Z\left( Q_8 \right) \) is bounded above by \( \frac{8}{4} = 2 \). Since \( \pm 1 \) commutes with every element, the centre must be \( Z\left( Q_8 \right) = \left\{ \pm 1 \right\} \). For any element not in the centre, \( s \in \left\{ \pm i, \pm j, \pm k \right\} \), we have seen in \eqref{1.2} that its stabiliser must satisfy
+\[
+2 = \left| Z\left( Q_8 \right) \right| < \left| \mathrm{Stab}_{\phi}\left( s \right) \right| < \left| Q_8 \right|=8,
+\]
+so the only possibility is that its size is \( 4 \) (from this, we can directly deduce that \(\mathrm{Stab}_{\phi}\left( s \right) = \left\{ \pm 1, \pm s \right\}\), which is unnecessary, since we only require the cardinalities). Combining all of this in equation \eqref{1.1}, we obtain:
+\begin{align*}
+|C| &= \left| Z(Q_8) \right| \cdot \left| Q_8 \right| + \sum_{s \in Q_8\setminus Z(Q_8)} \left| \mathrm{Stab}_{\phi}\left( s \right) \right|\\
+&=\left| \left\{ \pm 1 \right\} \right| \cdot \left| Q_8 \right| + \sum_{s \in \left\{ \pm i, \pm j, \pm k \right\}} \left| \mathrm{Stab}_{\phi}\left( s \right) \right|\\
+&= 2 \cdot 8 + 6 \cdot 4 = 16 + 24 = 40.
+\end{align*}
+Thus, among the \( 64 \) possible ordered pairs in \( Q_8 \times Q_8 \), exactly \( 40 \) commute, giving:
+\[
+\mathbb{P}(C) = \frac{40}{64} = \frac{5}{8}.
+\]
+Hence, the bound is attained.
+\end{solution}

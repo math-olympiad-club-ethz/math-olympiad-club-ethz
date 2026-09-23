@@ -1,0 +1,54 @@
+% title:          Minimal integral of chromatic functions
+% area:           analytic-inequalities, optimisation
+% methods:        symmetry
+% difficulty:
+% difficulty-ai:  medium
+% status:         partial
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         icmc
+% origin-date:    2025-02-23
+% origin-number:  Round 2, Problem 4
+% also-in:
+% taken-from:
+% references:     ICMC 8 (2024-2025), Round Two, 23 February 2025, Problem 4 (proposed by Ishan Nath) - https://icmathscomp.org/files/2024-2025/ICMC_8.2_paper.pdf; official solutions (answer 1/6, attained by f(x) = x, g(x) = 1 - x) - https://icmathscomp.org/files/2024-2025/ICMC_8.2_solutions.pdf; background: the sharp case of Chebyshev's (Čebyšev 1882) inequality |T(f,g)| <= (d-c)^2/12 ||f'||_inf ||g'||_inf, where T is the Chebyshev functional, as stated in M. W. Alomari, 'On Pompeiu-Chebyshev functional and its generalization', Theorem 1 - https://arxiv.org/pdf/1706.06250
+% history:        ai
+\begin{problem}
+A function \( f : [0, 1] \rightarrow \mathbb{R} \) is \textit{chromatic} if:
+\begin{itemize}
+    \item for all \( x, y \in [0, 1], |f(x) - f(y)| \leq |x - y| \), and
+    \item \(\int_{0}^{1} f(x)  dx = 1/2\).
+\end{itemize}
+
+
+Over all pairs \( f, g : [0, 1] \rightarrow \mathbb{R} \) of chromatic functions, what is the minimum value of
+
+\[
+\int_{0}^{1} f(x)g(x)  dx?
+\]
+\end{problem}
+\begin{solution}
+Notice that each chromatic function is continuous and therefore its Riemann integral is well defined.  
+Define
+\[
+\mathcal{A} := \left\{ h \mid h : [0, 1] \rightarrow \mathbb{R} \text{ is chromatic} \right\} \subset \mathcal{F}([0,1], \mathbb{R}).
+\]
+Observe that for each \( h \in \mathcal{A} \) we have \( 1 - h \in \mathcal{A} \), so that
+\[
+1 - \_ : \mathcal{A} \rightarrow \mathcal{A}
+\]
+is well defined and clearly \( (1 - \_) \circ (1 - \_) = \mathrm{Id}_{\mathcal{A}} \), hence it is a bijection.  
+Furthermore, if \( f, h \in \mathcal{A} \), then
+\[
+\int_{0}^{1} f(x) \left( 1 - h(x) \right) \, dx = \frac{1}{2} - \int_{0}^{1} f(x) h(x) \, dx,
+\]
+so that in total we have
+\[
+\inf_{f, h \in \mathcal{A}} \int_{0}^{1} f(x) h(x) \, dx
+= \inf_{f, h \in \mathcal{A}} \int_{0}^{1} f(x) \left( 1 - h(x) \right) \, dx
+= \frac{1}{2} - \sup_{f, h \in \mathcal{A}} \int_{0}^{1} f(x) h(x) \, dx.
+\]
+If we can find \( f, h\in\mathcal{A}\) such that \(\int_{0}^{1} f(x) h(x) \, dx \) is maximal, then we know that \( \displaystyle \int_{0}^{1} f(x) \left( 1 - h(x) \right) \, dx \) is minimal.
+
+\textcolor{red}{to finish}
+\end{solution}

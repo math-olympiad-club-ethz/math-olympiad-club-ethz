@@ -1,0 +1,89 @@
+% title:          Series of a permutation over squares
+% area:           series, permutations
+% methods:        pigeonhole, abel-summation, rearrangement, induction
+% difficulty:
+% difficulty-ai:  easy
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         imc
+% origin-date:    1999
+% origin-number:  Day 1, Problem 2
+% also-in:        book
+% taken-from:
+% references:     IMC 1999 (6th IMC, Keszthely), Day 1, Problem 2, official problems and solutions - https://www.imc-math.org.uk/imc1999/prob_sol1.pdf; Kalva archive, 6th IMC 1999, A2 (reworded) - https://prase.cz/kalva/imc/imc99.html; T.-L. Radulescu, V. D. Radulescu, T. Andreescu, Problems in Real Analysis: Advanced Calculus on the Real Axis, Springer 2009, Problem 2.5.18 (attributed to IMC 1999) - http://users.uoa.gr/~dcheliotis/Andreescu%20T.%20Problems%20in%20Real%20Analysis%20-%20Advanced%20Calculus%20on%20the%20Real%20Axis%20(Springer%202009).pdf; Math.SE 463648 'On a infinite series problem of IMC' (discussion of official Solution 2) - https://math.stackexchange.com/questions/463648/on-a-infinite-series-problem-of-imc
+% history:        ai
+\begin{problem}
+Does there exist a bijective map \(\pi \colon \mathbb{N}_{>0} \to \mathbb{N}_{>0}\) such that
+\[
+\sum_{n=1}^{\infty} \frac{\pi(n)}{n^2} < \infty?
+\]
+\end{problem}
+\begin{solution}
+\textit{Solution 1.}
+\\\\
+No. For a very quick and clever solution, if we let \(\pi\) be a permutation of \(\mathbb{N}_{>0}\) and let \(N \in \mathbb{N}\), we shall argue that
+\[
+\sum_{n=N+1}^{3N} \frac{\pi(n)}{n^2} > \frac{1}{9}.
+\]
+In fact, of the \(2N\) numbers \(\pi\left[\llbracket N+1;3N\rrbracket\right]=\left\{\pi(N+1), \ldots, \pi(3N)\right\}\), only \(N\) can be smaller than or equal to \(N\), so at least \(N\) of them must be strictly bigger than \(N\). Hence,
+\[
+\sum_{n=N+1}^{3N} \frac{\pi(n)}{n^2} \geq \frac{1}{(3N)^2} \sum_{n=N+1}^{3N} \pi(n) \geq \frac{1}{9N^2} \cdot N \cdot N = \frac{1}{9}.
+\]
+The result follows directly because we have the infinite decomposition \(\mathbb{N}_{>0}= \bigsqcup_{N\in 3\mathbb{N}} \llbracket N+1;3N \rrbracket\).
+\\\\
+\textit{Alternative solutions.} There are two more solutions, both of which use the following fact:
+\\\\
+Let \(\pi\) be a permutation of \(\mathbb{N}^{*}\). Fix \(N \in \mathbb{N}^{*}\): the set of numbers \(\pi\left[\llbracket 1;N \rrbracket\right] = \left\{\pi(1), \ldots, \pi(N)\right\}\) is of size \(N\), i.e., the numbers are distinct positive integers. Thus, it is easy to prove\footnote{For the case \(N=1\), take \(\iota_1 = \mathrm{id}_{\llbracket 1;1 \rrbracket}\). The condition holds vacuously as \(\llbracket 1;N-1 \rrbracket = \varnothing\).
+\\\\
+Now assume the result holds for \(N \geq 1\). We prove it for \(N+1\). By the inductive hypothesis, there exists a permutation \(\iota_N \colon \llbracket 1;N \rrbracket \hookrightarrow \llbracket 1;N \rrbracket\) such that \(\pi\left(\iota_N(i+1)\right) > \pi\left(\iota_N(i)\right)\) for all \(i \in \llbracket 1;N-1 \rrbracket\). If \(\pi(N+1) > \pi\left(\iota_N(N)\right)\), define \(\iota_{N+1} = \iota_N \cup \left\{(N+1, N+1)\right\}\). This extends \(\iota_N\) to \(\llbracket 1;N+1 \rrbracket\) while preserving the order, so the result holds. Else, by injectivity, equality is impossible, so \(\pi(N+1) < \pi\left(\iota_N(N)\right)\), and hence we can take \(k\) to be the smallest index in \(\llbracket 1;N \rrbracket\) such that \(\pi(N+1) < \pi\left(\iota_N(k)\right)\). Define:
+\[
+\iota_{N+1} = \iota_N|_{\llbracket1;k-1\rrbracket} \cup \left\{(k, N+1)\right\} \cup \left\{(t+1, \iota_N(t))\,\middle|\, t \in \llbracket k;N \rrbracket\right\}.
+\]
+This changes the value at \(k\) to \(N+1\) and shifts the rest to take the preceding value. Clearly, \(\iota_N\) is a bijection, and \(\iota_{N+1}|_{\llbracket1;k-1\rrbracket}\) preserves the order. By choice of \(k\), \(\pi\left(\iota_{N+1}(k)\right) = \pi(N+1) < \pi\left(\iota_N(k)\right) = \pi\left(\iota_{N+1}(k+1)\right)\). Now if \(k > 1\), then by minimality (and again by injectivity), we have \(\pi\left(\iota_{N+1}(k)\right) = \pi(N+1) > \pi\left(\iota_N(k-1)\right) = \pi\left(\iota_{N+1}(k-1)\right)\). In all cases, \(\iota_{N+1}|_{\llbracket1;k+1\rrbracket}\) preserves the order. For \(N \geq i > k\), we have \(\pi\left(\iota_{N+1}(i+1)\right) = \pi\left(\iota_N(i)\right) > \pi\left(\iota_N(i-1)\right) = \pi\left(\iota_{N+1}(i)\right)\) by the inductive hypothesis. In total, \(\iota_{N+1}\) satisfies the required ordering. This concludes the induction step and hence the induction.} by induction over \(\mathbb{N}^{*}\) that there exists a permutation \(\iota_N \colon \llbracket 1;N \rrbracket \hookrightarrow \llbracket 1;N \rrbracket\) such that:
+\[
+\forall i \in \llbracket 1;N-1 \rrbracket,\quad \pi\left(\iota_N(i+1)\right) > \pi\left(\iota_N(i)\right).
+\]
+\textit{Solution 2.}
+\\\\
+Fix \(N \geq 1\). From our proposition above, it follows that there is a permutation \(\iota_N\) of \(\llbracket 1;N \rrbracket\) such that for all \(t \in \llbracket 1;N-1 \rrbracket\), \(\pi\left(\iota_N(t+1)\right) > \pi\left(\iota_N(t)\right)\). In particular, since \(\pi\left(\iota_N(1)\right) \geq 1\), we get trivially by induction that for all \(t \in \llbracket 1;N \rrbracket\), \(\pi\left(\iota_N(t)\right) \geq t\), so that:
+\[
+\sum_{i=1}^{N} \pi(i) = \sum_{i=1}^{N} \pi\left(\iota_N(i)\right) \geq \sum_{i=1}^{N} i = \frac{N(N+1)}{2},
+\]
+and this holds for all \(N \in \mathbb{N}^{*}\). Now we perform the very useful-to-know \href{https://en.wikipedia.org/wiki/Summation_by_parts}{Abel transformation} on the finite sequences \(\pi|_{\llbracket 1; N \rrbracket}\) and \(\left(\frac{1}{n^2}\right)_{1 \leq n \leq N}\) to obtain:
+\[
+\sum_{n=1}^{N} \frac{\pi(n)}{n^2} = \frac{1}{N^2} \left(\sum_{n=1}^{N} \pi(n)\right) + \sum_{n=1}^{N-1} \left(\sum_{j=1}^{n} \pi(j)\right) \left( \frac{1}{n^2} - \frac{1}{(n+1)^2} \right)
+\]
+\[
+\geq \sum_{n=1}^{N-1} \left( \frac{n(n+1)}{2} \right) \left( \frac{1}{n^2} - \frac{1}{(n+1)^2} \right) = \sum_{n=1}^{N-1} \frac{2n+1}{2n(n+1)} \geq \sum_{n=1}^{N-1} \frac{1}{n+1} = \sum_{n=2}^{N} \frac{1}{n}.
+\]
+Thus,
+\[
+\liminf_{N \to +\infty} \sum_{n=1}^{N} \frac{\pi(n)}{n^2} \geq \liminf_{N \to +\infty} \sum_{n=2}^{N} \frac{1}{n} = +\infty.
+\]
+\textit{Solution 3.}
+\\\\
+Fix \(N \geq 1\). Again, from our proposition, there is a permutation \(\iota_N\) of \(\llbracket 1;N \rrbracket\) such that for all \(t \in \llbracket 1;N-1 \rrbracket\), \(\pi\left(\iota_N(t+1)\right) > \pi\left(\iota_N(t)\right)\). We are in the following situation:
+\[
+\frac{1}{N^2} \leq \cdots \leq \frac{1}{1^2}
+\]
+\[
+\pi\left(\iota_N(1)\right) \leq \cdots \leq \pi\left(\iota_N(N)\right)
+\]
+By the very useful-to-know \href{https://en.wikipedia.org/wiki/Rearrangement_inequality}{rearrangement inequality}, we obtain:
+\[
+\sum_{n=1}^{N} \frac{\pi(n)}{n^2} \geq \sum_{n=1}^{N} \frac{\pi\left(\iota_N(n)\right)}{n^2}.
+\]
+Since \(\pi\left(\iota_N(1)\right) \geq 1\), we get trivially by induction that \(\pi\left(\iota_N(t)\right) \geq t\), so that:
+\[
+\sum_{n=1}^{N} \frac{\pi\left(\iota_N(n)\right)}{n^2} \geq \sum_{n=1}^{N} \frac{n}{n^2} = \sum_{n=1}^{N} \frac{1}{n}.
+\]
+Thus,
+\[
+\sum_{n=1}^{N} \frac{\pi(n)}{n^2} \geq \sum_{n=1}^{N} \frac{1}{n}.
+\]
+In particular, as \(N\) was arbitrary, we get:
+\[
+\liminf_{N \to +\infty} \sum_{n=1}^{N} \frac{\pi(n)}{n^2} \geq \liminf_{N \to +\infty} \sum_{n=2}^{N} \frac{1}{n} = +\infty.
+\]
+\end{solution}

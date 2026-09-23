@@ -1,0 +1,17 @@
+% _preview.tex — wrapper to compile ONE problem file locally (VS Code "build on save" or latexmk).
+% The file to preview is passed in \bankfile (path without extension), e.g.
+%   cd problem-bank && TEXINPUTS=.: latexmk -pdf -usepretex='\def\bankfile{problems/0003-roots-on-the-unit-circle}' -jobname=0003-roots-on-the-unit-circle -outdir=problems problems/_preview.tex
+% .vscode/settings.json does exactly this for the .tex file you are editing.  website-code/build.py does not use this file.
+\documentclass[11pt]{article}
+\input{preamble}
+\begin{document}
+\ifdefined\bankfile
+  % The heading shows the ID, i.e. the job name up to its first '-' (0042-title -> 0042, new-title -> new);
+  % \jobname's characters are plain text, so a path with _ or # never reaches the heading.
+  \def\bankpreviewid#1-#2\relax{#1}%
+  \bankproblem{1}{Preview}{}{\expandafter\bankpreviewid\jobname-\relax}
+  \input{\bankfile}
+\else
+  Define \verb|\bankfile| (see the comment at the top of this file).
+\fi
+\end{document}
