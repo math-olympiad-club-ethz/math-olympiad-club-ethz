@@ -70,6 +70,8 @@ The audit's code fixes are done (report: session scratchpad `audit/REPORT.md`). 
 - [ ] Idea (Antoine, 2026-09-22), not now: a **track record** page listing what club members achieved in
       competitions (IMC, ICMC, …). The 2025 lines about IMC and ICMC were removed from the home page for that reason.
 
+- [ ] look at the picture image.png stored in the repo (only on Antoine local machine), it contains some task tod o given by Georg.
+
 ## Repository
 
 - [x] Reorganisation, problem bank, history pass and website committed as a themed series, merged into `main` and
