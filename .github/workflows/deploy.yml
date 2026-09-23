@@ -48,12 +48,14 @@ jobs:
 
       # TeX Live: validates every problem (pdflatex), externalises TikZ figures, and provides the packages
       # missing from the WebAssembly TeX Live (stmaryrd, bbm, algorithmicx, algorithms) for the bundle.
-      # Third-party action: pinned to a reviewed commit, not to the movable tag.
-      - name: TeX Live (cached apt packages)
-        uses: awalsh128/cache-apt-pkgs-action@553a35bb8ebd9fcabcb1c9451aa4c98e1b4ca8a9   # v1.6.3 (= tag v1 on 2026-09-23)
-        with:
-          packages: texlive-latex-base texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra texlive-science texlive-pictures texlive-bibtex-extra biber
-          version: 1.0
+      # Ubuntu's own packages with apt-get: no third-party action (the cached-apt action installed nothing and still
+      # reported success, 2026-09-23).  The first check fails loudly if pdflatex is missing.
+      - name: TeX Live
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q texlive-latex-base texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended \
+            texlive-fonts-extra texlive-science texlive-pictures texlive-bibtex-extra biber
+          pdflatex --version | head -1
 
       # The texlyre-busytex release assets (~520 MB) are downloaded once and cached; tools/busytex_bundle.py checks
       # them against tools/busytex-assets.sha256 on every build, cached or not.
