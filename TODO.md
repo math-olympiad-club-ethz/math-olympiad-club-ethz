@@ -32,9 +32,12 @@ Details, sources and the full change table: [`problem-bank/history-review.md`](p
 ## Problem bank — LaTeX fixes (humans only)
 
 - [x] Pure typos in the problem files fixed (59 entries, 2026-09-23, with Antoine's OK; check the diff before committing).
-- [ ] The 87 errors that need a mathematical fix, each with an AI **Proposal** to check, in
-      [`problem-bank/known-errors.md`](problem-bank/known-errors.md) (among them 0062 "not transcendental", 0080 m a
-      positive integer, 0052 closed disc in U).
+- [ ] The 87 errors that need a mathematical fix, each with an AI **Proposal**, in
+      [`problem-bank/known-errors.md`](problem-bank/known-errors.md). Plan (decided 2026-09-23, for later):
+      - 13 are only cosmetic (unusual notation, compiles fine): delete those entries.
+      - 6 need real missing maths (0014, 0033, 0034, 0038, 0039, 0056): mark the problems `status: partial`, drop the
+        entries; 0069's entry too (already partial).
+      - 68 concrete corrections in 34 problems: apply them all and read the diff, or go through them one by one.
 - [ ] Missing solutions: 0052, 0060–0062, 0065–0068, 0071–0080.
 - [ ] Partial solutions: 0019, 0031, 0034, 0038–0040, 0049, 0063, 0064, 0069.
 
@@ -49,6 +52,10 @@ Details, sources and the full change table: [`problem-bank/history-review.md`](p
       GitHub. Needs thought: a static GitHub Pages site has no server and no safe place for a password.
       With it comes back the **Edit** link next to each problem (removed from the Problems page on 2026-09-23 until then).
 - [ ] Later: CI posts the compiled PDF of a proposed problem on its pull request.
+- [ ] Idea (Antoine, 2026-09-23): a **"proposed"** tag. Today a proposed problem stays invisible on the site until
+      someone sets `review: human`. Instead it could be listed at once with a "proposed" badge, and lose it when
+      reviewed. To decide: shown to everyone, or only behind a "show proposed problems" switch (unreviewed content,
+      possibly wrong). Needs the build to publish `review: none` problems in that case.
 
 ## Audit follow-ups (yours, 2026-09-23)
 
