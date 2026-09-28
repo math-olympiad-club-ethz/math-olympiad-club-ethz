@@ -33,10 +33,6 @@ area:
             name: Series
             description: Infinite series and their convergence or sums.
             aliases: [infinite series, infinite sum, convergent series, divergent series]
-          - slug: monotonicity
-            name: Monotonicity
-            description: Properties of monotonic functions and sequences, including the monotone convergence theorem.
-            aliases: [monotonic, monotone, increasing, decreasing, non-decreasing, non-increasing, monotone convergence]
           - slug: sums
             name: Finite sums & products
             description: Closed forms, bounds and identities for finite sums and products.
@@ -738,6 +734,10 @@ methods:
         aliases: [smoothing, mixing variables, smoothing argument, sos method, uvw method]
   - group: Analysis
     tags:
+      - slug: monotonicity
+        name: Monotonicity
+        description: Properties of monotonic functions and sequences, including the monotone convergence theorem.
+        liases: [monotonic, monotone, increasing, decreasing, non-decreasing, non-increasing, monotone convergence]
       - slug: telescoping
         name: Telescoping
         description: Write terms as differences so that a sum or product collapses.
