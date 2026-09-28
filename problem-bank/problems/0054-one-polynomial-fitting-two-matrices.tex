@@ -1,10 +1,10 @@
 % title:          One polynomial fitting two matrices
 % area:           matrices, eigenvalues
 % methods:        cayley-hamilton, chinese-remainder, eigenvalue-arguments, rank-nullity
-% difficulty:
+% difficulty:     medium
 % difficulty-ai:  medium
-% status:
-% review:         none
+% status:         partial
+% review:         human
 % --- history: all optional, leave EMPTY if unknown ---
 % origin:         bernoulli
 % origin-date:    2024-06-03
@@ -12,13 +12,15 @@
 % also-in:
 % taken-from:
 % references:     Bernoulli Competition (EPFL Bernoulli Center), 3 June 2024, Problem 1 (checked in the club's copy of the official solutions (Bernoulli 2023-2026 solutions PDF, not online)) - https://bernoulli.epfl.ch/youth-at-bernoulli/bernoulli-competition/; key ingredient: Sylvester's theorem (AX - XB = C is uniquely solvable for every C iff A and B have no common eigenvalue), J. Sylvester, Sur l'équation en matrices px = xq, C. R. Acad. Sci. Paris 99 (1884) - https://en.wikipedia.org/wiki/Sylvester_equation
-% history:        ai
+% history:        human
 \begin{problem}
 Let \( A, B \in \mathrm{Mat}_{n \times n}(\mathbb{C}) \). Suppose that every matrix \( C \in \mathrm{Mat}_{n \times n}(\mathbb{C}) \) can be written in the form \( C = AD - DB \) for some \( D \in \mathrm{Mat}_{n \times n}(\mathbb{C}) \). Prove that there exists a polynomial \( R \in \mathbb{C}[x] \) such that
 \[
 R(A) = A^3 - A^2 - A + I_n \quad \text{and} \quad R(B) = (2 - i)B^4 + (2 + i)B^3 - B.
 \]
 \end{problem}
+
+%Why, just why, do we have P_i,j ndexing for ONLY two polynomials? Makes no sense.
 \begin{solution}
 \textbf{Step 1.} We prove \( A \) and \( B \) have no common eigenvalues.
 
