@@ -4,7 +4,7 @@
 % difficulty:
 % difficulty-ai:  medium
 % status:
-% review:         none
+% review:         human
 % --- history: all optional, leave EMPTY if unknown ---
 % origin:         all-russian
 % origin-date:    1961
@@ -12,7 +12,7 @@
 % also-in:
 % taken-from:
 % references:     1st All-Russian (All-Union) Mathematical Olympiad, Moscow 1961, Problem 5 (part a on the form-8 paper, part b on the form-10 paper); book source N. B. Vasil'ev, A. A. Egorov, Zadachi vsesoyuznykh matematicheskikh olimpiad, Nauka 1988, problem 5 - https://olympiads.win.tue.nl/imo/soviet/RusMath.html; AoPS '1961 All-Soviet Union Olympiad' (Form 8 P5 = part a, Form 10 P5 = part b) - https://web.archive.org/web/20210506170132/https://artofproblemsolving.com/downloads/printable_post_collections/114577; Kalva-style compilation '1st ASU 1961, Problem 5' - https://mathematikalpha.de/wp-content/uploads/2016/01/All_Soviet_Union_Math_Competitions.pdf; also http://schoolexercisebooks.blogspot.com/2010/10/1st-all-russian-mathematical-olympiad.html. Part (b) is the modulo-2 Ducci map for n = 2^k (write a_i = (-1)^{x_i}): https://en.wikipedia.org/wiki/Ducci_sequence
-% history:        ai
+% history:        human
 \begin{problem}
 a) Given a 4-tuple of positive numbers \((a,b,c,d)\), it is transformed into a new one according to the rule:
 \[
@@ -32,9 +32,11 @@ Prove that you will always eventually obtain a tuple consisting entirely of 1s.
               \[
                   abcd.
               \]
+              Note that the product at a subsequent step is exactly the square of the product at the preceding step.
+              
               If \( abcd > 1 \), then at each step, the product of the transformed values is strictly increasing, making a return to the initial 4-tuple impossible. Similarly, if \( abcd < 1 \), the product is strictly decreasing, again preventing a return. Therefore, the only possibility for a return is if \( abcd = 1 \).
 
-              Next, define \( M(Q) \) as the largest number in the 4-tuple \( Q \). If at least one number in \( Q_1 \) is not \( 1 \), then necessarily \( M(Q_1) > 1 \). Moreover, in \( Q_3 \), each element is the square of some element from \( Q_1 \) (use $abcd=1$), implying:
+              Next, define \( M(Q) \) as the largest number in the 4-tuple \( Q \). If at least one number in \( Q_1 \) is not \( 1 \), then necessarily \( M(Q_1) > 1 \). Moreover, in \( Q_3 \), each element is the square of some element from \( Q_1 \) (can be shown using that $abcd=1$), implying:
               \[
                   M(Q_3) = M(Q_1)^2.
               \]
