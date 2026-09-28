@@ -165,6 +165,14 @@ area:
             name: Free groups & commutators
             description: Free groups, words, relations and commutator identities.
             aliases: [free group, commutator, word problem, generators and relations, presentation]
+          - slug: group-center
+            name: Center & Centralizers
+            description: Group center, centralizers, normalizers, and the class equation.
+            aliases: [center, centralizer, normalizer, z(g), class equation, conjugacy class]
+          - slug: commutator
+            name: Commutators & Solvability
+            description: Commutators, derived subgroups, solvable and nilpotent groups.
+            aliases: [commutator, derived subgroup, solvable group, nilpotent group, commutator identity, perfect group]
       - slug: rings-fields
         name: Rings & fields
         description: Rings, ideals, fields, field extensions and Galois theory.
