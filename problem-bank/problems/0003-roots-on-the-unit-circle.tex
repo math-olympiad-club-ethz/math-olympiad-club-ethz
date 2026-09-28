@@ -48,4 +48,62 @@ then \( |z| = 1 \). (Here, \( i \) is the imaginary unit satisfying \( i^2 = -1 
     - If $|z| < 1$, then $1 - |z|^2 > 0$, so $N > D$ and hence $|z^9| > 1$.
 
     Both cases are a contradiction. Thus, we conclude that $|z| = 1$ for all roots $z$.
+
+    
+    
+    
+    \bigskip
+    \noindent\textbf{Second solution.}
+    Since $z = 0$ is not a root, divide the equation by $z^5$:
+    \begin{equation*}
+        11\left(z^5 - z^{-5}\right) + 10i\left(z^4 + z^{-4}\right) = 0.
+    \end{equation*}
+    Put $u = z - z^{-1}$. Expanding gives the identities
+    \begin{equation*}
+        z^5 - z^{-5} = u^5 + 5u^3 + 5u, \qquad z^4 + z^{-4} = u^4 + 4u^2 + 2.
+    \end{equation*}
+    Now let $w = i\left(z - z^{-1}\right)$, so $u = -iw$. Then
+    \begin{equation*}
+        z^5 - z^{-5} = -i\left(w^5 - 5w^3 + 5w\right), \qquad
+        z^4 + z^{-4} = w^4 - 4w^2 + 2,
+    \end{equation*}
+    and after multiplying by $i$, the equation becomes $P(w) = 0$, where
+    \begin{equation*}
+        P(w) = 11\left(w^5 - 5w^3 + 5w\right) - 10\left(w^4 - 4w^2 + 2\right).
+    \end{equation*}
+
+    \medskip
+    \noindent\emph{Claim: all five roots of $P$ are real and lie in $(-2, 2)$.}
+    For $w = 2\cos\theta$ we have $w^5 - 5w^3 + 5w = 2\cos 5\theta$ and
+    $w^4 - 4w^2 + 2 = 2\cos 4\theta$, so
+    \begin{equation*}
+        P(2\cos\theta) = 22\cos 5\theta - 20\cos 4\theta.
+    \end{equation*}
+    At $\theta_k = k\pi/5$ we have $\cos 5\theta_k = (-1)^k$, and
+    $|20\cos 4\theta_k| \le 20 < 22$, hence
+    \begin{equation*}
+        \operatorname{sign} P(2\cos\theta_k) = (-1)^k, \qquad k = 0, 1, \dots, 5.
+    \end{equation*}
+    The points $2\cos\theta_0 > 2\cos\theta_1 > \dots > 2\cos\theta_5$ are strictly
+    decreasing, and $P$ changes sign on each of the five consecutive intervals
+    between them. By the intermediate value theorem, $P$ has a root in each of these
+    five disjoint open intervals, all contained in $(-2, 2)$. Since $\deg P = 5$,
+    these are all the roots of $P$.
+
+    \medskip
+    \noindent\emph{Conclusion.}
+    Let $z$ be a root of the original equation. Then $w = i(z - z^{-1})$ is a root
+    of $P$, so $w = a$ is real with $|a| < 2$. Multiplying $i(z - z^{-1}) = a$ by
+    $-iz$ shows that $z$ satisfies
+    \begin{equation*}
+        z^2 + iaz - 1 = 0
+        \quad\Longrightarrow\quad
+        z = \frac{-ia \pm \sqrt{4 - a^2}}{2}.
+    \end{equation*}
+    Because $|a| < 2$, the square root is real, so
+    \begin{equation*}
+        |z|^2 = \frac{a^2 + (4 - a^2)}{4} = 1.
+    \end{equation*}
+    Hence $|z| = 1$. (For real $a$ with $|a| > 2$ the roots are purely imaginary
+    with modulus $\neq 1$, which is why the bound $|a| < 2$ is exactly what is needed.)
 \end{solution}
