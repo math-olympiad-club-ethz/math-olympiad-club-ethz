@@ -648,6 +648,10 @@ methods:
         name: Field norm
         description: Norm (or trace) map of a field extension as a multiplicative invariant.
         aliases: [norm of an extension, norm map, algebraic norm]
+      - slug: gcd
+        name: Greatest common divisor
+        description: "Use gcd properties: gcd(a, b) = gcd(a, b - ka), the Euclidean algorithm, gcd of consecutive terms, gcd(a^m - 1, a^n - 1) = a^gcd(m,n) - 1."
+        aliases: [gcd, greatest common divisor, euclidean algorithm, gcd trick, gcd argument, highest common factor, hcf]
       - slug: bezout
         name: Bézout's identity
         description: gcd(a, b) = au + bv; extended Euclidean algorithm.
