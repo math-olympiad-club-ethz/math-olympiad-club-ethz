@@ -21,6 +21,10 @@ area:
         description: Functions of one real variable, sequences, series, limits, derivatives and integrals.
         aliases: [calculus, single variable, real functions]
         children:
+          - slug: bounds
+            name: Bounds
+            description: Upper and lower bounds, supremum (least upper bound), infimum (greatest lower bound), and completeness.
+            aliases: [bound, bounds, upper bound, lower bound, supremum, infimum, sup, inf, least upper bound, greatest lower bound, completeness axiom]
           - slug: sequences
             name: Sequences & recursive sequences
             description: Convergence and limits of real sequences, including recursively defined ones.
