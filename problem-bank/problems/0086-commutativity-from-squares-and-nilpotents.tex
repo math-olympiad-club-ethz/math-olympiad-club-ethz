@@ -1,0 +1,74 @@
+% title:          Commutativity from squares and nilpotents
+% area:           ring-theory
+% methods:        contradiction
+% difficulty:
+% difficulty-ai:  medium
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         jarnik
+% origin-date:    2012-03-30
+% origin-number:  Category II, Problem 3
+% also-in:
+% taken-from:     VJIMC 2012 official problems and solutions (Category II, Problem 3)
+% references:     22nd Vojtěch Jarník International Mathematical Competition (VJIMC), Ostrava, 30 March 2012, Category II, Problem 3 (official statement) - https://vjimc.osu.cz/storage/uploads/j22problems2.pdf ; official solution, page 3 of 4 (in case 4 it writes '1 - x - y + xy = 1 - y - x + xy', the right side should end in yx) - https://vjimc.osu.cz/storage/uploads/j22solutions2.pdf ; no earlier source of this form (every x satisfies x^2 = 1 or is nilpotent) was found ; the same class of rings in research form: W. K. Nicholson and H. J. Springer, Local rings with elementary abelian units, Canad. Math. Bull. 19 (1976), no. 2, 205-208, Proposition 3(1), p. 206 (a local ring whose units all satisfy u^2 = 1 is commutative); the proof of Corollary 5 notes that such a ring satisfies r^2 = 1 or r^3 = 0 for every r, and a ring as in the VJIMC problem is local with such units, so the two statements are equivalent, doi:10.4153/CMB-1976-031-0 - https://www.cambridge.org/core/services/aop-cambridge-core/content/view/A8CEE168EECA848004B21F4CEB32F3EA/S0008439500062366a.pdf/local-rings-with-elementary-abelian-units.pdf ; general lemma: W. K. Nicholson, Semiperfect rings with abelian group of units, Pacific J. Math. 49 (1973), no. 1, 191-198, Proposition 2(1), pp. 192-193 (a local ring with abelian group of units is commutative), doi:10.2140/pjm.1973.49.191 - https://msp.org/pjm/1973/49-1/pjm-v49-n1-p20-s.pdf ; rings in which every element is nilpotent or a unit are local: D. L. Outcalt and A. Yaqub, A commutativity theorem for rings, Bull. Austral. Math. Soc. 2 (1970), 95-99, Theorem (a) and Corollary, pp. 95-96, doi:10.1017/S0004972700041630 - https://www.cambridge.org/core/services/aop-cambridge-core/content/view/23FD5AB511363446FF71838EFF8EBB89/S0004972700041630a.pdf/a-commutativity-theorem-for-rings.pdf ; these three papers were opened ; earlier problem-book version: B. Bogoşel, Probleme de structuri algebrice, Editura GIL, Zalău, 2011, ISBN 978-606-500-051-3, Chapter 2, Problem 36, p. 29, solution pp. 79-80 (a ring whose group of units is commutative and whose elements are all invertible or nilpotent is commutative, then the case x^2 = 1 or x^2 = 0; no source named; same case analysis), opened in a third-party copy - https://vdoc.pub/documents/probleme-de-structuri-algebrice-14aj1e4m96eo
+% history:        ai
+%
+% AI-WRITTEN, NEEDS HUMAN REVIEW (2026-09-30): both the statement and the solution were written by AI (Claude).
+% The statement makes the official VJIMC 2012 text rigorous (ring axioms, identity, n >= 1, "possibly both"); n >= 1
+% and "possibly both" change nothing (they only matter for the zero ring).  The solution follows the official solution
+% and adds what it leaves implicit: the zero ring, inverses are unique, why a unit u satisfies u^2 = 1 (a unit of a
+% non-zero ring is not nilpotent), why (xy)^2 = 1 for units x, y (xy is a unit), why x^2 = 1 is impossible for a
+% non-unit x, and what the binomial formula needs.  In case 4 the official solution writes "1 - x - y + xy = 1 - y -
+% x + xy"; the right side should end in yx.
+% Restyled on 2026-10-01 after problem-bank/writing-style.md (the style of the fully solved problems); the mathematics is unchanged.
+\begin{problem}
+Let \( \left( A, +, \cdot, 0_A, 1_A \right) \) be a (possibly non-commutative) unital ring, i.e., \( \left( A, +, 0_A \right) \) is an abelian group, the multiplication \( \cdot \) (we write \( xy := x \cdot y \)) is associative and distributes over \( + \) on both sides, and \( 1_A x = x 1_A = x \) for every \( x \in A \). Suppose that every \( x \in A \) satisfies
+\[
+x^{2} = 1_A \quad \text{or} \quad x^{n} = 0_A \text{ for some integer } n \geq 1
+\]
+(possibly both). Prove that \( A \) is commutative, i.e., \( xy = yx \) for all \( x, y \in A \).
+\end{problem}
+\begin{solution}
+For \( x \in A \) and \( k \in \mathbb{N} \), define recursively \( x^{0} := 1_A \) and \( x^{k+1} := x^{k} x \); by associativity, \( x^{k} x^{l} = x^{k+l} \) for all \( k, l \in \mathbb{N} \). An element \( x \in A \) is nilpotent if \( x^{n} = 0_A \) for some integer \( n \geq 1 \). An element \( u \in A \) is a unit if \( uv = vu = 1_A \) for some \( v \in A \); this \( v \) is unique (if also \( uv' = v'u = 1_A \), then \( v' = v' \left( uv \right) = \left( v'u \right) v = v \)), and we denote it by \( u^{-1} \). Denote by \( A^{\times} \) the set of units of \( A \). It contains \( 1_A \), with \( u \) it contains \( u^{-1} \), and it is closed under multiplication since \( \left( uu' \right) \left( u'^{-1} u^{-1} \right) = 1_A = \left( u'^{-1} u^{-1} \right) \left( uu' \right) \) for \( u, u' \in A^{\times} \). Thus, \( \left( A^{\times}, \cdot, 1_A \right) \) is a group.
+\\\\
+If \( 1_A = 0_A \), then \( x = x \cdot 1_A = x \cdot 0_A = 0_A \) for every \( x \in A \) (since \( x \cdot 0_A = x \left( 0_A + 0_A \right) = x \cdot 0_A + x \cdot 0_A \) gives \( x \cdot 0_A = 0_A \) after adding \( -\left( x \cdot 0_A \right) \)), so \( A = \left\{ 0_A \right\} \) is commutative. Else \( 1_A \neq 0_A \), which we assume from now on.
+\\\\
+We claim that every unit \( u \in A^{\times} \) satisfies \( u^{2} = 1_A \). Indeed, if \( u^{n} = 0_A \) for some \( n \geq 1 \), then
+\[
+1_A = \left( u^{-1} \right)^{n} u^{n} = \left( u^{-1} \right)^{n} \cdot 0_A = 0_A,
+\]
+where the first equality follows by induction on \( n \), since \( \left( u^{-1} \right)^{k+1} u^{k+1} = \left( u^{-1} \right)^{k} \left( u^{-1} u \right) u^{k} = \left( u^{-1} \right)^{k} u^{k} \). This is a contradiction to \( 1_A \neq 0_A \). Thus, \( u \) is not nilpotent, and by the given assumption \( u^{2} = 1_A \).
+\\\\
+We now show that the group \( A^{\times} \) is commutative. Let \( x, y \in A^{\times} \). Then \( xy \in A^{\times} \), so the above claim applied to \( x \), \( y \) and \( xy \) gives \( x^{2} = y^{2} = 1_A \) and \( xyxy = \left( xy \right)^{2} = 1_A \). Multiplying the last equality by \( x \) on the left and by \( y \) on the right, we obtain
+\[
+yx = x^{2} \, yx \, y^{2} = x \left( xyxy \right) y = x \cdot 1_A \cdot y = xy.
+\]
+Thus, \( A^{\times} \) is commutative.
+\\\\
+Next, we claim that if \( x \notin A^{\times} \), then \( 1_A - x \in A^{\times} \). Suppose, for the sake of contradiction, that \( x \notin A^{\times} \) and \( y := 1_A - x \notin A^{\times} \). If \( x^{2} = 1_A \), then \( x \) would be a unit (with inverse \( x \)); hence \( x^{2} \neq 1_A \), and by the given assumption \( x^{n} = 0_A \) for some \( n \geq 1 \). In the same way, \( y^{m} = 0_A \) for some \( m \geq 1 \). Thus, \( x^{i} = x^{i-n} x^{n} = 0_A \) for every \( i \geq n \), and \( y^{j} = 0_A \) for every \( j \geq m \). Moreover, \( x \) and \( y \) commute:
+\[
+xy = x \left( 1_A - x \right) = x - x^{2} = \left( 1_A - x \right) x = yx,
+\]
+and then \( y^{j} x = x y^{j} \) for every \( j \in \mathbb{N} \) (by induction on \( j \)). For such commuting elements the binomial formula holds (by induction on \( N \) as for numbers, the binomial coefficients acting as integer multiples), so with \( N := n + m \) we have
+\[
+\left( x + y \right)^{N} = \sum_{i=0}^{N} \binom{N}{i} x^{i} y^{N-i}.
+\]
+In every term, either \( i \geq n \), and then \( x^{i} = 0_A \), or \( i \leq n - 1 \), and then \( N - i \geq m + 1 \), so \( y^{N-i} = 0_A \). Hence, \( \left( x + y \right)^{N} = 0_A \). But \( x + y = 1_A \), so \( 1_A = 1_A^{N} = 0_A \), which is a contradiction. This proves the claim.
+\\\\
+Now let \( x, y \in A \), and consider the cases:
+\\\\
+If \( x, y \in A^{\times} \), then \( xy = yx \) since \( A^{\times} \) is commutative.
+\\\\
+If \( x \in A^{\times} \) and \( y \notin A^{\times} \), then \( 1_A - y \in A^{\times} \) as shown above, so since \( A^{\times} \) is commutative, \( x \left( 1_A - y \right) = \left( 1_A - y \right) x \), i.e., \( x - xy = x - yx \), hence \( xy = yx \).
+\\\\
+If \( x \notin A^{\times} \) and \( y \in A^{\times} \), the previous case with the roles of \( x \) and \( y \) exchanged gives \( yx = xy \).
+\\\\
+If \( x, y \notin A^{\times} \), then \( 1_A - x, 1_A - y \in A^{\times} \) as shown above, so since \( A^{\times} \) is commutative, we have
+\[
+1_A - x - y + xy = \left( 1_A - x \right) \left( 1_A - y \right) = \left( 1_A - y \right) \left( 1_A - x \right) = 1_A - y - x + yx,
+\]
+hence \( xy = yx \).
+\\\\
+In all cases \( xy = yx \), and since \( x, y \in A \) were arbitrary, \( A \) is commutative.
+\end{solution}

@@ -1,0 +1,83 @@
+% title:          Rings with finitely many zero divisors
+% area:           ring-theory
+% methods:        bijection
+% difficulty:
+% difficulty-ai:  easy
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         paper
+% origin-date:    1965-08
+% origin-number:  Theorem 1, p. 241
+% also-in:        jarnik
+% taken-from:     VJIMC 2002 official problems and solutions (Category II, Problem 2)
+% references:     Earliest known appearance (to the best of our knowledge): N. Ganesan, Properties of Rings with a Finite Number of Zero Divisors II, Math. Ann. 161 (1965), no. 4, 241-246, Theorem 1, p. 241 (received 7 Nov 1964; rings not assumed commutative, no identity assumed, 0 counted as a zero divisor: a ring with finitely many p >= 2 left and q >= 2 right zero divisors is finite with at most min(p^2, q^2) elements, which is exactly the hypothesis 'at least one and finitely many zero divisors'; the proof uses the cosets of the left annihilator of a two-sided zero divisor, the idea of the VJIMC solution), doi:10.1007/BF01359907 - https://gdz.sub.uni-goettingen.de/download/pdf/PPN235181684_0161/LOG_0050.pdf ; commutative case a year earlier: N. Ganesan, Properties of Rings with a Finite Number of Zero Divisors, Math. Ann. 157 (1964), no. 3, 215-218, Theorem I, p. 215 (at most (n+1)^2 elements for n >= 1 non-zero zero divisors), doi:10.1007/BF01362435 - https://gdz.sub.uni-goettingen.de/download/pdf/PPN235181684_0157/LOG_0043.pdf ; one-sided strengthening: Kwangil Koh, On 'Properties of Rings with a Finite Number of Zero Divisors', Math. Ann. 171 (1967), no. 1, 79-80, Theorem I, p. 79 (finitely many left, or finitely many right, zero divisors suffice), doi:10.1007/BF01433095 - https://gdz.sub.uni-goettingen.de/download/pdf/PPN235181684_0171/LOG_0017.pdf ; these three papers were opened ; two-sided zero divisors: Y. Hirano, Some finiteness conditions for rings, Chinese J. Math. 16 (1988), no. 1, 55-59 (known from the zbMATH review Zbl 0661.16016 only, not opened) ; survey with an elementary proof: M. Kinyon, Rings with finitely many zero divisors, arXiv:2604.23423 (2026) - https://arxiv.org/abs/2604.23423 ; competition: 12th Vojtěch Jarník International Mathematical Competition (VJIMC), Ostrava, 10 April 2002, Category II, Problem 2 (problem credited to Eötvös Loránd University, Budapest) - https://vjimc.osu.cz/storage/uploads/j12problems2.pdf ; official solution, labelled j12-II-2/j12-II-52 (proves |R| <= (m+1)^2; its last paragraph says 'at most m times' where m+1 is meant) - https://vjimc.osu.cz/storage/uploads/j12solutions.pdf
+% history:        ai
+%
+% AI-WRITTEN, NEEDS HUMAN REVIEW (2026-09-29): both the statement and the solution were written by AI (Claude).
+% The statement makes the official VJIMC 2002 text rigorous (ring axioms, no identity assumed, definition of a zero
+% divisor); the solution follows the official solution, with its two footnotes worked into the proof.  The official
+% solution's last paragraph says each value is obtained "at most m times"; its own previous paragraph and footnote
+% say m+1, which is what the solution below uses.
+% Restyled on 2026-10-01 after problem-bank/writing-style.md (the style of the fully solved problems); the mathematics is unchanged.
+\begin{problem}
+Let \( \left(R, +, \cdot, 0_R\right) \) be a (possibly non-commutative) ring, not necessarily unital, i.e., \( \left(R, +\right) \) is an abelian group with neutral element \( 0_R \), and the multiplication \( \cdot \) (we write \( ab := a \cdot b \)) is associative and distributes over \( + \) on both sides. Denote by
+\[
+Z\left(R\right) := \left\{ a \in R \setminus \left\{0_R\right\} \mid \exists b \in R \setminus \left\{0_R\right\}, \, ab = 0_R \text{ or } ba = 0_R \right\}
+\]
+the set of zero divisors of \( R \). Suppose that \( Z\left(R\right) \) is non-empty and finite. Prove that \( R \) is finite.
+\end{problem}
+\begin{solution}
+We only use the ring axioms from the statement (in particular, no multiplicative identity). First note that distributivity gives, for all \( x, y, z \in R \),
+\[
+x \cdot 0_R = 0_R, \quad \left(x - y\right)z = xz - yz.
+\]
+Indeed, \( x \cdot 0_R = x\left(0_R + 0_R\right) = x \cdot 0_R + x \cdot 0_R \), and adding \( -\left(x \cdot 0_R\right) \) to both sides gives \( x \cdot 0_R = 0_R \). For the same reason, \( 0_R \cdot z = 0_R \), so \( yz + \left(-y\right)z = \left(y + \left(-y\right)\right)z = 0_R \cdot z = 0_R \), that is, \( \left(-y\right)z = -\left(yz\right) \). Therefore, \( \left(x - y\right)z = xz + \left(-y\right)z = xz - yz \).
+\\\\
+Let \( m := \left|Z\left(R\right)\right| \); by hypothesis \( m \in \mathbb{N}_{>0} \). Since a zero divisor is non-zero by definition, \( 0_R \notin Z\left(R\right) \) and
+\[
+\left|Z\left(R\right) \cup \left\{0_R\right\}\right| = m + 1.
+\]
+Since \( Z\left(R\right) \) is non-empty, take \( a \in Z\left(R\right) \). By definition, \( a \neq 0_R \) and there exists \( b \in R \setminus \left\{0_R\right\} \) such that \( ab = 0_R \) or \( ba = 0_R \). If \( ab = 0_R \), set \( u := a \) and \( v := b \). Else \( ba = 0_R \), and set \( u := b \) and \( v := a \). In both cases,
+\[
+u \neq 0_R, \quad v \neq 0_R, \quad uv = 0_R,
+\]
+i.e., \( u \) and \( v \) are two non-zero elements with product zero.
+\\\\
+Now define the map
+\[
+\varphi \colon R \to R, \quad x \mapsto xu.
+\]
+We claim that \( \operatorname{Im}\left(\varphi\right) \subseteq Z\left(R\right) \cup \left\{0_R\right\} \). Let \( x \in R \). By associativity and the first identity above,
+\[
+\left(xu\right)v = x\left(uv\right) = x \cdot 0_R = 0_R.
+\]
+If \( xu \neq 0_R \), then \( xu \) is a non-zero element whose product with the non-zero element \( v \) is \( 0_R \), so \( xu \in Z\left(R\right) \) by definition. Hence, \( xu \in Z\left(R\right) \cup \left\{0_R\right\} \) in all cases, which proves the claim. Thus,
+\[
+\left|\operatorname{Im}\left(\varphi\right)\right| \leq \left|Z\left(R\right) \cup \left\{0_R\right\}\right| = m + 1,
+\]
+i.e., \( \varphi \) takes at most \( m + 1 \) values.
+\\\\
+We show that each value of \( \varphi \) is taken at most \( m + 1 \) times. Let \( w \in \operatorname{Im}\left(\varphi\right) \) and fix some \( x_0 \in \varphi^{-1}\left[\left\{w\right\}\right] \). The map
+\[
+\psi \colon \varphi^{-1}\left[\left\{w\right\}\right] \to R, \quad y \mapsto y - x_0
+\]
+is injective, since \( y - x_0 = y' - x_0 \) implies \( y = y' \). Moreover, \( \psi \) takes its values in \( Z\left(R\right) \cup \left\{0_R\right\} \). Indeed, let \( y \in \varphi^{-1}\left[\left\{w\right\}\right] \), that is, \( yu = w = x_0 u \). If \( y = x_0 \), then \( \psi\left(y\right) = 0_R \). Else \( y - x_0 \neq 0_R \) and, by the second identity above,
+\[
+\left(y - x_0\right)u = yu - x_0 u = w - w = 0_R
+\]
+with \( u \neq 0_R \), so \( \psi\left(y\right) = y - x_0 \in Z\left(R\right) \) by definition. Since \( \psi \) is an injection into \( Z\left(R\right) \cup \left\{0_R\right\} \), we have
+\[
+\left|\varphi^{-1}\left[\left\{w\right\}\right]\right| \leq \left|Z\left(R\right) \cup \left\{0_R\right\}\right| = m + 1,
+\]
+and since \( w \in \operatorname{Im}\left(\varphi\right) \) was arbitrary, each value of \( \varphi \) is taken at most \( m + 1 \) times.
+\\\\
+The fibres \( \varphi^{-1}\left[\left\{w\right\}\right] \), for \( w \in \operatorname{Im}\left(\varphi\right) \), are pairwise disjoint and cover \( R \):
+\[
+R = \bigsqcup_{w \in \operatorname{Im}\left(\varphi\right)} \varphi^{-1}\left[\left\{w\right\}\right].
+\]
+As \( \varphi \) takes at most \( m + 1 \) values, this is a union of at most \( m + 1 \) sets, and we have just seen that each of them has at most \( m + 1 \) elements. A finite union of finite sets is finite, so \( R \) is finite, as required. More precisely, we have
+\[
+\left|R\right| = \sum_{w \in \operatorname{Im}\left(\varphi\right)} \left|\varphi^{-1}\left[\left\{w\right\}\right]\right| \leq \left(m + 1\right)\left(m + 1\right) = \left(m + 1\right)^2.
+\]
+\end{solution}

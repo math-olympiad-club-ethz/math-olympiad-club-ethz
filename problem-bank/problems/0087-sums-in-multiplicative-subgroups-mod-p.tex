@@ -1,0 +1,63 @@
+% title:          Sums in multiplicative subgroups mod p
+% area:           finite-fields, orders-residues, additive-number-theory
+% methods:        construction, cyclotomic-polynomials
+% difficulty:
+% difficulty-ai:  easy
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         paper
+% origin-date:    2013-11
+% origin-number:  Claim 3.2, p. 8
+% also-in:        jarnik
+% taken-from:     VJIMC 2014 official problems and solutions (Category II, Problem 2)
+% references:     Earliest known appearance (to the best of our knowledge): N. Alon, J. Bourgain, Additive patterns in multiplicative subgroups, preprint (no printed date; PDF created 28 Nov 2013), Claim 3.2, p. 8: 'If d is divisible by 6 then any multiplicative subgroup H of size d in any finite field F_q contains a solution to x + y = 1', given as 'the following simple observation', no source named - https://www.cs.tau.ac.il/~nogaa/PDFS/multip1.pdf (opened; Claim 3.2 is also on p. 8 of the versions of January and February 2014) ; journal version: Geom. Funct. Anal. 24 (2014), no. 3, 721-739, doi:10.1007/s00039-014-0270-y (online 9 May 2014, after the competition; not opened) ; its proof is the official solution's, step for step (H is cyclic, so it has an element z of order 6, z^3 = -1, z(1 + z^2 + z^4) = z(z^6 - 1)/(z^2 - 1) = 0, x = z, y = z^5), and d, which the official solution uses without defining it, is the claim's name for |H|: probably the jury's source ; the same preprint's Theorem 3.1 (when 6 does not divide d, sum-free multiplicative subgroups of size d exist) is Problem 6 of the USA TST for IMO 2014, Day II, 23 Jan 2014, proposed by Alon and Bourgain according to AoPS and V. Wang's 2015 handout - https://web.evanchen.cc/exams/IMO-2014-TST.pdf ; much older special case with the same proof: A.-M. Legendre, Sur quelques objets d'analyse indéterminée et particulièrement sur le théorème de Fermat, printed as Essai sur la théorie des nombres, Second supplément (title page 'Septembre 1825'; received by the Académie on 10 Oct 1825, Procès-verbaux t. VIII, p. 290), §23, p. 14 (the subgroup of the 2k non-zero n-th power residues modulo a prime θ = 2nk + 1, n an odd prime: when 3 divides k it contains r and r' = r + 1, because μ^i has order 6 and μ^{2i} - μ^i + 1 = 0; the proof never uses that n is prime) - https://archive.org/details/bub_gb_zHMs_R2SATYC ; reprinted as Recherches sur quelques objets d'analyse indéterminée et particulièrement sur le théorème de Fermat, Mém. Acad. Roy. Sci. Inst. France 6 (année 1823, Paris, Firmin Didot, 1827), 1-60, §23, p. 17 (the 'année 1823' is nominal: the printed memoir cites Dirichlet's memoir, approved on 18 July 1825) - https://archive.org/details/mmoiresdelacad06memo ; both scans opened (the footnote crediting Sophie Germain belongs to §22; §23 names no one) ; possibly earlier, not verified: S. Germain, Manuscript A, BnF Français 9114, ff. 198r-208v, undated (R. Laubenbacher and D. Pengelley, §3.2.2, argue it considerably predates her letter to Gauss of 12 May 1819), which sets aside 'le cas où N est multiple de 3' (seen only in the facsimile in R. Laubenbacher, D. Pengelley, 'Voici ce que j'ai trouvé': Sophie Germain's grand plan to prove Fermat's Last Theorem, Historia Math. 37 (2010), 641-692, Fig. 5 and §3.1, doi:10.1016/j.hm.2009.12.002, who say she shows that the condition then always fails; manuscript not opened) ; the same special case for the Fermat congruence: E. Wendt, Arithmetische Studien über den 'letzten' Fermatschen Satz, welcher aussagt, dass die Gleichung a^n = b^n + c^n für n > 2 in ganzen Zahlen nicht auflösbar ist, J. reine angew. Math. 113 (1894), 335-347, p. 337, doi:10.1515/crll.1894.113.335 ; L. E. Dickson, On the congruence x^n + y^n + z^n = 0 (mod p), J. reine angew. Math. 135 (1909), 134-141, p. 134, doi:10.1515/crll.1909.135.134 (both opened) ; in books on Fermat's Last Theorem: L. E. Dickson, History of the Theory of Numbers II, 1920, p. 735 ('Legendre proved (§§ 23-28) that m must be prime to 3') and p. 763 ; L. J. Mordell, Three Lectures on Fermat's Last Theorem, 1921, p. 29 ; P. Ribenboim, 13 Lectures on Fermat's Last Theorem, 1979, Lecture XII, (1B), p. 247 ; P. Ribenboim, Fermat's Last Theorem for Amateurs, 1999, Chap. IV, (2C)-(2D), p. 127 (opened, Ribenboim in OCR copies) ; the case |A| = 6: C.-A. Laisant, Théorèmes sur les nombres, Mém. Soc. Sci. Phys. Nat. Bordeaux (2) 1 (1876), 400-402, Théorème I, p. 400: 'Si un nombre a appartient à l'exposant 3 par rapport au module premier p, le nombre a + 1 appartiendra à l'exposant 6' (so 1, a and a + 1 lie in the subgroup of order 6) - https://archive.org/details/mmoiresdelasoci01bordgoog (opened) ; the same step is a textbook exercise, e.g. K. Ireland, M. Rosen, A Classical Introduction to Modern Number Theory, 2nd ed., 1990, Chap. 4, Ex. 22, p. 49 ('If a has order 3 modulo p, show that 1 + a has order 6') ; competition: 24th Vojtěch Jarník International Mathematical Competition (VJIMC), Ostrava, 4 April 2014, Category II, Problem 2 (official statement) - https://vjimc.osu.cz/storage/uploads/j24problems2.pdf ; official solution, page 2 of 4 (uses that A is cyclic to get an element a of order 6, then a + a^5 = -a^3 = 1; it writes '6 | d' for 6 | |A|) - https://vjimc.osu.cz/storage/uploads/j24solutions2.pdf ; both VJIMC files opened (PDFs created on 4 and 5 April 2014) ; no statement of the general form was found in a competition, problem column or book before 4 April 2014 (searched: IMC 1994-2013, Putnam 1938-2013, Schweitzer, Kürschák, KöMaL 1999-2015, SEEMOUS 2007-2014, VJIMC 1991-2013, IMO shortlists 1959-2004, national olympiads and TSTs 1989-2009, Crux 1975-2014, AMM problem indexes; Ireland-Rosen, Lidl-Niederreiter, Ribenboim, Dickson, Edwards, Andreescu-Dospinescu, PEN) ; later reprints: MOlympiad.NET compilation of VJIMC 1991-2014 (2017), AoPS thread c7h2568820 (21 May 2021)
+% history:        ai
+%
+% AI-WRITTEN, NEEDS HUMAN REVIEW (2026-09-30): both the statement and the solution were written by AI (Claude).
+% The statement makes the official VJIMC 2014 text rigorous (the field Z/pZ, its multiplicative group, the order of A).
+% The official solution uses that A is cyclic (every finite subgroup of the multiplicative group of a field is cyclic),
+% which no solution or shared result of the bank proves; the solution below uses Cauchy's theorem from the shared
+% appendix instead (problem-bank/appendix/cauchy-group-theorem.tex, McKay's proof, also AI-written), for the primes 2 and 3,
+% and finds the same elements: a := -omega has order 6, and x = a, y = a^5, z = 1 are the official solution's x', y'
+% and 1.  The official solution also writes "6 | d" without defining d: it means |A|, and d is the name of |H| in
+% Alon and Bourgain's Claim 3.2 (see references).
+% Restyled on 2026-10-01 after problem-bank/writing-style.md (the style of the fully solved problems); the mathematics is unchanged.
+\begin{problem}
+Let \( p \) be a prime number and \( \mathbb{F}_{p} := \mathbb{Z}/p\mathbb{Z} \) be the field with \( p \) elements. Let \( A \) be a subgroup of the multiplicative group \( \left(\mathbb{F}_{p}^{\times}, \cdot, 1_{\mathbb{F}_{p}}\right) \), where \( \mathbb{F}_{p}^{\times} := \mathbb{F}_{p} \setminus \left\{ 0_{\mathbb{F}_{p}} \right\} \). Suppose that the order \( \left| A \right| \) of \( A \) is a multiple of \( 6 \). Prove that there exist \( x, y, z \in A \) such that
+\[
+x + y = z,
+\]
+where \( + \) is the addition of \( \mathbb{F}_{p} \).
+\end{problem}
+\begin{solution}
+Since \( 6 \) divides \( \left| A \right| \), the primes \( 2 \) and \( 3 \) both divide the order of the finite group \( \left(A, \cdot, 1_{\mathbb{F}_{p}}\right) \). By Cauchy's theorem, if a prime \( q \) divides the order of a finite group, then the group has an element of order \( q \); for a proof of this classical fact, see the Appendix [\appendixref{cauchy-group-theorem}], where the prime is called \( p \). Applying it to \( A \) with \( q = 2 \) and with \( q = 3 \), we obtain \( h, \omega \in A \) such that
+\[
+h \neq 1_{\mathbb{F}_{p}}, \quad h^{2} = 1_{\mathbb{F}_{p}}, \qquad \omega \neq 1_{\mathbb{F}_{p}}, \quad \omega^{3} = 1_{\mathbb{F}_{p}}.
+\]
+In \( \mathbb{F}_{p} \), we have
+\[
+\left(h - 1_{\mathbb{F}_{p}}\right)\left(h + 1_{\mathbb{F}_{p}}\right) = h^{2} - 1_{\mathbb{F}_{p}} = 0_{\mathbb{F}_{p}},
+\]
+and \( h - 1_{\mathbb{F}_{p}} \neq 0_{\mathbb{F}_{p}} \). Since \( \mathbb{F}_{p} \) is a field, it is a domain, i.e., if \( u, v \in \mathbb{F}_{p} \) satisfy \( uv = 0_{\mathbb{F}_{p}} \), then \( u = 0_{\mathbb{F}_{p}} \) or \( v = 0_{\mathbb{F}_{p}} \). Hence, \( h + 1_{\mathbb{F}_{p}} = 0_{\mathbb{F}_{p}} \), that is \( h = -1_{\mathbb{F}_{p}} \). In particular, \( -1_{\mathbb{F}_{p}} \in A \).
+\\\\
+Similarly, we have
+\[
+\left(\omega - 1_{\mathbb{F}_{p}}\right)\left(\omega^{2} + \omega + 1_{\mathbb{F}_{p}}\right) = \omega^{3} - 1_{\mathbb{F}_{p}} = 0_{\mathbb{F}_{p}},
+\]
+and \( \omega - 1_{\mathbb{F}_{p}} \neq 0_{\mathbb{F}_{p}} \), so again because \( \mathbb{F}_{p} \) is a domain, we obtain
+\[
+\omega^{2} + \omega + 1_{\mathbb{F}_{p}} = 0_{\mathbb{F}_{p}}.
+\]
+Now define
+\[
+x := -\omega = h\omega, \qquad y := -\omega^{2} = h\omega^{2}, \qquad z := 1_{\mathbb{F}_{p}}.
+\]
+Since \( A \) contains \( h \), \( \omega \) and \( 1_{\mathbb{F}_{p}} \) and is closed under multiplication, we have \( x, y, z \in A \). Using \( \omega^{2} + \omega + 1_{\mathbb{F}_{p}} = 0_{\mathbb{F}_{p}} \), we obtain
+\[
+x + y = -\left(\omega + \omega^{2}\right) = 1_{\mathbb{F}_{p}} = z,
+\]
+as desired.
+\\\\
+We show that \( x \), \( y \) and \( z \) are even pairwise distinct. If \( x = y \), i.e., \( -\omega = -\omega^{2} \), then \( \omega = \omega^{2} \), hence \( \omega = 1_{\mathbb{F}_{p}} \) (multiply by \( \omega^{-1} \)). If \( x = z \), i.e., \( -\omega = 1_{\mathbb{F}_{p}} \), then \( \omega^{2} = 1_{\mathbb{F}_{p}} \), hence \( \omega = \omega^{3} \omega^{-2} = 1_{\mathbb{F}_{p}} \). If \( y = z \), i.e., \( -\omega^{2} = 1_{\mathbb{F}_{p}} \), then \( \omega^{4} = 1_{\mathbb{F}_{p}} \), hence \( \omega = \omega^{4} \omega^{-3} = 1_{\mathbb{F}_{p}} \). All three cases are a contradiction to \( \omega \neq 1_{\mathbb{F}_{p}} \). Thus, \( x \), \( y \) and \( z \) are pairwise distinct.
+\end{solution}

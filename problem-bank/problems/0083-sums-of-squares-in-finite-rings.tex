@@ -1,0 +1,65 @@
+% title:          Sums of squares in finite rings
+% area:           ring-theory
+% methods:        pigeonhole, substitution
+% difficulty:
+% difficulty-ai:  medium
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         jarnik
+% origin-date:    2005-04-06
+% origin-number:  Category II, Problem 4
+% also-in:
+% taken-from:     VJIMC 2005 official problems and solutions (Category II, Problem 4)
+% references:     15th Vojtěch Jarník International Mathematical Competition (VJIMC), Ostrava, 6 April 2005, Category II, Problem 4 (official statement, no proposer named) - https://vjimc.osu.cz/storage/uploads/j15problems2.pdf ; official solution, p. 8 of the combined Category I and II solutions file (same proof as the club copy: S = set of squares, S + S in S, x -> x + y is a bijection of the finite S so S is an additive subgroup, xy + yx = (x+y)^2 - x^2 - y^2 in S, pairs (a, bc), (c, ab), (ca, b), (1) + (2) - (3) = 2abc) - https://vjimc.osu.cz/storage/uploads/j15solutions.pdf ; no earlier source of this statement was found (short search; AoPS not reachable; KöMaL 1999-2006, zbMATH and Math StackExchange gave nothing) ; special case where every square is 0, finiteness not needed: IMC 1999 (6th IMC, Keszthely), Day 2, Problem 1 (in a not necessarily commutative ring where the square of any element is 0, abc + abc = 0; the official solution uses the same pairs (a, bc), (b, ca), (c, ab)) - https://www.imc-math.org.uk/imc1999/prob_sol2.pdf ; the three files above were opened
+% history:        ai
+%
+% AI-WRITTEN, NEEDS HUMAN REVIEW (2026-09-29): both the statement and the solution were written by AI (Claude).
+% The statement makes the official VJIMC 2005 text rigorous (ring axioms, the notations x^2, 2x and abc).  The solution
+% follows the official solution and adds the details it leaves implicit: 0 is a square, why an injective map from a
+% finite set to itself is onto, and the expansion of (x+y)^2 without commutativity.
+% Restyled on 2026-10-01 after problem-bank/writing-style.md (the style of the fully solved problems); the mathematics is unchanged.
+\begin{problem}
+Let \( \left(R, +, \cdot, 0_R\right) \) be a finite ring, possibly non-commutative and not necessarily unital, i.e., \( \left(R, +\right) \) is an abelian group with neutral element \( 0_R \), and the multiplication \( \cdot \) is associative and distributes over \( + \) on both sides. For \( x, y, z \in R \), write \( xy := x \cdot y \), \( x^{2} := xx \), \( 2x := x + x \) and \( xyz := \left(xy\right)z = x\left(yz\right) \).
+
+Suppose that for all \( a, b \in R \) there exists \( c \in R \) (depending on \( a \) and \( b \)) such that
+\[
+a^{2} + b^{2} = c^{2}.
+\]
+Prove that for all \( a, b, c \in R \) there exists \( d \in R \) such that \( 2abc = d^{2} \), that is, \( abc + abc = d^{2} \).
+\end{problem}
+\begin{solution}
+Define the set of squares of \( R \):
+\[
+S := \left\{ x^{2} \mid x \in R \right\} \subset R.
+\]
+We show that \( S \) is an additive subgroup of \( R \) which contains \( xy + yx \) for all \( x, y \in R \); the result then follows by combining three such elements.
+\\\\
+First note that \( 0_R \in S \). Indeed, since \( \cdot \) distributes over \( + \), we have
+\[
+0_R \cdot 0_R = 0_R \cdot \left(0_R + 0_R\right) = 0_R \cdot 0_R + 0_R \cdot 0_R,
+\]
+and adding \( -\left(0_R \cdot 0_R\right) \) to both sides gives \( 0_R \cdot 0_R = 0_R \), i.e., \( 0_R = \left(0_R\right)^{2} \in S \). Moreover, \( S \) is closed under addition: let \( s, t \in S \) and write \( s = a^{2} \) and \( t = b^{2} \) with \( a, b \in R \); by the given assumption, there exists \( c \in R \) such that \( s + t = a^{2} + b^{2} = c^{2} \in S \).
+\\\\
+It remains to show that \( S \) is closed under subtraction. Fix \( y \in S \). Since \( S \) is closed under addition, adding \( y \) defines a map \( \_ + y \colon S \rightarrow S \). It is injective: if \( x + y = x' + y \) for some \( x, x' \in S \), then adding \( -y \) to both sides gives \( x = x' \). Since \( S \subset R \) is finite, injectivity of \( \_ + y \) implies its surjectivity: its image is a subset of \( S \) with \( \left| S \right| \) elements, hence \( S \) itself. This is the only place where we use that \( R \) is finite. Hence, for every \( s \in S \) there exists \( x \in S \) with \( x + y = s \), so that \( s - y = x \in S \). As \( s, y \in S \) were arbitrary, \( S \) is closed under subtraction; together with \( 0_R \in S \), this shows that \( S \) is an additive subgroup of \( R \).
+\\\\
+Now let \( x, y \in R \). Using that \( \cdot \) distributes over \( + \) on both sides (but not that it is commutative), we have
+\[
+\left(x + y\right)^{2} = \left(x + y\right)\left(x + y\right) = x^{2} + xy + yx + y^{2},
+\]
+which gives
+\[
+xy + yx = \left(x + y\right)^{2} - x^{2} - y^{2} \in S,
+\]
+because \( \left(x + y\right)^{2}, x^{2}, y^{2} \in S \) and \( S \) is an additive subgroup of \( R \).
+\\\\
+Let \( a, b, c \in R \). Applying this to \( \left(x, y\right) = \left(a, bc\right) \), \( \left(c, ab\right) \) and \( \left(ca, b\right) \), and using that \( \cdot \) is associative to omit the brackets in products of three elements, we obtain
+\[
+abc + bca \in S, \quad cab + abc \in S, \quad cab + bca \in S.
+\]
+Since \( S \) is an additive subgroup of \( R \), it contains the sum of the first two elements minus the third one, which is (as \( + \) is associative and commutative)
+\[
+\left(abc + bca\right) + \left(cab + abc\right) - \left(cab + bca\right) = abc + abc = 2abc.
+\]
+Therefore, \( 2abc \in S \), i.e., there exists \( d \in R \) such that \( 2abc = d^{2} \), as desired.
+\end{solution}

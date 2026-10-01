@@ -1,0 +1,42 @@
+% title:          Squares in finite groups
+% area:           finite-groups
+% methods:        pigeonhole
+% difficulty:
+% difficulty-ai:  easy
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         paper
+% origin-date:    1953-03
+% origin-number:  Theorem 1, p. 185
+% also-in:        book, jarnik
+% taken-from:     VJIMC 2006 official problems and solutions (Category II, Problem 2)
+% references:     Earliest known appearance (to the best of our knowledge): W. R. Utz, Square Roots in Groups, Amer. Math. Monthly 60 (1953), no. 3, 185-186 (Classroom Notes), Theorem 1, p. 185: 'Each element of a finite group has a square root if, and only if, the order of the group is odd' (even order: the elements of period > 2 pair off with their inverses, so some a has period 2, the identity has the two square roots i and a, and since the squares are the diagonal of the group table some element has no square root; odd order n = 2k+1: b = (b^(-k))^2; Theorem 2: every element has an r-th root iff r is prime to the order; the author adds that these theorems 'may be known to many algebraists'), doi:10.2307/2307579 - https://archive.org/details/sim_american-mathematical-monthly_1953-03_60_3 (scan opened) ; the odd half is older: G. A. Miller, review of L. E. Dickson, Linear Groups, Bull. Amer. Math. Soc. 9 (1902), no. 3, 165-173, pp. 167-168 ('in an abelian group of odd order every operator is the square of one and only one operator'), doi:10.1090/S0002-9904-1902-00970-1, and G. A. Miller, Groups whose operators have no more than three distinct squares, Proc. Natl. Acad. Sci. USA 19 (1933), no. 9, 848-851, p. 848 ('every operator of a group of odd order is a square of one and only one of its operators'), doi:10.1073/pnas.19.9.848 (both read in the archive.org OCR text) ; pairing proof of an element of order 2 in a group of even order: W. Burnside, Theory of Groups of Finite Order, 2nd ed., 1911, Chapter VI, Section 76, remark, pp. 90-91 - https://www.gutenberg.org/ebooks/40395 ; textbook exercises: S. Warner, Modern Algebra, Prentice-Hall, 1965, Section 25, Exercise 25.12(b) (snippets only, not opened); R. Dubisch, Introduction to Abstract Algebra, Wiley, 1965 (exercise with Utz's lemma and Theorem 1, Utz in its references; snippets only, not opened); T. M. Apostol, Introduction to Analytic Number Theory, Springer, 1976, Exercises for Chapter 6, Exercises 7-10 (8: McKay's proof of Cauchy's theorem as a hint; 9: this problem) - https://archive.org/details/dli.scoerat.13757introductiontoanalyticnumbertheory ; abelian case as a journal problem: A. Schwartz, Problem E1794, Amer. Math. Monthly 72 (1965), no. 5, 543, solutions 73 (1966), no. 8, 892, doi:10.2307/2314135 and doi:10.2307/2314201 (Crossref metadata; statement seen in a snippet only) ; University of Toronto Mathematics Competition 2003, Problem 10 (E. J. Barbeau, University of Toronto Mathematics Competition (2001-2015), Springer, 2016, Chapter 9; snippet only, not opened) ; competition: 16th Vojtěch Jarník International Mathematical Competition (VJIMC), Ostrava, 29 March 2006, Category II, Problem 2 - https://vjimc.osu.cz/storage/uploads/j16problems2.pdf ; official solution 'by Stijn Cambie', the solution of the club copy (element of order 2 by pairing each element with its inverse, then an element whose order has maximal 2-adic valuation is not a square; typeset in 2014 according to the PDF metadata; 'h in S' should read 'h in G' and 'v2(k)' should read 'v2(ord(k))'), p. 6 - https://vjimc.osu.cz/storage/uploads/j16solutions.pdf ; the solution below uses Cauchy's theorem (shared result cauchy-group-theorem) with the proof of James H. McKay, Another proof of Cauchy's group theorem, Amer. Math. Monthly 66 (1959), no. 2, 119, doi:10.2307/2310010 (scan opened)
+% history:        ai
+%
+% AI-WRITTEN, NEEDS HUMAN REVIEW (2026-09-29): both the statement and the solution were written by AI (Claude).
+% As Antoine asked, the even case uses Cauchy's theorem, cited from the shared appendix (problem-bank/appendix/
+% cauchy-group-theorem.tex, McKay's proof, also AI-written), instead of the solution of the club copy: Cauchy with p = 2
+% replaces the pairing of each element with its inverse, and "the squaring map is not injective, hence not onto"
+% replaces the 2-adic argument.
+% Restyled on 2026-10-01 after problem-bank/writing-style.md (the style of the fully solved problems); the mathematics is unchanged.
+\begin{problem}
+Let \( \left( G, \cdot, e_G \right) \) be a finite group of order \( n := \left| G \right| \). Prove that every element of \( G \) is a square if and only if \( n \) is odd. (An element \( g \in G \) is a square if \( g = h^{2} := h \cdot h \) for some \( h \in G \).)
+\end{problem}
+\begin{solution}
+For \( g \in G \), denote by \( \mathrm{ord}(g) \) the order of \( g \), i.e., the least integer \( k \geq 1 \) such that \( g^{k} = e_G \). It exists because \( G \) is finite: two of \( g^{1}, \dots, g^{n+1} \) must be equal, say \( g^{a} = g^{b} \) with \( a < b \), and then \( g^{b-a} = e_G \). Now, since \( \mathrm{ord}(g) \) is the order of the subgroup generated by \( g \), by Lagrange's theorem \( \mathrm{ord}(g) \mid n \) for every \( g \in G \).
+\\\\
+If \( n \) is odd, let \( g \in G \) and \( k := \mathrm{ord}(g) \). By Lagrange's theorem, \( k \) divides the odd number \( n \), so \( k \) is odd and \( t := \frac{k+1}{2} \in \mathbb{N}_{>0} \). Then we have
+\[
+\left( g^{t} \right)^{2} = g^{2t} = g^{k+1} = g^{k} \cdot g = e_G \cdot g = g,
+\]
+so \( g \) is a square. Since \( g \in G \) was arbitrary, every element of \( G \) is a square.
+\\\\
+If \( n \) is even, we use Cauchy's theorem: if a prime \( p \) divides \( n \), then \( G \) has an element of order \( p \). For a proof of this classical fact, see the Appendix [\appendixref{cauchy-group-theorem}]. Since the prime \( 2 \) divides \( n \), there exists \( h \in G \) of order \( 2 \), i.e., \( h \neq e_G \) and \( h^{2} = e_G \). Consider the squaring map
+\[
+q \colon G \to G, \quad x \mapsto x^{2}.
+\]
+Since \( q(e_G) = e_G = q(h) \) and \( e_G \neq h \), the map \( q \) is not injective. But a map from the finite set \( G \) to itself which is not injective is not surjective (its image has fewer than \( \left| G \right| \) elements), so there exists \( g \in G \setminus \mathrm{ran}(q) \), and this \( g \) is not a square.
+\\\\
+Thus, we conclude that every element of \( G \) is a square if and only if \( n \) is odd.
+\end{solution}

@@ -1,0 +1,92 @@
+% title:          Cut capturing half the matrix sum
+% area:           extremal-graphs
+% methods:        extremal-principle, symmetry
+% difficulty:
+% difficulty-ai:  easy
+% status:
+% review:         none
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         jarnik
+% origin-date:    2005-04-06
+% origin-number:  Category II, Problem 2
+% also-in:
+% taken-from:     VJIMC 2005 official problems and solutions (Category II, Problem 2)
+% references:     15th Vojtěch Jarník International Mathematical Competition (VJIMC), Ostrava, 6 April 2005, Category II, Problem 2 (official statement; no author or university credited) - https://vjimc.osu.cz/storage/uploads/j15problems2.pdf ; official solution - https://vjimc.osu.cz/storage/uploads/j15solutions.pdf ; no earlier source of this signed, non-symmetric matrix form was found (searched: IMC 1994-2004, Putnam 1938-2004, IMO 1959-2003, IMO Shortlist 1981-2002, USAMO 1972-2003, All-Russian/ASU 1961-1992 and 1995-2002, Tournament of Towns 1980-2003, Eötvös-Kürschák to 2003, Polish MO 1995/96-2004/05, Schweitzer 1987, 1995 and 1997-2004, KöMaL 1994-2005, max-cut and signed-graph literature) ; special case of a 0/1 symmetric matrix, i.e. a graph: P. Erdős, On some extremal problems in graph theory, Israel J. Math. 3 (1965), no. 2, 113-116, Lemma 1, p. 114: 'Every G(n;m) has an even subgraph having at least m/2 edges' (even = bipartite; proof by induction on n), doi:10.1007/BF02760037 - https://users.renyi.hu/~p_erdos/1965-07.pdf (opened) ; special case of a symmetric matrix with entries -1, 0, 1, i.e. a signed graph (some switching leaves at most half of the edges negative): J. Akiyama, D. Avis, V. Chvátal, H. Era, Balancing signed graphs, Discrete Appl. Math. 3 (1981), no. 4, 227-233, Main Theorem (the frustration index of every signing of a graph with m edges, not necessarily simple, is at most m/2), doi:10.1016/0166-218X(81)90001-9 (not opened; known from T. Zaslavsky, A Mathematical Bibliography of Signed and Gain Graphs and Allied Areas, Electron. J. Combin. Dynamic Survey DS8, 8th ed., 2012 - https://people.math.binghamton.edu/zaslav/Bsg/ds8-8ed.pdf, opened) ; related extremal problem on a real table with sign changes: 24th Moscow Mathematical Olympiad 1961, round 2 (grade 9 problem 2, grade 10 problem 3), also Kvant 1971 no. 4, M80: changing the signs of whole rows or columns of a real m x n table can make all row and column sums non-negative (this gives the case where the non-zero entries lie in R x C with R, C disjoint) - https://problems.ru/view_problem_details_new.php?id=78265 (opened; listed as 1st ASU 1961, Problem 7 in J. Scholes's Kalva archive - https://web.archive.org/web/20030911104959id_/http://www.kalva.demon.co.uk:80/soviet/sov61.html, opened)
+% history:        ai
+%
+% AI-WRITTEN, NEEDS HUMAN REVIEW (2026-09-29): both the statement and the solution were written by AI (Claude).
+% The statement makes the official VJIMC 2005 text rigorous.  Its "J ⊂ {1,...,n}" cannot mean a proper non-empty
+% subset, because then the claim is false (n = 2, a_{1,2} = a_{2,1} = -1).  As F(empty set) = F({1,...,n}) = 0,
+% allowing either of them is enough; the statement allows both, and the official solution itself uses ⊂ as ⊆.  The
+% solution follows the official solution; its second computation ("Similarly, for k not in J") is obtained from the
+% first one through the symmetry F(complement of I) = F(I).
+% Restyled on 2026-10-01 after problem-bank/writing-style.md (the style of the fully solved problems); the mathematics is unchanged.
+\begin{problem}
+Let \( n \in \mathbb{N}_{>0} \), write \( N := \llbracket 1, n \rrbracket \), and let \( \left(a_{i,j}\right)_{i,j \in N} \in \mathbb{R}^{n \times n} \) be a matrix, not necessarily symmetric and with entries of any sign, such that \( a_{i,i} = 0 \) for every \( i \in N \). Prove that there exists a subset \( J \subseteq N \) (possibly empty, possibly equal to \( N \)) such that
+\[
+\sum_{\substack{i \in J \\ j \in N \setminus J}} a_{i,j} + \sum_{\substack{i \in N \setminus J \\ j \in J}} a_{i,j} \geq \frac{1}{2} \sum_{i,j=1}^{n} a_{i,j}.
+\]
+\end{problem}
+\begin{solution}
+For \( A, B \subseteq N \), define
+\[
+S\left(A, B\right) := \sum_{\substack{i \in A \\ j \in B}} a_{i,j},
+\]
+where an empty sum is \( 0 \). For \( I \subseteq N \), write \( I^{c} := N \setminus I \) and define
+\[
+F\left(I\right) := S\left(I, I^{c}\right) + S\left(I^{c}, I\right).
+\]
+We need to find \( J \subseteq N \) such that \( F\left(J\right) \geq \frac{1}{2} S\left(N, N\right) \). Two facts follow directly from the definitions. First, \( F \) does not change when a set is replaced by its complement: since \( \left(I^{c}\right)^{c} = I \), we have
+\[
+F\left(I^{c}\right) = S\left(I^{c}, I\right) + S\left(I, I^{c}\right) = F\left(I\right).
+\]
+Second, since \( N \times N = \left(I \times I\right) \sqcup \left(I \times I^{c}\right) \sqcup \left(I^{c} \times I\right) \sqcup \left(I^{c} \times I^{c}\right) \), we have
+\[
+S\left(N, N\right) = S\left(I, I\right) + S\left(I^{c}, I^{c}\right) + F\left(I\right).
+\]
+Since \( N \) has only \( 2^{n} \) subsets, \( F \) attains a maximum; fix \( J \subseteq N \) with
+\[
+F\left(J\right) = \max\left\{ F\left(I\right) \mid I \subseteq N \right\}.
+\]
+By the first fact, \( F\left(J^{c}\right) = F\left(J\right) \), so \( J^{c} \) is a maximiser of \( F \) as well.
+\\\\
+We claim that every maximiser \( M \) of \( F \) satisfies \( S\left(M, M\right) \leq \frac{1}{2} F\left(M\right) \). If \( M \) is empty, both sides are \( 0 \). Else let \( k \in M \) and put \( M' := M \setminus \left\{k\right\} \), so that \( M = M' \sqcup \left\{k\right\} \) and \( \left(M'\right)^{c} = M^{c} \sqcup \left\{k\right\} \). Separating the terms of row \( k \) or column \( k \), we obtain
+\[
+\begin{aligned}
+S\left(M, M^{c}\right) &= S\left(M', M^{c}\right) + \sum_{j \in M^{c}} a_{k,j}, \\
+S\left(M^{c}, M\right) &= S\left(M^{c}, M'\right) + \sum_{i \in M^{c}} a_{i,k}, \\
+S\left(M', \left(M'\right)^{c}\right) &= S\left(M', M^{c}\right) + \sum_{i \in M'} a_{i,k}, \\
+S\left(\left(M'\right)^{c}, M'\right) &= S\left(M^{c}, M'\right) + \sum_{j \in M'} a_{k,j}.
+\end{aligned}
+\]
+Adding the first two lines and subtracting the last two, we obtain
+\[
+F\left(M\right) - F\left(M'\right) = \sum_{j \in M^{c}} a_{k,j} + \sum_{i \in M^{c}} a_{i,k} - \sum_{j \in M'} a_{k,j} - \sum_{i \in M'} a_{i,k}.
+\]
+Since \( a_{k,k} = 0 \), we may add the index \( k \) to the last two sums without changing them: \( \sum_{j \in M'} a_{k,j} = \sum_{j \in M} a_{k,j} \) and \( \sum_{i \in M'} a_{i,k} = \sum_{i \in M} a_{i,k} \). This is the only place where we use the given hypothesis on the diagonal. As \( M \) is a maximiser, \( F\left(M\right) - F\left(M'\right) \geq 0 \), and since \( k \in M \) was arbitrary, we have for every \( k \in M \)
+\[
+0 \leq \sum_{j \in M^{c}} a_{k,j} + \sum_{i \in M^{c}} a_{i,k} - \sum_{j \in M} a_{k,j} - \sum_{i \in M} a_{i,k}.
+\]
+Summing these inequalities over \( k \in M \), and using
+\[
+\begin{aligned}
+\sum_{k \in M} \sum_{j \in M^{c}} a_{k,j} &= S\left(M, M^{c}\right), \\
+\sum_{k \in M} \sum_{i \in M^{c}} a_{i,k} &= S\left(M^{c}, M\right), \\
+\sum_{k \in M} \sum_{j \in M} a_{k,j} = \sum_{k \in M} \sum_{i \in M} a_{i,k} &= S\left(M, M\right),
+\end{aligned}
+\]
+we obtain \( 0 \leq F\left(M\right) - 2 S\left(M, M\right) \), i.e., \( S\left(M, M\right) \leq \frac{1}{2} F\left(M\right) \), which proves the claim.
+\\\\
+Now apply the claim to the two maximisers \( J \) and \( J^{c} \):
+\[
+S\left(J, J\right) \leq \frac{1}{2} F\left(J\right) \quad \text{and} \quad S\left(J^{c}, J^{c}\right) \leq \frac{1}{2} F\left(J^{c}\right) = \frac{1}{2} F\left(J\right).
+\]
+(Equivalently, one may compare \( F\left(J\right) \) with \( F\left(J \cup \left\{k\right\}\right) \) for \( k \notin J \): since \( \left(J \cup \left\{k\right\}\right)^{c} = J^{c} \setminus \left\{k\right\} \) and, by the first fact, \( F \) does not change when a set is replaced by its complement, this is the computation in the proof of the claim, for \( M = J^{c} \).) By the second fact for \( I = J \), we have
+\[
+\begin{aligned}
+\sum_{i,j=1}^{n} a_{i,j} = S\left(N, N\right) &= S\left(J, J\right) + S\left(J^{c}, J^{c}\right) + F\left(J\right) \\
+&\leq \frac{1}{2} F\left(J\right) + \frac{1}{2} F\left(J\right) + F\left(J\right) = 2 F\left(J\right).
+\end{aligned}
+\]
+Therefore, \( F\left(J\right) \geq \frac{1}{2} \sum_{i,j=1}^{n} a_{i,j} \), i.e., the subset \( J \subseteq N \) satisfies the inequality from the statement.
+\end{solution}
