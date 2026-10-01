@@ -1,0 +1,139 @@
+% Shared result, cited from solutions with \appendixref{vanishing-power-sums}.
+% Moved on 2026-09-30 from the appendix of problem 0030 (A.2 there), text unchanged: only the links to other
+% results became \appendixref.  Earlier version: none in git before the problem bank (2026 PDF of problem set 7).
+\begin{appendixitem}{Vanishing consecutive power sums}
+The following lemma is helpful.
+\begin{lemma}
+Let \( R \) be a commutative unital ring which is a domain, together with the canonical morphism \( \mathrm{can}_R \colon \mathbb{Z} \to R \), and write for any integer \( k \): \( k_R := \mathrm{can}_R\left(k\right) \). Then for all \( m \in \mathbb{N}_{\geq 1} \) such that \( \operatorname{char}\left(R\right) = 0 \) or \( m < \operatorname{char}\left(R\right) \), the set
+\[
+S_m := \left\{ \boldsymbol{\lambda} \colon m \to R \,\middle|\, \exists t \in \mathbb{N}, \forall k \in \left\llbracket 1, m \right\rrbracket, \sum_{i \in m} \lambda_i^{t+k} = 0_{R} \right\}
+\]
+is equal to the singleton set \( \left\{0_m\right\} \), where \( 0_m \colon m \to R \) is defined by \( i \mapsto 0_{R} \) and where \( x^0 = 1_R \) even if \( x = 0_R \).
+\end{lemma}
+\begin{proof}
+This is proven by induction on \( m \in \mathbb{N}_{\geq 1} \), assuming \( \operatorname{char}\left(R\right) = 0 \) or \( m < \operatorname{char}\left(R\right) \).
+\\\\
+Base case \( m = 1 \): The condition \( \operatorname{char}\left(R\right) = 0 \) or \( 1 < \operatorname{char}\left(R\right) \) holds because if \( \operatorname{char}\left(R\right) \neq 0 \), it must be a prime number (since \( R \) is a domain), meaning \( \operatorname{char}\left(R\right) \geq 2 > 1 \). We then have:
+\[
+S_1 = \left\{ \boldsymbol{\lambda} \colon 1 \to R \,\middle|\, \exists t \in \mathbb{N}, \forall k \in \left\llbracket 1, 1 \right\rrbracket, \sum_{i \in 1} \lambda_i^{t+k} = 0_{R} \right\} \overset{\text{clear}}{=} \left\{ \boldsymbol{\lambda} \colon 1 \to R \,\middle|\, \exists t \in \mathbb{N}, \lambda_0^{t+1} = 0_{R} \right\}.
+\]
+Clearly, since \( R \) is a domain, \( \lambda_0^{t+1} = 0_{R} \Rightarrow \lambda_0 = 0_{R} \) (trivial induction). Hence, \( S_1 = \left\{0_1\right\} \), which establishes the base case.
+\\\\
+Induction step: Assume the statement holds for some \( m \in \mathbb{N}_{\geq 1} \), so that \( S_m = \left\{0_m\right\} \). We want to show it holds for \( m + 1 \in \mathbb{N}_{> 1} \) (assuming \( \operatorname{char}\left(R\right) = 0 \) or \( m + 1 < \operatorname{char}\left(R\right) \)).
+\\\\
+Clearly, \( \left\{0_{m+1}\right\} \subset S_{m+1} \). To show the converse, let any \( \boldsymbol{\lambda} \in S_{m+1} \), we first show that \( \exists k \in m+1 \) such that \( \lambda_k = 0_{R} \). This can be proven in (at least) three ways: The first one (the simplest) uses a direct computation, the second (quite related to the first) uses Newton's identities (with a full proof of them), finally the last one uses the Vandermonde matrix (whose determinant is proven in Appendix [\appendixref{vandermonde-determinant}]):
+\\\\
+\textit{Direct computation.}
+\\\\
+Fix \( n \in \mathbb{N}_{>0} \). For \( k \in \mathbb{N} \), let the \( k \)-th power sum polynomials in \( n \) variables be
+\[
+p_k\left(\mathbf{X}\right) := \sum_{i \in n} X_i^k \in \mathbb{Z}\left[\mathbf{X}\right],
+\]
+and the \( k \)-th elementary symmetric polynomials in \( n \) variables be
+\[
+e_k\left(\mathbf{X}\right) := \sum_{\substack{A \in \mathscr{P}\left(n\right)\\\left|A\right| = k}} \prod_{a \in A} X_a \in \mathbb{Z}\left[\mathbf{X}\right]\footnote{That is:
+\[
+e_0\left(\mathbf{X}\right) = 1,\, e_1\left(\mathbf{X}\right) = \sum_{i \in n} X_i,\, e_2\left(\mathbf{X}\right) = \sum_{0 \leq i < j < n} X_i X_j,\, \ldots,\, e_n\left(\mathbf{X}\right) = \prod_{i \in n} X_i,
+\]
+and \( e_k\left(\mathbf{X}\right) = 0 \) for \( k > n \).}.
+\]
+In our case, where the number of variables is \( m+1 \geq 1 \), we define, for all \( k \geq 0 \), the \( k \)-th power sum and the \( k \)-th elementary symmetric polynomial in the vector \( \boldsymbol{\lambda} \), respectively:
+\[
+p_k := p_k\left(\boldsymbol{\lambda}\right) = \sum_{i \in m+1} \lambda_i^k,\quad e_k := e_k\left(\boldsymbol{\lambda}\right) = \sum_{\substack{A \in \mathscr{P}\left(m+1\right)\\\left|A\right| = k}} \prod_{a \in A} \lambda_a.
+\]
+By the condition \( \boldsymbol{\lambda} \in S_{m+1} \), it is clear that there exists a minimal \( t_{\boldsymbol{\lambda}} \in \mathbb{N} \) such that \( p_{t_{\boldsymbol{\lambda}}+k} = 0_{R} \) for all \( k \in \left\llbracket 1, m+1 \right\rrbracket \). Consider the polynomial whose roots are the coordinates of \( \boldsymbol{\lambda} \):
+\[
+P\left(X\right) = \prod_{i \in m+1} \left(X - \lambda_i\right) = \sum_{j=0}^{m+1} \left(-1\right)_R^j e_j X^{m+1-j} \in R\left[X\right].
+\]
+One has for all \( i \in m+1 \), \( 0_{R} = P\left(\lambda_i\right) \), so that:
+\[
+0_{R} = \lambda_i^{t_{\boldsymbol{\lambda}}} \cdot P\left(\lambda_i\right) = \sum_{j=0}^{m+1} \left(-1\right)_R^j e_j \lambda_i^{t_{\boldsymbol{\lambda}}+m+1-j}.
+\]
+Summing this identity over all \( i \in m+1 \) gives:
+\[
+0_{R} = \sum_{i \in m+1} 0_{R} = \sum_{i \in m+1}\sum_{j=0}^{m+1} \left(-1\right)_R^j e_j \lambda_i^{t_{\boldsymbol{\lambda}}+m+1-j} = \sum_{j=0}^{m+1} \left(-1\right)_R^j e_j p_{t_{\boldsymbol{\lambda}}+m+1-j}
+\]
+\[
+= \sum_{j=0}^{m} 0_{R} + \left(-1\right)_R^{m+1} e_{m+1} p_{t_{\boldsymbol{\lambda}}} \Rightarrow 0_{R} = e_{m+1} p_{t_{\boldsymbol{\lambda}}} = p_{t_{\boldsymbol{\lambda}}} \cdot \prod_{i \in m+1} \lambda_i,
+\]
+where we used that \( p_{t_{\boldsymbol{\lambda}}+k} = 0_{R} \) for all \( k \in \left\llbracket 1, m+1 \right\rrbracket \). 
+By minimality of \( t_{\boldsymbol{\lambda}} \), \( p_{t_{\boldsymbol{\lambda}}} \neq 0_{R} \). Indeed, if \( t_{\boldsymbol{\lambda}} = 0 \), then \( p_{t_{\boldsymbol{\lambda}}} = \left(m+1\right)_{R} \), which is not zero by hypothesis on the characteristic. Else \( t_{\boldsymbol{\lambda}} \geq 1 \), then assuming \( p_{t_{\boldsymbol{\lambda}}} = 0_{R} \) yields a contradiction to the minimality of \( t_{\boldsymbol{\lambda}}\) because then one could take \( t_{\boldsymbol{\lambda}}-1 \in \mathbb{N} \) and the condition would still hold for this integer.
+\\\\
+This implies (as \( R \) is a domain) that there exists \( k \in m+1 \) such that \( \lambda_k = 0_{R} \).
+\\\\
+\textit{Using Newton's identities.}
+\\\\
+In the same settings as above, for \( n \in \mathbb{N}_{>0} \) and \( k \in \mathbb{N} \), the previous direct computation proof above hints that some of the \( k \)-th power sum polynomials in \( n \) variables and some of the \( k \)-th elementary symmetric polynomials in \( n \) variables are related. Indeed, they are related by the so-called \href{https://en.wikipedia.org/wiki/Newton%27s_identities}{Newton's identities} (valid for \( 1\leq k \leq n \)) over \( R\left[X_0,\dots,X_{n-1}\right] = R\left[\mathbf{X}\right] \):
+\[
+k_R e_k\left(\mathbf{X}\right) = \sum_{i=1}^k \left(-1\right)_R^{i-1} e_{k-i}\left(\mathbf{X}\right) p_i\left(\mathbf{X}\right).
+\]
+For a short combinatorial proof of these identities, see [\appendixref{newton-identities}].
+\\\\
+By the condition \( \boldsymbol{\lambda} \in S_{m+1} \), there exists \( t_{\boldsymbol{\lambda}} \in \mathbb{N} \) such that \( p_{t_{\boldsymbol{\lambda}}+k} = 0_{R} \) for all \( k \in \left\llbracket 1, m+1 \right\rrbracket \). In our case, where the number of variables is \( m+1 \geq 1 \), we define, for all \( k \geq 0 \), the \( k \)-th power sum and the \( k \)-th elementary symmetric polynomial as before but this time in the vector \( \boldsymbol{\lambda}^{t_{\boldsymbol{\lambda}}} \) (each coordinate of this vector is raised to the power \( t_{\boldsymbol{\lambda}} \)), respectively:
+\[
+\tilde{p}_k := p_k\left(\boldsymbol{\lambda}^{t_{\boldsymbol{\lambda}}}\right) = \sum_{i \in m+1} \left(\lambda_i^{t_{\boldsymbol{\lambda}}}\right)^k,\quad \tilde{e}_k := e_k\left(\boldsymbol{\lambda}^{t_{\boldsymbol{\lambda}}}\right) = \sum_{\substack{A \in \mathscr{P}\left(m+1\right)\\\left|A\right| = k}} \prod_{a \in A} \lambda_a^{t_{\boldsymbol{\lambda}}}.
+\]
+Notice that \( \tilde{p}_k = p_{t_{\boldsymbol{\lambda}} + k}\left(\boldsymbol{\lambda}\right) \) and thus, for each \( i \in \left\llbracket 1, m+1 \right\rrbracket \), \( \tilde{p}_i = 0_{R} \). Newton's identities (for \( 1\leq k = m+1\leq m+1 \)) when evaluated at \( \boldsymbol{\lambda}^{t_{\boldsymbol{\lambda}}} \) give:
+\[
+0_{R} = \sum_{i=1}^{m+1} \left(-1\right)_R^{i-1} \tilde{e}_{m+1-i} \tilde{p}_{i} = \left(m+1\right)_{R} \tilde{e}_{m+1} = \left(m+1\right)_{R} \prod_{i \in m+1} \lambda_i^{t_{\boldsymbol{\lambda}}}.
+\]
+Since \( m+1 \geq 2 \) and \( \operatorname{char}\left(R\right) = 0 \) or \( m+1 < \operatorname{char}\left(R\right) \), we obtain \( \left(m+1\right)_{R} \neq 0_{R} \).
+\\\\
+This implies (as \( R \) is a domain) that there exists \( k \in m+1 \) such that \( \lambda_k = 0_{R} \).
+\\\\
+\textit{Using the Vandermonde matrix.}
+\\\\
+It is clear that there exists a bijection \( \alpha^{\boldsymbol{\lambda}} \colon r \xrightarrow{\text{bij}} \operatorname{ran}\left(\boldsymbol{\lambda}\right) \subset R \), where \( r := \left|\operatorname{ran}\left(\boldsymbol{\lambda}\right)\right| \).
+\\\\
+(Note that \( \boldsymbol{\lambda} \neq \varnothing \) and \( \operatorname{dom}\left(\boldsymbol{\lambda}\right) = m+1 \) so that \( r \in \left\llbracket 1, m+1 \right\rrbracket \)). By hypothesis on \( \boldsymbol{\lambda} \), there exists \( t_{\boldsymbol{\lambda}} \in \mathbb{N} \) such that for all \( k \in \left\llbracket 1, m+1 \right\rrbracket \):
+\[
+0_{R} \overset{\text{hyp}}{=} \sum_{i \in m+1} \lambda_i^{t_{\boldsymbol{\lambda}}+k} \overset{\text{clear}}{=} \sum_{j \in r} \left|\boldsymbol{\lambda}^{-1}\left(\left\{\alpha^{\boldsymbol{\lambda}}\left(j\right)\right\}\right)\right|_{R} \cdot \left(\alpha^{\boldsymbol{\lambda}}\left(j\right)\right)^{t_{\boldsymbol{\lambda}}} \cdot \left(\alpha^{\boldsymbol{\lambda}}\left(j\right)\right)^k,
+\]
+where the multiplicity \( \left|\boldsymbol{\lambda}^{-1}\left(\left\{\alpha^{\boldsymbol{\lambda}}\left(j\right)\right\}\right)\right| \neq 0 \) by construction, so that:
+\[
+\left|\boldsymbol{\lambda}^{-1}\left(\left\{\alpha^{\boldsymbol{\lambda}}\left(j\right)\right\}\right)\right|_{R} \neq 0_{R}
+\]
+either because \( \operatorname{char}\left(R\right) = 0 \) or because the multiplicity is bounded by \( m+1 < \operatorname{char}\left(R\right) \).
+\\\\
+Since \( r \leq m+1 \), we get the following system of equations:
+\[
+M_{\alpha^{\boldsymbol{\lambda}}} \cdot v_{\alpha^{\boldsymbol{\lambda}}} = \mathbf{0}_{r},
+\]
+where \( M_{\alpha^{\boldsymbol{\lambda}}} \in R^{r \times r} \) is defined by \( \left(i,j\right) \mapsto \left(\alpha^{\boldsymbol{\lambda}}\left(j\right)\right)^{i+1} \) for \( i,j \in r \), i.e.,
+\[
+M_{\alpha^{\boldsymbol{\lambda}}} = \begin{pmatrix}
+\left(\alpha^{\boldsymbol{\lambda}}\left(0\right)\right)^1 & \dots & \left(\alpha^{\boldsymbol{\lambda}}\left(r-1\right)\right)^1 \\
+\vdots & \ddots & \vdots \\
+\left(\alpha^{\boldsymbol{\lambda}}\left(0\right)\right)^r & \dots & \left(\alpha^{\boldsymbol{\lambda}}\left(r-1\right)\right)^r
+\end{pmatrix},
+\]
+and \( v_{\alpha^{\boldsymbol{\lambda}}} \in R^{r \times 1} \) is the well-defined column vector given by \( j \mapsto \left|\boldsymbol{\lambda}^{-1}\left(\left\{\alpha^{\boldsymbol{\lambda}}\left(j\right)\right\}\right)\right|_{R} \cdot \left(\alpha^{\boldsymbol{\lambda}}\left(j\right)\right)^{t_{\boldsymbol{\lambda}}} \).
+\\\\
+Assume now towards a contradiction that \( 0_{R} \notin \operatorname{ran}\left(\boldsymbol{\lambda}\right) \). Then \( v_{\alpha^{\boldsymbol{\lambda}}} \in \operatorname{ker}\left(M_{\alpha^{\boldsymbol{\lambda}}}\right) \setminus \left\{\mathbf{0}_{r}\right\} \) (since there exists \( j \in r \) with \( \alpha^{\boldsymbol{\lambda}}\left(j\right) \neq 0_{R} \), which implies \( \left(\alpha^{\boldsymbol{\lambda}}\left(j\right)\right)^{t_{\boldsymbol{\lambda}}} \neq 0_{R} \) even if \( t_{\boldsymbol{\lambda}}=0 \)). Thus, \( M_{\alpha^{\boldsymbol{\lambda}}} \) is a matrix for which its associated \(R\)-linear operator is not injective. As is true in any commutative ring, we must have:
+\[
+0_{R} = \operatorname{det}_{R}\left(M_{\alpha^{\boldsymbol{\lambda}}}\right) = \left( \prod_{j \in r} \alpha^{\boldsymbol{\lambda}}\left(j\right) \right) \operatorname{det}_{R}\left(V_{\alpha^{\boldsymbol{\lambda}}}^T\right),
+\]
+where \( \operatorname{det}_R \) is defined via the Leibniz formula (permutation summation formula), ensuring that all standard properties, such as being a monoid morphism, or being multilinear over the ring \( R \) hold. We used the multilinear property in the last equality to extract from each column \( j \) the factor \( \alpha^{\boldsymbol{\lambda}}\left(j\right) \), and where \( V_{\alpha^{\boldsymbol{\lambda}}} \in R^{r \times r} \) is the Vandermonde matrix of \( \alpha^{\boldsymbol{\lambda}} \), with entries \( V_{\alpha^{\boldsymbol{\lambda}}}\left(i,j\right) = \left(\alpha^{\boldsymbol{\lambda}}\left(i\right)\right)^j \).
+\\\\
+By the lemma in Appendix [\appendixref{vandermonde-determinant}]:
+\[
+\operatorname{det}_{R}\left(V_{\alpha^{\boldsymbol{\lambda}}}^T\right) = \operatorname{det}_{R}\left(V_{\alpha^{\boldsymbol{\lambda}}}\right) = \prod_{0 \leq i < j < r} \left(\alpha^{\boldsymbol{\lambda}}\left(j\right) - \alpha^{\boldsymbol{\lambda}}\left(i\right)\right) \neq 0_{R},
+\]
+because \( \alpha^{\boldsymbol{\lambda}} \) is injective, and \( R \) is a domain! (Even if \( r=1 \), the empty product is \( 1_{R} \neq 0_{R} \)).
+\\\\
+So we must have \( \prod_{j \in r} \alpha^{\boldsymbol{\lambda}}\left(j\right) = 0_{R} \), which implies because \( R \) is a domain that there exists \( j \in r \) such that \( \alpha^{\boldsymbol{\lambda}}\left(j\right) = 0_{R} \), meaning \( 0_{R} \in \operatorname{ran}\left(\boldsymbol{\lambda}\right) \), a contradiction. Thus our assumption is false and we must have \( 0_{R} \in \operatorname{ran}\left(\boldsymbol{\lambda}\right) \).
+\\\\
+Hence, there exists \( k \in m+1 \) such that \( \lambda_k = 0_{R} \).
+\\\\
+So all of these three proofs showed that \( \exists k \in m+1,\, \lambda_k = 0_{R} \). Now define then \( \boldsymbol{\lambda}' \colon m \to R \) by:
+\[
+i \mapsto \begin{cases}
+\lambda_i & \text{if } i < k \\
+\lambda_{i+1} & \text{if } i \geq k
+\end{cases}
+\]
+From \( \lambda_k = 0_{R} \) and \(\boldsymbol{\lambda}\in S_{m+1}\), it must be true that \( \boldsymbol{\lambda}' \in S_m = \left\{0_m\right\} \) (use the same \(t\) and the fact that \( m \leq m+1 \)). So that in total (clear), \( \boldsymbol{\lambda} = 0_{m+1} \) and hence \( S_{m+1} \subset \left\{0_{m+1}\right\} \).
+\\\\
+This concludes the converse and finishes the induction step.
+\end{proof}
+\end{appendixitem}

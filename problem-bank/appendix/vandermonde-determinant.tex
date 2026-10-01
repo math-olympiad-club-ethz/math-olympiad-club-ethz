@@ -1,0 +1,55 @@
+% Shared result, cited from solutions with \appendixref{vandermonde-determinant}.
+% Moved on 2026-09-30 from the appendix of problem 0030 (A.5 there), text unchanged: only the links to other
+% results became \appendixref.  Earlier version: none in git before the problem bank (2026 PDF of problem set 7).
+\begin{appendixitem}{Vandermonde Determinant}
+\begin{lemma}[Vandermonde Determinant]
+Let \( R \) be a commutative unital ring and \( n \in \mathbb{N}_{>0} \). For any vector \( \boldsymbol{x} \in R^n \), let \( V_{\boldsymbol{x}} \in R^{n \times n} \) be the Vandermonde matrix defined by \( \left(i,j\right) \mapsto x_i^j \) for \( i, j \in n \) (where \( x^0 = 1_R \) even if \( x = 0_R \)), i.e.,
+\[
+V_{\boldsymbol{x}} = \begin{pmatrix}
+1_R & x_0 & \dots & x_0^{n-1} \\
+1_R & x_1 & \dots & x_1^{n-1} \\
+\vdots & \vdots & \ddots & \vdots \\
+1_R & x_{n-1} & \dots & x_{n-1}^{n-1}
+\end{pmatrix}.
+\]
+Then:
+\[
+\operatorname{det}_R\left(V_{\boldsymbol{x}}\right) = \prod_{0 \leq i < j < n} \left(x_j - x_i\right).
+\]
+\end{lemma}
+\begin{proof}
+We proceed by induction on \( n \in \mathbb{N}_{>0} \), quantifying over all vectors \( \boldsymbol{x} \in R^n \).
+\\\\
+Base case \( n = 1 \): Let any \( \boldsymbol{x} \in R^1 \). The matrix is \( V_{\boldsymbol{x}} = \begin{pmatrix} 1_R \end{pmatrix} \). Its determinant is \( 1_R \), which matches the empty product \( \prod_{0 \leq i < j < 1} \left(x_j - x_i\right) = 1_R \).
+\\\\
+Induction step: Assume the statement holds for some \( n \in \mathbb{N}_{>0} \). We wish to prove it for \( n+1 \). Let any \( \boldsymbol{x} \in R^{n+1} \). We perform elementary column operations, which do not alter the determinant over a commutative ring. For each column index \( j \) from \( n \) down to \( 1 \), we subtract \( x_0 \) times column \( j-1 \) from column \( j \). Formally, the new columns \( C'_j \) are given by \( C'_j := C_j - x_0 C_{j-1} \) for \( j \in \llbracket 1, n \rrbracket \), and \( C'_0 := C_0 \).
+\\\\
+The entries of the new matrix \( V'_{\boldsymbol{x}} \) are:
+\[
+V'_{\boldsymbol{x}}\left(i, j\right) = 
+\begin{cases}
+1_R & \text{if } j = 0 \\
+x_i^j - x_0 x_i^{j-1} = x_i^{j-1}\left(x_i - x_0\right) & \text{if } j > 0
+\end{cases}
+\]
+In the first row (\( i = 0 \)), for \( j > 0 \), the entries are \( x_0^{j-1}\left(x_0 - x_0\right) = 0_R \). Thus, the first row is exactly \( \begin{pmatrix} 1_R & 0_R & \dots & 0_R \end{pmatrix} \).
+\\\\
+Expanding the determinant along the first row (using the Laplace expansion, which is valid over any commutative ring), we get:
+\[
+\operatorname{det}_R\left(V_{\boldsymbol{x}}\right) = \operatorname{det}_R\left(V'_{\boldsymbol{x}}\right) = \left(-1_R\right)^{0+0} \cdot \operatorname{det}_R\left(\left(V'_{\boldsymbol{x}}\right)_{(0\mid0)}\right) = \operatorname{det}_R\left(\left(V'_{\boldsymbol{x}}\right)_{(0\mid0)}\right),
+\]
+where \( \left(V'_{\boldsymbol{x}}\right)_{(0\mid0)} \in R^{n \times n} \) is the submatrix obtained by deleting row \( 0 \) and column \( 0 \).
+\\\\
+By the multilinearity of the determinant with respect to the rows, we can factor out the common scalar \( \left(x_{r+1} - x_0\right) \) from each row \( r \in n \) of \( \left(V'_{\boldsymbol{x}}\right)_{(0\mid0)} \), to obtain:
+\[
+\operatorname{det}_R\left(\left(V'_{\boldsymbol{x}}\right)_{(0\mid0)}\right) = \left( \prod_{r\in n}\left(x_{r+1} - x_0\right) \right) \operatorname{det}_R\left(V_{\boldsymbol{x}'}\right) = \left( \prod_{0<j<n+1} \left(x_{j} - x_0\right) \right) \operatorname{det}_R\left(V_{\boldsymbol{x}'}\right),
+\]
+where \( \boldsymbol{x}' \colon n \to R \) is defined by \( k \mapsto x_{k+1} \). Hence, by the induction hypothesis, \( \operatorname{det}_R\left(V_{\boldsymbol{x}'}\right) = \prod_{0 \leq i < j < n} \left(x_{j+1} - x_{i+1}\right) = \prod_{1 \leq i < j < n+1} \left(x_{j} - x_{i}\right) \).
+\\\\
+Therefore:
+\[
+\operatorname{det}_R\left(V_{\boldsymbol{x}}\right) = \left( \prod_{0<j<n+1} \left(x_{j} - x_0\right) \right) \prod_{1 \leq i < j < n+1} \left(x_{j} - x_{i}\right) = \prod_{0 \leq i < j < n+1} \left(x_j - x_i\right).
+\]
+This completes the induction step and the proof.
+\end{proof}
+\end{appendixitem}

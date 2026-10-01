@@ -237,3 +237,14 @@ test('no regex lookbehind in the page scripts (Safari before 16.4 cannot parse i
   const dir = new URL('../../site/static/js/', import.meta.url);
   for (const f of readdirSync(dir).filter(f => f.endsWith('.js'))) assert.ok(!/\(\?<[!=]/.test(readFileSync(new URL(f, dir), 'utf8')), f);
 });
+
+test('preview: the shared results the solution cites (and those they cite) get a heading at the end', () => {
+  const catalogue = [{ name: 'cauchy-group-theorem', title: "Cauchy's Theorem for Groups", cites: [] }, { name: 'field-norm', title: 'Field norm', cites: ['cauchy-group-theorem'] }];
+  const tex = P.previewMain(draft({ solution: 'By \\appendixref{field-norm}.' }), cat, {}, catalogue).tex;
+  assert.ok(tex.includes('\\end{solution}\n\\bankappendix\n\\bankappendixitem{field-norm}\n\\begin{appendixitem}{Field norm}\n'), tex);
+  assert.ok(tex.includes("\\bankappendixitem{cauchy-group-theorem}\n\\begin{appendixitem}{Cauchy's Theorem for Groups}\n"), tex);
+  assert.ok(tex.endsWith('\\end{appendixitem}\n\\end{document}\n'), tex);
+  assert.ok(!P.previewMain(draft({ solution: 'No citation, % \\appendixref{field-norm}' }), cat, {}, catalogue).tex.includes('\\bankappendix'));
+  assert.ok(!P.previewMain(draft(), cat, {}, catalogue).tex.includes('\\bankappendix'));
+  assert.ok(!P.previewMain(draft({ solution: 'By \\appendixref{unknown}.' }), cat, {}, catalogue).tex.includes('\\bankappendix'));
+});

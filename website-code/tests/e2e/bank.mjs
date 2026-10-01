@@ -335,13 +335,21 @@ try {
   check(out.s.tex.includes('\\begin{solution}') || out.s.tex.includes('\\banknosolution'), 'solutions .tex has solutions or "Not solved yet" markers');
   check(!/\\today/.test(out.p.tex + out.s.tex), 'no \\today in the generated documents');
   check(!/Selection:/.test(out.p.tex + out.s.tex), 'the cover prints no "Selection" line (no filters, no typed text)');
+  const cited = await page.evaluate(async (ids) => {                            // shared results (problem-bank/appendix/)
+    const b = await window.bank.C.loadBodies();
+    return window.bank.C.appendixOrder(ids.map(i => b[String(i).padStart(4, '0')]), window.bank.C.loadedAppendix());
+  }, out.s.ids);
+  const items = [...out.s.tex.matchAll(/^\\bankappendixitem\{([a-z0-9-]+)\}$/gm)].map(m => m[1]);
+  check(JSON.stringify(items) === JSON.stringify(cited) && !out.p.tex.includes('\\bankappendix'),
+    `the solutions PDF ends with the shared results its solutions cite (${cited.join(', ') || 'none'}), the problems PDF with none`);
   const dir = mkdtempSync(join(tmpdir(), 'bank-e2e-'));
   for (const [v, r] of [['problems', out.p], ['solutions', out.s]]) {
     const f = join(dir, `${v}.pdf`);
     writeFileSync(f, Buffer.from(r.bytes));
-    const py = spawnSync('python3', [CHECK_PDF, f, String(n20)], { encoding: 'utf8' });
+    const py = spawnSync('python3', [CHECK_PDF, f, String(n20), String(v === 'solutions' ? cited.length : 0)], { encoding: 'utf8' });
     console.log('   ' + (py.stdout || py.stderr).trim());
-    check(py.status === 0, `${v} PDF has the headings "Problem 1." … "Problem ${n20}." and prints no problem number`);
+    check(py.status === 0, `${v} PDF has the headings "Problem 1." … "Problem ${n20}."${v === 'solutions' && cited.length
+      ? ` and an Appendix A.1 … A.${cited.length}` : ''}, prints no problem number and no ?? reference`);
     check(JSON.stringify(texIds(r.tex)) === JSON.stringify(autoIds), `${v} PDF lists the problems in the automatic order`);
   }
   check((await page.locator('#bank-out-problems a', { hasText: 'Download .tex' }).count()) === 1, 'Download .tex offered');
@@ -425,9 +433,10 @@ try {
   for (const [v, bytes, tex] of [['problems', man.p, man.pt], ['solutions', man.s, man.st]]) {
     const f = join(dir2, `${v}.pdf`);
     writeFileSync(f, Buffer.from(bytes));
-    const py = spawnSync('python3', [CHECK_PDF, f, String(n20)], { encoding: 'utf8' });
+    const results = (tex.match(/^\\bankappendixitem\{/gm) || []).length;          // the same results, maybe reordered
+    const py = spawnSync('python3', [CHECK_PDF, f, String(n20), String(results)], { encoding: 'utf8' });
     console.log('   ' + (py.stdout || py.stderr).trim());
-    check(py.status === 0, `${v} PDF has its ${n20} headings and no problem number`);
+    check(py.status === 0, `${v} PDF has its ${n20} headings${results ? ` and its ${results} shared result(s)` : ''}, no problem number, no ??`);
     check(JSON.stringify(texIds(tex)) === JSON.stringify(want), `${v} PDF follows the hand-made order`);
   }
   await page.click('#bank-order-btn');

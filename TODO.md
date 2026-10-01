@@ -7,6 +7,10 @@ Open work across the repository. Tick items off (`- [x]`) or delete them when do
 - [ ] Review the 80 problems and set `review: human` on each one you accept. Until then the public site shows
       **no problems** (only `review: human` is published; `python3 build.py --preview` shows all).
 - [ ] After checking a problem's history header, set `history: human` (the AI pass set `history: ai`).
+- [ ] 0081–0087 (VJIMC 2002–2014, added 2026-09-29/30): statement **and** solution written by AI at Antoine's request
+      (see the `% AI-WRITTEN` comment in each file); review them like the others before `review: human`. Review
+      `problem-bank/appendix/cauchy-group-theorem.tex` (also AI-written) with 0085 and 0087: it is published with the first of
+      them to get `review: human`.
 
 ## Problem bank — decisions from the history pass (2026-09-22)
 
@@ -16,7 +20,10 @@ Details, sources and the full change table: [`problem-bank/history-review.md`](p
       sequence, 0018 Sutner's theorem, 0030 Minkowski's lemma, 0032 Jacobson's lemma, 0036 5/8 theorem,
       0052 Darboux-Picard theorem, 0055 100 prisoners and a light bulb, 0066 Fermat point, 0070 Perplexing polynomial puzzle.
 - [ ] **Origin rule**: first appearance of the *result* (research paper) or first time *posed as a problem*
-      (competition)? Affects 0005, 0016, 0018, 0030, 0036, 0080.
+      (competition)? Affects 0005, 0016, 0018, 0030, 0036, 0080, and 0081, 0085, 0087 (added 2026-09-30). For 0087
+      also: the full statement first appears in Alon-Bourgain's preprint (Nov 2013), but Legendre (1825, §23) already
+      proves the case of subgroups of odd prime index with the same argument. 0087 follows 0081 (origin = first paper
+      with the full statement; earlier special cases in references); 0030 took Minkowski's special case instead.
 - [ ] **New origin slugs** `paper` and `historical`: keep, or widen `journal` / use `book` instead?
 - [ ] **Folklore or first verified source**: 0045, 0048, 0053, 0055.
 - [ ] **0019**: the earliest record is Antoine's MSE post (2025) — ask the friend where the problem came from.
@@ -56,6 +63,26 @@ Details, sources and the full change table: [`problem-bank/history-review.md`](p
       someone sets `review: human`. Instead it could be listed at once with a "proposed" badge, and lose it when
       reviewed. To decide: shown to everyone, or only behind a "show proposed problems" switch (unreviewed content,
       possibly wrong). Needs the build to publish `review: none` problems in that case.
+- [ ] Raised by Spas (2026-09-28): **one broken problem blocks the whole site.** `build.py` stops at the first
+      validation or pdflatex error in any problem file (`load_and_validate` / `compile_all` call `fail()`), and the
+      deploy job needs the build, so nothing deploys, not even correct edits made later, until that file is fixed.
+      This is the repository's own build design, not a GitHub Pages limit. Idea: deploy the site without the broken
+      problems (named in the build log) while CI still shows them as failed, so they get fixed. To decide: only on
+      `main` or also for pull requests; how to report (red check, GitHub issue, note on the Problems page).
+- [x] Shared **appendix of reusable results** (Antoine, 2026-09-30; built the night of 2026-09-30, not committed):
+      `problem-bank/appendix/<name>.tex`, cited with `\appendixref{<name>}`, printed once per PDF as A.1, A.2, …
+      (see problem-bank/README.md, "Shared results"). The appendices of 0018, 0030, 0034, 0041 moved there verbatim
+      (10 results) plus Cauchy's theorem (AI-written, from 0085). Follow-ups:
+  - [ ] Gauss's Lemma (I, II, III) is cited by name in 0035 and 0041 but never stated or proved anywhere: a candidate
+        result for the library (a human writes it).
+  - [ ] Candidates found inside solutions (could become shared results): 0049 (injective continuous => monotone;
+        periodic point => fixed point; iterative square roots), 0030's footnote on Legendre's formula, the two
+        footnotes of `appendix/unipotent-finite-order.tex` (commuting nilpotents; unit + nilpotent), 0070 (uniqueness
+        of base-b expansion; evaluation at a transcendental is injective on N[X]), 0034 (definitions of real powers),
+        0031 (Simon's factoring identity).
+  - [ ] Two results have no proof: `appendix/spectral-mapping-theorem.tex` recalls the theorem without one, and
+        `appendix/gelfond-schneider-theorem.tex` says "Proof not yet written" (0034's known error). Write the proofs,
+        or cite a reference instead.
 
 ## Audit follow-ups (yours, 2026-09-23)
 

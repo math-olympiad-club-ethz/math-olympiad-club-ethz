@@ -1,0 +1,55 @@
+% Shared result, cited from solutions with \appendixref{newton-identities}.
+% Moved on 2026-09-30 from the appendix of problem 0030 (A.4 there), text unchanged: only the links to other
+% results became \appendixref.  Earlier version: spring 2025 problem set 7, solutions appendix (static/uploads/problems/spring_2025/problemset_7, commit 7bdae2b^), A.1 there.
+\begin{appendixitem}{Newton's Identities}
+    \begin{theorem}[Newton's Identities]
+        Let \( R \) be a commutative unital ring together with the canonical morphism \( \mathrm{can}_R \colon \mathbb{Z} \to R \), and write for any integer \( k \): \( k_R := \mathrm{can}_R\left(k\right) \). For positive integers \( 1\leq k \leq n \), the following identity holds over the ring \( R\left[X_0,\ldots,X_{n-1}\right] = R\left[\mathbf{X}\right] \):
+        \[
+            k_R\left(\sum_{\substack{A \in \mathscr{P}\left(n\right) \\ \left|A\right| = k}} \prod_{a \in A} X_{a}\right)
+            - \sum_{i=1}^{k} \left(-1\right)_R^{i-1} \left(\sum_{\substack{A \in \mathscr{P}\left(n\right) \\ \left|A\right| = k-i}} \prod_{a \in A} X_{a}\right)
+            \left(\sum_{j \in n} X_j^{i}\right) = 0_{R\left[\mathbf{X}\right]}.
+        \]
+    \end{theorem}
+    The following short combinatorial proof is due to Doron Zeilberger (1983).
+    \begin{proof}
+        The left hand side of the identity is equal to:
+        \begin{equation}
+            \label{eq:star}
+            \tag{*}
+            \left(\sum_{\substack{A \in \mathscr{P}\left(n\right) \\ \left|A\right| = k}} \sum_{j \in A} \left(-1\right)_R^{0}
+            \left(\prod_{a \in A} X_a\right) X_j^0\right)
+            + \left(\sum_{i=1}^{k} \sum_{\substack{A \in \mathscr{P}\left(n\right) \\ \left|A\right| = k-i}} \sum_{j \in n} \left(-1\right)_R^{i}
+            \left(\prod_{a \in A} X_a\right) X_j^i\right).
+        \end{equation}
+        We establish the identity by defining a sign-reversing involution on a combinatorial structure.
+        \\\\
+        Define the set of \( 3 \)-tuples:
+        \[
+            \mathcal{A}\left(n, k\right) := \left\{ \left\langle A, j, i \right\rangle \,\middle|\,
+            \begin{array}{l}
+                A \in \mathscr{P}\left(n\right),\ \left|A\right| \leq k,\ j \in n,\ i = k - \left|A\right|,\ \\
+                \text{and if } i = 0 \text{ then } j \in A
+            \end{array}
+            \right\}.
+        \]
+        The \emph{weight} \( w \colon \mathcal{A}\left(n, k\right) \rightarrow R\left[\mathbf{X}\right] \) is defined by
+        \( \left\langle A, j, i \right\rangle \mapsto \left(-1\right)_R^{i} \left(\prod_{a \in A} X_a\right) X_j^i \in R\left[\mathbf{X}\right] \setminus \left\{0_{R\left[\mathbf{X}\right]}\right\} \).
+        The sum of the weights of all elements in \( \mathcal{A}\left(n, k\right) \), namely \( \sum_{e \in \mathcal{A}\left(n, k\right)} w\left(e\right) \), is readily seen to be equal to \hyperref[eq:star]{(*)}. To show this sum is zero, define the function \( T \colon \mathcal{A}\left(n, k\right) \to \mathcal{A}\left(n, k\right) \) as:
+        \[
+            T\left(\left\langle A, j, i \right\rangle\right) =
+            \begin{cases}
+                \left\langle A \setminus \left\{j\right\}, j, i + 1 \right\rangle, & \text{if } j \in A,    \\
+                \left\langle A \cup \left\{j\right\}, j, i - 1 \right\rangle,      & \text{if } j \notin A.
+            \end{cases}
+        \]
+        With a mental exercise, we see that \( T \) is well defined and satisfies:
+        \[
+            w \circ T = -w, \quad T \circ T = \mathrm{id}_{\mathcal{A}\left(n, k\right)}.
+        \]
+        Thus, every element \( \left\langle A, j, i \right\rangle \) uniquely pairs with its image under \( T \) (since it is an involution (which has no fixed point)) and their weights cancel. Hence, the total sum is zero. Formally\footnote{Any involution \( \tau \) on a set \( S \) induces a relation on \( S \): \( \sim_{\tau} \subset S \times S \) defined by \( x \sim y \Leftrightarrow y = \tau\left(x\right) \). This is an equivalence relation and the equivalence class of \( x \in S \) is \( \left[x\right]_{\sim_{\tau}} = \left\{x, \tau\left(x\right)\right\} \) (which can have size \( 1 \) if \( x \) is a fixed point of \( \tau \)). Recall that the set of equivalence classes partitions \( S \). This implies (for an arbitrary set by the axiom of choice) (for a finite set by induction) that \( \exists P \subset S \) with \( S = \bigsqcup_{p \in P} \left[p\right]_{\sim_{\tau}} \).} \( \exists P \subset \mathcal{A}\left(n, k\right) \) such that \( \mathcal{A}\left(n, k\right) = \bigsqcup_{p \in P} \left\{p, T\left(p\right)\right\} \) (and for each \( p \in P \), the set \( \left\{p, T\left(p\right)\right\} \) has size \( 2 \)) so that:
+        \[
+            \sum_{e \in \mathcal{A}\left(n, k\right)} w\left(e\right) = \sum_{p \in P} \left(w\left(p\right) + w\left(T\left(p\right)\right)\right) = \sum_{p \in P} \left(w\left(p\right) - w\left(p\right)\right) = \sum_{p \in P} 0_{R\left[\mathbf{X}\right]} = 0_{R\left[\mathbf{X}\right]}
+        \]
+        (even if \( T \) had a fixed point the equation \( w \circ T = -w \) would imply that the weight of it is \( 0_{R\left[\mathbf{X}\right]} \) so it wouldn't matter).
+    \end{proof}
+\end{appendixitem}

@@ -216,8 +216,10 @@ const FIELD_INPUT = { title: 'pp-title', statement: 'pp-statement', solution: 'p
   difficulty: 'pp-difficulty', origin: 'pp-origin', originDate: 'pp-origin-date', originNumber: 'pp-origin-number', bibtex: 'pp-bibtex' };
 const REQUIRED = new Set(['Write the problem statement (required).', 'Pick at least one area (required).']);
 
+const appendixCatalogue = Array.isArray(data.appendix) ? data.appendix : [];   // shared results: [{name, title, cites, labels}]
+
 function currentErrors(draft) {
-  return P.validateDraft(draft, cat, state.bib ? Object.keys(state.bib) : null);
+  return P.validateDraft(draft, cat, state.bib ? Object.keys(state.bib) : null, appendixCatalogue);
 }
 
 let shownErrorsKey = null;
@@ -330,7 +332,7 @@ function markIfStale() {
 /* The preview document of the draft now in the form, or null when there is nothing to compile. */
 function currentPreview() {
   const d = readDraft();
-  return d.statement.trim() ? { d, ...P.previewMain(d, cat, state.bib || {}) } : null;
+  return d.statement.trim() ? { d, ...P.previewMain(d, cat, state.bib || {}, appendixCatalogue) } : null;
 }
 
 function clearPreview() {

@@ -4,8 +4,8 @@ build.
     python3 tests/python/check_public_build.py [--site site]
 
 Exit 1 with one line per problem if the site holds more (or less) than the rule "only review: human problems with a
-final number" allows: index.json, bodies.json and figures/ must hold exactly those problems, the pages must embed the
-public index, and the engine bundle must be complete.
+final number" allows: index.json, bodies.json and figures/ must hold exactly those problems and the shared results
+their solutions cite (bank/appendix.py), the pages must embed the public index, and the engine bundle must be complete.
 """
 import argparse
 import json
@@ -14,13 +14,16 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))   # website-code/
 sys.path.insert(0, ROOT)
+from bank import appendix as A  # noqa: E402
 from bank import paths  # noqa: E402
 from bank import problems as P  # noqa: E402
 from bank.data import visible_problems  # noqa: E402
+from bank.validate import problem_cites  # noqa: E402
 
 
-def check(site_dir, problems):
-    """[message] for every way `site_dir` differs from the public build of `problems` (parsed problem files)."""
+def check(site_dir, problems, items=()):
+    """[message] for every way `site_dir` differs from the public build of `problems` (parsed problem files) and the
+    shared results `items` (bank/appendix.py::load_items)."""
     errors = []
     bank = os.path.join(site_dir, "static", "bank")
 
@@ -55,14 +58,21 @@ def check(site_dir, problems):
     if bodies is not None:
         if bodies.get("build") and '"build":"%s"' % bodies["build"] not in html:
             errors.append("problems.html and static/bank/bodies.json come from different builds")
+        appendix = bodies.get("appendix") or {}
         bodies = bodies.get("problems", {})
         if sorted(bodies) != [f"{i:04d}" for i in want]:
             errors.append(f"static/bank/bodies.json holds {sorted(bodies)}, the published problems are {want}")
-        used = {name for b in bodies.values() for name in (b.get("figures") or {})}
+        published = [p for p in visible_problems(problems, preview=False)]
+        cites_of = {it["name"]: it["cites"] for it in items if it["name"]}
+        want_results = sorted(A.closure([n for p in published for n in problem_cites(p)], cites_of))
+        if sorted(appendix) != want_results:
+            errors.append(f"static/bank/bodies.json holds the shared results {sorted(appendix)}, the published problems "
+                          f"cite {want_results}")
+        used = {name for b in list(bodies.values()) + list(appendix.values()) for name in (b.get("figures") or {})}
         fig_dir = os.path.join(bank, "figures")
         present = set(os.listdir(fig_dir)) if os.path.isdir(fig_dir) else set()
         if present - used:
-            errors.append(f"static/bank/figures/ holds figures of no published problem: {sorted(present - used)}")
+            errors.append(f"static/bank/figures/ holds figures of no published problem or shared result: {sorted(present - used)}")
         if used - present:
             errors.append(f"static/bank/figures/ misses {sorted(used - present)}")
     for name in ("tags.json", "preamble.tex", "references.bib"):
@@ -90,7 +100,7 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--site", default=paths.SITE_DIR)
     a = ap.parse_args(argv)
-    errors = check(a.site, P.load_problems(paths.PROBLEMS_DIR))
+    errors = check(a.site, P.load_problems(paths.PROBLEMS_DIR), A.load_items())
     for msg in errors:
         print(f"public build: {msg}")
     n = len(visible_problems(P.load_problems(paths.PROBLEMS_DIR)))

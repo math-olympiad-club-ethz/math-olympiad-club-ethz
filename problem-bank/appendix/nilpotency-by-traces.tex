@@ -1,0 +1,51 @@
+% Shared result, cited from solutions with \appendixref{nilpotency-by-traces}.
+% Moved on 2026-09-30 from the appendix of problem 0030 (A.3 there), text unchanged: only the links to other
+% results became \appendixref.  Earlier version: none in git before the problem bank (2026 PDF of problem set 7).
+\begin{appendixitem}{Nilpotency and traces of powers}
+\begin{lemma} 
+For $r \in \mathbb{N}_{>0}$ and any field $\mathbb{F}$ such that $\operatorname{char}\left(\mathbb{F}\right) = 0$ or $\operatorname{char}\left(\mathbb{F}\right) > r$, let $M \in \mathbb{F}^{r \times r}$ be a matrix. The following are equivalent:
+\begin{enumerate}
+    \item $M^r = \mathbf{0}_{r \times r}$,
+    \item $M$ is nilpotent,
+    \item $\sigma\left(M\right) = \left\{0_{\mathbb{F}}\right\}$ where $\sigma\left(M\right) := \operatorname{Root}_{P_{\text{char}, M}\left(X\right)}\left(\mathbb{F}^{\text{alg}}\right)$,
+    \item $\forall k \in \mathbb{N}_{>0}, \operatorname{tr}\left(M^k\right) = 0_{\mathbb{F}}$,
+    \item $\exists t \in \mathbb{N}, \forall k \in \llbracket 1, r \rrbracket, \operatorname{tr}\left(M^{t+k}\right) = 0_{\mathbb{F}}$.
+\end{enumerate}
+One cannot reduce the set of powers for which the trace is $0_{\mathbb{F}}$ to an arbitrary set $S \subset \mathbb{N}_{>0}$ of size $r$. If $\operatorname{char}\left(\mathbb{F}\right) \neq 0$, then one cannot relax the requirement that $\operatorname{char}\left(\mathbb{F}\right) > r$.
+\end{lemma}
+
+\begin{proof}
+For the equivalences, it suffices to prove that each statement $i.$ implies $i+1.$ (for $i \in \left\{ 1, 2, 3, 4\right\}$) and that 5. implies 1.
+\\\\
+$1. \Rightarrow 2.$: This is trivial as $r > 0$ so it satisfies the definition of being nilpotent (in the ring $\mathbb{F}^{r \times r}$).
+\\\\
+$2. \Rightarrow 3.$: Let $k \in \mathbb{N}_{>0}$ be the index of nilpotency of $M$ (we could take any power $t \in \mathbb{N}_{>0}$ that satisfies $M^{t} = \mathbf{0}_{r \times r}$). Any $\lambda \in \sigma\left(M\right)$ must (standard) satisfy the equation $\lambda^k = 0_{\mathbb{F}}$. Since $\mathbb{F}$ is a domain and $k > 0$, this implies that $\lambda = 0_{\mathbb{F}}$ thus $\sigma\left(M\right) = \left\{0_{\mathbb{F}}\right\}$ (because $\sigma\left(M\right) \neq \varnothing$).
+\\\\
+$3. \Rightarrow 4.$: Let $\boldsymbol{\lambda} \in \left(\mathbb{F}^{\text{alg}}\right)^r$ be any vector (the order in this vector doesn't matter) of exactly all the eigenvalues of $M$ counted with their respective algebraic multiplicities. By the Spectral Mapping Theorem [\appendixref{spectral-mapping-theorem}] one has that for all $k \in \mathbb{N}_{>0}$:
+$$\operatorname{tr}\left(M^k\right) = \sum_{i \in r} \lambda_i^k.$$
+Because $\sigma\left(M\right) = \left\{0_{\mathbb{F}}\right\}$, we must have $\operatorname{ran}\left(\boldsymbol{\lambda}\right) = \left\{0_{\mathbb{F}}\right\}$. Hence (as $k > 0$), $\operatorname{tr}\left(M^k\right) = \sum_{i \in r} 0_{\mathbb{F}} = 0_{\mathbb{F}}$.
+\\\\
+$4. \Rightarrow 5.$: This is trivial (use $t = 0$).
+\\\\
+To finish, we need to show that $5. \Rightarrow 1.$. Now, notice that $3. \Rightarrow 1.$: indeed, the characteristic polynomial has degree $r$, so $P_{\text{char}, M}\left(X\right) = \prod_{\lambda \in \sigma\left(M\right)} \left(X - \lambda\right)^{m_{P_{\text{char}, M}\left(X\right)}\left(\lambda\right)} \overset{\sigma\left(M\right)=\left\{0_{\mathbb{F}}\right\}}{=} X^r$. We have by the Cayley-Hamilton theorem (valid over any field) that $M^r = \mathbf{0}_{r \times r}$. Hence $1.\Leftrightarrow 3.$, and so it suffices, in fact, to show $5.\Rightarrow 3.$. This relies on the lemma [\appendixref{vanishing-power-sums}]. Let $\boldsymbol{\lambda} \in \left(\mathbb{F}^{\text{alg}}\right)^r$ be any vector (the order in this vector doesn't matter) of exactly all the eigenvalues of $M$ counted with their respective algebraic multiplicities. By the Spectral Mapping Theorem [\appendixref{spectral-mapping-theorem}], for all $k \in \mathbb{N}_{\geq 1}$, $\operatorname{tr}\left(M^k\right) = \sum_{i \in r} \lambda_i^k$. Hence if there exists $t \in \mathbb{N}$ such that $\forall k \in \llbracket 1, r \rrbracket, \operatorname{tr}\left(M^{t+k}\right) = 0_{\mathbb{F}}$, then by our lemma [\appendixref{vanishing-power-sums}], we have $\forall i \in r, \lambda_i = 0_{\mathbb{F}}$. Hence $\sigma\left(M\right) = \left\{0_{\mathbb{F}}\right\}$ (since $\sigma\left(M\right) \neq \varnothing$).
+\\\\
+To show that a general set of powers $S \subset \mathbb{N}_{>0}$ of size equal to the dimension of the matrix does not suffice:
+\\\\
+Let $r=3$ and consider the field $\mathbb{C}$. Let $\omega = e^{2\pi i / 3}$ be a primitive third root of unity, and define the diagonal matrix:
+$$M = \begin{pmatrix} 1 & 0 & 0 \\ 0 & \omega & 0 \\ 0 & 0 & \omega^2 \end{pmatrix}$$
+The eigenvalues of $M$ are $1, \omega,$ and $\omega^2$. Since none are zero, $M$ is not nilpotent. However, if we look at the non-consecutive set of powers $S = \left\{1, 2, 4\right\}$ (note $\left|S\right| = 3 = r$), we find (because $X^3-1 = \left(X-1\right)\left(X^2+ X + 1\right)$):
+\begin{itemize}
+    \item $\operatorname{tr}\left(M^1\right) = 1 + \omega + \omega^2 = 0$
+    \item $\operatorname{tr}\left(M^2\right) = 1^2 + \omega^2 + \omega^4 = 1 + \omega^2 + \omega = 0$
+    \item $\operatorname{tr}\left(M^4\right) = 1^4 + \omega^4 + \omega^8 = 1 + \omega + \omega^2 = 0$
+\end{itemize}
+Thus, $r$ distinct and strictly positive powers can all have zero trace without the matrix being nilpotent.
+\\\\
+To show that the characteristic must be $0$ or strictly greater than $r$:
+\\\\
+Let $p$ be a prime and consider the field $\mathbb{F}_p$. Now take $r=p$ and take the identity matrix $I_r$. Then $I_r$ is not nilpotent since $I_r^k = I_r \neq \mathbf{0}_{r \times r}$. However, $\operatorname{tr}\left(I_r^k\right) = \operatorname{tr}\left(I_r\right) = \sum_{i\in r}1_{\mathbb{F}_p} = 0_{\mathbb{F}_p}$ (because $r=p$ and we are in characteristic $p$).
+\end{proof}
+\begin{remark}
+Although one cannot use any set of $r$ distinct powers for which the trace is \(0_{\mathbb{F}}\), one can still apply this theorem in certain other special cases. One example is that for any \(l \in \mathbb{N}_{>0}\) and \(t\in\mathbb{N}\), the \(r\) distinct powers \(\left\{ l\cdot \left(t+k\right) \,\middle|\, k \in \llbracket1,r\rrbracket \right\}\) suffice: simply apply the theorem to \(M^l\) to deduce that \(M^l\) is nilpotent and hence \(M\) is nilpotent.
+\end{remark}
+\end{appendixitem}

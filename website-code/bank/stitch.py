@@ -1,9 +1,10 @@
 """Stitch problem bodies for the in-browser (BusyTeX / pdfTeX-in-WebAssembly) compile.
 
-CI side.  Reads problems/NNNN-title.tex and writes
+CI side.  Reads problems/NNNN-title.tex (and the shared results appendix/<name>.tex) and writes
 
-    site/static/bank/bodies.json          {"NNNN": {statement, solution|null, figures, title, origin, ...}}
-    site/static/bank/figures/figNNNN-k.pdf externalised TikZ / tikz-cd / pgfplots pictures
+    site/static/bank/bodies.json          {"build", "problems": {"NNNN": {statement, solution|null, cites, figures, title,
+                                           origin, ...}}, "appendix": {name: {title, text, cites, figures}}}
+    site/static/bank/figures/figNNNN-k.pdf externalised TikZ / tikz-cd / pgfplots pictures (figa-<name>-k.pdf: results)
 
 Per body it (1) strips the header comments, (2) namespaces every \\label / \\ref / \\eqref / \\cref /
 \\Cref / \\pageref / \\autoref / \\nameref / \\hyperref[..] key as pNNNN:key (duplicate labels exist across
@@ -11,7 +12,9 @@ problems), (3) externalises every tikzpicture / tikzcd block: compiled standalon
 pdflatex (author-mode preamble + preview, tightpage), cached by content hash, and replaced by
 \\includegraphics{figNNNN-k.pdf}; (4) pre-resolves citations from references.bib and the problem's own
 bibentries block (bank/bib.py): \\cite{a,b} becomes [1, 2] and a problemreferences list is appended
-(statement citations after the statement, the rest after the solution); \\printbibliography / \\nocite are dropped.
+(statement citations after the statement, the rest after the solution); \\printbibliography / \\nocite are dropped;
+(5) records the shared results the solution cites (bank/appendix.py, "cites").  build_appendix does the same for the
+shared results of problem-bank/appendix/ (bodies.json "appendix"); make_main appends the cited ones to a solutions PDF.
 
 The same module generates the stitched main.tex (make_main) that the browser compiles against the
 precompiled format club.fmt (the format already contains \\documentclass + the STITCHED preamble):
@@ -33,6 +36,7 @@ import tempfile
 from bank import paths  # noqa: E402  (bank/ is importable: python3 -m bank.stitch from website/)
 sys.path.insert(0, paths.WEBSITE)
 from bank import problems as P  # noqa: E402
+from bank import appendix as A  # noqa: E402
 from bank.bib import CITE_RE, DROP_RE, bib_block, format_entry, parse_bib, parse_bib_text  # noqa: E402,F401
 
 CLUB_NAME = "Math Olympiad Club ETHZ"
@@ -71,9 +75,11 @@ TARGET_CMDS = ("label", "hypertarget")          # the rest of REF_CMDS refer to 
 
 
 def namespace_labels(tex, prefix):
+    """Prefix every label key with `prefix`:.  Keys of the shared results (appendix:<name>...) are global: a solution
+    refers to them by their full name, so they are left as written."""
     def keys(s):
-        return ",".join(k if not k.strip() or k.strip().startswith(prefix + ":") else f"{prefix}:{k.strip()}"
-                        for k in s.split(","))
+        return ",".join(k if not k.strip() or k.strip().startswith(prefix + ":") or k.strip().startswith(A.LABEL_PREFIX)
+                        else f"{prefix}:{k.strip()}" for k in s.split(","))
     tex = LABEL_RE.sub(lambda m: f"\\{m.group(1)}{m.group(2)}{m.group(3) or ''}{{{keys(m.group(4))}}}", tex)
     tex = RANGE_RE.sub(lambda m: f"\\{m.group(1)}{m.group(2)}{{{keys(m.group(3))}}}{{{keys(m.group(4))}}}", tex)
     tex = HYPERREF_RE.sub(lambda m: f"\\hyperref[{keys(m.group(1))}]", tex)
@@ -246,7 +252,8 @@ def _local_pdflatex(doc, workdir, jobname):
 
 
 def externalise_figures(tex, pid, fig_dir, cache_dir, counter, log):
-    """Replace every tikz block by \\includegraphics{figNNNN-k.pdf}; returns (tex, {name: info})."""
+    """Replace every tikz block by \\includegraphics{fig<pid>-k.pdf} (figNNNN-k.pdf, or figa-<name>-k.pdf for a shared
+    result); returns (tex, {name: info})."""
     figures = {}
     spans = find_figures(tex)
     if not spans:
@@ -341,6 +348,7 @@ def bank_sources(problems, tags):
         methods = [tags["methods"][m]["name"] for m in p["methods"] if m in tags["methods"]] if tags else list(p["methods"])
         out.append({"id": f"{p['id']:04d}", "title": p["title"], "origin": P.origin_label(p, tags) if tags else _raw_origin(p),
                     "status": p["status"], "methods": methods, "statement": statement, "solution": solution,
+                    "cites": A.cited_names(solution) if solution is not None else [],
                     "bibtex": bib_block(p["body"]), "source": p["file"]})
     return out
 
@@ -386,12 +394,39 @@ def build_bodies(source, out_dir, ids=None, log=print):
         bodies[pid] = {"id": pid, "title": p["title"], "origin": p["origin"], "status": p["status"],
                        "methods": list(p.get("methods") or []),
                        "solved": solution is not None and p["status"] != "partial",
-                       "statement": statement, "solution": solution, "figures": figs}
+                       "statement": statement, "solution": solution, "cites": list(p.get("cites") or []), "figures": figs}
         stats["problems"] += 1
         stats["figures"] += len(figs)
         stats["citations"] += ncite
         stats["solutions"] += solution is not None
     return bodies, stats
+
+
+def build_appendix(items, names, out_dir, log=print):
+    """The shared results `names` (see bank/appendix.py) as the browser needs them: {name: {name, title, text, cites,
+    figures}}, sorted by name.  Like a problem body: its own labels namespaced as a-<name>:key (the global ones,
+    appendix:<name>:key, stay as written), TikZ externalised to figures/figa-<name>-k.pdf, citations pre-resolved with a
+    reference list at the end of the result."""
+    bib = parse_bib(paths.BIB_FILE)
+    fig_dir = os.path.join(out_dir, "figures")
+    cache_dir = os.path.join(paths.CACHE_DIR, "figures")
+    by_name = {it["name"]: it for it in items}
+    out, stats = {}, {"results": 0, "figures": 0, "citations": 0}
+    for name in sorted(names):
+        it = by_name[name]
+        text = namespace_labels(it["text"], A.LOCAL_PREFIX + name)
+        try:
+            text, figs = externalise_figures(text, "a-" + name, fig_dir, cache_dir, [0], log)
+        except RuntimeError as err:
+            raise RuntimeError(f"{it['file']}: a TikZ figure does not compile on its own "
+                               f"(definitions it needs must come before it in the same block):\n{err}") from None
+        own = parse_bib_text(it.get("bibtex") or "")
+        text, _, ncite = resolve_citations(text, None, {**bib, **own} if own else bib, log, name)
+        out[name] = {"name": name, "title": it["title"], "text": text, "cites": list(it["cites"]), "figures": figs}
+        stats["results"] += 1
+        stats["figures"] += len(figs)
+        stats["citations"] += ncite
+    return out, stats
 
 
 # ----------------------------------------------------------------------------------------------
@@ -402,10 +437,12 @@ def tex_escape(s):
     return re.sub(r"(?<!\\)([&%$#_])", r"\\\1", s)
 
 
-def make_main(bodies, ids, variant="problems", filters="", standalone=False, show_methods=False):
+def make_main(bodies, ids, variant="problems", filters="", standalone=False, show_methods=False, appendix=None):
     """The document the browser compiles, problems in the order of `ids` (the page decides the order).
     With standalone=False it starts at \\begin{document}
-    (\\documentclass + stitched preamble live in club.fmt); standalone=True adds them (plain pdflatex)."""
+    (\\documentclass + stitched preamble live in club.fmt); standalone=True adds them (plain pdflatex).
+    appendix: the shared results ({name: entry}, bodies.json "appendix"); a solutions PDF whose solutions cite some
+    ends with them (bank/appendix.py::appendix_order).  A PDF that cites none is the same as without `appendix`."""
     assert variant in ("problems", "solutions")
     sel = [bodies[f"{i:04d}"] for i in ids if f"{i:04d}" in bodies]
     out = []
@@ -435,6 +472,13 @@ def make_main(bodies, ids, variant="problems", filters="", standalone=False, sho
                     out.append(r"\banknosolution")
             else:
                 out.append(r"\banknosolution")
+    order = A.appendix_order(sel, appendix) if variant == "solutions" and appendix else []
+    if order:
+        out.append(r"\bankappendix")
+        for name in order:
+            a = appendix[name]
+            out += [r"\bankappendixitem{%s}" % name, r"\begin{appendixitem}{%s}" % tex_escape(a["title"]), a["text"],
+                    r"\end{appendixitem}"]
     out.append(r"\end{document}")
     return "\n".join(out) + "\n"
 
@@ -482,18 +526,22 @@ def main(argv=None):
         source = load_bank_problems(a.problems_dir, _load_tags())
         ids = set(parse_ids(a.ids, [int(p["id"]) for p in source]))
         bodies, stats = build_bodies(source, a.out, ids)
+        items = A.load_items()
+        cites = {it["name"]: it["cites"] for it in items if it["name"]}
+        appendix, astats = build_appendix(items, A.closure([n for b in bodies.values() for n in b["cites"]], cites), a.out)
         os.makedirs(a.out, exist_ok=True)
-        payload = {"meta": {"count": len(bodies), "source": "problems/", **stats},
-                   "problems": bodies}
+        payload = {"meta": {"count": len(bodies), "source": "problems/", **stats, "appendix": astats},
+                   "problems": bodies, "appendix": appendix}
         path = os.path.join(a.out, "bodies.json")
         with open(path, "w", encoding="utf-8") as f:
             json.dump(payload, f, ensure_ascii=False, indent=0, sort_keys=True)
-        print(f"wrote {path}: {stats}")
+        print(f"wrote {path}: {stats}, appendix {astats}")
         return 0
     with open(a.bodies, encoding="utf-8") as f:
-        bodies = json.load(f)["problems"]
+        data = json.load(f)
+    bodies = data["problems"]
     ids = parse_ids(a.ids, [int(k) for k in bodies])
-    sys.stdout.write(make_main(bodies, ids, a.variant, a.filters, a.standalone, a.show_methods))
+    sys.stdout.write(make_main(bodies, ids, a.variant, a.filters, a.standalone, a.show_methods, data.get("appendix")))
     return 0
 
 

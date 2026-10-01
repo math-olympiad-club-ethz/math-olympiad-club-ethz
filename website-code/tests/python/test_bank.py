@@ -11,6 +11,7 @@ import unittest
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))   # website-code/
 sys.path.insert(0, ROOT)
+from bank import appendix as A  # noqa: E402
 from bank import paths  # noqa: E402
 from bank import problems as P  # noqa: E402
 from bank import number  # noqa: E402
@@ -418,12 +419,19 @@ class UnsafeTeX(unittest.TestCase):
                 r"\includegraphics{/tmp/x.pdf}", r"\openin1=/etc/passwd", r"\read1 to\x", r"\immediate\write18{ls}", r"\write\x{y}",
                 r"\verbatiminput{x}", r"\lstinputlisting{x}", r"\today", r"\the\year", r"\the\time", r"\pdfuniformdeviate 100",
                 r"\pdfsetrandomseed 1", r"\pdffiledump length 10 {/etc/passwd}", r"\citeauthor{solomon1967Hurwitz}",
-                r"\fullcite{solomon1967Hurwitz}", r"\cites{a}{b}"]
+                r"\fullcite{solomon1967Hurwitz}", r"\cites{a}{b}",
+                # shared results live in problem-bank/appendix/ (bank/appendix.py); a statement never cites one
+                r"\appendix", r"\begin{appendixitem}{X} y \end{appendixitem}", r"\appendixref{cauchy-group-theorem}",
+                r"\eqref{appendix:field-norm:A.2.3}", r"\appendixref", r"\bankappendixitem{x}", r"\appendixitem x",
+                r"\setcounter{bankappendixitem}{5}", r"\addtocounter{ bankappendixitem }{1}", r"\label{appendix:x}",
+                # a reference to a label that is not set in the file prints ??
+                r"See \ref{nowhere}."]
     ACCEPTED = [r"\newcommand{\R}{\mathbb{R}}", r"\renewcommand{\phi}{\varphi}", r"\DeclareRobustCommand{\x}{y}",
                 r"$a \times b \leq \left( c \right) \deg f \det A$", r"\begin{align*} x \end{align*}", r"\begin{enumerate}[label=(\alph*)]\item x\end{enumerate}",
                 r"\setcounter{enumi}{2}", r"\definecolor{c}{rgb}{1,0,0}", r"\href{https://en.wikipedia.org/wiki/Legendre%27s_formula}{L}",
                 r"\cite*{solomon1967Hurwitz}", r"\parencite[p.~3]{solomon1967Hurwitz}", r"\nocite{solomon1967Hurwitz}",
-                r"\label{a} \ref{a} \hyperref[a]{x}", r"\EndIf \EndWhile", r"\appendix", r"\footnote{x}", r"\@."]
+                r"\label{a} \ref{a} \hyperref[a]{x}", r"\EndIf \EndWhile", r"\footnote{x}", r"\@.",
+                r"% \appendix and \appendixref{x} in a comment"]
 
     def test_rejected(self):
         for snippet in self.REJECTED:
@@ -442,9 +450,14 @@ class UnsafeTeX(unittest.TestCase):
 
     def test_every_problem_of_the_bank_passes(self):
         probs = P.load_problems(paths.PROBLEMS_DIR)
+        cat = A.catalogue(A.load_items())
         for p in probs:
-            P.validate(p, TAGS, BIB_KEYS)
+            P.validate(p, TAGS, BIB_KEYS, cat)
         self.assertEqual([(p["file"], p["errors"]) for p in probs if p["errors"]], [])
+
+    def test_every_shared_result_of_the_bank_passes(self):
+        from bank.validate import appendix_errors
+        self.assertEqual(appendix_errors(A.load_items(), BIB_KEYS), [])
 
     @unittest.skipUnless(shutil.which("pdflatex"), "needs pdflatex")
     def test_ci_pdflatex_cannot_read_outside_its_folder(self):
@@ -639,6 +652,183 @@ class NumberingInGit(unittest.TestCase):
         self.assertEqual(self.git("diff", "--cached", "--name-only"), "")
 
 
+def item_probe(files):
+    """Parse the result files {name.tex: text} in a temporary folder and validate them against each other."""
+    from bank.validate import appendix_errors
+    with tempfile.TemporaryDirectory() as d:
+        for name, text in files.items():
+            with open(os.path.join(d, name), "w", encoding="utf-8") as f:
+                f.write(text)
+        items = A.load_items(d)
+        cat = A.catalogue(items)
+        for it in items:
+            A.validate_item(it, BIB_KEYS, cat)
+        return {it["file"]: it for it in items}, A.cycle_errors(items), A.stray_files(d)
+
+
+RESULT = "%% A shared result\n\\begin{appendixitem}{%s}\n%s\n\\end{appendixitem}\n"
+
+
+class SharedResults(unittest.TestCase):
+    """problem-bank/appendix/: results written once, cited from solutions with \\appendixref (bank/appendix.py)."""
+
+    def test_citations_in_text_order_without_comments(self):
+        tex = ("See \\appendixref{b-result} % \\appendixref{hidden}\n and \\eqref{appendix:a-result:eq} then "
+               "\\appendixref {a-result}, \\appendixref{b-result}, \\ref{appendix:c-result} \\appendixref{Bad Name} \\appendixref x")
+        # only \appendixref cites (a reference to a label of a result needs its \appendixref next to it: check_text)
+        self.assertEqual(A.cited_names(tex), ["b-result", "a-result"])
+        self.assertEqual([t for _, t in A.malformed_refs(tex)], ["\\appendixref{Bad Name}", "\\appendixref"])
+        self.assertEqual(A.ref_name("appendix:x-y:eq:1"), "x-y")
+        self.assertIsNone(A.ref_name("appendix:X"))
+        self.assertIsNone(A.ref_name("p0001:appendix:x"))
+
+    def test_a_good_result_file(self):
+        items, cycles, stray = item_probe({
+            "alpha.tex": RESULT % ("Alpha Result", "\\begin{theorem}\\label{thm} A, by \\appendixref{beta} and \\cite{mckay1959cauchy}."
+                                   "\\end{theorem}\n\\begin{equation}\\label{appendix:alpha:eq} x\\end{equation}"),
+            "beta.tex": RESULT % ("Beta", "B. \\begin{tikzpicture}\\draw (0,0) -- (1,1);\\end{tikzpicture}"),
+            "_template.tex": "whatever", "alpha.pdf": "%PDF"})
+        self.assertEqual({f: messages(it) for f, it in items.items()}, {"alpha.tex": [], "beta.tex": []})
+        self.assertEqual((cycles, stray), ([], []))
+        a = items["alpha.tex"]
+        self.assertEqual((a["name"], a["title"], a["cites"]), ("alpha", "Alpha Result", ["beta"]))
+        self.assertTrue(a["text"].startswith("\\begin{theorem}") and a["text"].endswith("\\end{equation}"))
+
+    def test_result_file_errors(self):
+        items, cycles, stray = item_probe({
+            "Bad_Name.tex": RESULT % ("T", "x"),
+            "no-title.tex": "\\begin{appendixitem}\nx\n\\end{appendixitem}\n",
+            "outside.tex": RESULT % ("T", "x") + "stray text\n",
+            "self.tex": RESULT % ("T", "\\appendixref{self} \\appendixref{nowhere} \\cite{nokey} \\def\\x{y}"),
+            "labels.tex": RESULT % ("T", "\\label{appendix:other:k} \\tikz \\draw (0,0);"),
+            "blocks.tex": "\\begin{problem}\nx\n\\end{problem}\n",
+            "two.tex": RESULT % ("T", "x") + RESULT % ("U", "y"),
+            "title.tex": RESULT % ("√2 and a very long title with far too many words", "x"),
+            "notes.txt": "x"})
+        m = {f: " | ".join(messages(it)) for f, it in items.items()}
+        self.assertIn("file name must be the result's name", m["Bad_Name.tex"])
+        self.assertIn("the title must be plain text in braces right after the block marker", m["no-title.tex"])
+        self.assertIn("text outside the appendixitem", m["outside.tex"])
+        for what in ("does not cite itself", "unknown result 'nowhere'", "'nokey'", "\\def"):
+            self.assertIn(what, m["self.tex"])
+        self.assertIn("label 'appendix:other:k'", m["labels.tex"])
+        self.assertIn("inline \\tikz", m["labels.tex"])
+        self.assertIn("must not contain a problem block", m["blocks.tex"])
+        self.assertIn("one block", m["two.tex"])
+        self.assertIn("cannot be printed", m["title.tex"])
+        self.assertIn("title has 11 words", m["title.tex"])
+        self.assertEqual([p.endswith("notes.txt") for p, _, _ in stray], [True])
+
+    def test_cycles_are_reported(self):
+        _, cycles, _ = item_probe({"a.tex": RESULT % ("A", "x\n\\appendixref{d} \\appendixref{b}"), "b.tex": RESULT % ("B", "\\appendixref{c}"),
+                                   "c.tex": RESULT % ("C", "\\appendixref{a}"), "d.tex": RESULT % ("D", "y")})
+        self.assertEqual([m for _, _, m in cycles], ["results cite each other in a circle: a -> b -> c -> a"])
+        self.assertEqual([(os.path.basename(p), l) for p, l, _ in cycles], [("a.tex", 4)])     # the \appendixref{b} line
+
+    def test_problems_cite_results_only_from_the_solution(self):
+        body = "\\begin{problem}\nS\n\\end{problem}\n\\begin{solution}\nBy \\appendixref{known} and \\eqref{appendix:known:eq}.\n\\end{solution}\n"
+        self.assertEqual(messages(probe(body)), [])                               # names not checked
+        cat = {"known": {"appendix:known", "appendix:known:eq"}}
+
+        def check(text):
+            with tempfile.TemporaryDirectory() as d:
+                path = os.path.join(d, "new-probe.tex")
+                with open(path, "w", encoding="utf-8") as f:
+                    f.write(HEADER + text)
+                p = P.parse_problem_file(path)
+                P.validate(p, TAGS, BIB_KEYS, cat)
+                return p
+
+        self.assertEqual(messages(check(body)), [])
+        p = check(body.replace("\\appendixref{known}", "\\appendixref{unknown}"))
+        self.assertEqual(messages(p), ["unknown result 'unknown': there is no problem-bank/appendix/unknown.tex",
+                                       "'appendix:known:eq': cite the result with \\appendixref{known} in the same text too "
+                                       "(the local preview and the CI proof print only the results cited with \\appendixref)"])
+        self.assertEqual([l for l, _ in p["errors"]], [7, 7])
+        p = check(body.replace("\\appendixref{known}", "\\appendixref{unknown}, \\appendixref{unknown}, \\appendixref{known}"))
+        self.assertEqual(messages(p), ["unknown result 'unknown': there is no problem-bank/appendix/unknown.tex"])   # once
+        p = check(body.replace("appendix:known:eq", "appendix:known:nope"))
+        self.assertEqual(messages(p), ["'appendix:known:nope': problem-bank/appendix/known.tex sets no label with this full "
+                                       "name (write \\label{appendix:known:nope} there)"])
+        p = check(body.replace("appendix:known:eq", "appendix:gone:eq"))
+        self.assertEqual(messages(p), ["'appendix:gone:eq': there is no such result in problem-bank/appendix/"])
+        p = check(body.replace("\\eqref{appendix:known:eq}", "\\begin{tikzpicture}\\node {\\appendixref{known}};\\end{tikzpicture}"))
+        self.assertEqual(messages(p), ["a drawing is made on its own, without the appendix: cite the result next to it, not inside it"])
+        p = check(body.replace("\\eqref{appendix:known:eq}", "\\eqref{eq:mine} \\ref{#1}"))
+        self.assertEqual(messages(p), ["'eq:mine' is not labelled in this file (a label of a shared result is referred to as "
+                                       "appendix:<name>:<key>)"])
+        p = check(body.replace("\\eqref{appendix:known:eq}", "\\begin{equation}\\label{appendix:known:eq} x\\end{equation}"))
+        self.assertTrue(any(m.startswith("label 'appendix:known:eq'") for m in messages(p)), messages(p))
+        p = check(body.replace("\\appendixref{known}", "\\ref{appendix:Bad_Name}"))
+        self.assertIn("'appendix:Bad_Name': there is no such result in problem-bank/appendix/", messages(p))
+        p = probe("\\begin{problem}\nS\n\\end{problem}\n\\begin{bibentries}\n@misc{k, note = {\\appendixref{x}}}\n\\end{bibentries}\n")
+        self.assertTrue(any("only a solution may cite" in m for m in messages(p)), messages(p))
+
+    def test_closure_and_order(self):
+        cites = {"a": ["b"], "b": ["c", "a"], "c": [], "d": ["a"]}
+        self.assertEqual(A.closure(["d", "zz"], cites), ["d", "a", "b", "c"])
+        appendix = {n: {"cites": c} for n, c in cites.items()}
+        sel = [{"solution": "x", "cites": ["c", "zz"]}, {"solution": None, "cites": ["d"]}, {"solution": "y", "cites": ["b", "c"]}]
+        self.assertEqual(A.appendix_order(sel, appendix), ["c", "b", "a"])        # printed solutions first, then what they cite
+
+    def test_make_main_appends_the_cited_results_to_the_solutions_pdf(self):
+        body = lambda i, cites: {"id": f"{i:04d}", "title": f"T{i}", "origin": "", "status": "", "methods": [], "statement": f"S{i}",
+                                 "solution": f"Sol{i}", "cites": cites, "figures": {}}
+        bodies = {"0001": body(1, ["b-res"]), "0002": body(2, [])}
+        appendix = {"a-res": {"name": "a-res", "title": "A & co", "text": "TEXT A", "cites": [], "figures": {}},
+                    "b-res": {"name": "b-res", "title": "B", "text": "TEXT B \\appendixref{a-res}", "cites": ["a-res"], "figures": {}}}
+        so = make_main(bodies, [1, 2], "solutions", appendix=appendix)
+        tail = so[so.index("\\bankappendix\n"):]
+        self.assertEqual(tail, "\\bankappendix\n\\bankappendixitem{b-res}\n\\begin{appendixitem}{B}\nTEXT B \\appendixref{a-res}\n"
+                               "\\end{appendixitem}\n\\bankappendixitem{a-res}\n\\begin{appendixitem}{A \\& co}\nTEXT A\n"
+                               "\\end{appendixitem}\n\\end{document}\n")
+        self.assertEqual(make_main(bodies, [1, 2], "problems", appendix=appendix), make_main(bodies, [1, 2], "problems"))
+        self.assertEqual(make_main(bodies, [2], "solutions", appendix=appendix), make_main(bodies, [2], "solutions"))
+
+    def test_website_text_of_a_result(self):
+        from bank.stitch import build_appendix
+        items, _, _ = item_probe({"alpha.tex": RESULT % ("Alpha", "\\begin{equation}\\label{eq} x\\end{equation} (\\ref{eq}), "
+                                                         "\\eqref{appendix:alpha:eq2}, \\appendixref{beta}, \\cite{mckay1959cauchy}."),
+                                  "beta.tex": RESULT % ("Beta", "y")})
+        with tempfile.TemporaryDirectory() as out:
+            data, stats = build_appendix(list(items.values()), ["alpha"], out, log=lambda *a: None)
+        a = data["alpha"]
+        self.assertEqual(list(data), ["alpha"])
+        self.assertIn("\\label{a-alpha:eq}", a["text"])                           # its own labels: a-<name>:
+        self.assertIn("(\\ref{a-alpha:eq})", a["text"])
+        self.assertIn("\\eqref{appendix:alpha:eq2}", a["text"])                  # already global: unchanged
+        self.assertIn("\\appendixref{beta}", a["text"])
+        self.assertIn("[1]", a["text"])
+        self.assertIn("\\begin{problemreferences}", a["text"])
+        self.assertEqual((a["cites"], stats["citations"]), (["beta"], 1))
+        self.assertEqual(namespace_labels("\\ref{appendix:x} \\ref{y}", "p0001"), "\\ref{appendix:x} \\ref{p0001:y}")
+
+    def test_proof_cache_key_follows_the_cited_results(self):
+        from bank.validate import _appendix_digest
+        items = lambda a, b, c: [{"name": "a", "cites": ["b"], "body": a}, {"name": "b", "cites": [], "body": b},
+                                 {"name": "c", "cites": [], "body": c}]
+        key = _appendix_digest(["a"], items("A", "B", "C"))
+        self.assertEqual(key, _appendix_digest(["a"], items("A", "B", "C changed")))    # c is not cited
+        self.assertNotEqual(key, _appendix_digest(["a"], items("A", "B changed", "C")))  # b is cited by a
+        self.assertNotEqual(key, _appendix_digest(["a"], items("A changed", "B", "C")))
+        self.assertEqual(_appendix_digest([], items("A", "B", "C")), "")
+        self.assertEqual(_appendix_digest(["gone"], items("A", "B", "C")), "")
+
+    def test_proof_prints_the_cited_results_in_author_mode_only(self):
+        p = probe("\\begin{problem}\nS\n\\end{problem}\n\\begin{solution}\nBy \\appendixref{x}.\n\\end{solution}\n")
+        self.assertIn("\\bankappendixall", proof_sources(p, TAGS, with_solution=True)[0])
+        self.assertNotIn("\\bankappendixall", proof_sources(p, TAGS, with_solution=False)[0])
+        self.assertNotIn("\\bankappendixall", proof_sources(p, TAGS, with_solution=True, stitched=True)[0])
+
+    def test_every_citation_of_the_bank_resolves(self):
+        items = A.load_items()
+        names = A.names_of(items)
+        from bank.validate import problem_cites
+        cited = {n for p in P.load_problems(paths.PROBLEMS_DIR) for n in problem_cites(p)}
+        self.assertLessEqual(cited, names)
+        self.assertLessEqual({n for it in items for n in it["cites"]}, names)
+
+
 class PublicBuildCheck(unittest.TestCase):
     def test_check_catches_unpublished_content(self):
         sys.path.insert(0, os.path.join(ROOT, "tests", "python"))
@@ -664,10 +854,40 @@ class PublicBuildCheck(unittest.TestCase):
             write("static/bank/figures/fig0002-1.pdf", "%PDF")                            # a figure of an unpublished problem
             write("static/bank/index.json", build_index([good, other], TAGS, preview=True))
             errors = "\n".join(check(site, [good, other]))
-            self.assertIn("figures of no published problem: ['fig0002-1.pdf']", errors)
+            self.assertIn("figures of no published problem or shared result: ['fig0002-1.pdf']", errors)
             self.assertIn("'preview' is not false", errors)
             write("static/bank/bodies.json", {"build": "b2", "problems": {"0001": {"figures": {"fig0001-1.pdf": {}}}}})
             self.assertIn("come from different builds", "\n".join(check(site, [good, other])))
+
+    def test_check_wants_exactly_the_results_the_published_solutions_cite(self):
+        sys.path.insert(0, os.path.join(ROOT, "tests", "python"))
+        from check_public_build import check
+        good = parse("0001-good-problem.tex")                                        # review: human
+        good["body"] = good["body"].replace("\\end{solution}", "By \\appendixref{alpha}.\n\\end{solution}")
+        items = [{"name": "alpha", "cites": ["beta"]}, {"name": "beta", "cites": []}, {"name": "gamma", "cites": []}]
+        with tempfile.TemporaryDirectory() as site:
+            bank = os.path.join(site, "static", "bank")
+            os.makedirs(os.path.join(bank, "figures"))
+            os.makedirs(os.path.join(site, "static", "busytex"))
+
+            def write(rel, data):
+                with open(os.path.join(site, rel), "w", encoding="utf-8") as f:
+                    f.write(data if isinstance(data, str) else json.dumps(data))
+
+            def bodies(appendix):
+                write("static/bank/bodies.json", {"build": "b1", "problems": {"0001": {"figures": {}}}, "appendix": appendix})
+            write("static/bank/index.json", build_index([good], TAGS))
+            for f in ("static/bank/tags.json", "static/bank/preamble.tex", "static/bank/references.bib", "index.html", "propose.html"):
+                write(f, "{}")
+            write("problems.html", '<script>{"index":{"preview":false},"build":"b1","engine":"e1"}</script>')
+            write("static/busytex/manifest.json", {"version": "e1", "files": {}})
+            bodies({"alpha": {"figures": {"figa-alpha-1.pdf": {}}}, "beta": {"figures": {}}})
+            write("static/bank/figures/figa-alpha-1.pdf", "%PDF")
+            self.assertEqual(check(site, [good], items), [])
+            bodies({"alpha": {"figures": {}}, "beta": {"figures": {}}, "gamma": {"figures": {}}})    # gamma: cited by nobody
+            errors = "\n".join(check(site, [good], items))
+            self.assertIn("holds the shared results ['alpha', 'beta', 'gamma'], the published problems cite ['alpha', 'beta']", errors)
+            self.assertIn("figures of no published problem or shared result: ['figa-alpha-1.pdf']", errors)
 
 
 if __name__ == "__main__":

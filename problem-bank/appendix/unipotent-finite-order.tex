@@ -1,0 +1,34 @@
+% Shared result, cited from solutions with \appendixref{unipotent-finite-order}.
+% Moved on 2026-09-30 from the appendix of problem 0030 (A.6 there), text unchanged: only the links to other
+% results became \appendixref.  Earlier version: spring 2025 problem set 7, solutions appendix (static/uploads/problems/spring_2025/problemset_7, commit 7bdae2b^), A.2 there.
+\begin{appendixitem}{Unipotent matrices of finite order}
+\begin{lemma}
+Let \( l \in \mathbb{N}_{>0} \) and \( R \) be a commutative unital ring together with the canonical morphism \( \operatorname{can}_{R} \colon \mathbb{Z} \rightarrow R \) and write for any integer \( k \): \( k_R := \mathrm{can}_R\left(k\right) \). Let \( N \in R^{l\times l} \) be a nilpotent matrix. If \( I_{l} + N \) has finite order \( r \in \mathbb{N}_{>0} \) (where \( I_l \) is the identity matrix in \( R^{l\times l} \)) such that \( r_{R} \in R^{\times} \) is invertible, then \( N = \mathbf{0}_{R^{l\times l}} \).
+\end{lemma}
+
+\begin{proof}
+Let \( r := \operatorname{ord}_{R^{l\times l}}\left(I_{l} + N\right) \in \mathbb{N}_{>0} \) be the order of \( I_{l} + N \). Then, by the binomial theorem (noting that \( I_{l} \) and \( N \) commute),
+\[
+I_l = \left(I_l + N\right)^r = \sum_{j=0}^{r} \binom{r}{j}_{R} N^{j} = I_l + \sum_{j=1}^{r} \binom{r}{j}_{R} N^{j},
+\]
+It follows that
+\[
+\mathbf{0}_{R^{l\times l}} = \sum_{j=1}^{r} \binom{r}{j}_{R} N^{j}.
+\]
+and because \( R \) is commutative, we can factor \( N \) to obtain:
+\[
+\mathbf{0}_{R^{l\times l}} = N \left( \sum_{j=1}^{r} \binom{r}{j}_{R} N^{j-1} \right) = N \left( r_{R} I_{l} + \sum_{j=2}^{r} \binom{r}{j}_{R} N^{j-1} \right).
+\]
+Let \( S := r_{R} I_{l} + \sum_{j=2}^{r} \binom{r}{j}_{R} N^{j-1} \in R^{l\times l} \) be the right-hand factor in this product, and define \( E := \sum_{j=2}^{r} \binom{r}{j}_{R} N^{j-1} \in R^{l\times l} \) (the sum is possibly empty if \( r = 1 \), in which case it is the empty sum and \( E = \mathbf{0}_{l\times l} \)). So \( S = r_{R} I_l + E \), and we claim that \( S \) is invertible.
+\\\\
+Indeed, \( N \) is nilpotent, and so are all of its powers. Since \( R \) is commutative, any scalar multiple \( \lambda N^k \) with \( \lambda \in R \) and \( k \in \mathbb{N}_{>0} \) is nilpotent. Moreover, for any (possibly non-commutative) unital ring \( A \) (here \( R^{l \times l} \)), the set of nilpotent elements \( \operatorname{Nil}\left( A \right) \) is closed\footnote{For the finite product, the index of nilpotency is bounded above by the minimum of the respective indices of nilpotency (use the commutativity of the factors). For the finite sum, the index of nilpotency is bounded above by 1 plus the sum of the nilpotency indices minus the number of summands. To see this, use the multinomial theorem (which is valid since the summands commute) and use the pigeonhole principle.} under finite sums and products, provided that the terms commute pairwise. Because \( R \) is commutative, we get that for any \( \lambda, \lambda' \in R \) and \( k, k' \in \mathbb{N}_{>0} \), the elements \( \lambda N^k \) and \( \lambda' N^{k'} \) commute. Hence \( E \in \operatorname{Nil}\left(R^{l\times l}\right) \).
+\\\\
+Now \( r_{R} \in R^{\times} \), so we must have \( r_{R} I_{l} \in \left(R^{l\times l}\right)^{\times} \). As \( E \) is nilpotent and \( E \) commutes with \( r_{R} I_{l} \) (since \( R \) is commutative), the element \( S := r_{R} I_{l} + E \), being the sum of an invertible element of \( R^{l\times l} \) and a nilpotent one, must be invertible\footnote{This is a general fact about any (possibly non-commutative) unital ring \( A \): if \( a \in A^{\times} \), \( b \in \operatorname{Nil}\left(A\right) \), and \( ab = ba \), then \( a + b \in A^{\times} \). Indeed, let \( v \in \mathbb{N}_{>0} \) be the index of nilpotency of \( b \). Then, since \( a \) and \( b \) commute, so do \( a^{-1} \) and \( b \), and we have \( \left(ba^{-1}\right)^v = b^va^{-v} = 0_{A} \). A simple computation (using the fact that \( \pm 1_{A} \) commutes with every element, and that \( a \), \( b \), and \( a^{-1} \) commute with one another, as do their powers) shows that the element
+\[
+a^{-1} \left( \sum_{k=0}^{v-1} \left(-1_{A}\right)^k \left(b a^{-1}\right)^k \right)\in A,
+\]
+is both a left and right inverse of \( a + b = a \left(1_{A} + a^{-1} b\right)=\left(1_{A} + ba^{-1}\right)a \), and so \( a+b\in A^{\times} \)}.
+\\\\
+Thus, multiplying on the right by \( S^{-1} \) on both sides of the equation \( \mathbf{0}_{R^{l\times l}} = N S \) yields \( N = \mathbf{0}_{R^{l\times l}} \).
+\end{proof}
+\end{appendixitem}

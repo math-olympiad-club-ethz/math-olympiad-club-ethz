@@ -262,7 +262,7 @@ f\left[ \mathbb{Q}_{>0} \setminus \{1\} \right] = \left\{ \left( t^{\frac{1}{t -
 \]
 We shall show that the reverse inclusion \( \supset \) holds. Let \( (x, y) \in S \cap \left( \mathbb{Q}^{\mathrm{alg}} \times \mathbb{Q}^{\mathrm{alg}} \right) \); then \( x, y > 0 \) and \( x, y \) are algebraic. Since the set is symmetric, we may again assume that \( x < y \). Recalling our construction of the parametrisation, we know that for \( t := \frac{y}{x} \in \mathbb{R}_{>0} \setminus \{1\} \), we have \( f(t) = f\left( \frac{y}{x} \right) = (x, y) \). Since \( \mathbb{Q}^{\mathrm{alg}} \) is a field, \( t \in \mathbb{Q}^{\mathrm{alg}} \), and the following constants \( u := \frac{1}{t - 1} = \frac{y}{x - y} \neq 0 \) and \( v := \frac{t}{t - 1} = \frac{x}{x - y} \neq 0,1 \) are such that \( u, v \in \mathbb{Q}^{\mathrm{alg}} \), and \( t^{u} = x \), \( t^{v} = y \). If \( t \) is irrational (i.e. \( t \in \mathbb{R} \setminus \mathbb{Q} \)), then so are \( u \) and \( v \). (If either \( u \) or \( v \) were rational, then \( t = (u - 1)^{-1} + 1 \) or \( t = v^{-1} + 1 \) would be rational, a contradiction.)
 \\\\
-But this is impossible because, by the \href{https://en.wikipedia.org/wiki/Gelfond–Schneider_theorem}{Gelfond–Schneider theorem}, as \( t \in \mathbb{Q}^{\mathrm{alg}} \setminus \{0,1\} \) and \( u \in \mathbb{Q}^{\mathrm{alg}} \setminus \mathbb{Q} \), it follows that \( t^{u} = x \) is transcendental—a contradiction to \( x \in \mathbb{Q}^{\mathrm{alg}} \). For a proof of the Gelfond–Schneider theorem see the Appendix [\hyperref[A]{A}]. Thus, \( t \) must be rational and so \( (x, y) = f(t) \in f\left[ \mathbb{Q}_{>0} \setminus \{1\} \right] \).
+But this is impossible because, by the \href{https://en.wikipedia.org/wiki/Gelfond–Schneider_theorem}{Gelfond–Schneider theorem}, as \( t \in \mathbb{Q}^{\mathrm{alg}} \setminus \{0,1\} \) and \( u \in \mathbb{Q}^{\mathrm{alg}} \setminus \mathbb{Q} \), it follows that \( t^{u} = x \) is transcendental—a contradiction to \( x \in \mathbb{Q}^{\mathrm{alg}} \). For a proof of the Gelfond–Schneider theorem see the Appendix [\appendixref{gelfond-schneider-theorem}]. Thus, \( t \) must be rational and so \( (x, y) = f(t) \in f\left[ \mathbb{Q}_{>0} \setminus \{1\} \right] \).
 \\\\
 Hence:
 \[
@@ -296,15 +296,4 @@ A \cap \left( \mathbb{Q}^{\mathrm{alg}} \times \mathbb{Q}^{\mathrm{alg}} \right)
 \begin{remark}
    If one asks the same question over \( \mathbb{C} \), with the known subtleties of this generalisation, the intersection with \( \mathbb{Q}^{\mathrm{alg}} \times \mathbb{Q}^{\mathrm{alg}} \subset \mathbb{C} \times \mathbb{C} \) appears in the literature to lack a complete characterisation.
 \end{remark}
-
-
-\appendix
-\section{}
-\label{A}
-\begin{theorem}[Gelfond-Schneider theorem]
-Let \( \alpha \) and \( \beta \) be algebraic numbers (i.e., \( \alpha, \beta \in \mathbb{Q}^{\mathrm{alg}} \)) such that \( \alpha \neq 0, 1 \) and \( \beta \) is irrational. Then any value of \( \alpha^\beta \) is transcendental.
-\end{theorem}
-\[
-\substack{\textit{Proof not yet written}}
-\]
 \end{solution}

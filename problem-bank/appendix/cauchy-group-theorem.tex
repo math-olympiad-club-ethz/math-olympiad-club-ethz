@@ -1,0 +1,51 @@
+% Shared result, cited from solutions with \appendixref{cauchy-group-theorem}.
+% AI-WRITTEN, NEEDS HUMAN REVIEW (2026-09-30): the statement and the proof below were written by AI (Claude) for
+% problem 0085 (also cited by 0087), at Antoine's request; no solution of the bank proved Cauchy's theorem before.
+% The proof is J. H. McKay's (Amer. Math. Monthly 66 (1959), p. 119), written with the conventions of the bank:
+% natural numbers as sets, k = {i in N | i < k}, and products "taken in the order of the integer p" (see problem 0023).
+% Restyled on 2026-10-01 after problem-bank/writing-style.md (the style of the fully solved problems); the mathematics is unchanged.
+\begin{appendixitem}{Cauchy's Theorem for Groups}
+Let \( \left(G, \cdot, e_{G}\right) \) be a finite group of order \( n := \left| G \right| \). We use the convention \( \mathbb{N} = \left\{ 0, 1, 2, \dots \right\} \) and identify an integer \( k \in \mathbb{N} \) with the set \( \left\{ i \in \mathbb{N} \mid i < k \right\} \). For \( g \in G \), the order of \( g \) is defined by
+\[
+\operatorname{ord}(g) := \min\left\{ k \in \mathbb{N}_{\geq 1} \mid g^{k} = e_{G} \right\}.
+\]
+This minimum exists because \( G \) is finite: two of \( g^{1}, \dots, g^{n+1} \) are equal, say \( g^{a} = g^{b} \) with \( a < b \), and then \( g^{b-a} = e_{G} \).
+\begin{theorem}[Cauchy]
+In this setting, let \( p \) be a prime dividing \( n \). Then \( G \) has an element of order \( p \), that is, an element \( g \neq e_{G} \) with \( g^{p} = e_{G} \).
+\end{theorem}
+\begin{proof}
+The following proof is due to McKay \cite{mckay1959cauchy}. Consider the set
+\[
+X := \left\{ \left(g_{0}, \dots, g_{p-1}\right) \in G^{p} \mid \prod_{i \in p} g_{i} = e_{G} \right\},
+\]
+where the product is taken in the order of the integer \( p = \left\{ i \in \mathbb{N} \mid i < p \right\} \), i.e., \( \prod_{i \in p} g_{i} = g_{0} g_{1} \cdots g_{p-1} \).
+\\\\
+Let us compute \( \left| X \right| \): for every \( \left(g_{0}, \dots, g_{p-2}\right) \in G^{p-1} \), there is exactly one \( g_{p-1} \in G \) such that \( g_{0} \cdots g_{p-2} g_{p-1} = e_{G} \), namely \( g_{p-1} = \left(g_{0} \cdots g_{p-2}\right)^{-1} \). Hence,
+\[
+\left| X \right| = n^{p-1},
+\]
+which is divisible by \( p \) because \( p \mid n \) and \( p - 1 \geq 1 \).
+\\\\
+Now define the cyclic shift
+\[
+\sigma \colon X \to X, \quad \left(g_{0}, g_{1}, \dots, g_{p-1}\right) \mapsto \left(g_{1}, \dots, g_{p-1}, g_{0}\right).
+\]
+It is well defined: if \( g_{0} g_{1} \cdots g_{p-1} = e_{G} \), then \( g_{1} \cdots g_{p-1} = g_{0}^{-1} \), hence \( g_{1} \cdots g_{p-1} g_{0} = g_{0}^{-1} g_{0} = e_{G} \). Shifting \( p \) times gives back the tuple, i.e., \( \sigma^{p} = \mathrm{id}_{X} \) (with \( \sigma^{0} := \mathrm{id}_{X} \)).
+\\\\
+For \( x, y \in X \), write \( x \sim y \) if \( y = \sigma^{k}(x) \) for some \( k \in \mathbb{N} \). This is an equivalence relation: it is reflexive (take \( k = 0 \)), transitive (since \( \sigma^{l}\left(\sigma^{k}(x)\right) = \sigma^{k+l}(x) \)) and symmetric (if \( y = \sigma^{k}(x) \), then \( \sigma^{(p-1)k}(y) = \sigma^{pk}(x) = x \)). Fix \( x \in X \) and let \( d := \min\left\{ k \in \mathbb{N}_{\geq 1} \mid \sigma^{k}(x) = x \right\} \); this minimum exists and \( d \leq p \), since \( \sigma^{p}(x) = x \). Then the class of \( x \) is
+\[
+\left\{ \sigma^{j}(x) \mid j \in d \right\},
+\]
+since for \( k \in \mathbb{N} \), writing \( k = cd + j \) with \( c \in \mathbb{N} \) and \( j \in d \), we have \( \sigma^{k}(x) = \sigma^{j}\left(\sigma^{cd}(x)\right) = \sigma^{j}(x) \). These \( d \) elements are pairwise distinct: if \( \sigma^{i}(x) = \sigma^{j}(x) \) with \( 0 \leq i < j < d \), then applying \( \sigma^{(p-1)i} \) gives \( \sigma^{pi}(x) = \sigma^{j-i}\left(\sigma^{pi}(x)\right) \), that is \( x = \sigma^{j-i}(x) \) with \( 1 \leq j - i < d \), a contradiction to the minimality of \( d \). Moreover, \( d \) divides \( p \): write \( p = cd + j \) with \( c \in \mathbb{N} \) and \( j \in d \); then \( x = \sigma^{p}(x) = \sigma^{j}(x) \), so \( j = 0 \) since these \( d \) elements are pairwise distinct. As \( p \) is prime, every equivalence class therefore has either \( 1 \) or \( p \) elements. The class of \( x = \left(g_{0}, \dots, g_{p-1}\right) \) has one element exactly when \( \sigma(x) = x \), that is when \( g_{0} = g_{1} = \cdots = g_{p-1} \); so the classes with one element are those of the tuples \( \left(g, \dots, g\right) \) with \( g^{p} = e_{G} \).
+\\\\
+Let \( s \) be the number of classes with one element and \( t \) the number of classes with \( p \) elements. Since \( X \) is the disjoint union of its classes, we have
+\[
+\left| X \right| = s + pt,
+\]
+and as \( p \mid \left| X \right| \), also \( p \mid s \). Now \( \left(e_{G}, \dots, e_{G}\right) \) forms a class with one element, so \( s \geq 1 \), hence \( s \geq p \geq 2 \). Thus, there is \( g \in G \) with \( g \neq e_{G} \) and \( g^{p} = e_{G} \). Writing \( p = c \cdot \operatorname{ord}(g) + j \) with \( c \in \mathbb{N} \) and \( j \in \operatorname{ord}(g) \), we obtain
+\[
+e_{G} = g^{p} = \left(g^{\operatorname{ord}(g)}\right)^{c} g^{j} = g^{j},
+\]
+so \( j = 0 \) by minimality of the order, i.e., \( \operatorname{ord}(g) \) divides \( p \). Since \( g \neq e_{G} \), we have \( \operatorname{ord}(g) \neq 1 \), and therefore \( \operatorname{ord}(g) = p \), as desired.
+\end{proof}
+\end{appendixitem}

@@ -146,8 +146,8 @@ def format_entry(e):
             j += " (%s)" % e["number"]
         if e.get("year"):
             j += ", %s" % e["year"]
-        if e.get("pages"):
-            j += ", pp.~%s" % e["pages"]
+        if e.get("pages"):                     # p.~119, pp.~241--246
+            j += ", %s~%s" % ("pp." if re.search(r"[-–—,+]", e["pages"]) else "p.", e["pages"])
         parts.append(j + ".")
     else:
         tail = []

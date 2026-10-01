@@ -219,8 +219,8 @@ UNSAFE_TEX = [
      "a problem is one self-contained file (no other files, no images: draw with TikZ)"),
     (r"\\(?:today|year|month|day|time|pdf[A-Za-z]+)(?![A-Za-z@])",
      "the same problems must always give the same PDF (no date, clock, random numbers or pdfTeX primitives)"),
-    (r"\\(?:[Bb]ank[A-Za-z]*|refitem)(?![A-Za-z@])|\{[ \t\n]*problemreferences[ \t\n]*\}",
-     "it belongs to the website's PDF layout (headings, reference lists)"),
+    (r"\\(?:[Bb]ank[A-Za-z]*|refitem|appendixitem)(?![A-Za-z@])|\{[ \t\n]*(?:problemreferences|bankappendixitem)[ \t\n]*\}",
+     "it belongs to the website's PDF layout (headings, reference lists, the appendix)"),
 ]
 # The citation commands the website resolves (bank/bib.py::CITE_RE); \nocite is harmless.
 SUPPORTED_CITES = {"cite", "citep", "citet", "parencite", "textcite", "autocite", "Cite", "Parencite", "Textcite",
@@ -249,10 +249,12 @@ def _block_order_error(blocks):
     return blocks[k][2] if k < len(blocks) else -1
 
 
-def validate(p, tags, bib_keys=None):
+def validate(p, tags, bib_keys=None, appendix=None):
     """Append validation errors to p['errors'] (list of (line, message)).  Returns them.
     bib_keys: the keys of references.bib; when given, every \\cite key must exist there or in the
-    problem's own bibentries block."""
+    problem's own bibentries block.  appendix: bank/appendix.py::catalogue() of the shared results
+    (problem-bank/appendix/), {name: global labels}; when given, every result and label of a result the solution
+    refers to must exist."""
     e = p["errors"]
     hl = p["header_lines"]
 
@@ -346,6 +348,29 @@ def validate(p, tags, bib_keys=None):
                                                   "problems-only PDF would print ?? (label it in the statement, or refer to it only in the solution)"))
     if p["status"] == "partial" and not p["has_solution"]:
         e.append((line("status"), "status: partial only makes sense when there is a (partial) solution block"))
+
+    # Shared results (problem-bank/appendix/, bank/appendix.py): only the solution cites them, since a problems-only PDF
+    # has no appendix; \appendix and appendixitem blocks do not belong in a problem file; every \ref points to a label
+    # of this file or to a label appendix:<name>:<key> of a result the solution cites.  Checked block by block, as the
+    # website and the propose page read the blocks.  Same rules in bank-propose.js::validateDraft.
+    from . import appendix as A
+    mm = A.APPENDIX_CMD_RE.search(masked)
+    if mm:
+        e.append((at(mm.start()), "\\appendix is not used in problem files: write the result in "
+                                  "problem-bank/appendix/<name>.tex and cite it with \\appendixref{<name>}"))
+    mm = A.ITEM_MARKER_RE.search(masked)
+    if mm:
+        e.append((at(mm.start()), "an appendixitem block belongs in problem-bank/appendix/<name>.tex, not in a problem file"))
+    if structure_ok:
+        spans = [(blocks[i][1], blocks[i][3], blocks[i + 1][2]) for i in range(0, len(blocks), 2)]
+        from .stitch import label_refs
+        labels = set()
+        for kind, s, t in spans:
+            if kind in ("problem", "solution"):
+                labels |= set(label_refs(masked[s:t])[0])
+        for kind, s, t in spans:
+            for pos, msg in A.check_text(text[s:t], appendix, allow_cites=kind == "solution", labels=labels):
+                e.append((at(s + pos), msg))
 
     for rx, label in FORBIDDEN_TEX:
         mm = re.search(rx, text)

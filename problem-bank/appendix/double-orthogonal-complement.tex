@@ -1,0 +1,89 @@
+% Shared result, cited from solutions with \appendixref{double-orthogonal-complement}.
+% Moved on 2026-09-30 from the appendix of problem 0018 (A there), text unchanged: only the links to other
+% results became \appendixref.  Earlier version: spring 2025 problem set 4, solutions appendix (static/uploads/problems/spring_2025/problemset_4, commit 7bdae2b^).
+\begin{appendixitem}{Double Orthogonal Complement}
+Let \( E \) be a vector space over a field \( K \), and let \( B \colon E \times E \to K \) be a symmetric \( K \)-bilinear form. For any subspace \( Q \subseteq E \), the orthogonal complement is defined by
+\[
+Q^{\perp} := \left\{ v \in E \mid \forall q \in Q, \, B\left(q, v\right) = 0_K \right\}.
+\]
+It is clearly a \( K \)-subspace of \( E \). The map
+\[
+\varphi_Q \colon E \to Q^{*}, \quad v \mapsto B\left(\cdot, v\right)\big|_{Q}
+\]
+is \( K \)-linear (since \( B \) is \( K \)-bilinear) and has kernel \( Q^{\perp} \), because
+\[
+v \in \ker\left(\varphi_Q\right)
+\;\Longleftrightarrow\;
+\varphi_Q\left(v\right) = 0_{Q^{*}}
+\;\Longleftrightarrow\;
+\forall w \in Q, \, B\left(w, v\right) = 0_K
+\;\Longleftrightarrow\;
+v \in Q^{\perp}.
+\]
+If \( \dim\left(Q\right) \) is finite, then \( \dim\left(Q\right) = \dim\left(Q^{*}\right) \)\footnote{Given an ordered basis \( \left\langle w_i \right\rangle_{i \in \dim\left(Q\right)} \) of \( Q \) (which must be finite), one has an ordered basis \( \left\langle w_i^{*} \right\rangle_{i \in \dim\left(Q\right)} \) of \( Q^{*} \), where each functional \( w_i^{*} \colon Q \to K \) sends a vector \( v = \sum_{j \in \dim\left(Q\right)} \lambda_j w_j \in Q \) to \( \lambda_i \).}. Hence, by the rank–nullity theorem, we obtain a standard general inequality
+\[
+\dim\left(E\right)
+= \dim\left(\ker\left(\varphi_Q\right)\right) + \dim\left(\operatorname{Im}\left(\varphi_Q\right)\right)
+\]
+\[
+= \dim\left(Q^{\perp}\right) + \dim\left(\operatorname{Im}\left(\varphi_Q\right)\right)
+\leq \dim\left(Q^{\perp}\right) + \dim\left(Q^{*}\right)
+= \dim\left(Q^{\perp}\right) + \dim\left(Q\right).
+\]
+The form \( B \) is non-degenerate if \( E^{\perp} = \left\{ 0_E \right\} \). Hence \( \varphi_E \) is injective if and only if \( E^{\perp} = \left\{ 0_E \right\} \), that is, if and only if \( B \) is non-degenerate. If \( B \) is non-degenerate and \( \dim\left(E\right) \) is finite, then \( \varphi_E \) is an isomorphism. Indeed, since \( \dim\left(E\right) = \dim\left(E^{*}\right) \), injectivity of \( \varphi_E \) implies its surjectivity.
+\\\\
+\textit{Examples:} For any $n\in\mathbb{N}_{\geq 1}$, we define on the finite dimensional $K$-vector space $K^n$ the standard binary product \(\langle\cdot,\cdot\rangle_{K^n}: K^n\times K^n\rightarrow K \), i.e.,
+\[
+\langle v, w \rangle_{K^n} = \sum_{i=0}^{n-1} v_i w_i.
+\]
+It is easy to see that $\langle \cdot, \cdot \rangle_{K^n}$ is $K$-linear in the first coordinate, symmetric (so $K$-linear in the second coordinate and thus $K$-bilinear) and non-degenerate that is:
+$$\forall v\in K^n\left(\left(\forall w\in K^n \langle v,w\rangle_{K^n}=0_K\right) \rightarrow v=0_{K^n}\right)$$
+(Just plug the canonical basis for $w$ that is for each $i\in n$ take $w=e_i$ and use the fact that $v_i\cdot 1_{K}=v_i$ to conclude $v_i=0_K$, and thus $v=0_{K^n}$).
+\begin{theorem}[Double Orthogonal Complement]
+    In this setting, if \(\dim\left(E\right)\) is finite, \( B \) is non-degenerate, then
+    \begin{enumerate}
+        \item For any \( K \)-subspace \( Q \subseteq E \); \(\dim\left(E\right)=\dim\left(Q^{\perp}\right) + \dim\left(Q\right)\).
+        \item For any \( K \)-subspace \( Q \subseteq E \); \(\left(Q^{\perp}\right)^{\perp} = Q\).
+    \end{enumerate}
+\end{theorem}
+
+\begin{proof}
+\textbf{1.} Using the fact that \( \varphi_E \) is an isomorphism, we have that \( (\varphi_E)|_{Q^{\perp}} \) is an isomorphism onto its image:
+    \[
+\operatorname{Im}\left((\varphi_E)|_{Q^{\perp}}\right) = \left\{ B\left(-, v\right) \mid v \in Q^{\perp} \right\} = \left\{ f \in E^{*} \mid \forall q \in Q, \, f\left(q\right) = 0 \right\} =: Q^{\circ}.
+    \]
+    The middle equality's \( \supset \) inclusion follows from the surjectivity of \( \varphi_E \) and the definition of \( Q^{\perp} \). Thus, \( \dim\left(Q^{\perp}\right) = \dim\left(Q^{\circ}\right) \).
+\\\\
+Now, given an ordered basis \( \left\langle w_i\right\rangle_{i \in \dim\left(Q\right)} \) of \( Q \), complete it into an ordered basis of \( E \):
+    \[
+    \left\langle w_i\right\rangle_{i \in \dim\left(Q\right)} \frown \left\langle v_j\right\rangle_{j \in \dim\left(E\right) - \dim\left(Q\right)}.
+    \]
+    Then:
+    \[
+    \left\langle w_i^*\right\rangle_{i \in \dim\left(Q\right)} \frown \left\langle v_j^*\right\rangle_{j \in \dim\left(E\right) - \dim\left(Q\right)},
+    \]
+    where each functional sends a vector \( v = \sum_{j \in \dim\left(Q\right)} \lambda_j w_j + \sum_{i \in \dim\left(E\right) - \dim\left(Q\right)} \gamma_i v_i \) of \( E \) to \( \lambda_i \) or \( \gamma_j \), respectively, is an ordered basis of \( E^{*} \). This basis satisfies the following property: if \( f \in E^{*} \), then we can write
+    \[
+    f = \sum_{i \in \dim\left(Q\right)} f\left(w_i\right) w_i^* + \sum_{j \in \dim\left(E\right) - \dim\left(Q\right)} f\left(v_j\right) v_j^*.
+    \]
+    In particular, if \( f \in Q^{\circ} \), then \( f = \sum_{j \in \dim\left(E\right) - \dim\left(Q\right)} f\left(v_j\right) v_j^* \), because \( \left\{w_i \mid i \in \dim\left(Q\right)\right\} \subset Q \). Thus, \( \left\langle v_j^*\right\rangle_{j \in \dim\left(E\right) - \dim\left(Q\right)} \) generates \( Q^{\circ} \). Since these vectors are \( K \)-linearly independent, we obtain
+    \[
+    \dim\left(E\right) - \dim\left(Q\right) = \dim\left(Q^{\circ}\right).
+    \]
+    In total, we obtain for any \( K \)-subspace \( Q \) of \( E \),
+    \[
+    \dim\left(Q^{\perp}\right) = \dim\left(Q^{\circ}\right) = \dim\left(E\right) - \dim\left(Q\right).
+    \]
+    which gives our desired equality.
+\\\\
+\textbf{2.} Let \( Q \subseteq \left(Q^{\perp}\right)^{\perp} \): Let \( q \in Q \), then,
+    \[
+    \forall v \in Q^\perp, \, 0=B\left(q, v\right) = B\left(v,q\right) \implies q \in \left(Q^{\perp}\right)^{\perp}.
+    \]
+Since \( Q^{\perp}\subset E \) is a \( K \)-subspace, we must have:
+    \[
+\dim\left(\left(Q^{\perp}\right)^{\perp}\right) = \dim\left(E\right) - \dim\left(Q^{\perp}\right) = \dim\left(E\right) - \left(\dim\left(E\right) - \dim\left(Q\right)\right) = \dim\left(Q\right).
+    \]
+    We conclude \( Q = \left(Q^{\perp}\right)^{\perp} \) since \( Q \subset \left(Q^{\perp}\right)^{\perp} \) and they have the same (crucially finite) dimension.
+\end{proof}
+\end{appendixitem}

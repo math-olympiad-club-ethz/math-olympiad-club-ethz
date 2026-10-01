@@ -109,14 +109,17 @@ def main(argv=None):
     ap.add_argument("--no-git", action="store_true", help="with --apply: plain rename instead of git mv")
     ap.add_argument("--message", help="with --apply: also write a commit message to this file")
     a = ap.parse_args(argv)
+    from . import appendix as A
     from .bib import parse_bib
     from .tags import load_tags
-    from .validate import folder_errors
+    from .validate import appendix_errors, folder_errors
     problems = P.load_problems(a.problems_dir)
+    items = A.load_items()
     # Never number (and push) a tree the build would reject, e.g. a proposal merged while its checks were red.
     tags, bib_keys = load_tags(paths.TAGS_FILE), set(parse_bib(paths.BIB_FILE))
-    errors = [(p["path"], line, msg) for p in problems for line, msg in P.validate(p, tags, bib_keys)]
-    errors += folder_errors(a.problems_dir, problems)
+    cat = A.catalogue(items)
+    errors = [(p["path"], line, msg) for p in problems for line, msg in P.validate(p, tags, bib_keys, cat)]
+    errors += folder_errors(a.problems_dir, problems) + appendix_errors(items, bib_keys)
     try:
         last_id = read_last_id(a.problems_dir)
     except ValueError:

@@ -73,9 +73,10 @@ Then open http://localhost:8000/problems.html. (The first two commands are neede
 - Without `--no-compile` every problem is compiled with your local TeX Live (MacTeX) — what CI does.
 - Without `--no-bundle` the in-browser engine bundle `website-code/site/static/busytex/` is (re)built: this downloads the
   texlyre-busytex assets once (≈520 MB, cached in `.cache/`, checked against `tools/busytex-assets.sha256`) and needs
-  Node + TeX Live (≈40 s). You only need it after changing `preamble.tex`; when the bundle is missing (fresh clone) it
-  is built even with `--no-bundle`, so the first build takes longer.
-- `python3 -m bank.validate --compile` (in `website-code/`) validates and compiles the problem files alone.
+  Node + TeX Live (≈40 s). You only need it after changing `preamble.tex`; when the bundle is missing (fresh clone)
+  or was made from an older `preamble.tex`, it is built even with `--no-bundle`, so that build takes longer.
+- `python3 -m bank.validate --compile` (in `website-code/`) validates and compiles the problem files and the shared
+  results alone.
 - Tests: `npm test` (unit tests of the search, order and propose logic, JS/Python parity tests, Python validator
   tests, and headless-browser tests: the Problems page (filter, tick, order, both PDFs checked) and the Propose page
   (form, live preview, the generated file passes `bank.validate --compile`)).
@@ -86,13 +87,14 @@ Then open http://localhost:8000/problems.html. (The first two commands are neede
 association-documents/      ← statutes.tex + statutes.pdf, signed founding minutes
 problem-bank/
   problems/                 ← one .tex per problem; _template.tex; _preview.tex (VS Code)
+  appendix/                 ← shared results (theorem + proof), cited from solutions with \appendixref{name}
   tags.yml, preamble.tex, references.bib
   work-in-progress/         ← problems still in construction (magic problems), git-ignored, local only
   known-errors.md           ← mistakes in statements/solutions still to fix (temporary)
   history-review.md         ← AI history pass results to review (temporary)
 website-code/
   build.py                  ← validates, compiles, writes site data + engine bundle, renders templates/ into site/
-  bank/                     ← Python library: paths, tags, problem parser/validator, stitch, data
+  bank/                     ← Python library: paths, tags, problem parser/validator, shared results, stitch, data
   templates/                ← Jinja2 templates (base, index, problems, propose)
   site/                     ← the site as served (GitHub Pages); site/static/js/bank-*.js is the page's code
   tools/                    ← busytex_bundle.py (in-browser TeX engine bundle)

@@ -112,8 +112,15 @@ hidden
 \usetikzlibrary{arrows.meta}\tikzset{x=1cm}\pgfplotsset{compat=1.18}
 \fbox{\parbox{0.6\linewidth}{\centering\small\textit{TikZ drawing placeholder of the propose page's preview.}}} $\fbox{\parbox{3cm}{\small\textit{in math}}}$
 \begin{problemreferences}\refitem{1} A. Author, \emph{Title}, Journal \textbf{1} (2000), pp.~1--2. \url{https://x.y}\end{problemreferences}
+By Appendix~\appendixref{census-result} and \eqref{appendix:census-result:eq}.
 \end{solution}
 \banknosolution
+\bankappendix
+\bankappendixitem{census-result}
+\begin{appendixitem}{Census shared result}
+\begin{lemma}\label{appendix:census-result:lem} See \appendixref{census-result}. \end{lemma}
+\begin{equation}\label{appendix:census-result:eq} x = 1 \end{equation}
+\end{appendixitem}
 \end{document}
 """
 
@@ -228,7 +235,8 @@ def main(argv=None):
         log("bodies.json missing → bank.stitch build")
         stitch.main(["build", "--out", os.path.dirname(a.bodies)])
     with open(a.bodies, encoding="utf-8") as f:
-        bodies = json.load(f)["problems"]
+        data = json.load(f)
+    bodies, appendix = data["problems"], data.get("appendix") or {}
     fig_dir = os.path.join(os.path.dirname(a.bodies), "figures")
     ids = sorted(int(k) for k in bodies)
 
@@ -237,7 +245,7 @@ def main(argv=None):
     os.makedirs(a.staging)
     docs = []
     for variant in ("problems", "solutions"):
-        tex = stitch.make_main(bodies, ids, variant, filters="all problems")
+        tex = stitch.make_main(bodies, ids, variant, filters="all problems", appendix=appendix)
         files = {os.path.basename(m): os.path.join(fig_dir, os.path.basename(m))
                  for m in stitch.re.findall(r"\\includegraphics(?:\[[^\]]*\])?\{([^}]+)\}", tex)}
         docs.append((f"all_{variant}", tex, files))
@@ -326,6 +334,8 @@ def main(argv=None):
         with open(versions) as f:
             manifest["engine_versions"] = f.read()
     manifest["version"] = sha256("".join(v["sha256"] for k, v in sorted(manifest["files"].items())).encode())[:16]
+    with open(paths.PREAMBLE_FILE, "rb") as f:          # build.py rebuilds the bundle when preamble.tex changed
+        manifest["preamble_sha256"] = sha256(f.read())
     with open(os.path.join(a.out, "manifest.json"), "w") as f:
         json.dump(manifest, f, indent=1)
     with open(os.path.join(a.staging, "build-report.json"), "w") as f:      # local paths inside: not deployed

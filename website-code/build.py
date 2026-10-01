@@ -5,20 +5,24 @@ Static site generator for the Math Olympiad Club ETHZ website and problem bank.
     python3 build.py                 # full build: validate + compile every problem, site data, bundle, HTML
     python3 build.py --preview       # include unreviewed problems (with a review badge) — local review
     python3 build.py --no-compile    # skip the per-problem pdflatex proofs (fast local iteration)
-    python3 build.py --no-bundle     # skip the in-browser engine bundle (site/static/busytex/ kept as is; built if missing)
+    python3 build.py --no-bundle     # skip the in-browser engine bundle (site/static/busytex/ kept as is; built if
+                                     # missing or made from an older preamble.tex)
     python3 build.py --assets DIR    # texlyre-busytex assets (default .cache/busytex-assets; downloaded if absent)
 
 Steps (any failure stops the build — nothing deploys):
   1. tags.yml is loaded and checked.
   2. every problem-bank/problems/NNNN-title.tex (and proposed new-title.tex) is parsed and validated
-     (file:line messages), IDs are unique, nothing else sits in problems/, _last-id.txt is sound.
-  3. every problem is compiled standalone with pdflatex, with and without its solution (successes are remembered
-     in .cache/proofs/ by a hash of everything that goes in, so an unchanged problem is not compiled again).
+     (file:line messages), IDs are unique, nothing else sits in problems/, _last-id.txt is sound; the same for the
+     shared results of problem-bank/appendix/ (bank/appendix.py), which solutions cite with \\appendixref{name}.
+  3. every problem is compiled standalone with pdflatex, with and without its solution (the solution with the shared
+     results it cites), and every shared result on its own (successes are remembered in .cache/proofs/ by a hash of
+     everything that goes in, so an unchanged problem is not compiled again).
   4. site data: site/static/bank/{tags.json,index.json,bodies.json,figures/} (published problems only,
      or all with --preview, where new-title.tex files appear under their provisional number, see bank/number.py).  bodies.json carries the CI-side transforms (namespaced labels, externalised
-     TikZ figures, pre-resolved citations).
+     TikZ figures, pre-resolved citations) and the shared results those problems cite ("appendix").
   5. the in-browser engine bundle site/static/busytex/ (trimmed TeX Live + format file), unless --no-bundle and
-     the bundle exists.  The texlyre-busytex assets are checked against tools/busytex-assets.sha256 first.
+     the bundle exists and was made from the current preamble.tex.  The texlyre-busytex assets are checked against
+     tools/busytex-assets.sha256 first.
   6. the HTML pages from templates/ into site/.
 Everything this script writes (site/static/bank/, site/static/busytex/, site/*.html) is a build output and
 git-ignored: CI runs the build and deploys its own copies. Only the sources are committed.
@@ -36,6 +40,7 @@ import sys
 from jinja2 import Environment, FileSystemLoader
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from bank import appendix as A  # noqa: E402
 from bank import paths  # noqa: E402
 from bank import problems as P  # noqa: E402
 from bank import stitch  # noqa: E402
@@ -43,7 +48,7 @@ from bank.bib import parse_bib  # noqa: E402
 from bank.number import assign_provisional_ids, read_last_id  # noqa: E402
 from bank.data import build_index, build_tag_catalogue, visible_problems  # noqa: E402
 from bank.tags import TagError, load_tags  # noqa: E402
-from bank.validate import compile_problem, folder_errors  # noqa: E402
+from bank.validate import appendix_errors, compile_item, compile_problem, folder_errors  # noqa: E402
 
 ROOT = paths.WEBSITE
 REPO = paths.REPO
@@ -69,41 +74,47 @@ def step(msg):
 
 def load_and_validate(tags):
     probs = P.load_problems(PROBLEMS_DIR)
+    items = A.load_items()
     bib_keys = set(parse_bib(paths.BIB_FILE))
+    cat = A.catalogue(items)
     n_err = 0
     for p in probs:
-        P.validate(p, tags, bib_keys)
+        P.validate(p, tags, bib_keys, cat)
         for line, msg in sorted(p["errors"]):
             print(f"{os.path.relpath(p['path'], REPO)}:{line}: {msg}")
             n_err += 1
-    for path, line, msg in folder_errors(PROBLEMS_DIR, probs):
+    for path, line, msg in folder_errors(PROBLEMS_DIR, probs) + appendix_errors(items, bib_keys):
         print(f"{os.path.relpath(path, REPO)}:{line}: {msg}")
         n_err += 1
     if n_err:
-        fail(f"{n_err} problem(s) in the problem files — fix them (messages above are file:line: what is wrong)")
+        fail(f"{n_err} problem(s) in the problem files and shared results — fix them (messages above are file:line: what is wrong)")
     n_new = sum(1 for p in probs if p["new"])
-    print(f"{len(probs)} problem files valid" + (f" ({n_new} proposed new-*.tex, numbered after the merge)" if n_new else ""))
-    return probs
+    print(f"{len(probs)} problem files valid" + (f" ({n_new} proposed new-*.tex, numbered after the merge)" if n_new else "")
+          + f", {len(items)} shared result{'' if len(items) == 1 else 's'} in problem-bank/appendix/")
+    return probs, items
 
 
-def compile_all(probs, tags, jobs):
-    jobs_list = [(p, True) for p in probs] + [(p, False) for p in probs if p["has_solution"]]
+def compile_all(probs, items, tags, jobs):
+    jobs_list = [(p, True) for p in probs] + [(p, False) for p in probs if p["has_solution"]] + [(it, None) for it in items]
     failed = []
     with concurrent.futures.ThreadPoolExecutor(max_workers=jobs) as ex:
-        futs = {ex.submit(compile_problem, p, tags, ws, cache_dir=PROOF_CACHE): (p, ws) for p, ws in jobs_list}
+        futs = {(ex.submit(compile_item, p, items, cache_dir=PROOF_CACHE) if ws is None
+                 else ex.submit(compile_problem, p, tags, ws, cache_dir=PROOF_CACHE, items=items)): (p, ws)
+                for p, ws in jobs_list}
         for fut in concurrent.futures.as_completed(futs):
             p, ws = futs[fut]
             ok, err = fut.result()
             if not ok:
                 failed.append((p, ws, err))
     for p, ws, err in failed:
-        print(f"FAIL {os.path.relpath(p['path'], REPO)} ({'with solution' if ws else 'statement only'}):\n{err}\n")
+        tag = "shared result" if ws is None else "with solution" if ws else "statement only"
+        print(f"FAIL {os.path.relpath(p['path'], REPO)} ({tag}):\n{err}\n")
     if failed:
         fail(f"{len(failed)} compile failure(s)")
     print(f"{len(jobs_list)} standalone compiles OK")
 
 
-def write_site_data(probs, tags, preview):
+def write_site_data(probs, items, tags, preview):
     os.makedirs(BANK_DATA_DIR, exist_ok=True)
     visible = visible_problems(probs, preview)
     index = build_index(probs, tags, preview)
@@ -118,14 +129,19 @@ def write_site_data(probs, tags, preview):
         shutil.rmtree(fig_dir)
     os.makedirs(fig_dir, exist_ok=True)
     source = stitch.bank_sources(visible, tags)
+    # the shared results these problems cite, and the ones those cite (bank/appendix.py): only those are published
+    cites_of = {it["name"]: it["cites"] for it in items if it["name"]}
+    wanted = A.closure([n for s in source for n in s["cites"]], cites_of)
     try:
         bodies, stats = stitch.build_bodies(source, BANK_DATA_DIR, log=lambda *a: None)
+        appendix, astats = stitch.build_appendix(items, wanted, BANK_DATA_DIR, log=lambda *a: None)
     except RuntimeError as e:
         fail(str(e))
-    # "build" = a hash of the problem texts; the page carries the same value and refuses texts of another deploy
+    # "build" = a hash of the texts; the page carries the same value and refuses texts of another deploy
     problems_json = json.dumps(bodies, ensure_ascii=False, separators=(",", ":"))
-    build = hashlib.sha256(problems_json.encode("utf-8")).hexdigest()[:16]
-    payload = '{"build":%s,"problems":%s}' % (json.dumps(build), problems_json)
+    appendix_json = json.dumps(appendix, ensure_ascii=False, separators=(",", ":"))
+    build = hashlib.sha256((problems_json + "\0" + appendix_json).encode("utf-8")).hexdigest()[:16]
+    payload = '{"build":%s,"problems":%s,"appendix":%s}' % (json.dumps(build), problems_json, appendix_json)
     with open(os.path.join(BANK_DATA_DIR, "bodies.json"), "w", encoding="utf-8") as f:
         f.write(payload)
     size = len(payload.encode("utf-8"))
@@ -135,7 +151,9 @@ def write_site_data(probs, tags, preview):
     shutil.copyfile(paths.PREAMBLE_FILE, os.path.join(BANK_DATA_DIR, "preamble.tex"))   # "Download .tex", "Show available LaTeX"
     shutil.copyfile(paths.BIB_FILE, os.path.join(BANK_DATA_DIR, "references.bib"))      # \cite in the propose page's preview
     print(f"site data: {index['count']} problem(s) {'(PREVIEW: all, with review badges)' if preview else 'published'}, "
-          f"{stats['figures']} figure(s), {stats['citations']} citation(s), {len(catalogue['area'])} area / {len(catalogue['methods'])} methods tags")
+          f"{astats['results']} shared result(s) cited, "
+          f"{stats['figures'] + astats['figures']} figure(s), {stats['citations'] + astats['citations']} citation(s), "
+          f"{len(catalogue['area'])} area / {len(catalogue['methods'])} methods tags")
     return index, catalogue, build
 
 
@@ -160,6 +178,18 @@ def build_bundle(assets_dir):
         fail("the engine bundle failed to build (see tools/busytex_bundle.py output above)")
 
 
+def bundle_is_current():
+    """True if site/static/busytex/ exists and its format file was built from the current preamble.tex (a format
+    made from an older preamble lacks the new macros: every PDF using them would fail in the browser)."""
+    try:
+        with open(os.path.join(paths.BUSYTEX_DIR, "manifest.json"), encoding="utf-8") as f:
+            built_from = json.load(f).get("preamble_sha256")
+        with open(paths.PREAMBLE_FILE, "rb") as f:
+            return built_from == hashlib.sha256(f.read()).hexdigest()
+    except (OSError, ValueError, AttributeError):
+        return False
+
+
 def engine_version():
     """manifest.json's version of the engine bundle in site/static/busytex/ (None if there is no bundle)."""
     try:
@@ -179,7 +209,7 @@ def asset_version():
     return h.hexdigest()[:10]
 
 
-def render_pages(index, catalogue, preview, build=None):
+def render_pages(index, catalogue, preview, build=None, items=()):
     env = Environment(loader=FileSystemLoader(TEMPLATES_DIR), autoescape=False)
 
     def url_for(endpoint, **kw):
@@ -194,10 +224,15 @@ def render_pages(index, catalogue, preview, build=None):
 
     # build / engine: the problem texts and the LaTeX engine this page was built with (bank-compile.js::expectBuild)
     bank_data = inline_json({"tags": catalogue, "index": index, "github": github, "build": build, "engine": engine_version()})
-    propose_data = inline_json({"tags": catalogue, "github": github})
+    # the shared results a proposed solution may cite with \appendixref{name}: names, titles, the results they cite and
+    # the labels a solution may refer to (texts are not needed); the page lists them in its writing rules
+    results = [{"name": it["name"], "title": it["title"], "cites": list(it["cites"]), "labels": sorted(A.global_labels(it))}
+               for it in items if it["name"]]
+    propose_data = inline_json({"tags": catalogue, "github": github, "appendix": results})
     pages = [("index.html", {"page": "home"}),
              ("problems.html", {"page": "problems", "page_title": "Problems", "bank_data_json": bank_data, "preview": preview}),
-             ("propose.html", {"page": "propose", "page_title": "Propose a problem", "propose_data_json": propose_data})]
+             ("propose.html", {"page": "propose", "page_title": "Propose a problem", "propose_data_json": propose_data,
+                               "appendix_results": results})]
     version = asset_version()
     for name in os.listdir(OUTPUT_DIR):
         if name.endswith(".html"):
@@ -226,24 +261,27 @@ def main(argv=None):
     print({k: len(v) for k, v in tags.items()})
 
     step("problem files")
-    probs = load_and_validate(tags)
+    probs, items = load_and_validate(tags)
     if a.preview:
         assign_provisional_ids(probs, read_last_id())   # new-*.tex under the number they will get after the merge
 
     if not a.no_compile:
-        step("compiling every problem standalone (with and without solution)")
-        compile_all(probs, tags, a.jobs)
+        step("compiling every problem standalone (with and without solution) and every shared result")
+        compile_all(probs, items, tags, a.jobs)
 
     step("site data")
-    index, catalogue, build = write_site_data(probs, tags, a.preview)
+    index, catalogue, build = write_site_data(probs, items, tags, a.preview)
 
-    missing = not os.path.exists(os.path.join(paths.BUSYTEX_DIR, "manifest.json"))
-    if not a.no_bundle or missing:           # a fresh clone has none: Create / Preview and the browser tests need it
-        step("in-browser engine bundle" + (" (missing, so built despite --no-bundle)" if a.no_bundle else ""))
+    # a fresh clone has no bundle, and one made from an older preamble.tex lacks its new macros: Create / Preview and
+    # the browser tests need a current one
+    stale = not bundle_is_current()
+    if not a.no_bundle or stale:
+        step("in-browser engine bundle" + (" (missing or built from an older preamble.tex, so built despite --no-bundle)"
+                                           if a.no_bundle else ""))
         build_bundle(ensure_assets(a.assets))
 
     step("HTML pages")
-    render_pages(index, catalogue, a.preview, build)
+    render_pages(index, catalogue, a.preview, build, items)
     print(f"\n🎉 Site built in 'website-code/site/'{' (preview)' if a.preview else ''}. Serve it with: python3 -m http.server 8000 --directory website-code/site")
 
 

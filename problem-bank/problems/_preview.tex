@@ -1,16 +1,31 @@
-% _preview.tex — wrapper to compile ONE problem file locally (VS Code "build on save" or latexmk).
+% _preview.tex — wrapper to compile ONE problem file, or one shared result, locally (VS Code "build on save" or latexmk).
 % The file to preview is passed in \bankfile (path without extension), e.g.
 %   cd problem-bank && TEXINPUTS=.: latexmk -pdf -usepretex='\def\bankfile{problems/0003-roots-on-the-unit-circle}' -jobname=0003-roots-on-the-unit-circle -outdir=problems problems/_preview.tex
+%   cd problem-bank && TEXINPUTS=.: latexmk -pdf -usepretex='\def\bankfile{appendix/spectral-mapping-theorem}' -jobname=spectral-mapping-theorem -outdir=appendix problems/_preview.tex
 % .vscode/settings.json does exactly this for the .tex file you are editing.  website-code/build.py does not use this file.
+% A problem is followed by the shared results its solution cites (\appendixref, read from appendix/); a file of
+% problem-bank/appendix/ is shown as that result (followed by the results it cites).
 \documentclass[11pt]{article}
 \input{preamble}
 \begin{document}
 \ifdefined\bankfile
-  % The heading shows the ID, i.e. the job name up to its first '-' (0042-title -> 0042, new-title -> new);
-  % \jobname's characters are plain text, so a path with _ or # never reaches the heading.
-  \def\bankpreviewid#1-#2\relax{#1}%
-  \bankproblem{1}{Preview}{}{\expandafter\bankpreviewid\jobname-\relax}
-  \input{\bankfile}
+  % Is \bankfile a result: in problem-bank/appendix/ (the absolute path VS Code passes), or appendix/<name> (relative
+  % to problem-bank/, as in the second example)?  (The sentinels after \bankfile make both matches always succeed.)
+  \def\bankpreviewisresult#1/problem-bank/appendix/#2\relax{\ifx\relax#2\relax\else\def\bankpreviewresult{}\fi}%
+  \expandafter\bankpreviewisresult\bankfile/problem-bank/appendix/\relax
+  \def\bankpreviewisrelative#1appendix/#2\relax{\ifx\relax#1\relax\def\bankpreviewresult{}\fi}%
+  \expandafter\bankpreviewisrelative\bankfile appendix/\relax
+  \ifdefined\bankpreviewresult
+    % The result's name is the job name (the file name without .tex).
+    \bankappendixneed{\jobname}\bankappendixall
+  \else
+    % The heading shows the ID, i.e. the job name up to its first '-' (0042-title -> 0042, new-title -> new);
+    % \jobname's characters are plain text, so a path with _ or # never reaches the heading.
+    \def\bankpreviewid#1-#2\relax{#1}%
+    \bankproblem{1}{Preview}{}{\expandafter\bankpreviewid\jobname-\relax}
+    \input{\bankfile}
+    \bankappendixall
+  \fi
 \else
   Define \verb|\bankfile| (see the comment at the top of this file).
 \fi

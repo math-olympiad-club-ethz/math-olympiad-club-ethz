@@ -1,0 +1,23 @@
+% Shared result, cited from solutions with \appendixref{spectral-mapping-theorem}.
+% Moved on 2026-09-30 from the appendix of problem 0030 (A.1 there), text unchanged: only the links to other
+% results became \appendixref.  Earlier version: none in git before the problem bank (2026 PDF of problem set 7).
+\begin{appendixitem}{Spectral Mapping Theorem}
+We recall the following important theorem:
+\begin{theorem}[Spectral Mapping Theorem]
+Let \( \mathbb{F} \) be a field, \( r \in \mathbb{N}_{>0} \), and \( A \in \mathbb{F}^{r \times r} \). Let \( \mathbb{F}^{\text{alg}} \supset \mathbb{F} \) be the algebraic closure of \( \mathbb{F} \). Let \( Q \in \mathbb{F}^{\text{alg}}\left[X\right] \). Let \( \sigma\left(A\right) = \operatorname{Root}_{P_{\text{char}, A}\left(X\right)}\left(\mathbb{F}^{\text{alg}}\right) \) be the set of all eigenvalues of \( A \), and for each \( \lambda \in \sigma\left(A\right) \), let \( m_\lambda := m_{P_{\text{char}, A}\left(X\right)}\left(\lambda\right) \) be the algebraic multiplicity of \( \lambda \) in \( P_{\text{char}, A}\left(X\right) \). The Spectral Mapping Theorem (easy to prove once one knows that every matrix in \( \left(\mathbb{F}^{\text{alg}}\right)^{r \times r} \) is similar to an upper triangular matrix over \( \mathbb{F}^{\text{alg}} \)) states precisely that \( P_{\text{char}, Q\left(A\right)}\left(X\right) = \prod_{\lambda \in \sigma\left(A\right)} \left(X - Q\left(\lambda\right)\right)^{m_\lambda} \). Recall that \( 0_{\mathbb{F}}^{0} := 1_{\mathbb{F}} \).
+In particular:
+\[
+\sigma\left(Q\left(A\right)\right) = \left\{ Q\left(\lambda\right) \,\middle|\, \lambda \in \sigma\left(A\right) \right\}\subset \mathbb{F}^{\text{alg}},
+\]
+\[
+\forall \kappa \in \mathbb{F}^{\text{alg}}, \ m_{P_{\text{char}, Q\left(A\right)}\left(X\right)}\left(\kappa\right) = \sum_{\substack{\mu \in \sigma\left(A\right) \\ Q\left(\mu\right) = \kappa}} m_{\mu}.
+\]
+If we let \( \lambda \in \left(\mathbb{F}^{\text{alg}}\right)^r \) be any vector (the order in this vector doesn't matter) of exactly all the eigenvalues of \( A \) counted with their respective algebraic multiplicities, then \( Q(\lambda)\in \left(\mathbb{F}^{\text{alg}}\right)^r  \) (each coordinate is evaluated through \(Q\)) is a vector of exactly all the eigenvalues of \( Q\left(A\right) \) with their respective algebraic multiplicities. Hence (by standard formula linking its trace and determinant to its eigenvalues):
+\[
+\operatorname{tr}\left(Q\left(A\right)\right) = \sum_{i\in r} Q\left(\lambda_i\right),
+\]
+\[
+\operatorname{det}_{\mathbb{F}^{\text{alg}}}\left(Q\left(A\right)\right) = \prod_{i\in r} Q\left(\lambda_i\right).
+\]
+\end{theorem}
+\end{appendixitem}

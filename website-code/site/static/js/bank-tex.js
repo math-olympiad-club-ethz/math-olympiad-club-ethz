@@ -144,7 +144,7 @@ export function formatEntry(e) {
     if (e.volume) j += ` \\textbf{${e.volume}}`;
     if (e.number) j += ` (${e.number})`;
     if (e.year) j += `, ${e.year}`;
-    if (e.pages) j += `, pp.~${e.pages}`;
+    if (e.pages) j += `, ${/[-–—,+]/.test(e.pages) ? 'pp.' : 'p.'}~${e.pages}`;      // p.~119, pp.~241--246
     parts.push(j + '.');
   } else {
     const tail = [e.publisher, e.howpublished, e.year].filter(Boolean);
@@ -249,4 +249,40 @@ export function labelRefs(tex) {
   for (const m of tex.matchAll(RANGE_RE)) for (const g of [3, 4]) for (const k of split(m[g])) refs.push([k, m.index]);
   for (const m of tex.matchAll(HYPERREF_RE)) for (const k of split(m[1])) refs.push([k, m.index]);
   return { targets, refs };
+}
+
+/* ------------------------------------------------------------------ shared results (problem-bank/appendix/) */
+
+/* \appendixref{<name>}, with the spaces TeX allows; m[1] is undefined when there is no {...}.  Same regex as
+   bank/appendix.py::APPENDIXREF_RE. */
+export const APPENDIXREF_RE = /\\appendixref(?![A-Za-z@])(?:[ \t\n]*\{([^{}]*)\})?/g;
+export const APPENDIX_NAME_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+export const APPENDIX_LABEL_PREFIX = 'appendix:';
+
+/* 'appendix:<name>' or 'appendix:<name>:<label>' -> <name>, else null.  Mirrors bank/appendix.py::ref_name. */
+export function refName(key) {
+  if (!key.startsWith(APPENDIX_LABEL_PREFIX)) return null;
+  const name = key.slice(APPENDIX_LABEL_PREFIX.length).split(':')[0];
+  return APPENDIX_NAME_RE.test(name) ? name : null;
+}
+
+/* [[offset, name]] of every \appendixref{name} (comments masked), in text order: only \appendixref decides which
+   results a PDF prints (author mode cannot follow references to labels).  Mirrors bank/appendix.py::citations. */
+export function appendixCitations(tex) {
+  const masked = maskComments(String(tex || ''));
+  return [...masked.matchAll(APPENDIXREF_RE)].filter(m => m[1] !== undefined && APPENDIX_NAME_RE.test(m[1])).map(m => [m.index, m[1]]);
+}
+
+/* The shared results cited in `tex` with \appendixref, in order of first citation.  Mirrors bank/appendix.py::cited_names. */
+export function citedNames(tex) {
+  const out = [];
+  for (const [, n] of appendixCitations(tex)) if (!out.includes(n)) out.push(n);
+  return out;
+}
+
+/* [[offset, text]] of \appendixref calls without a {name} or with something that is not a name.  Mirrors
+   bank/appendix.py::malformed_refs. */
+export function malformedAppendixRefs(tex) {
+  const masked = maskComments(String(tex || ''));
+  return [...masked.matchAll(APPENDIXREF_RE)].filter(m => m[1] === undefined || !APPENDIX_NAME_RE.test(m[1])).map(m => [m.index, m[0]]);
 }

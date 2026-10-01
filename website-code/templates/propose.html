@@ -38,6 +38,8 @@
       <li>Your own macros: <code>\newcommand</code> (not <code>\def</code>).</li>
       <li>No date or time (<code>\today</code>).</li>
       <li>Citations: <code>\cite{key}</code>, with the entry in the Bibliography box below.</li>
+      <li>Shared results (a theorem with its proof, kept in the bank's appendix): cite one in the solution with <code>Appendix~\appendixref{name}</code>; <code>\appendixref</code> prints its number (A.1) and the PDF adds the result at the end. New shared results are added by the board.{% if appendix_results %} Available:
+        {% for r in appendix_results %}<code>{{ r.name|e }}</code> ({{ r.title|e }}){% if not loop.last %}, {% endif %}{% endfor %}.{% endif %}</li>
       </ul>
       <button id="pp-show-latex" type="button" class="btn btn-sm btn-outline-secondary mt-2" aria-haspopup="dialog" aria-controls="pp-latex">Show available LaTeX</button>
     </details>

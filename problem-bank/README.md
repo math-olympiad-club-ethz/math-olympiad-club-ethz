@@ -8,11 +8,14 @@ problems/NNNN-short-title.tex   ← one problem (header in % comments, \begin{pr
 problems/new-short-title.tex    ← a proposed problem, not numbered yet (numbered automatically after the merge)
 problems/_last-id.txt           ← highest number ever given (kept by the numbering Action; numbers are never reused)
 problems/_template.tex          ← copy this to add a problem
-problems/_preview.tex           ← wrapper used by VS Code to compile a single problem
+problems/_preview.tex           ← wrapper used by VS Code to compile a single problem (or a shared result)
+appendix/<name>.tex             ← a shared result (theorem + proof), cited from solutions with \appendixref{<name>}
+appendix/_template.tex          ← copy this to add a shared result
 tags.yml                        ← the ONLY list of allowed tags (areas as a tree, methods, difficulty, origins)
 preamble.tex                    ← shared preamble (author/CI mode with TikZ + biblatex; stitched browser mode)
 references.bib                  ← shared bibliography for \cite
 work-in-progress/               ← problems still in construction (the magic problems); git-ignored, local only
+writing-style.md                ← how statements and solutions are written here (from the fully solved problems)
 known-errors.md                 ← mistakes found in statements/solutions, still to fix (temporary)
 history-review.md               ← what the AI history pass changed, with sources; still to review (temporary)
 inspiration/                    ← personal reference material, git-ignored
@@ -61,6 +64,42 @@ used by that problem only (LaTeX skips it; the website turns citations into a nu
 
 New tag or origin = one entry in `tags.yml` (slug, name, optional description and aliases).
 
+## Shared results (the appendix)
+
+A result that several solutions use (a theorem with its proof: Cauchy's theorem, the Spectral Mapping Theorem,
+Capelli's lemma, …) is written once, in `appendix/<name>.tex`, and a solution cites it with `\appendixref{<name>}`.
+Every PDF whose solutions cite results ends with an **Appendix** holding each of them once, and the results they
+cite in turn, numbered A.1, A.2, … in order of first citation; `\appendixref{<name>}` prints that number (e.g. `A.2`)
+as a link, so write it as you would write a number: `see Appendix~\appendixref{cauchy-group-theorem}`.
+
+```latex
+% appendix/cauchy-group-theorem.tex   (the file name is the citation key: lowercase kebab-case, never rename it)
+\begin{appendixitem}{Cauchy's Theorem for Groups}
+\begin{theorem} ... \end{theorem}
+\begin{proof} ... \end{proof}
+\end{appendixitem}
+```
+
+- One `appendixitem` block per file, with the title (plain text) as its argument; `%` comments outside it (source,
+  notes), and optionally a `bibentries` block after it. The same LaTeX rules as problems; TikZ and `\cite` work.
+- A result may cite other results with `\appendixref`; they are added too (results citing each other in a circle
+  are an error).
+- Labels inside a result are its own. When a solution refers to an equation or a lemma inside a result, give that
+  label the full name `appendix:<name>:<key>` (both at `\label` and at `\ref`), e.g. `\eqref{appendix:field-norm:A.2.3}`,
+  and cite the result with `\appendixref{<name>}` in the same solution: only `\appendixref` makes a PDF print the
+  result (the validator checks both). `appendix:<name>` is the label of the result's heading. In the local preview
+  and the CI proofs a problem and the results it cites share one set of labels, so do not reuse, in a solution, a
+  label name that a cited result sets (the website keeps them apart).
+- Only solutions cite results (a problems-only PDF has no appendix); `\appendix` is not used in problem files any
+  more.
+- Preview: saving `appendix/<name>.tex` in VS Code shows that result (followed by the results it cites); saving a
+  problem shows it followed by the results its solution cites. Local previews and CI proofs print the result's name
+  next to its number, `A.1 (cauchy-group-theorem)`; the website's PDFs do not. Terminal:
+  `cd website-code && python3 -m bank.validate --compile ../problem-bank/appendix/<name>.tex`.
+- Results have no header and no `review` field: the website publishes a result when a published solution cites it
+  (or a result cited by one), so a result is reviewed together with the first problem that cites it. The propose page
+  lists every result of the folder (name and title) for proposers to cite.
+
 ## Improve a problem, review
 
 - To change a problem, edit its file on GitHub (`problem-bank/problems/`); saving proposes the change as a pull
@@ -75,10 +114,16 @@ New tag or origin = one entry in `tags.yml` (slug, name, optional description an
     `references`): `none` nobody looked, `ai` filled by an AI pass from sources it found (what it changed and how
     sure it was: [`history-review.md`](history-review.md)), `human` checked by a person against the source.
     `history` never decides whether a problem is published.
+  - The history fields record the earliest source known to us, never a final truth: when an earlier source turns
+    up, they change. References say "Earliest known appearance (to the best of our knowledge)" for that reason.
 
 ## Rules
 
-- Statements and solutions are written by humans. Tools may only fill header fields.
+- Statements and solutions are written by humans. Tools may only fill header fields. (Exception, decided by Antoine
+  on 2026-09-29: statements, and solutions when he asks for them, may be written by AI; such files say so in a
+  `% AI-WRITTEN, NEEDS HUMAN REVIEW` comment under the header and keep `review: none` until a person has checked them.
+  A shared result has no header: the comment is at the top of its file, and the result is checked before any problem
+  citing it gets `review: human`.)
 - IDs are sequential integers without meaning, given automatically after the merge; they never change and are never reused.
 - Every header field except `area` may be empty; an empty field never breaks anything.
 - Only `review: human` problems appear on the website. The repository itself is public: every file here (unreviewed

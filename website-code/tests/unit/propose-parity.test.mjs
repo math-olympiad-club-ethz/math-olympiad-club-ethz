@@ -17,6 +17,7 @@ const PY = String.raw`
 import json, os, sys, tempfile
 sys.path.insert(0, os.getcwd())
 from bank import paths, problems as P
+from bank import appendix as A
 from bank.bib import format_entry, parse_bib, parse_bib_entries
 from bank.stitch import find_figures, label_refs, resolve_citations, split_body
 from bank.tags import load_tags
@@ -31,16 +32,21 @@ out["mask"] = [P.mask_comments(t) for t in req.get("mask", [])]
 out["labels"] = [[label_refs(t)[0], [list(r) for r in label_refs(t)[1]]] for t in req.get("labels", [])]
 out["figures"] = [[list(f) for f in find_figures(t)] for t in req.get("figures", [])]
 out["dates"] = [P._valid_date(t, allow_partial=True) for t in req.get("dates", [])]
+out["cited"] = [A.cited_names(t) for t in req.get("cited", [])]
+out["malformed"] = [[list(x) for x in A.malformed_refs(t)] for t in req.get("cited", [])]
+out["citations"] = [[list(x) for x in A.citations(t)] for t in req.get("cited", [])]
 files = []
 if req.get("files"):
     tags, keys = load_tags(paths.TAGS_FILE), set(parse_bib(paths.BIB_FILE))
+    names = None if req.get("appendix") is None else \
+        {r["name"]: set(r.get("labels", [])) | {A.LABEL_PREFIX + r["name"]} for r in req["appendix"]}
     with tempfile.TemporaryDirectory() as d:
         for name, text in req["files"]:
             path = os.path.join(d, name)
             with open(path, "w", encoding="utf-8") as f:
                 f.write(text)
             p = P.parse_problem_file(path)
-            P.validate(p, tags, keys)
+            P.validate(p, tags, keys, names)
             st, so = split_body(p["body"])
             files.append({"errors": [m for _, m in p["errors"]], "new": p["new"], "title": p["title"], "area": p["area"],
                           "methods": p["methods"], "difficulty": p["difficulty"], "origin": p["origin"], "originDate": p["origin_date"],
@@ -82,7 +88,9 @@ test('entry formatter: JS == Python on every entry of references.bib and edge ca
   const entries = T.parseBibEntries(readFileSync(BIB, 'utf8')).map(([, f]) => f);
   entries.push({ title: 'k' }, { title: 'Springer chapter', doi: '10.1007/978-3-642-15546-8_7' }, { title: 'On a theorem of {Euler}' },
     { title: '{{Protected}}' }, { title: '{A} and {B}' }, { title: '}{' }, { author: 'A and B and C', title: '{T}', journal: 'J', volume: '1', number: '2', year: '3', pages: '4--5' },
-    { eprint: '1234.5678', archiveprefix: 'arXiv', url: 'https://x.y', note: 'see arXiv' }, { publisher: 'P', howpublished: 'H', note: 'N' }, {});
+    { eprint: '1234.5678', archiveprefix: 'arXiv', url: 'https://x.y', note: 'see arXiv' }, { publisher: 'P', howpublished: 'H', note: 'N' }, {},
+    // one page (p.) or several (pp.)
+    { journal: 'J', pages: '119' }, { journal: 'J', pages: '241–246' }, { journal: 'J', pages: '3, 7' }, { journal: 'J', pages: '12+' });
   assert.ok(entries.length >= 9);
   assert.deepEqual(entries.map(T.formatEntry), python({ format: entries }).format);
 });
@@ -185,4 +193,60 @@ test('files made by the page pass the Python validator with the same fields; inv
     assert.notDeepEqual(P.validateDraft(d, cat, bibKeys), [], `JS rejects bad draft ${i}`);
     assert.notDeepEqual(r.errors, [], `Python rejects bad draft ${i}: ${P.problemFile(d)}`);
   });
+});
+
+test('shared results: the citation scanner is the same on both sides (\\appendixref, appendix: labels, comments, malformed calls)', () => {
+  const texts = ['See \\appendixref{b-res} % \\appendixref{hidden}\n and \\eqref{appendix:a-res:eq} then \\appendixref {a-res}, \\appendixref{b-res}',
+    '\\ref{appendix:c-res} \\appendixref{Bad Name} \\appendixref x \\appendixref{} \\appendixref{a--b} \\appendixrefx{y} \\hyperref[appendix:d, appendix:e-f:1]{t}',
+    '\\cref{appendix:g:1,appendix:h} \\label{appendix:i:j} \\appendixref\n{k-2} \\appendixref{\u001fl}', '', 'no citation', '\\\\% \\appendixref{m} \\appendixref{n}'];
+  const py = python({ cited: texts });
+  assert.deepEqual(texts.map(T.citedNames), py.cited);
+  assert.deepEqual(texts.map(T.malformedAppendixRefs), py.malformed);
+  assert.deepEqual(texts.map(T.appendixCitations), py.citations);
+});
+
+test('shared results: drafts citing them pass or fail on both sides', (t) => {
+  if (!existsSync(TAGS)) { t.skip('site/static/bank/tags.json not built'); return; }
+  const cat = S.buildCatalogue(JSON.parse(readFileSync(TAGS, 'utf8')));
+  const bibKeys = T.parseBibEntries(readFileSync(BIB, 'utf8')).map(([k]) => k);
+  const results = [{ name: 'cauchy-group-theorem', labels: [] }, { name: 'field-norm', labels: ['appendix:field-norm:A.2.3'] }];
+  const base = { ...P.emptyDraft(), statement: 'Prove that $1+1=2$.', area: ['primes'] };
+  const good = [
+    { ...base, solution: 'By Cauchy (Appendix~\\appendixref{cauchy-group-theorem}), \\appendixref{field-norm} and \\eqref{appendix:field-norm:A.2.3}.' },
+    { ...base, solution: 'By \\appendixref {field-norm}. % \\appendixref{nowhere}' },
+    { ...base, statement: 'Prove it. % \\appendix and \\appendixref{nowhere}', solution: 'x' },
+    { ...base, solution: 'See \\hyperref[appendix:field-norm]{the norm} (\\appendixref{field-norm}).' },
+    { ...base, solution: '\\newcommand{\\myref}[1]{(\\ref{#1})} By \\appendixref{field-norm}.' },
+    { ...base, statement: 'Show (\\ref{eq}). \\begin{equation}\\label{eq} x \\end{equation}', solution: 'By \\eqref{eq}.' },
+  ];
+  const bad = [
+    { ...base, statement: 'By \\appendixref{cauchy-group-theorem}.' }, { ...base, solution: 'By \\appendixref{nowhere}.' },
+    { ...base, solution: 'By \\ref{appendix:nowhere:1}.' }, { ...base, solution: 'By \\appendixref{Bad Name}.' },
+    { ...base, solution: 'By \\appendixref.' }, { ...base, solution: '\\appendix x' }, { ...base, statement: '\\begin{appendixitem}{T} x \\end{appendixitem}' },
+    { ...base, statement: 'See \\eqref{appendix:field-norm:A.2.3}.' },
+    { ...base, statement: 'See \\cite{b1}.', bibtex: '@misc{b1, title = {A}, note = {\\appendixref{field-norm}}}' },
+    // a label of a result without citing the result with \appendixref (the local preview would print ??)
+    { ...base, solution: 'By \\eqref{appendix:field-norm:A.2.3}.' },
+    // a label the result does not set; a label named appendix:... in a problem; a reference to no label at all
+    { ...base, solution: 'By \\appendixref{field-norm} and \\eqref{appendix:field-norm:nope}.' },
+    { ...base, solution: '\\begin{equation}\\label{appendix:field-norm:A.2.3} x \\end{equation}' },
+    { ...base, solution: 'By \\eqref{nowhere}.' }, { ...base, solution: 'By \\ref{appendix:Bad_Name}.' },
+    // inside a drawing (drawn on its own, without the appendix)
+    { ...base, solution: '\\begin{tikzpicture}\\node {\\appendixref{field-norm}};\\end{tikzpicture}' },
+    // layout commands of the appendix
+    { ...base, solution: '\\appendixitem x' }, { ...base, solution: '\\setcounter{bankappendixitem}{5}' },
+  ];
+  const all = [...good, ...bad];
+  const py = python({ files: all.map(d => [P.fileName(d), P.problemFile(d)]), appendix: results }).files;
+  good.forEach((d, i) => {
+    assert.deepEqual(P.validateDraft(d, cat, bibKeys, results), [], `JS accepts good draft ${i}`);
+    assert.deepEqual(py[i].errors, [], `Python accepts good draft ${i}`);
+  });
+  bad.forEach((d, i) => {
+    assert.notDeepEqual(P.validateDraft(d, cat, bibKeys, results), [], `JS rejects bad draft ${i}`);
+    assert.notDeepEqual(py[good.length + i].errors, [], `Python rejects bad draft ${i}: ${P.problemFile(d)}`);
+  });
+  // without the list of results (not loaded), names and labels of results are not checked, the rest is
+  assert.deepEqual(P.validateDraft({ ...base, solution: 'By \\appendixref{nowhere}.' }, cat, bibKeys, null), []);
+  assert.notDeepEqual(P.validateDraft({ ...base, statement: 'By \\appendixref{nowhere}.' }, cat, bibKeys, null), []);
 });

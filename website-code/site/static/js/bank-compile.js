@@ -10,11 +10,11 @@ export const CLUB_NAME = 'Math Olympiad Club ETHZ';
 // absolute URL for the engine: the worker resolves relative paths against its own location (static/js/), not the page's
 const PATHS = { worker: 'static/js/compile-worker.js', bodies: 'static/bank/bodies.json', figures: 'static/bank/', preamble: 'static/bank/preamble.tex',
   get engine() { return new URL('static/busytex/', typeof document !== 'undefined' ? document.baseURI : 'http://localhost/').href; } };
-const COMPILE_TIMEOUT_MS = 240000;                     // a PDF: 60 s + 2 s per problem, at most this
+const COMPILE_TIMEOUT_MS = 240000;                     // a PDF: 60 s + 2 s per problem or shared result, at most this
 const PREVIEW_TIMEOUT_MS = 60000;
 const selectionTimeout = n => Math.min(COMPILE_TIMEOUT_MS, 60000 + 2000 * n);
 
-const state = { worker: null, ready: null, readyInfo: null, initWaiting: false, bodies: null, bodiesPromise: null, figures: new Map(), seq: 0,
+const state = { worker: null, ready: null, readyInfo: null, initWaiting: false, bodies: null, appendix: null, bodiesPromise: null, figures: new Map(), seq: 0,
   queue: [], running: null, listeners: new Set(), failed: null, expect: {} };
 
 export function onStatus(fn) { state.listeners.add(fn); return () => state.listeners.delete(fn); }
@@ -72,7 +72,9 @@ function ensureWorker() {
       const k = job.order.indexOf(data.pid);
       if (k < 0) return;
       job.pid = data.pid;
-      if (job.order.length > 1) emit({ kind: 'progress', stage: 'compile', job: job.kind, text: `Compiling… ${k + 1} / ${job.order.length}` });
+      const problems = job.order.filter(p => !isResultMarker(p)).length;
+      if (isResultMarker(data.pid)) emit({ kind: 'progress', stage: 'compile', job: job.kind, text: 'Compiling… appendix' });
+      else if (problems > 1) emit({ kind: 'progress', stage: 'compile', job: job.kind, text: `Compiling… ${k + 1} / ${problems}` });
     } else if (data.type === 'result') {
       if (job) finish(job, null, data);
     } else if (data.type === 'error') {
@@ -168,7 +170,8 @@ function cancelJob(job) {
 function timedOut(job) {
   if (state.running !== job) return;
   const title = (job.pid && job.names && job.names[job.pid]) || job.label;
-  const err = new Error('The LaTeX compile took too long and was stopped.' + (title ? ` It got stuck in the problem “${title}”.` : ''));
+  const where = job.pid && isResultMarker(job.pid) ? 'the shared result' : 'the problem';
+  const err = new Error('The LaTeX compile took too long and was stopped.' + (title ? ` It got stuck in ${where} “${title}”.` : ''));
   err.name = 'TimeoutError';
   stopWorker({ keepInit: true });
   finish(job, err);
@@ -206,6 +209,7 @@ export async function loadBodies() {
       .then(j => {
         if (!j || typeof j.problems !== 'object') throw new Error('Could not read the problem texts.');
         if (state.expect.build && j.build && j.build !== state.expect.build) throw staleError();
+        state.appendix = j.appendix && typeof j.appendix === 'object' ? j.appendix : {};
         return (state.bodies = j.problems);
       })
       .catch(e => { state.bodiesPromise = null; throw e.name === 'SyntaxError' ? new Error('Could not read the problem texts.') : e; });
@@ -218,8 +222,25 @@ export async function loadBodies() {
 export const texEscape = s => String(s).replace(/\\?[&%$#_]/g, m => (m.length === 2 ? m : '\\' + m));
 const pad4 = i => String(i).padStart(4, '0');
 
-/* Stitched document.  MUST stay identical to bank/stitch.py::make_main. */
-export function makeMain(bodies, ids, variant, { filters = '', showMethods = false } = {}) {
+/* The shared results (problem-bank/appendix/) loaded with the bodies: {name: {name, title, text, cites, figures}}. */
+export const loadedAppendix = () => state.appendix || {};
+
+/* The results a solutions PDF prints, in order: those cited by its printed solutions (PDF order), then the results
+   those cite, as they are met.  Mirrors bank/appendix.py::appendix_order. */
+export function appendixOrder(sel, appendix) {
+  const has = n => Object.prototype.hasOwnProperty.call(appendix, n);
+  const order = [];
+  for (const b of sel) {
+    if (b.solution === null || b.solution === undefined) continue;
+    for (const n of b.cites || []) if (has(n) && !order.includes(n)) order.push(n);
+  }
+  for (let k = 0; k < order.length; k++) for (const n of appendix[order[k]].cites || []) if (has(n) && !order.includes(n)) order.push(n);
+  return order;
+}
+
+/* Stitched document.  MUST stay identical to bank/stitch.py::make_main.  `appendix`: the shared results; a solutions
+   PDF whose solutions cite some ends with them. */
+export function makeMain(bodies, ids, variant, { filters = '', showMethods = false, appendix = null } = {}) {
   const sel = ids.map(i => bodies[pad4(i)]).filter(Boolean);
   const out = ['\\begin{document}', '\\thispagestyle{empty}', '\\vspace*{\\stretch{1}}', '\\begin{center}',
     `{\\Huge\\bfseries ${CLUB_NAME}}\\\\[2ex]`,
@@ -238,13 +259,21 @@ export function makeMain(bodies, ids, variant, { filters = '', showMethods = fal
       } else out.push('\\banknosolution');
     }
   });
+  const order = variant === 'solutions' && appendix ? appendixOrder(sel, appendix) : [];
+  if (order.length) {
+    out.push('\\bankappendix');
+    for (const name of order) {
+      const a = appendix[name];
+      out.push(`\\bankappendixitem{${name}}`, `\\begin{appendixitem}{${texEscape(a.title)}}`, a.text, '\\end{appendixitem}');
+    }
+  }
   out.push('\\end{document}');
   return out.join('\n') + '\n';
 }
 
 /* The downloadable .tex: a standalone document.  The shared preamble is inlined when it could be fetched
    (build.py publishes it next to the data), otherwise it is \input and must sit next to the file.
-   Externalised figures (figNNNN-k.pdf) are referenced, not embedded. */
+   Externalised figures (figNNNN-k.pdf, figa-<name>-k.pdf) are referenced, not embedded. */
 let preamblePromise = null;
 export function loadPreamble() {
   if (!preamblePromise) {
@@ -258,12 +287,13 @@ export function standaloneTex(mainTex, preambleText = null) {
   return '\\documentclass[11pt]{article}\n\\def\\BankStitched{}\n' + pre + mainTex;
 }
 
-/* The drawings (externalised TikZ, figNNNN-k.pdf) of these problems.  Fetched by content (?v=<sha256>): an edited
-   drawing keeps its file name, and the browser's HTTP cache must not hand back the old one.  `verified` is false when
-   a file's bytes do not match bodies.json (a deploy still arriving): such a PDF is shown but not cached. */
-async function figureFiles(bodies, ids) {
+/* The drawings (externalised TikZ, figNNNN-k.pdf, figa-<name>-k.pdf) of these problems and shared results (entries of
+   bodies.json).  Fetched by content (?v=<sha256>): an edited drawing keeps its file name, and the browser's HTTP cache
+   must not hand back the old one.  `verified` is false when a file's bytes do not match bodies.json (a deploy still
+   arriving): such a PDF is shown but not cached. */
+async function figureFiles(entries) {
   const files = {}; let verified = true;
-  await Promise.all(ids.map(i => bodies[pad4(i)]).filter(Boolean).flatMap(b => Object.entries(b.figures || {}).map(async ([name, info]) => {
+  await Promise.all(entries.filter(Boolean).flatMap(b => Object.entries(b.figures || {}).map(async ([name, info]) => {
     const key = name + ':' + (info.sha256 || '');
     if (!state.figures.has(key)) state.figures.set(key, fetchFigure(info).catch(e => { state.figures.delete(key); throw e; }));   // a failed fetch is retried next time
     const f = await state.figures.get(key);
@@ -290,9 +320,12 @@ async function fetchFigure(info) {
 }
 
 /* The compiled document (not the .tex offered for download) prints "BANK:<id>" on the terminal before each
-   problem, so a compile that never ends can say which problem it is stuck in.  On the \bankproblem line itself:
-   the log's line numbers stay those of mainTex, and \typeout puts nothing in the PDF. */
-const withMarkers = tex => tex.replace(/^\\bankproblem\{\d+\}.*\{(\d+)\}$/gm, (m, id) => `\\typeout{BANK:${id}}${m}`);
+   problem and "BANK:a-<name>" before each shared result, so a compile that never ends can say where it is stuck.
+   On the \bankproblem / \bankappendixitem line itself: the log's line numbers stay those of mainTex, and \typeout
+   puts nothing in the PDF. */
+const withMarkers = tex => tex.replace(/^\\bankproblem\{\d+\}.*\{(\d+)\}$/gm, (m, id) => `\\typeout{BANK:${id}}${m}`)
+  .replace(/^\\bankappendixitem\{([a-z0-9-]+)\}$/gm, (m, name) => `\\typeout{BANK:a-${name}}${m}`);
+const isResultMarker = pid => String(pid).startsWith('a-');
 
 /* ------------------------------------------------------------------ finished-PDF cache (by selection hash) */
 
@@ -308,7 +341,7 @@ function engineVersion() {
   }
   return versionPromise;
 }
-/* The key also covers the figures' contents: an edited drawing keeps its file name (figNNNN-k.pdf), so mainTex alone
+/* The key also covers the figures' contents: an edited drawing keeps its file name (figNNNN-k.pdf, figa-<name>-k.pdf), so mainTex alone
    would not change.  null without SubtleCrypto (plain-http pages): no PDF cache there. */
 async function selectionKey(version, variant, mainTex, figures = '') {
   if (!hasSubtle()) return null;
@@ -330,8 +363,14 @@ async function selection(ids, variant, { filtersText, showMethods, useCache, sig
   const sorted = [...new Set(ids.map(Number))];
   const sel = sorted.map(i => bodies[pad4(i)]);
   if (sel.some(b => !b)) throw staleError();        // listed on this page but not in bodies.json: the page is older than the data
-  const mainTex = makeMain(bodies, sorted, variant, { filters: filtersText, showMethods });
-  const figures = sel.flatMap(b => Object.entries(b.figures || {}).map(([n, f]) => `${n}:${f.sha256}`)).sort().join(',');
+  const appendix = loadedAppendix();
+  if (variant === 'solutions' && sel.some(b => b.solution != null && (b.cites || []).some(n => !Object.prototype.hasOwnProperty.call(appendix, n)))) {
+    throw staleError();                            // a cited shared result is missing: texts of two different deploys
+  }
+  const mainTex = makeMain(bodies, sorted, variant, { filters: filtersText, showMethods, appendix });
+  const resultNames = variant === 'solutions' ? appendixOrder(sel, appendix) : [];
+  const results = resultNames.map(n => appendix[n]);
+  const figures = [...sel, ...results].flatMap(b => Object.entries(b.figures || {}).map(([n, f]) => `${n}:${f.sha256}`)).sort().join(',');
   const version = await engineVersion();
   const key = useCache ? await selectionKey(version, variant, mainTex, figures) : null;
   if (key) {
@@ -342,9 +381,11 @@ async function selection(ids, variant, { filtersText, showMethods, useCache, sig
   }
   if (signal && signal.aborted) throw abortError();
   await initEngine();
-  const { files, verified } = await figureFiles(bodies, sorted);
-  const r = await compileRaw(withMarkers(mainTex), files, { timeoutMs: selectionTimeout(sorted.length), signal, kind: 'selection',
-    order: sel.map(b => b.id), names: Object.fromEntries(sel.map(b => [b.id, b.title])) });
+  const { files, verified } = await figureFiles([...sel, ...results]);
+  // the timeout counts the shared results too (each is a page or two of text)
+  const r = await compileRaw(withMarkers(mainTex), files, { timeoutMs: selectionTimeout(sorted.length + results.length), signal, kind: 'selection',
+    order: [...sel.map(b => b.id), ...resultNames.map(n => `a-${n}`)],
+    names: Object.fromEntries([...sel.map(b => [b.id, b.title]), ...resultNames.map(n => [`a-${n}`, appendix[n].title])]) });
   checkEngine(r);
   if (r.exit !== 0 || !r.pdf || !r.pdf.length) throw compileError(r, mainTex);
   if (key && verified && r.version === version) {
@@ -379,7 +420,7 @@ async function preview(id, signal) {
   const mainTex = makePreview(bodies, id);
   if (signal && signal.aborted) throw abortError();
   await initEngine();
-  const { files } = await figureFiles(bodies, [id]);
+  const { files } = await figureFiles([bodies[pad4(id)]]);
   const r = await compileRaw(mainTex, files, { timeoutMs: PREVIEW_TIMEOUT_MS, signal, kind: 'preview', label: bodies[pad4(id)].title });
   checkEngine(r);
   if (r.exit !== 0 || !r.pdf || !r.pdf.length) throw compileError(r, mainTex);

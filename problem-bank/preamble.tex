@@ -163,6 +163,74 @@
 \theoremstyle{remark}
 \newtheorem*{remark}{Remark}
 
+% ===== Shared results: the appendix (problem-bank/appendix/<name>.tex) =====
+% A result is written once, as one block in its own file:
+%   \begin{appendixitem}{<Title>} statement and proof \end{appendixitem}
+% A solution cites it with \appendixref{<name>}, which prints its number in this PDF (e.g. A.2) as a link.  Every PDF
+% with such a solution ends with an Appendix holding each cited result once (and the results they cite), numbered
+% A.1, A.2, ... in order of first citation.  The website's PDFs (stitched mode) get the results from the build
+% (bank/stitch.py::make_main); author mode (local preview, CI proofs) reads them from problem-bank/appendix/ at
+% \bankappendixall, at the end of the document.
+\newcounter{bankappendixitem}
+\renewcommand{\thebankappendixitem}{A.\arabic{bankappendixitem}}
+\crefname{bankappendixitem}{Appendix}{Appendices}\Crefname{bankappendixitem}{Appendix}{Appendices}
+\newcommand{\bankappendixitemautorefname}{Appendix}
+\newcommand{\bankappendix}{\clearpage\setcounter{bankappendixitem}{0}%
+  \noindent{\Large\bfseries Appendix}\par\nopagebreak\addvspace{0.5\baselineskip}}
+% \bankappendixitem{<name>}: the next appendixitem is the result <name> (its heading gets the label appendix:<name>).
+% Like the problem IDs, the name is printed in author mode only: "A.1 (spectral-mapping-theorem). Title".
+\newcommand{\bankappendixname}{}
+\newcommand{\bankappendixitem}[1]{\renewcommand{\bankappendixname}{#1}}
+\ifdefined\BankStitched\newcommand{\bankappendixtag}[1]{}\else\newcommand{\bankappendixtag}[1]{ (#1)}\fi
+\makeatletter
+\newenvironment{appendixitem}[1]{%
+  \par\addvspace{1.5\baselineskip}\penalty-300%
+  \setcounter{equation}{0}\setcounter{theorem}{0}\setcounter{lemma}{0}\setcounter{definition}{0}%
+  \setcounter{figure}{0}\setcounter{table}{0}\setcounter{footnote}{0}%
+  \setcounter{section}{0}\setcounter{subsection}{0}\renewcommand{\thesection}{\arabic{section}}%
+  \refstepcounter{bankappendixitem}\def\@currentlabelname{#1}\label{appendix:\bankappendixname}% (\nameref: the title)
+  \noindent{\large\bfseries\thebankappendixitem\bankappendixtag{\bankappendixname}.\ #1}\par\nopagebreak
+  \addvspace{0.5\baselineskip}\ignorespaces}
+  {\par}
+\makeatother
+\ifdefined\BankStitched
+  \newcommand{\bankappendixneed}[1]{}
+  \newcommand{\bankappendixall}{}
+\else
+  % Author mode: \appendixref queues the name; \bankappendixall prints the Appendix and \input's every queued result
+  % once (a result read there may queue more: they are printed after it).
+  \ExplSyntaxOn
+  \seq_new:N \g__bank_appendix_seq
+  \int_new:N \g__bank_appendix_int
+  % Only a result name (lowercase kebab-case) is queued: nothing else is ever \input (e.g. ../x in a file not yet
+  % validated, opened in the local preview).
+  \cs_new_protected:Npn \bankappendixneed #1
+    {
+      \str_set:Nx \l_tmpa_str {#1}
+      \exp_args:NnV \regex_match:nnT { \A [a-z0-9]+ (\-[a-z0-9]+)* \Z } \l_tmpa_str
+        {
+          \seq_if_in:NVF \g__bank_appendix_seq \l_tmpa_str
+            { \seq_gput_right:NV \g__bank_appendix_seq \l_tmpa_str }
+        }
+    }
+  \cs_new_protected:Npn \__bank_appendix_print:n #1
+    { \bankappendixitem {#1} \input { appendix/#1 } }
+  \cs_generate_variant:Nn \__bank_appendix_print:n { x }
+  \cs_new_protected:Npn \__bank_appendix_next:
+    {
+      \int_compare:nNnT { \g__bank_appendix_int } < { \seq_count:N \g__bank_appendix_seq }
+        {
+          \int_gincr:N \g__bank_appendix_int
+          \__bank_appendix_print:x { \seq_item:Nn \g__bank_appendix_seq { \g__bank_appendix_int } }
+          \__bank_appendix_next:
+        }
+    }
+  \cs_new_protected:Npn \bankappendixall
+    { \int_compare:nNnT { \seq_count:N \g__bank_appendix_seq } > { 0 } { \bankappendix \__bank_appendix_next: } }
+  \ExplSyntaxOff
+\fi
+\DeclareRobustCommand{\appendixref}[1]{\bankappendixneed{#1}\hyperref[appendix:#1]{\ref*{appendix:#1}}}
+
 % ===== Code listings =====
 \usepackage{listings}
 \definecolor{backcolour}{rgb}{0.98,0.98,0.96}

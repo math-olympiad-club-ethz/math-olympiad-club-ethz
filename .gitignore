@@ -64,4 +64,5 @@ website-code/site/*.html
 # Local previews of single problems (problem-bank/problems/_preview.tex via VS Code), and any stray PDF compiled from
 # a file in problem-bank/ itself (e.g. preamble.tex)
 problem-bank/problems/*.pdf
+problem-bank/appendix/*.pdf
 problem-bank/*.pdf

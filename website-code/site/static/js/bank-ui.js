@@ -636,7 +636,7 @@ function renderOutput(variant, res, err, idsForName) {
   if (tex) {
     actions.append(el('a', { class: 'btn btn-sm btn-outline-secondary', href: mk(C.standaloneTex(tex, preambleText), 'text/plain'), download: texFilename(ids, variant, '.tex'), text: 'Download .tex',
       title: preambleText ? 'Standalone LaTeX source (preamble inlined)' : 'LaTeX source; needs preamble.tex from the repository next to it' }));
-    if (/\\includegraphics\{fig\d{4}-\d+\.pdf\}/.test(tex)) actions.append(el('span', { class: 'small text-muted align-self-center', text: 'The .tex references externalised figures (fig….pdf) that are not included.' }));
+    if (/\\includegraphics\{fig(?:\d{4}|a-[a-z0-9-]+)-\d+\.pdf\}/.test(tex)) actions.append(el('span', { class: 'small text-muted align-self-center', text: 'The .tex references externalised figures (fig….pdf) that are not included.' }));
   }
   body.append(actions);
   if (res && res.pdf) {
@@ -697,7 +697,7 @@ async function compileInto(variant, ids, filtersText, showMethods, doneMessage, 
     if (name === 'AbortError') { setStatus('Cancelled.'); return 'cancelled'; }
     const message = (e && e.message) || String(e);
     let mainTex = e && e.mainTex;
-    if (!mainTex && name !== 'StaleError') { try { mainTex = C.makeMain(await C.loadBodies(), ids, variant, { filters: filtersText, showMethods }); } catch (e2) { /* no bodies */ } }
+    if (!mainTex && name !== 'StaleError') { try { mainTex = C.makeMain(await C.loadBodies(), ids, variant, { filters: filtersText, showMethods, appendix: C.loadedAppendix() }); } catch (e2) { /* no bodies */ } }
     renderOutput(variant, null, { name, message, mainTex }, ids);
     setStatus(`The ${variant === 'problems' ? 'problems' : 'solutions'} PDF could not be built: ${message.split('\n')[0]}` + (mainTex ? ' You can still download the .tex file.' : ''), 'danger');
     return 'failed';

@@ -7,7 +7,8 @@
 // The page loads the modules as <name>.js?v=<build>; a relative import does not inherit the query, so they are imported
 // with the same ?v= (one copy of each module, never a cached one of the last deploy next to new ones).
 const V = new URL(import.meta.url).search;
-const [{ texEscape }, { CITE_RE, DROP_RE, citeKeys, labelRefs, maskComments, parseBibEntries, parseBibText, placeholderFigures, pyStrip,
+const [{ appendixOrder, texEscape }, { APPENDIX_LABEL_PREFIX, CITE_RE, DROP_RE, appendixCitations, citeKeys, citedNames, findFigures,
+  labelRefs, malformedAppendixRefs, maskComments, parseBibEntries, parseBibText, placeholderFigures, pyStrip, refName,
   resolveCitations }] = await Promise.all([import(`./bank-compile.js${V}`), import(`./bank-tex.js${V}`)]);
 
 export const UNTITLED = 'Untitled problem';            // bank/problems.py::UNTITLED
@@ -139,7 +140,7 @@ const UNSAFE_TEX = [
    c => `${c} cannot be used: a problem is one self-contained text (no other files, no images: draw with TikZ)`],
   [/\\(?:today|year|month|day|time|pdf[A-Za-z]+)(?![A-Za-z@])/,
    c => `${c} cannot be used: the same problems must always give the same PDF (no date, clock or random numbers)`],
-  [/\\(?:[Bb]ank[A-Za-z]*|refitem)(?![A-Za-z@])|\{[ \t\n]*problemreferences[ \t\n]*\}/,
+  [/\\(?:[Bb]ank[A-Za-z]*|refitem|appendixitem)(?![A-Za-z@])|\{[ \t\n]*(?:problemreferences|bankappendixitem)[ \t\n]*\}/,
    c => `${c} cannot be used: it belongs to the website's PDF layout`],
 ];
 /* The citation commands the website resolves (bank-tex.js::CITE_RE); \nocite is harmless.  Same as bank/problems.py. */
@@ -147,6 +148,9 @@ const SUPPORTED_CITES = new Set(['cite', 'citep', 'citet', 'parencite', 'textcit
   'Autocite', 'supercite', 'footcite', 'nocite']);
 const CITE_COMMAND_RE = /\\([A-Za-z]*[Cc]ite[A-Za-z]*)(?![A-Za-z@])/g;
 const STRUCTURE = /\\(begin|end)\s*\{\s*(problem|solution|bibentries)\s*\}/;
+/* Shared results (problem-bank/appendix/): same rules as bank/problems.py::validate (bank/appendix.py). */
+const APPENDIX_CMD = /\\appendix(?![A-Za-z@])/;
+const APPENDIX_ITEM = /\\(begin|end)\s*\{\s*appendixitem\s*\}/;
 const BIB_COMMANDS = /\\(bibliography|addbibresource|bibliographystyle)\s*[[{]/;
 const lineOf = (text, i) => text.slice(0, i).split('\n').length;
 
@@ -163,12 +167,68 @@ function texErrors(text, where) {
   return out;
 }
 
+/* The rules on shared results for one box (bank/appendix.py::check_text): no \appendix, no appendixitem block,
+   well-formed \appendixref; `cites` false = the box may not cite results (statement, Bibliography box); cat = {name:
+   Set of global labels} (null = not checked); every \ref points to a label of the draft (`labels`) or to a label
+   appendix:<name>:<key> of a result the box also cites with \appendixref; no label named appendix:...; nothing of this
+   inside a drawing (drawn on its own).  `where(i)` as in texErrors. */
+function appendixErrors(text, where, cites, cat, labels = null) {
+  const out = [];
+  const masked = maskComments(text);
+  let m = APPENDIX_CMD.exec(masked);
+  if (m) out.push(`${where(m.index)}: \\appendix is not used in problems: shared results live in problem-bank/appendix/ and are cited with \\appendixref{name}.`);
+  m = APPENDIX_ITEM.exec(masked);
+  if (m) out.push(`${where(m.index)}: an appendixitem block belongs in problem-bank/appendix/<name>.tex, not in a problem.`);
+  for (const [i, call] of malformedAppendixRefs(text)) out.push(`${where(i)}: ${call.split(/\s+/).join(' ')}: write \\appendixref{name} with the name of a shared result.`);
+  const citations = appendixCitations(text);
+  const cited = new Set(citations.map(c => c[1]));
+  const figures = findFigures(masked);
+  const inFigure = i => figures.some(([s, e]) => s <= i && i < e);
+  const unknown = new Set();                            // each unknown name is reported once, like unknown \cite keys
+  for (const [i, name] of citations) {
+    if (!cites) out.push(`${where(i)}: only the solution may cite a shared result (a problems-only PDF has no appendix).`);
+    else if (inFigure(i)) out.push(`${where(i)}: a drawing is made on its own: cite the shared result next to it, not inside it.`);
+    else if (cat !== null && !Object.prototype.hasOwnProperty.call(cat, name) && !unknown.has(name)) {
+      unknown.add(name);
+      out.push(`${where(i)}: unknown shared result "${name}" (the list is in the writing rules).`);
+    }
+  }
+  const { targets, refs } = labelRefs(masked);
+  const available = labels || new Set(Object.keys(targets));
+  for (const k of Object.keys(targets)) {
+    if (k.startsWith(APPENDIX_LABEL_PREFIX)) out.push(`${where(targets[k])}: the label "${k}": labels named appendix:… belong to the shared results.`);
+  }
+  for (const [k, i] of refs) {
+    if (k.includes('#')) continue;                        // a macro parameter (\ref{#1} inside \newcommand)
+    if (!k.startsWith(APPENDIX_LABEL_PREFIX)) {
+      if (!available.has(k)) out.push(`${where(i)}: "${k}" is not labelled in this problem (a label of a shared result is written appendix:<name>:<key>).`);
+      continue;
+    }
+    const name = refName(k);
+    if (!cites) out.push(`${where(i)}: only the solution may refer to a shared result (a problems-only PDF has no appendix).`);
+    else if (inFigure(i)) out.push(`${where(i)}: a drawing is made on its own: refer to the shared result next to it, not inside it.`);
+    else if (name === null || (cat !== null && !Object.prototype.hasOwnProperty.call(cat, name))) out.push(`${where(i)}: "${k}": there is no such shared result.`);
+    else if (cat !== null && !cat[name].has(k)) out.push(`${where(i)}: "${k}": the shared result "${name}" has no label with this full name.`);
+    else if (!cited.has(name)) out.push(`${where(i)}: "${k}": cite the shared result with \\appendixref{${name}} too.`);
+  }
+  return out;
+}
+
+/* {name: Set of global labels} from the page's list of shared results [{name, labels}] (bank/appendix.py::catalogue). */
+export function appendixCatalogue(results) {
+  return Object.fromEntries((results || []).map(r => [r.name, new Set([`${APPENDIX_LABEL_PREFIX}${r.name}`, ...(r.labels || [])])]));
+}
+
 /* [{field, message}] — empty = the file will pass the CI validator.  `bibKeys`: keys of references.bib
-   (null = not loaded: \cite keys are not checked). */
-export function validateDraft(draft, cat, bibKeys = null) {
+   (null = not loaded: \cite keys are not checked).  `appendix`: the shared results [{name, labels}] (null = names and
+   labels of results not checked). */
+export function validateDraft(draft, cat, bibKeys = null, appendix = null) {
   const d = { ...emptyDraft(), ...draft };
   const errors = [];
   const err = (field, message) => errors.push({ field, message });
+  const results = appendix === null ? null : appendixCatalogue(appendix);
+  const labels = new Set([...Object.keys(labelRefs(maskComments(String(d.statement || ''))).targets),
+    ...Object.keys(labelRefs(maskComments(String(d.solution || ''))).targets)]);
 
   const title = effectiveTitle(d);
   let bad = unprintable(title);
@@ -192,6 +252,7 @@ export function validateDraft(draft, cat, bibKeys = null) {
     m = /\\tikz(?![A-Za-z@])/.exec(text);
     if (m) err(field, `${where(m.index)}: inline \\tikz is not supported; draw inside \\begin{tikzpicture} … \\end{tikzpicture}.`);
     for (const message of texErrors(text, where)) err(field, message);
+    for (const message of appendixErrors(text, where, field === 'solution', results, labels)) err(field, message);
   }
   {                                                     // the problems-only PDF holds the statement alone: a reference
     const st = labelRefs(maskComments(d.statement));    // into the solution would print ??
@@ -233,6 +294,7 @@ export function validateDraft(draft, cat, bibKeys = null) {
     m = /\\tikz(?![A-Za-z@])/.exec(bib);
     if (m) err('bibtex', `Bibliography, line ${lineOf(bib, m.index)}: \\tikz cannot be used here.`);
     for (const message of texErrors(bib, i => `Bibliography, line ${lineOf(bib, i)}`)) err('bibtex', message);
+    for (const message of appendixErrors(bib, i => `Bibliography, line ${lineOf(bib, i)}`, false, results, labels)) err('bibtex', message);
   }
   const own = parseBibEntries(bib).map(([k]) => k);
   if (pyStrip(block(bib)) && !own.length) err('bibtex', 'No BibTeX entry found. Entries look like @article{key, author = {…}, title = {…}, year = {…}}.');
@@ -260,8 +322,10 @@ const keepLines = t => t.replace(DROP_RE, m => (m.endsWith('\n') ? '%\n' : '%'))
    Figures become placeholders (no TikZ in the browser), citations are resolved like CI does.
    Returns {tex, lines}: lines.statement / lines.solution = [first, last, lead, end] (1-based lines of main.tex holding
    that box; lead = blank lines dropped at the top of the box; end = the page's own \end{problem} / \end{solution} line),
-   lines.refs = [[first, last], …] (reference lists made from the Bibliography box and references.bib). */
-export function previewMain(draft, cat, globalBib = {}) {
+   lines.refs = [[first, last], …] (reference lists made from the Bibliography box and references.bib).
+   `appendix`: the catalogue of shared results [{name, title, cites}]; the ones the solution cites get a heading at the
+   end (their text is not on this page), so \appendixref prints its number as in the bank's PDFs. */
+export function previewMain(draft, cat, globalBib = {}, appendix = []) {
   const d = { ...emptyDraft(), ...draft };
   const bib = Object.assign(Object.create(null), globalBib, parseBibText(d.bibtex));      // the draft's own entries win
   const st = keepLines(placeholderFigures(block(d.statement)).tex);
@@ -285,6 +349,15 @@ export function previewMain(draft, cat, globalBib = {}) {
   out.push('\\end{problem}');
   if (r.solution !== null) { out.push('\\begin{solution}'); push('solution', r.solution, so, leadingBlankLines(d.solution)); out.push('\\end{solution}'); }
   else out.push('\\banknosolution');
+  const known = Object.fromEntries((appendix || []).map(a => [a.name, a]));
+  const order = r.solution !== null ? appendixOrder([{ solution: so, cites: citedNames(so) }], known) : [];
+  if (order.length) {
+    out.push('\\bankappendix');
+    for (const name of order) {
+      out.push(`\\bankappendixitem{${name}}`, `\\begin{appendixitem}{${texEscape(known[name].title)}}`,
+        '\\noindent\\textit{The bank\'s PDFs print this shared result here.}', '\\end{appendixitem}');
+    }
+  }
   out.push('\\end{document}');
   return { tex: out.join('\n') + '\n', lines };
 }

@@ -1,6 +1,8 @@
 // Math Olympiad Club ETHZ — LaTeX authoring settings for the problem bank.
 // Saving a problem-bank/problems/NNNN-title.tex compiles it through problem-bank/problems/_preview.tex
-// (which adds the shared preamble); the PDF appears next to the .tex (git-ignored).
+// (which adds the shared preamble, and the shared results the solution cites); the PDF appears next to the .tex
+// (git-ignored).  Saving a shared result problem-bank/appendix/<name>.tex previews that result (and the results it
+// cites).
 // Requires the "LaTeX Workshop" extension (see .vscode/extensions.json).
 {
   "latex-workshop.latex.tools": [
@@ -14,7 +16,7 @@
       "args": [
         "-norc",
         "-e",
-        "die qq{bank-preview only builds problem-bank/problems/NNNN-*.tex and new-*.tex\\n} unless ($ENV{BANK_DOC} // q{}) =~ m{/problem-bank/problems/(?:[0-9]{4}|new)-[^/]+\\z};",
+        "die qq{bank-preview only builds problem-bank/problems/NNNN-*.tex, new-*.tex and problem-bank/appendix/<name>.tex\\n} unless ($ENV{BANK_DOC} // q{}) =~ m{/problem-bank/(?:problems/(?:[0-9]{4}|new)-[^/]+|appendix/[a-z0-9]+(?:-[a-z0-9]+)*)\\z};",
         "-pdf",
         "-f",
         "-interaction=nonstopmode",

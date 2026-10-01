@@ -7,7 +7,8 @@
      ← {type:'ready', timings, download, version}   download: {bytes (transferred, compressed), fromCache: bool, files}
      → {type:'compile', id, mainTex, files?: {name: Uint8Array}, rerun?: true}
      ← {type:'started', id}                  pdfTeX starts (the engine is loaded): the page starts its timeout here
-     ← {type:'marker', id, pid}              a line "BANK:<pid>" on the terminal (\typeout before each problem)
+     ← {type:'marker', id, pid}              a line "BANK:<pid>" on the terminal (\typeout before each problem, and
+                                             "BANK:a-<name>" before each shared result)
      ← {type:'result', id, version, exit, pdf?, log, passes:[ms], rerun:bool, pages, errors}
      ← {type:'error', id?, message}          message: a short sentence for the page (details go to the console)
 
@@ -167,7 +168,7 @@ async function init(base, force) {
     noInitialRun: true,
     print: s => {
       stdout += s + '\n'; if (stdout.length > OUT_MAX) stdout = stdout.slice(-OUT_KEEP);
-      if (currentJob !== null && s.startsWith('BANK:')) { const m = /^BANK:(\d+)\s*$/.exec(s); if (m) post({ type: 'marker', id: currentJob, pid: m[1] }); }
+      if (currentJob !== null && s.startsWith('BANK:')) { const m = /^BANK:(\d+|a-[a-z0-9-]+)\s*$/.exec(s); if (m) post({ type: 'marker', id: currentJob, pid: m[1] }); }
     },
     printErr: s => { stderr += s + '\n'; if (stderr.length > OUT_MAX) stderr = stderr.slice(-OUT_KEEP); },
     setStatus: () => {},

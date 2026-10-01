@@ -1,0 +1,48 @@
+% Shared result, cited from solutions with \appendixref{field-norm}.
+% Moved on 2026-09-30 from the appendix of problem 0041 (A.2 there), text unchanged: only the links to other
+% results became \appendixref.  Earlier version: spring 2025 problem set 9, solutions appendix (static/uploads/problems/spring_2025/problemset_9, commit 7bdae2b^), A.2 there.
+% The equation (**) below is used by problem 0041: its label has the global name appendix:field-norm:A.2.3.
+\begin{appendixitem}{Field norm}
+For a field extension \( K \hookrightarrow L \), for each \( \alpha \in L \), we can consider the \( K \)-linear endomorphism of mutliplication by \(\alpha\):
+\[
+[\times \alpha] : L \rightarrow L.
+\]
+If the extension is \(K\)-finite-dimensional (then it is algebraic), we can compute its characteristic polynomial \( P_{\operatorname{char}, [\times \alpha]}(X) \in K[X] \). In particular, we can compute its determinant (the constant term of \( P_{\operatorname{char}, [\times \alpha]}(X) \)), which defines the \textit{field norm}:
+\[
+N_{L/K} : L \rightarrow K, \quad N_{L/K}(\alpha) := {\det}_{K}([\times \alpha]).
+\]
+Since \( \forall \beta \in L,\ [\times \alpha \beta] = [\times \alpha] \circ [\times \beta] \), we have
+\[
+N_{L/K}(\alpha \beta) = N_{L/K}(\alpha) N_{L/K}(\beta).
+\]
+In the case where \( L/K \) is Galois (which is equivalent to \( K \hookrightarrow L \) being a normal and separable field extension), we must have that the roots in \( L \) of the minimal polynomial of \( \alpha \) in \( K[X] \) satisfy
+\[
+\left\{ \sigma(\alpha) \mid \sigma \in \operatorname{Gal}(L/K) \right\} = \operatorname{Root}_{P_{\min, \alpha}(X)}(L) = \operatorname{Root}_{P_{\min, \alpha}(X)}\left( K^{\mathrm{alg}} \right),
+\]
+where the first equality follows from standard Galois theory, and the second from the fact that the extension is normal. Now, because \( P_{\min, \alpha}(X) = P_{\min, [\times \alpha]}(X) \) (a mental exercise), we have:
+\[
+\operatorname{Root}_{P_{\operatorname{char}, [\times \alpha]}(X)}\left( K^{\mathrm{alg}} \right) = \operatorname{Root}_{P_{\min, [\times \alpha]}(X)}\left( K^{\mathrm{alg}} \right) = \operatorname{Root}_{P_{\min, \alpha}(X)}\left( K^{\mathrm{alg}} \right),
+\]
+where the first equality follows since the roots (in \( K^{\mathrm{alg}} \)) of the minimal polynomial of an endomorphism (on a finite-dimensional vector space) are precisely its eigenvalues. Combining:
+\begin{equation}
+\label{A.2.1}
+\tag{1}
+\operatorname{Root}_{P_{\operatorname{char}, [\times \alpha]}(X)}\left( K^{\mathrm{alg}} \right) = \left\{ \sigma(\alpha) \mid \sigma \in \operatorname{Gal}(L/K) \right\}.
+\end{equation}
+If \( \alpha \) generates the extension, i.e. \( L = K(\alpha) \), or equivalently \( \deg\left( P_{\min, \alpha}(X) \right) = [L:K] \), then, since the extension is finite and Galois, we have \( \left| \operatorname{Gal}(L/K) \right| = [L:K] \). From this, as \( P_{\min, \alpha}(X) \) is separable, it follows that for each \( \sigma, \sigma' \in \operatorname{Gal}(L/K) \), \( \sigma \neq \sigma' \) implies \( \sigma(\alpha) \neq \sigma'(\alpha) \). Thus:
+\begin{equation}
+\label{A.2.2}
+\tag{2}
+\left|\left\{ \sigma(\alpha) \mid \sigma \in \operatorname{Gal}(L/K) \right\}\right|=[L:K]=\deg\left(P_{\operatorname{char}, [\times \alpha]}(X)\right).
+\end{equation}
+From \eqref{A.2.1} and \eqref{A.2.2}, we obtain:
+\[
+P_{\operatorname{char}, [\times \alpha]}(X) = \prod_{\sigma \in \operatorname{Gal}(L/K)} \left( X - \sigma(\alpha) \right)\footnote{In fact, this holds even if \( \alpha \) does not generate the extension (but still \( L/K \) is finite and Galois), as one can show that the multiplicities of each root of the characteristic polynomial \( \theta \in \operatorname{Root}_{P_{\operatorname{char}, [\times \alpha]}(X)}\left( K^{\mathrm{alg}} \right) \) coincide with the number of automorphisms of \( L \) fixing \( K \) and sending \( \alpha \) to \( \theta \), that is, \( \left| \left\{ \sigma \in \operatorname{Gal}(L/K) \mid \sigma(\alpha) = \theta \right\} \right| \).},
+\]
+and so, by Vieta's formula:
+\begin{equation}
+\label{appendix:field-norm:A.2.3}
+\tag{**}
+N_{L/K}(\alpha) = \prod_{\sigma \in \operatorname{Gal}(L/K)} \sigma(\alpha).
+\end{equation}
+\end{appendixitem}

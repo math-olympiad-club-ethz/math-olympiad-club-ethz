@@ -1,0 +1,19 @@
+% A shared result of the appendix (see problem-bank/README.md, "Shared results").  Copy this file to
+% problem-bank/appendix/<name>.tex, <name> in lowercase kebab-case (e.g. spectral-mapping-theorem): the file name is the
+% key solutions cite with \appendixref{<name>}, so never rename it once it is cited.
+% Every PDF whose solutions cite the result ends with it, in the Appendix, numbered A.1, A.2, ...
+% Only % comments outside the block (source, notes).  Inside it, the club's LaTeX as in a solution, and:
+%   - a label that solutions refer to gets the full name \label{appendix:<name>:<key>}; a solution using it also cites
+%     the result with \appendixref{<name>}.  Other labels belong to the result alone;
+%   - other results are cited with \appendixref{<other-name>} (the PDF prints them too);
+%   - citations: \cite with a key of problem-bank/references.bib, or of an optional bibentries block right after the
+%     appendixitem block (same format as in problem files).
+% Delete these explanatory comment lines in a real file.
+\begin{appendixitem}{Title of the result}
+\begin{theorem}
+STATEMENT.
+\end{theorem}
+\begin{proof}
+PROOF.
+\end{proof}
+\end{appendixitem}

@@ -69,16 +69,16 @@ jobs:
         uses: actions/cache@v4
         with:
           path: website-code/.cache/figures
-          key: figures-${{ hashFiles('problem-bank/problems/**', 'problem-bank/preamble.tex') }}
+          key: figures-${{ hashFiles('problem-bank/problems/**', 'problem-bank/appendix/**', 'problem-bank/preamble.tex') }}
           restore-keys: figures-
 
-      # Successful pdflatex proofs, keyed by a hash of everything that goes in (bank/validate.py::compile_problem):
-      # an unchanged problem is not compiled again.
+      # Successful pdflatex proofs, keyed by a hash of everything that goes in (bank/validate.py::compile_problem,
+      # compile_item): an unchanged problem or shared result is not compiled again.
       - name: Cache the pdflatex proofs
         uses: actions/cache@v4
         with:
           path: website-code/.cache/proofs
-          key: proofs-${{ hashFiles('problem-bank/problems/**', 'problem-bank/preamble.tex', 'problem-bank/tags.yml', 'problem-bank/references.bib') }}
+          key: proofs-${{ hashFiles('problem-bank/problems/**', 'problem-bank/appendix/**', 'problem-bank/preamble.tex', 'problem-bank/tags.yml', 'problem-bank/references.bib') }}
           restore-keys: proofs-
 
       - name: Cache Playwright's Chromium

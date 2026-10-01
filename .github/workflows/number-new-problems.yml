@@ -3,7 +3,7 @@ name: Number new problems
 # A proposed problem arrives as problem-bank/problems/new-<title>.tex (from the website's "+" page or by hand).
 # Once merged into main, this job renames it to the next free NNNN-<title>.tex (website-code/bank/number.py),
 # commits as github-actions[bot] and starts the deploy workflow so the site is rebuilt with the final number.
-# It first validates the folder and checks _last-id.txt against the git history (hence fetch-depth: 0); if anything
+# It first validates the problems and the shared results (problem-bank/appendix/) and checks _last-id.txt against the git history (hence fetch-depth: 0); if anything
 # is wrong it fails and pushes nothing.  It pushes to main directly: a branch rule on main must let it through.
 # No loop: pushes made with GITHUB_TOKEN never start workflows, the bot's own runs are skipped, and the job
 # does nothing when no new-*.tex is left.  (Pull requests from forks have no write token, hence main.)

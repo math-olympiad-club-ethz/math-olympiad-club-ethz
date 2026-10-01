@@ -23,13 +23,16 @@
 %   difficulty-ai  AI suggestion, same scale
 %   status         "partial" only if the solution below is unfinished; otherwise leave empty
 %   review         none | ai | human  — only "human" is published on the site
-%   origin         source slug of the FIRST known appearance (tags.yml origins)
+%   origin         source slug of the earliest KNOWN appearance (tags.yml origins); it changes if an
+%                  earlier source turns up
 %   origin-date    YYYY | YYYY-MM | YYYY-MM-DD ;  origin-number  e.g. A3, P6, 12.1
 %   also-in        other source slugs, comma-separated
 %   taken-from     where the club got it (free text)
 %   references     free text / URLs
 %   history        none | ai | human — has the history above been checked?
 % Everything except one area tag and the problem block is optional.
+% A theorem proved once in the shared appendix (problem-bank/appendix/<name>.tex) is cited in the solution with
+% \appendixref{<name>}; the PDF then ends with it (see problem-bank/README.md, "Shared results").
 % \cite{key}: key in references.bib, or in an optional block at the very end of the file (this problem only):
 %   \begin{bibentries}
 %   @article{key, author = {...}, title = {...}, journal = {...}, year = {...}}
