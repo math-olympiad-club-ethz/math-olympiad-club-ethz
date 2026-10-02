@@ -52,9 +52,11 @@ Details, sources and the full change table: [`problem-bank/history-review.md`](p
       (`review: none` until the review is done).
 - [ ] Missing solutions: 0052, 0060–0062, 0065–0068, 0071–0080.
 - [ ] Partial solutions: 0019, 0031, 0034, 0038–0040, 0049, 0063, 0064, 0069.
+- [ ] 0003 solution 2 seems not to follow the writing style: to be done by an agent and then put to be reviewed by human (the solution 2 only)
 
 ## Problem bank — later
 
+- [ ] To be done by Antoine: must review all current problems and solutions and precisely identify the partial one, the ai one and the unsolved one. Be sure that fully solved one together with their statement really are good. This cannot be done by an AI. THen Anotine must provide/finish the partial solution/empty solutions. 
 - [ ] Magic problems (hat problems, picture hanging) in `problem-bank/work-in-progress/magic/`: separate category, not migrated yet.
 - [x] Website "+" flow: Propose page + Edit links + automatic numbering (2026-09-22).
 - [ ] After the first push to `main`: check that the Action `number-new-problems.yml` can push (if `main` gets branch
@@ -103,6 +105,8 @@ The audit's code fixes are done (report: session scratchpad `audit/REPORT.md`). 
       competitions (IMC, ICMC, …). The 2025 lines about IMC and ICMC were removed from the home page for that reason.
 
 - [ ] look at the picture image.png stored in the repo (only on Antoine local machine), it contains some task tod o given by Georg.
+
+- [ ] The website looks AI, lets get inspried by xent.ai or claustel.com fonts and behaving. Then after that we should care really about the optimality of the website: it should run hyper fast as fast as possible wihtouth glitch and so on...
 
 ## Repository
 
