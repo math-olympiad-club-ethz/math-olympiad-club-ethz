@@ -70,9 +70,14 @@ try {
   check((await page.locator(ROWS).count()) === 0 && await page.locator('#bank-results-head').isHidden(), 'on arrival: no list and no PDF bar');
   check(new RegExp(`${total} problems`).test(await page.textContent('#bank-idle')), `the page says "${total} problems" and offers Show all`);
   check(/<meta http-equiv="Content-Security-Policy"/.test(await page.content()), 'the page carries a Content-Security-Policy');
-  const bs = await page.evaluate(() => ({ js: typeof window.bootstrap, css: getComputedStyle(document.documentElement).getPropertyValue('--bs-body-bg').trim() }));
-  check(bs.css !== '' && (bs.js === 'object' || await page.waitForFunction(() => typeof window.bootstrap === 'object', null, { timeout: 10000 }).then(() => true, () => false)),
-    `Bootstrap CSS and JS load from the CDN under their integrity hashes (--bs-body-bg=${bs.css})`);
+  const look = await page.evaluate(async () => {
+    await document.fonts.ready;
+    return { bg: getComputedStyle(document.documentElement).getPropertyValue('--bg').trim(),
+      fonts: [...document.fonts].filter(f => f.status === 'loaded').map(f => `${f.family} ${f.weight}`),
+      others: performance.getEntriesByType('resource').map(e => e.name).filter(u => new URL(u).origin !== location.origin) };
+  });
+  check(look.bg !== '' && look.fonts.some(f => f.startsWith('MOC Typewriter')) && look.others.length === 0,
+    `the site's stylesheet and its Computer Modern font load, and nothing comes from another site (${look.fonts.join(', ') || 'no font'}${look.others.length ? '; from elsewhere: ' + look.others.join(', ') : ''})`);
   const modules = await page.evaluate(() => {
     const ui = document.querySelector('script[type=module]').src;
     const v = new URL(ui).search;
@@ -533,7 +538,7 @@ try {
   await page.click('#bank-order-btn');
   const lastId = await page.evaluate(() => {
     const l = document.getElementById('bank-order-list');
-    l.scrollIntoView({ block: 'center', behavior: 'instant' });  // the whole list on screen (Bootstrap makes scrolling smooth)
+    l.scrollIntoView({ block: 'center', behavior: 'instant' });  // the whole list on screen
     l.scrollTop = l.scrollHeight;                                // its last row visible, the first ones scrolled away
     return Number(l.lastElementChild.dataset.id);
   });
@@ -579,7 +584,7 @@ try {
     await p3.waitForSelector('#bank-idle:not([hidden]), ' + ROWS);
     await showAll(p3);
     await p3.waitForSelector(ROWS);
-    const theme = await p3.evaluate(() => document.documentElement.getAttribute('data-bs-theme'));
+    const theme = await p3.evaluate(() => document.documentElement.getAttribute('data-theme'));
     check(theme === scheme, `with no choice saved, the page follows the system: ${scheme} (${theme}); the old site's automatic "light" does not count`);
     const lay = await p3.evaluate(() => {
       const w = document.documentElement.clientWidth;
@@ -596,7 +601,7 @@ try {
     if (SHOTS) await p3.screenshot({ path: join(SHOTS, `problems-360-${scheme}.png`), fullPage: false });
     await p3.evaluate(() => window.scrollTo(0, 0));
     const name = await p3.evaluate(() => { const b = document.getElementById('theme-toggle'); return { label: b.getAttribute('aria-label'), text: b.innerText.trim() }; });
-    check(name.label === null && name.text === (scheme === 'dark' ? 'Light' : 'Dark'), `the theme button is named by what it shows ("${name.text}")`);
+    check(name.label === null && name.text.toLowerCase() === (scheme === 'dark' ? 'light' : 'dark'), `the theme button is named by what it shows ("${name.text}")`);
     check(logos.length === 1 && logos[0].includes(scheme === 'dark' ? 'dark' : 'light'), `only the ${scheme} logo is downloaded (${logos.join(', ')})`);
     for (const pg of ['index.html', 'propose.html']) {
       await p3.goto(`${base}/${pg}`);
@@ -605,12 +610,14 @@ try {
       check(sw[0] <= sw[1], `${pg} at 360 px (${scheme}): no sideways scroll (${sw[0]} px)`);
       if (SHOTS) await p3.screenshot({ path: join(SHOTS, `${pg.replace('.html', '')}-360-${scheme}.png`), fullPage: false });
     }
-    const tog = await p3.evaluate(() => { const t = document.querySelector('.navbar-toggler'); return [t.getAttribute('aria-label'), t.getAttribute('aria-controls'), t.getAttribute('aria-expanded')]; });
-    check(tog[0] === 'Menu' && tog[1] === 'navbarNav' && tog[2] === 'false', 'the mobile menu button has a name and says what it controls');
-    await p3.waitForFunction(() => typeof window.bootstrap === 'object', null, { timeout: 10000 }).catch(() => {});
-    await p3.click('.navbar-toggler');
-    await p3.waitForSelector('#navbarNav a[href="problems.html"]', { state: 'visible', timeout: 5000 }).catch(() => {});
-    check(await p3.locator('#navbarNav a[href="problems.html"]').isVisible(), 'the mobile menu opens (Bootstrap JS, loaded async)');
+    const nav = await p3.evaluate(() => {
+      const w = document.documentElement.clientWidth;
+      const links = [...document.querySelectorAll('#site-nav a')];
+      return { n: links.length, current: document.querySelector('#site-nav a[aria-current="page"]')?.getAttribute('href'),
+        onScreen: links.every(a => { const r = a.getBoundingClientRect(); return r.width > 0 && r.left >= 0 && r.right <= w + 0.5; }) };
+    });
+    check(nav.n === 3 && nav.onScreen && nav.current === 'propose.html' && await p3.locator('#site-nav a[href="problems.html"]').isVisible(),
+      'at 360 px the three page links are on screen, the current one marked, with no menu to open');
     await ctx.close();
   }
   {
@@ -621,7 +628,7 @@ try {
     p4.on('pageerror', e => errs.push(e.message));
     await p4.goto(`${base}/index.html`);
     await p4.click('#theme-toggle');
-    check(errs.length === 0 && (await p4.getAttribute('html', 'data-bs-theme')) === 'light' && /\d{4}/.test(await p4.textContent('#current-year')),
+    check(errs.length === 0 && (await p4.getAttribute('html', 'data-theme')) === 'light' && /\d{4}/.test(await p4.textContent('#current-year')),
       'with site data blocked, the theme button still works and nothing throws');
     if (SHOTS) {
       await p4.click('#theme-toggle');

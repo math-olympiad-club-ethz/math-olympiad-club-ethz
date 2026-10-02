@@ -14,13 +14,13 @@
   try { saved = localStorage.getItem('color-mode') || (localStorage.getItem('theme') === 'dark' ? 'dark' : null); } catch (e) { /* site data blocked */ }
   var dark = false;
   try { dark = window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { /* old browser */ }
-  root.setAttribute('data-bs-theme', saved === 'dark' || saved === 'light' ? saved : (dark ? 'dark' : 'light'));
+  root.setAttribute('data-theme', saved === 'dark' || saved === 'light' ? saved : (dark ? 'dark' : 'light'));
 
-  // the button's label ("Dark" / "Light") follows the theme through CSS (custom.css)
+  // the button's label ("Dark" / "Light") follows the theme through CSS (site.css)
   document.addEventListener('click', function (e) {
     if (!e.target.closest || !e.target.closest('#theme-toggle')) return;
-    var next = root.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark';
-    root.setAttribute('data-bs-theme', next);
+    var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
     try { localStorage.setItem('color-mode', next); } catch (err) { /* not saved: fine */ }
   });
 
@@ -32,7 +32,7 @@
   window.addEventListener('error', function (e) {
     var t = e.target;
     var src = t && t.tagName === 'SCRIPT' ? t.src : e.filename;
-    if (!src || src.indexOf(location.origin + '/') !== 0 || root.hasAttribute('data-ready')) return;   // the CDN, or later errors
+    if (!src || src.indexOf(location.origin + '/') !== 0 || root.hasAttribute('data-ready')) return;   // another site's script, or later errors
     var boxes = document.querySelectorAll('[data-load-error]');
     for (var i = 0; i < boxes.length; i++) boxes[i].hidden = false;
   }, true);

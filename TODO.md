@@ -106,7 +106,12 @@ The audit's code fixes are done (report: session scratchpad `audit/REPORT.md`). 
 
 - [ ] look at the picture image.png stored in the repo (only on Antoine local machine), it contains some task tod o given by Georg.
 
-- [ ] The website looks AI, lets get inspried by xent.ai or claustel.com fonts and behaving. Then after that we should care really about the optimality of the website: it should run hyper fast as fast as possible wihtouth glitch and so on...
+- [x] The website looks AI, lets get inspried by xent.ai or claustel.com fonts and behaving (2026-10-02): style "Terminal"
+      chosen from three previews (xent.ai's palette and structure, everything in Computer Modern Typewriter, the face
+      of LaTeX's `\texttt`). Bootstrap is gone: one stylesheet of our own, `website-code/site/static/css/site.css`, the
+      fonts in `site/static/fonts/` (cut by `tools/subset_fonts.py`), nothing loaded from another site, and the
+      Content-Security-Policy allows no inline style. The page links are always shown (no menu button on phones).
+- [ ] Then after that we should care really about the optimality of the website: it should run hyper fast as fast as possible wihtouth glitch and so on...
 
 ## Repository
 

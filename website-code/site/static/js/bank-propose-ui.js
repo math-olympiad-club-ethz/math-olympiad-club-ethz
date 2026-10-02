@@ -14,6 +14,7 @@ const el = (tag, attrs = {}, ...children) => {
   for (const [k, v] of Object.entries(attrs)) {
     if (k === 'class') e.className = v;
     else if (k === 'text') e.textContent = v;
+    else if (k === 'style') for (const [prop, val] of Object.entries(v)) e.style.setProperty(prop, val);   // CSSOM: allowed by the page's CSP
     else if (k.startsWith('on')) e.addEventListener(k.slice(2), v);
     else if (v === true) e.setAttribute(k, '');
     else if (v !== false && v != null) e.setAttribute(k, v);
@@ -94,7 +95,7 @@ function tagPicker(root, type, onChange) {
     items.forEach((it, i) => {
       if (it.groupHead) {                      // a method group: an option the keyboard reaches; Enter or → opens it, ← closes it
         const head = el('div', { id: `pp-${type}-opt-${i}`, class: 'bank-list-subheader bank-list-section' + (i === active ? ' bank-option-active' : ''), role: 'option', 'aria-selected': 'false' },
-          el('span', { class: 'bank-list-caret', 'aria-hidden': 'true', text: it.collapsed ? '▸' : '▾' }), el('span', { text: it.groupHead }),
+          el('span', { class: 'bank-list-caret', 'aria-hidden': 'true', text: it.collapsed ? '+' : '−' }), el('span', { text: it.groupHead }),
           el('span', { class: 'visually-hidden', text: it.collapsed ? ' (collapsed)' : ' (expanded)' }));
         head.addEventListener('mousedown', e => e.preventDefault());
         head.addEventListener('click', e => { e.stopPropagation(); choose(i); });
@@ -103,11 +104,11 @@ function tagPicker(root, type, onChange) {
       }
       const on = selected.includes(it.tag.slug);
       const caret = it.toggle
-        ? el('span', { class: 'bank-toggle', 'aria-hidden': 'true', title: it.toggle === 'open' ? 'Close' : 'Open', text: it.toggle === 'open' ? '▾' : '▸',
+        ? el('span', { class: 'bank-toggle', 'aria-hidden': 'true', title: it.toggle === 'open' ? 'Close' : 'Open', text: it.toggle === 'open' ? '−' : '+',
             onclick: (e) => { e.stopPropagation(); toggleNode(it.tag.slug); } })
         : it.browse ? el('span', { class: 'bank-toggle bank-toggle-empty', 'aria-hidden': 'true' }) : null;
       const row = el('div', { id: `pp-${type}-opt-${i}`, class: `bank-option bank-option-${type}` + (on ? ' bank-option-selected' : '') + (i === active ? ' bank-option-active' : ''),
-        role: 'option', 'aria-selected': on ? 'true' : 'false', style: `--depth:${it.depth}` },
+        role: 'option', 'aria-selected': on ? 'true' : 'false', style: { '--depth': String(it.depth) } },
         caret, el('span', { class: 'bank-option-label', text: it.tag.name }),
         it.toggle ? el('span', { class: 'visually-hidden', text: it.toggle === 'open' ? ' (expanded)' : ' (collapsed)' }) : null,
         it.sub ? el('span', { class: 'bank-option-sub', text: it.sub }) : null);
@@ -484,7 +485,7 @@ async function onSubmit() {
   else {
     showFile(true);
     $('pp-file').focus(); $('pp-file').select();
-    setSubmitStatus('Could not copy automatically: the file is selected below, copy it with Ctrl+C / ⌘+C.', 'warning');
+    setSubmitStatus('Could not copy automatically: the file is selected below, copy it with Ctrl+C / Cmd+C.', 'warning');
   }
 }
 

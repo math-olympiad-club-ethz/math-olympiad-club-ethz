@@ -1,87 +1,54 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mt-5">
-    
-    <div class="row mt-4">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-body">
-                    <h2 class="card-title">Welcome to the Math Olympiad Club at ETHZ!</h2>
-                    <p class="card-text">
-                    We are a group of passionate mathematicians dedicated to solving challenging problems and exploring the beauty of mathematics. Our club focuses on preparing for and participating in mathematical competitions.
-                    </p>
-                    <p class="card-text">
-                    Our mission is to encourage problem-solving skills, and provide a space for students to meet and challenge themselves with Olympiad-style problems. Whether you're a beginner or an experienced problem-solver, we hope you'll find something in our meetings to inspire you.
-                    </p>
-                    <p class="card-text">
-                    Our <a href="{{ url_for('problems') }}">problem bank</a> collects the problems of our sessions: search it by topic, make your own problem set as a PDF, or <a href="{{ url_for('propose') }}">propose a problem</a>.
-                    </p>
-                    <p class="card-text">
-                        Join our WhatsApp group chat: <a href="https://chat.whatsapp.com/Lb3YqmnlctwBltOA1r1PLO" target="_blank" rel="noopener noreferrer">Click here to join</a>
-                    </p>
-                    <hr>
-                    <h5>📅 Weekly Sessions (HS26, 16 Sep – 16 Dec 2026)</h5>
-                    <p class="card-text mb-1"><strong>When:</strong> Wednesdays, 18:00–20:00</p>
-                    <p class="card-text"><strong>Where:</strong> HG F 26.5</p>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-md-4">
-            <!-- Sponsor Section -->
-            <div class="card mb-4">
-                <div class="card-body text-center">
-                    <h3 class="card-title">Exclusive Sponsor</h3>
-                    <p class="card-text">We are proudly supported by</p>
-                    <span class="sponsor-logo" role="img" aria-label="Jane Street"></span>
-                </div>
-            </div>
-            <!-- Our Goals -->
-            <div class="card">
-                <div class="card-body">
-                    <h3 class="card-title">Our Goals</h3>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">Develop problem-solving skills</li>
-                        <li class="list-group-item">Prepare for math competitions</li>
-                        <li class="list-group-item">Encourage collaboration and learning</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+<section class="sec">
+    <h1 class="node lit"><span class="l">Welcome to the</span> <span class="l">Math Olympiad Club at <span class="ac">ETHZ</span>!</span></h1>
+    <div class="prose">
+        <p>We are a group of passionate mathematicians dedicated to solving challenging problems and exploring the beauty of mathematics. Our club focuses on preparing for and participating in mathematical competitions.</p>
+        <p>Our mission is to encourage problem-solving skills, and provide a space for students to meet and challenge themselves with Olympiad-style problems. Whether you’re a beginner or an experienced problem-solver, we hope you’ll find something in our meetings to inspire you.</p>
+        <p>Our <a href="{{ url_for('problems') }}">problem bank</a> collects the problems of our sessions: search it by topic, make your own problem set as a PDF, or <a href="{{ url_for('propose') }}">propose a problem</a>.</p>
+        <p>Join our WhatsApp group chat: <a href="https://chat.whatsapp.com/Lb3YqmnlctwBltOA1r1PLO" target="_blank" rel="noopener noreferrer">join the group chat</a></p>
     </div>
+</section>
 
-    <!-- Team Section -->
-    <div class="row mt-4">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <h3 class="card-title">Current Team</h3>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">Co-founder & President: <strong>Antoine du Fresne</strong></li>
-                        <li class="list-group-item">Treasurer: <strong>Spas Dimitrov</strong></li>
-                        <li class="list-group-item">Training Coordinator: <strong>Antoine du Fresne, Spas Dimitrov, Ana Cirjea, Thomas	Kollar-Munteanu, Evelyn Ebneter</strong></li>
-                        <li class="list-group-item">Competitions Coordinator: <strong>Georg Anegg</strong></li>
-                        <li class="list-group-item">Event Organiser / Communication: <strong>David Schindler</strong></li>
-                        <li class="list-group-item">Problem Finder: <strong> Antoine du Fresne, Spas Dimitrov, Arnav Naidu, David Schindler</strong></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+<section class="sec trio" aria-label="Sessions, sponsor and goals">
+    <div class="item node">
+        <h2>Weekly Sessions</h2>
+        <p class="when">HS26, 16 Sep – 16 Dec 2026</p>
+        <dl class="kv">
+            <dt>When</dt><dd>Wednesdays, 18:00–20:00</dd>
+            <dt>Where</dt><dd>HG F 26.5</dd>
+        </dl>
     </div>
+    <div class="item node">
+        <h2>Exclusive Sponsor</h2>
+        <p>We are proudly supported by</p>
+        <span class="sponsor-logo" role="img" aria-label="Jane Street"></span>
+    </div>
+    <div class="item node">
+        <h2>Our Goals</h2>
+        <ul class="dash">
+            <li>Develop <span class="nb">problem-solving</span> skills</li>
+            <li>Prepare for math competitions</li>
+            <li>Encourage collaboration and learning</li>
+        </ul>
+    </div>
+</section>
 
-    <!-- Contact -->
-    <div class="row mt-4 mb-5">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <h3 class="card-title">Contact Us</h3>
-                    <p class="card-text">
-                        📧 <a href="mailto:olympiadclub@math.ethz.ch">olympiadclub@math.ethz.ch</a>
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<section class="sec">
+    <h2 class="node">Current Team</h2>
+    <dl class="team">
+        <div><dt>Co-founder &amp; President</dt><dd>Antoine du Fresne</dd></div>
+        <div><dt>Treasurer</dt><dd>Spas Dimitrov</dd></div>
+        <div><dt>Training Coordinator</dt><dd><span class="nm">Antoine du Fresne</span>, <span class="nm">Spas Dimitrov</span>, <span class="nm">Ana Cirjea</span>, <span class="nm">Thomas Kollar-Munteanu</span>, <span class="nm">Evelyn Ebneter</span></dd></div>
+        <div><dt>Competitions Coordinator</dt><dd>Georg Anegg</dd></div>
+        <div><dt>Event Organiser / Communication</dt><dd>David Schindler</dd></div>
+        <div><dt>Problem Finder</dt><dd><span class="nm">Antoine du Fresne</span>, <span class="nm">Spas Dimitrov</span>, <span class="nm">Arnav Naidu</span>, <span class="nm">David Schindler</span></dd></div>
+    </dl>
+</section>
+
+<section class="sec">
+    <h2 class="node">Contact Us</h2>
+    <p><a href="mailto:olympiadclub@math.ethz.ch">olympiadclub@math.ethz.ch</a></p>
+</section>
 {% endblock %}

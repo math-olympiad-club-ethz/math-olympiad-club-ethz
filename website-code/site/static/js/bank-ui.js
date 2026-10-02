@@ -179,7 +179,7 @@ function renderList() {
       // a section title is an option too, so the keyboard reaches it: Enter or → opens it, ← closes it
       const head = el('div', { class: 'bank-list-header bank-list-section', role: 'option', id: `bank-opt-${i}`, 'aria-selected': 'false', 'data-index': i,
         title: it.collapsed ? 'Show' : 'Hide', onclick: (e) => { e.stopPropagation(); toggleSection(it.section); } },
-        el('span', { class: 'bank-list-caret', 'aria-hidden': 'true', text: it.collapsed ? '▸' : '▾' }), el('span', { text: it.header }),
+        el('span', { class: 'bank-list-caret', 'aria-hidden': 'true', text: it.collapsed ? '+' : '−' }), el('span', { text: it.header }),
         el('span', { class: 'visually-hidden', text: it.collapsed ? ' (collapsed)' : ' (expanded)' }));
       if (it.countHead) head.append(el('span', { class: 'bank-list-count-head', text: 'problems' }));
       box.append(head);
@@ -192,7 +192,7 @@ function renderList() {
       'aria-selected': it.selected ? 'true' : 'false', style: { '--depth': String(it.depth || 0) }, 'data-index': i });
     if (it.toggle) {       // a mouse target, not a button (no control inside an option): the keyboard opens a node with → and ←
       row.append(el('span', { class: 'bank-toggle', 'aria-hidden': 'true', title: (it.toggle === 'open' ? 'Collapse ' : 'Expand ') + it.label,
-        onclick: (e) => { e.stopPropagation(); toggleExpand(it.tag.slug); } }, it.toggle === 'open' ? '▾' : '▸'));
+        onclick: (e) => { e.stopPropagation(); toggleExpand(it.tag.slug); } }, it.toggle === 'open' ? '−' : '+'));
     } else if (state.list.mode === 'browse' && it.tag.type === 'area') row.append(el('span', { class: 'bank-toggle bank-toggle-empty', 'aria-hidden': 'true' }));
     if (state.list.mode !== 'browse') row.append(el('span', { class: 'bank-option-type', text: S.TYPE_LABEL[it.tag.type] }));   // in the browse list the section title says it
     row.append(el('span', { class: 'bank-option-label', text: it.label }));
@@ -525,7 +525,7 @@ function toggleOrderPanel(open) {
   if (open) renderOrder();
 }
 
-const HANDLE = () => el('span', { class: 'bank-order-handle', 'aria-hidden': 'true', title: 'Drag to move' }, '⠿');
+const HANDLE = () => el('span', { class: 'bank-order-handle', 'aria-hidden': 'true', title: 'Drag to move' }, '↕');
 
 function renderOrder() {
   const list = $('bank-order-list');

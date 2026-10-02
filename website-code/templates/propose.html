@@ -4,15 +4,13 @@
 {% set v = ('?v=' ~ asset_version) if asset_version else '' %}{# one version per build: see bank-propose.js #}
 <div class="propose">
   <div class="bank-head">
-    <h1 class="mb-1">Propose a problem</h1>
-    <div>
-      <button id="pp-clear" type="button" class="btn btn-outline-secondary mb-1" hidden>Clear the form</button>
-    </div>
+    <h1 class="node lit">Propose a problem</h1>
+    <button id="pp-clear" type="button" class="btn btn-sm" hidden>Clear the form</button>
   </div>
-  <p class="text-muted mb-3">Write your problem, check the preview and send it. A board member reviews it before it joins the <a href="{{ url_for('problems') }}">problem bank</a>. Only the statement and one area are required; the rest can be added later, by you or the board.</p>
+  <p class="bank-lede">Write your problem, check the preview and send it. A board member reviews it before it joins the <a href="{{ url_for('problems') }}">problem bank</a>. Only the statement and one area are required; the rest can be added later, by you or the board.</p>
 
-  <div id="pp-draft-note" class="alert alert-info py-2 small" role="status" hidden>Your draft was restored from this browser.</div>
-  <div id="pp-other-tab" class="alert alert-warning py-2 small" role="status" hidden>Another tab changed the draft saved in this browser. Type here to save this one again.</div>
+  <div id="pp-draft-note" class="alert alert-info small" role="status" hidden>Your draft was restored from this browser.</div>
+  <div id="pp-other-tab" class="alert alert-warning small" role="status" hidden>Another tab changed the draft saved in this browser. Type here to save this one again.</div>
 
   <form id="pp-form" novalidate>
     <div class="mb-3">
@@ -20,7 +18,7 @@
       <input id="pp-title" class="form-control" type="text" maxlength="120" autocomplete="off">
     </div>
 
-    <div class="row g-3 mb-2">
+    <div class="row g-3 mb-3">
       <div class="col-12 col-lg-6">
         <label for="pp-statement" class="form-label fw-semibold">Statement <span class="text-danger" aria-hidden="true">*</span><span class="visually-hidden">(required)</span></label>
         <textarea id="pp-statement" class="form-control pp-tex" rows="14" spellcheck="false" aria-required="true"></textarea>
@@ -30,9 +28,9 @@
         <textarea id="pp-solution" class="form-control pp-tex" rows="14" spellcheck="false"></textarea>
       </div>
     </div>
-    <details class="pp-rules small text-muted mb-3">
-      <summary>Writing rules</summary>
-      <ul class="mt-2 mb-0 ps-3">
+    <details class="pp-rules small text-muted mb-4">
+      <summary><span>Writing rules</span></summary>
+      <ul class="mt-2 mb-0">
       <li>Only the club's LaTeX (below): no <code>\usepackage</code>, no <code>\input</code>, no images.</li>
       <li>Drawings: TikZ inside <code>\begin{tikzpicture}</code> … <code>\end{tikzpicture}</code>. The preview shows a box; the website draws the real picture.</li>
       <li>Your own macros: <code>\newcommand</code> (not <code>\def</code>).</li>
@@ -41,7 +39,7 @@
       <li>Shared results (a theorem with its proof, kept in the bank's appendix): cite one in the solution with <code>Appendix~\appendixref{name}</code>; <code>\appendixref</code> prints its number (A.1) and the PDF adds the result at the end. New shared results are added by the board.{% if appendix_results %} Available:
         {% for r in appendix_results %}<code>{{ r.name|e }}</code> ({{ r.title|e }}){% if not loop.last %}, {% endif %}{% endfor %}.{% endif %}</li>
       </ul>
-      <button id="pp-show-latex" type="button" class="btn btn-sm btn-outline-secondary mt-2" aria-haspopup="dialog" aria-controls="pp-latex">Show available LaTeX</button>
+      <button id="pp-show-latex" type="button" class="btn btn-sm mt-2" aria-haspopup="dialog" aria-controls="pp-latex">Show available LaTeX</button>
     </details>
 
     <section class="card mb-4" aria-labelledby="pp-preview-title">
@@ -59,12 +57,12 @@
         <div id="pp-preview-error" class="alert alert-danger small" role="alert" hidden></div>
         <p id="pp-preview-empty" class="m-0"></p>
         <iframe id="pp-pdf" class="bank-pdf" title="Preview of the problem as a PDF" hidden></iframe>
-        <p id="pp-pdf-links" class="mt-2 mb-0" hidden><a id="pp-pdf-open" class="btn btn-sm btn-outline-primary me-2" href="#" target="_blank" rel="noopener">Open PDF</a><a id="pp-pdf-download" class="btn btn-sm btn-outline-secondary" href="#" download="preview.pdf">Download PDF</a></p>
+        <p id="pp-pdf-links" class="mt-2 mb-0" hidden><a id="pp-pdf-open" class="btn btn-sm btn-outline-primary me-2" href="#" target="_blank" rel="noopener">Open PDF</a><a id="pp-pdf-download" class="btn btn-sm" href="#" download="preview.pdf">Download PDF</a></p>
       </div>
     </section>
 
     <fieldset class="mb-4">
-      <legend class="h5">Tags</legend>
+      <legend class="node">Tags</legend>
       <div class="row g-3">
         <div class="col-12 col-lg-6">
           <label class="form-label fw-semibold" for="pp-area-input">Area <span class="text-danger" aria-hidden="true">*</span><span class="visually-hidden">(required)</span> <span class="text-muted fw-normal small">(what the problem is about)</span></label>
@@ -83,7 +81,7 @@
     </fieldset>
 
     <fieldset class="mb-4">
-      <legend class="h5">Where it comes from <span class="text-muted fw-normal small">(optional)</span></legend>
+      <legend class="node">Where it comes from <span class="fw-normal small">(optional)</span></legend>
       <div class="row g-3">
         <div class="col-12 col-md-4">
           <label class="form-label fw-semibold" for="pp-origin">Origin</label>
@@ -116,15 +114,15 @@
     <div class="card-header"><strong id="pp-send-title">Send your problem</strong></div>
     <div class="card-body">
       <div id="pp-errors" class="alert alert-warning small" role="alert" hidden></div>
-      <ol class="small mb-3">
+      <ol class="pp-steps small mb-3">
         <li>Click <strong>Copy file and open GitHub</strong>. GitHub opens a new file, <code id="pp-filename">new-untitled-problem.tex</code>. Sign in, or create a free account, if GitHub asks.</li>
-        <li>Paste the file (<kbd>Ctrl</kbd>+<kbd>V</kbd>, on a Mac <kbd>⌘</kbd>+<kbd>V</kbd>).</li>
+        <li>Paste the file (<kbd>Ctrl</kbd>+<kbd>V</kbd>, on a Mac <kbd>Cmd</kbd>+<kbd>V</kbd>).</li>
         <li>Click <strong>Propose new file</strong> (or <strong>Commit changes…</strong>), then <strong>Create pull request</strong>. A board member checks it, may add tags or a solution, then adds it to the bank. You can follow the review on GitHub.</li>
       </ol>
       <div class="d-flex flex-wrap gap-2 align-items-center">
         <button id="pp-submit" type="button" class="btn btn-primary">Copy file and open GitHub</button>
-        <a id="pp-download" class="btn btn-outline-secondary" href="#" download="problem.tex">Download .tex</a>
-        <button id="pp-show-file" type="button" class="btn btn-outline-secondary" aria-expanded="false" aria-controls="pp-file">Show the file</button>
+        <a id="pp-download" class="btn" href="#" download="problem.tex">Download .tex</a>
+        <button id="pp-show-file" type="button" class="btn" aria-expanded="false" aria-controls="pp-file">Show the file</button>
         <span id="pp-submit-status" class="small" role="status" aria-live="polite"></span>
       </div>
       <p class="small text-muted mt-2 mb-0">Your proposal is public on GitHub as soon as you send it.</p>
@@ -140,7 +138,7 @@
       <span class="flex-grow-1"></span>
       <button type="button" class="btn-close" aria-label="Close" data-close></button>
     </div>
-    <p class="small text-muted">Statements and solutions can use everything this preamble (<code>problem-bank/preamble.tex</code>) loads or defines, and nothing else: packages cannot be added. Something missing? Ask the board.</p>
+    <p class="small text-muted mb-3">Statements and solutions can use everything this preamble (<code>problem-bank/preamble.tex</code>) loads or defines, and nothing else: packages cannot be added. Something missing? Ask the board.</p>
     <pre id="pp-preamble" class="pp-preamble" tabindex="0">Loading…</pre>
   </dialog>
 

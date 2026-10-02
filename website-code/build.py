@@ -203,7 +203,7 @@ def asset_version():
     """A short hash of the page scripts and styles: the pages load them with ?v=<it> (templates), so a browser never
     mixes cached files of the last deploy with new ones."""
     h = hashlib.sha256()
-    for f in sorted(glob.glob(os.path.join(STATIC_DIR, "js", "*.js")) + [os.path.join(STATIC_DIR, "css", "custom.css")]):
+    for f in sorted(glob.glob(os.path.join(STATIC_DIR, "js", "*.js")) + glob.glob(os.path.join(STATIC_DIR, "css", "*.css"))):
         with open(f, "rb") as fh:
             h.update(fh.read())
     return h.hexdigest()[:10]
