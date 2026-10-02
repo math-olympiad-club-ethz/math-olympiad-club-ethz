@@ -11,7 +11,7 @@
 % origin-number:
 % also-in:
 % taken-from:
-% references:     Mathematics Stack Exchange, question 5051989 'Solve the differential equation f'=f/(f∘f)', posted 2025-04-01 by Antoine du Fresne. This is the earliest public record of the equation. The post says a friend passed it on informally about two years earlier and the original poser is unknown. The post contains the fixed-point proof that f = id. For the no-fixed-point case, the answers by piggy, Christophe Boilley and LegionMammal978 reduce it to the delay equation g'(x)=1/g(x+1), and LegionMammal978 builds a numerical one-parameter family f_a(x)=a·g(1+g^{-1}(x/a)) of non-identity solutions. Spas Dimitrov also posted an answer claiming a full solution - https://math.stackexchange.com/questions/5051989/solve-the-differential-equation-f-f-f-circ-f
+% references:     Earliest known appearance (to the best of our knowledge): Mathematics Stack Exchange, question 5051989 'Solve the differential equation f'=f/(f∘f)', posted 2025-04-01 by Antoine du Fresne. This is the earliest public record of the equation. The post says a friend passed it on informally about two years earlier and the original poser is unknown. The post contains the fixed-point proof that f = id. For the no-fixed-point case, the answers by piggy, Christophe Boilley and LegionMammal978 reduce it to the delay equation g'(x)=1/g(x+1), and LegionMammal978 builds a numerical one-parameter family f_a(x)=a·g(1+g^{-1}(x/a)) of non-identity solutions. Spas Dimitrov also posted an answer claiming a full solution - https://math.stackexchange.com/questions/5051989/solve-the-differential-equation-f-f-f-circ-f
 % history:        ai
 \begin{problem}
 Find all differentiable functions \( f : \mathbb{R}_{>0} \to \mathbb{R}_{>0} \) having at least one fixed point $\alpha\in\mathbb{R}_{>0}$ satisfying:
@@ -44,7 +44,7 @@ where we used the second fundamental theorem of calculus for the function $(F \c
 \\\\
 Now, using the fact that $\alpha$ is a fixed point of $f$, we get $F(f(\alpha)) = F(\alpha) = 0$, so $F(x) = F(f(x))$. By the injectivity of $F$, we conclude that $f(x) = x$. Since $x > 0$ was arbitrary, the proof is complete.
 \\\\
-\textbf{Bonus:} What happens if $f$ has no fixed point?
+\textit{Bonus:} What happens if $f$ has no fixed point?
 
 \subsection*{Solution:}
 Let $f:\mathbb{R}_{>0}\to\mathbb{R}_{>0}$ be a differentiable function satisfying:

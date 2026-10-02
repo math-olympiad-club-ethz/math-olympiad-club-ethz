@@ -11,7 +11,7 @@
 % origin-number:  Problem X.1.2
 % also-in:
 % taken-from:
-% references:     B. M. Makarov, M. G. Goluzina, A. A. Lodkin, A. N. Podkorytov, Selected Problems in Real Analysis (Russian original: Izbrannye zadachi po veshchestvennomu analizu, Nauka, Moscow, 1992; English translation: AMS Translations of Mathematical Monographs 107, 1992), Chapter X (Iterates of transformations of an interval), §1 Topological dynamics, Problem X.1.2 a)-c). The book's hint for X.1.2 (Solutions part) is word for word the hints at the start of our solution - https://vdoc.pub/documents/selected-problems-in-real-analysis-6tffcklec310 ; AMS volume page (1992, vol. 107) - https://web.archive.org/web/2024/https://www.ams.org/books/mmono/107/ ; Russian 1992 Nauka edition - https://analysis.spbu.ru/bib_r.html. Background for part c): R. E. Rice, B. Schweizer, A. Sklar, 'When is f(f(z)) = az^2 + bz + c?', Amer. Math. Monthly 87 (1980) 252-263, which discusses x^2-2 and points to Monthly problem E984 (1951, p. 564) - http://yaroslavvb.com/papers/rice-when.pdf. The bonus (cos, sin) is the club's own addition.
+% references:     Earliest known appearance (to the best of our knowledge): B. M. Makarov, M. G. Goluzina, A. A. Lodkin, A. N. Podkorytov, Selected Problems in Real Analysis (Russian original: Izbrannye zadachi po veshchestvennomu analizu, Nauka, Moscow, 1992; English translation: AMS Translations of Mathematical Monographs 107, 1992), Chapter X (Iterates of transformations of an interval), §1 Topological dynamics, Problem X.1.2 a)-c). The book's hint for X.1.2 (Solutions part) is word for word the hints at the start of our solution - https://vdoc.pub/documents/selected-problems-in-real-analysis-6tffcklec310 ; AMS volume page (1992, vol. 107) - https://web.archive.org/web/2024/https://www.ams.org/books/mmono/107/ ; Russian 1992 Nauka edition - https://analysis.spbu.ru/bib_r.html. Background for part c): R. E. Rice, B. Schweizer, A. Sklar, 'When is f(f(z)) = az^2 + bz + c?', Amer. Math. Monthly 87 (1980) 252-263, which discusses x^2-2 and points to Monthly problem E984 (1951, p. 564) - http://yaroslavvb.com/papers/rice-when.pdf. The bonus (cos, sin) is the club's own addition.
 % history:        ai
 \begin{problem}
 For each function \(g\in\{-id_{\mathbb{R}}, \exp, x\mapsto x^2-2\}\), determine whether there exists a continuous function $f:\mathbb{R}\rightarrow\mathbb{R}$ such that $f\circ f = g$.
@@ -24,7 +24,7 @@ For each function \(g\in\{-id_{\mathbb{R}}, \exp, x\mapsto x^2-2\}\), determine 
     \item[(b)] Prove that \( f \) is strictly increasing and that \( \inf f = a \in (-\infty, 0) \), \( f(a) = 0 \). Fix an arbitrary strictly increasing function \( f_0 \in C([a,0]) \) satisfying the conditions \( f_0(a) = 0 \) and \( f_0(0) = e^a \), and extend it to \( \mathbb{R} \) by using the equation.
     \item[(c)] Prove that \( f \) must be strictly increasing on \( [0, +\infty) \) and strictly decreasing on \( (-\infty, 0] \) and that \( f(0) \geq 0 \), which is impossible, because \( F \), and hence \( f \), takes negative values.
 \end{itemize}
-\textbf{Bonus:} If $F(x)=\cos(x)$ ?
+\textit{Bonus:} If $F(x)=\cos(x)$ ?
 \subsection*{Solution:}
 To begin we do some preliminary work (some of the result are well known but for the sake of completeness we give the "proofs"):
 \\\\
@@ -159,19 +159,19 @@ Let $f: \mathbb{R} \to \mathbb{R}$ be a strictly increasing continuous function.
 Since $f$ is strictly increasing we could consider $\pm \infty$ as fixed point. So there is always fixed point, We provide the construction for an interval $(a, b)$ of fixed point $a<b$ where $f(x) > x$. The case for $f(x) < x$ is analogous, and the global function is formed by the union of such constructions and the identity on the set of fixed points.
 
 \begin{enumerate}
-    \item \textbf{Fundamental Interval:} Pick an arbitrary point $x_0 \in (a, b)$. Let $x_1 = f(x_0)$. Since $f(x) > x$, we have $x_0 < x_1$. We define the sequence $x_{n+1} = f(x_n)$ for all $n \in \mathbb{Z}$.
+    \item \textit{Fundamental Interval:} Pick an arbitrary point $x_0 \in (a, b)$. Let $x_1 = f(x_0)$. Since $f(x) > x$, we have $x_0 < x_1$. We define the sequence $x_{n+1} = f(x_n)$ for all $n \in \mathbb{Z}$.
     
-    \item \textbf{Seed Map:} Choose a value $c$ such that $x_0 < c < x_1$. Define $g$ on the interval $[x_0, c]$ as any strictly increasing continuous function such that $g(x_0) = c$ and $g(c) = x_1$. 
+    \item \textit{Seed Map:} Choose a value $c$ such that $x_0 < c < x_1$. Define $g$ on the interval $[x_0, c]$ as any strictly increasing continuous function such that $g(x_0) = c$ and $g(c) = x_1$. 
     
-    \item \textbf{Functional Extension:} For $x \in [c, x_1]$, we are forced by the requirement $g(g(x)) = f(x)$ to define:
+    \item \textit{Functional Extension:} For $x \in [c, x_1]$, we are forced by the requirement $g(g(x)) = f(x)$ to define:
     $$g(x) = f(g^{-1}(x))$$
     Because $g: [x_0, c] \to [c, x_1]$ is a bijection, $g^{-1}$ is well-defined. This defines $g$ on the entire "fundamental interval" $[x_0, x_1]$.
     
-    \item \textbf{Inductive Propagation:} We extend $g$ to the rest of $(a, b)$ using the identity:
+    \item \textit{Inductive Propagation:} We extend $g$ to the rest of $(a, b)$ using the identity:
     $$g(x) = f(g(f^{-1}(x)))$$
     If $g$ is defined on $[x_n, x_{n+1}]$, this relation defines it on $[x_{n+1}, x_{n+2}]$. Since $f$ and $f^{-1}$ are continuous and strictly increasing, $g$ remains continuous and strictly increasing across the nodes $x_n$.
     
-    \item \textbf{Boundary Conditions:} Set $g(a) = a$ and $g(b) = b$. Since $\lim_{n \to -\infty} x_n = a$ and $\lim_{n \to \infty} x_n = b$, the monotonic nature of the construction ensures continuity at the fixed points.
+    \item \textit{Boundary Conditions:} Set $g(a) = a$ and $g(b) = b$. Since $\lim_{n \to -\infty} x_n = a$ and $\lim_{n \to \infty} x_n = b$, the monotonic nature of the construction ensures continuity at the fixed points.
 \end{enumerate}
 Thus, $g$ is a continuous iterative square root of $f$.
 \end{proof}

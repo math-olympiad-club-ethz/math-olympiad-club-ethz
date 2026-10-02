@@ -11,7 +11,7 @@
 % origin-number:  Round 2, Grades 7-8, Problem 3
 % also-in:        putnam, book
 % taken-from:
-% references:     Moscow Mathematical Olympiad 1949 (XII), Round 2, Grades 7-8, Problem 3, also set as Grades 9-10, Problem 3 (13 integer weights; any 12 balance six against six). Source: Prasolov et al., Moskovskie matematicheskie olimpiady 1935-1957 (MCCME 2010), statement p. 32, solution pp. 214-215. The solution's comment extends it to non-integer weights through a Q-basis reduction - https://old.mccme.ru/free-books/olymp/mmo-35-57.pdf; Shklarsky, Chentzov, Yaglom, The USSR Olympiad Problem Book (1962), Introductory Problems, Problem 9 (thirteen gears), listed as XII Moscow Olympiad (1949), Type II - https://archive.org/download/shklarsky-chentzov-yaglom-the-ussr-olympiad-problem-book/Shklarsky%2C%20Chentzov%2C%20Yaglom%20-%20The%20USSR%20Olympiad%20Problem%20Book_djvu.txt; Sixty-odd years of Moscow Mathematical Olympiads, hint to Problem 12.2.7-8.3 - https://vdoc.pub/documents/60-odd-years-of-moscow-mathematical-olympiads-2rmkfebo0u7g; 34th Putnam 1973, B1, the general version with integers - https://prase.cz/kalva/putnam/psoln/psol737.html; Alfutova & Ustinov, Algebra i teoriya chisel (MCCME 2002), Problem 09.100, parts (a) integer, (b) rational, (c) real weights - https://www.problems.ru/view_problem_details_new.php?id=61350; legacy note: came from a discussion with Clement Hongler in Budapest (July 2024).
+% references:     Earliest known appearance (to the best of our knowledge): Moscow Mathematical Olympiad 1949 (XII), Round 2, Grades 7-8, Problem 3, also set as Grades 9-10, Problem 3 (13 integer weights; any 12 balance six against six). Source: Prasolov et al., Moskovskie matematicheskie olimpiady 1935-1957 (MCCME 2010), statement p. 32, solution pp. 214-215. The solution's comment extends it to non-integer weights through a Q-basis reduction - https://old.mccme.ru/free-books/olymp/mmo-35-57.pdf; Shklarsky, Chentzov, Yaglom, The USSR Olympiad Problem Book (1962), Introductory Problems, Problem 9 (thirteen gears), listed as XII Moscow Olympiad (1949), Type II - https://archive.org/download/shklarsky-chentzov-yaglom-the-ussr-olympiad-problem-book/Shklarsky%2C%20Chentzov%2C%20Yaglom%20-%20The%20USSR%20Olympiad%20Problem%20Book_djvu.txt; Sixty-odd years of Moscow Mathematical Olympiads, hint to Problem 12.2.7-8.3 - https://vdoc.pub/documents/60-odd-years-of-moscow-mathematical-olympiads-2rmkfebo0u7g; 34th Putnam 1973, B1, the general version with integers - https://prase.cz/kalva/putnam/psoln/psol737.html; Alfutova & Ustinov, Algebra i teoriya chisel (MCCME 2002), Problem 09.100, parts (a) integer, (b) rational, (c) real weights - https://www.problems.ru/view_problem_details_new.php?id=61350; legacy note: came from a discussion with Clement Hongler in Budapest (July 2024).
 % history:        ai
 \begin{problem}
 There is an odd number ($2 \cdot n + 1 > 0$) of stones with real weights satisfying the following property: if we remove any stone from the $2 \cdot n + 1$, then there is a way to partition the rest of the stones into two sets of size $n$, such that the sum of the weights of the stones in both sets is equal. Show that all stones have the same weight.
@@ -31,9 +31,9 @@ We need to show:
 $$
 \forall \mathbf{y} \forall n \, \phi(\mathbf{y}, n) \rightarrow | \operatorname{ran}(\mathbf{y}) | = 1
 $$
-
-
-\textit{Solution 1.} Define the weight vector $\mathbf{x}$ and the matrix \( M \in \left\{-1, 0, 1\right\}^{(2n+1) \times (2n+1)} \) whose rows are composed of the vectors \( v_i \), each consisting of \( n \) entries equal to \( 1 \), \( n \) entries equal to \( -1 \), and a single \( 0 \) in position \( i \), in such a way that each row corresponds to a valid stone removal permutation. Clearly, the vector \( \mathbf{1} \) lies in the kernel of \( M \), and by construction, so does the vector \( \mathbf{x} \).
+\textit{Solution 1.}
+\\\\
+Define the weight vector $\mathbf{x}$ and the matrix \( M \in \left\{-1, 0, 1\right\}^{(2n+1) \times (2n+1)} \) whose rows are composed of the vectors \( v_i \), each consisting of \( n \) entries equal to \( 1 \), \( n \) entries equal to \( -1 \), and a single \( 0 \) in position \( i \), in such a way that each row corresponds to a valid stone removal permutation. Clearly, the vector \( \mathbf{1} \) lies in the kernel of \( M \), and by construction, so does the vector \( \mathbf{x} \).
 \\\\
 We claim that \( \dim_{\mathbb{R}}\left(\operatorname{Im}(M)\right) = 2n \), so that, by a dimensional argument, \( \ker(M) = \mathbb{R} \mathbf{1} \), hence there exists \( \lambda \in \mathbb{R} \) such that \( \lambda \mathbf{1} = \mathbf{x} \), as desired.
 \\\\
@@ -62,6 +62,7 @@ a contradiction. Therefore, \( \mathbf{1} \notin \left\langle \left\{ v_i \mid i
 and hence \( \dim_{\mathbb{R}}\left( \operatorname{Im}(M) \right) = 2n \), as desired.
 \\\\
 \textit{Solution 2.}
+\\\\
 Notice that for any $\mathbf{x}: 2 \cdot n + 1 \to \mathbb{R}$ and $n \in \mathbb{N}$, the property $\phi(\mathbf{x}, n)$ is invariant under multiplication and shift, meaning that if $\alpha \in \mathbb{R}$, then:
 $$
 \phi(\mathbf{x}, n) \rightarrow \phi(\mathbf{x} + \alpha, n) \wedge \phi(\alpha \cdot \mathbf{x}, n)
