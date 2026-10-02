@@ -1,10 +1,10 @@
 % title:          Reservoir sampling
 % area:           algorithms, discrete-probability
 % methods:        induction
-% difficulty:
+% difficulty:     easy
 % difficulty-ai:  easy
 % status:
-% review:         none
+% review:         human
 % --- history: all optional, leave EMPTY if unknown ---
 % origin:         folklore
 % origin-date:    1962
@@ -12,7 +12,7 @@
 % also-in:        interview
 % taken-from:
 % references:     Earliest known appearance (to the best of our knowledge): classical algorithm, reservoir sampling (the single-item case of Algorithm R). Earliest one-pass sampling method for an unknown population size: C. T. Fan, M. E. Muller, I. Rezucha, 'Development of sampling plans by using sequential (item by item) selection techniques and digital computers', J. Amer. Statist. Assoc. 57(298), 1962, 387-402, Method 4 - https://api.crossref.org/works/10.1080/01621459.1962.10480667 ; the rule 'keep the i-th item with probability 1/i' is Algorithm R, due to Alan G. Waterman (1975 letter to Knuth), printed in D. E. Knuth, TAOCP vol. 2, 2nd ed., 1981, Section 3.4.2, pp. 138-139; the 1st ed. had an older Algorithm 3.4.2R - https://markkm.com/blog/reservoir-sampling/ ; found independently by A. I. McLeod & D. R. Bellhouse, J. Roy. Statist. Soc. C 32(2), 1983, 182-184; faster algorithms in J. S. Vitter, 'Random sampling with a reservoir', ACM TOMS 11(1), 1985, 37-57, which credits Algorithm R to Waterman - https://www.cs.umd.edu/~samir/498/vitter.pdf ; overview - https://en.wikipedia.org/wiki/Reservoir_sampling ; coding-interview version: LeetCode 382 'Linked List Random Node' - https://leetcode.com/problems/linked-list-random-node/ ; GeeksforGeeks 'Select a random node from a singly linked list' - https://www.geeksforgeeks.org/dsa/select-a-random-node-from-a-singly-linked-list/ . The club's version was proposed by Hongler.
-% history:        ai
+% history:        human
 \begin{problem}
 We have a finite linked list of elements, \( x_{0} \rightarrow x_{1} \rightarrow \ldots \rightarrow x_{n} \), where \( n \in \mathbb{N} \) is \textbf{unknown}. Starting at \( x_{0} \), we have a pointer to \( x_{1} \), which leads to \( x_{2} \), and so on, until we reach the end of the linked list \( x_{n} \). At each step of traversing the list, we cannot go back, but we are informed whether or not we have reached the end. We have enough memory to store at least one of any of the elements \( x_i \) (\(0 \leq i \leq n\)), but perhaps not more; in particular, we cannot simply store the entire list in an array (unless, of course, \( n = 0 \)).
 \\\\
