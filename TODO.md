@@ -45,6 +45,11 @@ Details, sources and the full change table: [`problem-bank/history-review.md`](p
       - 6 need real missing maths (0014, 0033, 0034, 0038, 0039, 0056): mark the problems `status: partial`, drop the
         entries; 0069's entry too (already partial).
       - 68 concrete corrections in 34 problems: apply them all and read the diff, or go through them one by one.
+- [ ] **0030, Antoine himself**: merge the two versions by hand, taking the best of each. Since the merge of GitHub
+      main (2026-10-02), the file holds Antoine's full solution, then Spas and Ana's solutions appended as they are
+      (after the comment `% ---- Solutions by Spas and Ana ...`: a Setup, Solutions 1–4, Counterexamples for m = 2). The
+      file has duplicate solutions until then. Their `difficulty: hard` was taken; their `review: human` was not
+      (`review: none` until the review is done).
 - [ ] Missing solutions: 0052, 0060–0062, 0065–0068, 0071–0080.
 - [ ] Partial solutions: 0019, 0031, 0034, 0038–0040, 0049, 0063, 0064, 0069.
 

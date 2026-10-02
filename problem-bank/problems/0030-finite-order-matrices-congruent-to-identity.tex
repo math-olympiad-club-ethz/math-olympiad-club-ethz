@@ -1,7 +1,7 @@
 % title:          Finite order matrices congruent to identity
 % area:           matrices, congruences, finite-groups
 % methods:        eigenvalue-arguments, cayley-hamilton, trace-argument, contradiction, legendre-formula, spectral-mapping
-% difficulty:
+% difficulty:     hard
 % difficulty-ai:  medium
 % status:
 % review:         none
@@ -214,4 +214,56 @@ A counterexample for general $n\geq 1$ is easy to find, for example, $-I_n$. If 
 0 & 0 & 0 & 0 & \cdots & 0 & \pm 1
 \end{pmatrix} \in \mathbb{Z}^{\left( 2k+1 \right) \times \left( 2k+1 \right)}.
 \]
+% ---- Solutions by Spas and Ana (GitHub main, merged 2026-10-02), appended as they are; to combine with the solutions above (TODO.md) ----
+\textit{Setup (used in Solutions 1--3).}
+\\\\
+Write \( A = I_n + mB \) with \( B \in \mathbb{Z}^{n \times n} \), and let \( A^k = I_n \). If \( Bx = \beta x \) with \( x \neq 0 \), then \( Ax = (1 + m\beta)x \), so \( \alpha := 1 + m\beta \) is an eigenvalue of \( A \). Since \( A^k = I_n \), we have \( \alpha^k = 1 \), so \( |\alpha| = 1 \). Hence every eigenvalue \( \beta \) of \( B \) satisfies (here \( m \geq 3 \) is crucial)
+\[
+|\beta| = \frac{|\alpha - 1|}{m} \leq \frac{|\alpha| + 1}{m} = \frac{2}{m} < 1.
+\]
+\textit{Solution 1 (Vieta and diagonalisability).}
+\\\\
+The characteristic polynomial \( \chi_B \) is monic with integer coefficients. Write \( \chi_B = X^s q \) with \( q \in \mathbb{Z}[X] \) monic and \( q(0) \neq 0 \). Suppose \( \deg q \geq 1 \). The roots of \( q \) are eigenvalues of \( B \), so they all have modulus \( < 1 \), and by Vieta
+\[
+|q(0)| = \prod_{q(\rho) = 0} |\rho| < 1.
+\]
+But \( q(0) \) is a nonzero integer, a contradiction. Hence \( q = 1 \), i.e.\ \( 0 \) is the only eigenvalue of \( B \).
+
+Therefore every eigenvalue of \( A = I_n + mB \) equals \( 1 \). Since \( A^k = I_n \), the minimal polynomial of \( A \) divides \( X^k - 1 \), which has distinct roots, so \( A \) is diagonalisable over \( \mathbb{C} \). A diagonalisable matrix whose only eigenvalue is \( 1 \) is \( I_n \). \qed
+\\\\
+\textit{Solution 2 (Vieta and Cayley--Hamilton).}
+\\\\
+As in Solution 1, \( \chi_B = X^n \), so \( B^n = \mathbf{0} \) by Cayley--Hamilton. Put \( N := mB \), so \( N^n = \mathbf{0} \). From \( (I_n + N)^k = I_n \) and the binomial theorem,
+\[
+\mathbf{0} = \sum_{j=1}^{k} \binom{k}{j} N^j = N\,(kI_n + E), \qquad E := \sum_{j=2}^{k} \binom{k}{j} N^{j-1}.
+\]
+Now \( E = N \cdot (\text{polynomial in } N) \) is nilpotent and commutes with \( kI_n \). Since \( k \neq 0 \) in \( \mathbb{Q} \), the matrix \( kI_n + E = k\,(I_n + k^{-1}E) \) is invertible, with \( (I_n + F)^{-1} = \sum_{i \geq 0} (-F)^i \) for nilpotent \( F \). Hence \( N = \mathbf{0} \), i.e.\ \( A = I_n \). \qed
+\\\\
+\textit{Solution 3 (traces).}
+\\\\
+Instead of Vieta, we show that \( 0 \) is the only eigenvalue of \( B \) using traces. Let \( \beta_1, \dots, \beta_n \) be the eigenvalues of \( B \) with multiplicity. Then \( \operatorname{tr}(B^N) = \sum_i \beta_i^N \to 0 \) as \( N \to \infty \), because \( |\beta_i| < 1 \). Since \( \operatorname{tr}(B^N) \in \mathbb{Z} \), there is \( M \geq 1 \) with \( \operatorname{tr}(B^N) = 0 \) for all \( N \geq M \).
+
+Suppose \( B \) has distinct nonzero eigenvalues \( \gamma_1, \dots, \gamma_r \) (\( r \geq 1 \)) with multiplicities \( \mu_1, \dots, \mu_r \geq 1 \). Then for \( l = 0, \dots, r-1 \),
+\[
+\sum_{j=1}^{r} \gamma_j^{\,l} \cdot \mu_j \gamma_j^{M} = 0.
+\]
+The matrix \( (\gamma_j^{\,l})_{0 \leq l < r,\ 1 \leq j \leq r} \) is a Vandermonde matrix with distinct nodes, hence invertible. So \( \mu_j \gamma_j^M = 0 \) for all \( j \), which is impossible since \( \mu_j \neq 0 \) and \( \gamma_j \neq 0 \). Hence \( 0 \) is the only eigenvalue of \( B \). Now finish with the last paragraph of Solution 1, or with the argument of Solution 2. \qed
+\\\\
+\textit{Solution 4 (\( p \)-adic).}
+\\\\
+Assume \( A \neq I_n \). If \( m \) has an odd prime divisor \( p \), put \( c = 1 \). Otherwise \( m \) is a power of \( 2 \) with \( m \geq 4 \); put \( p = 2 \), \( c = 2 \). In both cases \( p^c \mid m \), so \( A \equiv I_n \pmod{p^c} \), and \( c \geq 2 \) if \( p = 2 \).
+
+Let \( c' \) be the minimum of \( v_p \) over the entries of \( A - I_n \). It is finite since \( A \neq I_n \), and \( c' \geq c \). Put \( B := p^{-c'}(A - I_n) \in \mathbb{Z}^{n \times n} \), which has an entry not divisible by \( p \). Since \( A \neq I_n \), we have \( k \geq 2 \). Let \( s := v_p(k) \). The binomial theorem gives
+\begin{equation*}
+\mathbf{0} = (I_n + p^{c'}B)^k - I_n = k p^{c'} B + \sum_{i=2}^{k} \binom{k}{i} p^{ic'} B^i. \tag{$*$}
+\end{equation*}
+
+\emph{Claim: for \( 2 \leq i \leq k \), \( p^{c'+s+1} \) divides \( \binom{k}{i} p^{ic'} \).}
+From \( i\binom{k}{i} = k\binom{k-1}{i-1} \) we get \( v_p\binom{k}{i} \geq s - v \), where \( v := v_p(i) \). Hence \( v_p\!\left(\binom{k}{i}p^{ic'}\right) \geq c' + s + \big((i-1)c' - v\big) \), and it suffices to show \( (i-1)c' \geq v + 1 \). If \( v = 0 \), this holds since \( i \geq 2 \). If \( v \geq 1 \), then \( i \geq p^v \), so \( (i-1)c' \geq (p^v - 1)c' \). For \( p \geq 3 \) use \( c' \geq 1 \) and \( 3^v \geq v + 2 \). For \( p = 2 \) use \( c' \geq 2 \) and \( 2(2^v - 1) \geq v + 1 \). In both cases the bound holds.
+
+By the claim, every entry of the sum in \( (*) \) is divisible by \( p^{c'+s+1} \), hence so is every entry of \( k p^{c'} B \). But for an entry \( b \) of \( B \) with \( p \nmid b \), we have \( v_p(k p^{c'} b) = c' + s \), a contradiction. Hence \( A = I_n \). \qed
+\\\\
+\textit{Counterexamples for \( m = 2 \).}
+\\\\
+For every \( n \geq 1 \), \( -I_n \equiv I_n \pmod 2 \) has order \( 2 \) but is not \( I_n \). A non-diagonal example: \( J = \begin{pmatrix} 1 & 2 \\ 0 & -1 \end{pmatrix} \) satisfies \( J \equiv I_2 \pmod 2 \) and \( J^2 = I_2 \). For \( n = 2l \) take the block matrix \( \operatorname{diag}(J, \dots, J) \) with \( l \) blocks, and for \( n = 2l + 1 \) with \( l \geq 1 \) take \( \operatorname{diag}(J, \dots, J, \pm 1) \). Each of these is \( \equiv I_n \pmod 2 \), has order \( 2 \), and is not \( I_n \). (For \( n = 1 \) use \( (-1) \).)
 \end{solution}

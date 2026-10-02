@@ -115,7 +115,8 @@ as a link, so write it as you would write a number: `see Appendix~\appendixref{c
     sure it was: [`history-review.md`](history-review.md)), `human` checked by a person against the source.
     `history` never decides whether a problem is published.
   - The history fields record the earliest source known to us, never a final truth: when an earlier source turns
-    up, they change. References say "Earliest known appearance (to the best of our knowledge)" for that reason.
+    up, they change. For that reason every `references` field starts with "Earliest known appearance (to the best
+    of our knowledge):" ("none found." when no source of the problem is known).
 
 ## Rules
 

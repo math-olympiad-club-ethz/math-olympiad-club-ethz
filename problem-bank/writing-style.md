@@ -8,7 +8,7 @@ How to read the numbers. "12 in 5" means 12 occurrences in 5 of the 25 bodies (t
 
 1. Write "we" (103 times in 21 of 25 bodies). Never "I" (0).
 2. Start with the first mathematical step. No solution copies its statement (0 of 24).
-3. Write one continuous text: no `\section`, no "Answer:", no "Claim:", no lemma environment (0 each in the 24 solutions). 19 of the 24 solutions have no bold or italic label at all.
+3. Write one continuous text: no `\section`, no "Answer:", no "Claim:", no lemma environment (0 each in the 24 solutions). 19 of the 24 solutions have no label at all.
 4. Separate blocks with a line that holds only `\\\\` (35 such lines in 17 bodies).
 5. Justify each step where it is used: "since" (37 in 13), "because" (9 in 7), a parenthesis, or a named result ("By Rolle's theorem").
 6. Put displays in `\[ ... \]`, each delimiter on its own line (113 and 112 of 114). Punctuate them: 100 of the 130 displays end with a period or a comma.
@@ -16,6 +16,7 @@ How to read the numbers. "12 in 5" means 12 occurrences in 5 of the 25 bodies (t
 8. End with one sentence that gives the answer or the claim in words, or with the target formula in a display (22 of 24 solutions).
 9. In a statement, set up the objects with "Let" (12 of 24), ask with "Prove that", "Show that" or "Find all", and display the key formula.
 10. Be precise with structures: neutral elements carry their structure (`0_K`, `1_R`), dimensions carry their field (`\dim_{\mathbb{R}}`), intervals use French brackets (`]0;1[`).
+11. Write every label of a solution in `\textit`, never in `\textbf`. When there are several solutions, number them all: `\textit{Solution 1.}` alone on its line, then a `\\\\` line, and the same for `\textit{Solution 2.}` (see "Several solutions" below).
 
 ## 1. Tone and voice
 
@@ -69,8 +70,36 @@ In a find-all problem, show the obvious solutions, then say that there are no ot
 ### Headings and labels
 
 - No `\section`, `\subsection` or `\paragraph` (0). No "Answer:", "Claim:" or "Case 1" label (0).
-- 19 of 24 solutions have no bold or italic label. The 5 exceptions: `\item \textbf{Coefficient of \( X^{4n} \):}` (0005), `\item \textbf{Understanding \(\langle n \rangle\):}` (0043), `\textbf{Step 1.}` (0054), `\textit{Remark:}` (0047), `\textit{Alternate solution}` (0048). The shared result uses `\textit{Examples:}`, `\textbf{1.}` and `\textbf{2.}`.
+- 19 of 24 solutions have no label. The 5 exceptions: `\item \textit{Coefficient of \( X^{4n} \):}` (0005), `\item \textit{Understanding \(\langle n \rangle\):}` (0043), `\textit{Step 1.}` (0054), `\textit{Remark:}` (0047), `\textit{Solution 2.}` (0048). The shared result uses `\textit{Examples:}`, `\textit{1.}` and `\textit{2.}`.
+- Labels are always in `\textit`, never in `\textbf`. Most solutions already used `\textit` (0027, 0030, 0041, 0047); the `\textbf` labels (0005, 0043, 0054, the shared result and a few others) were turned into `\textit` on 2026-10-02, in every problem and shared result. This concerns solutions only: a label inside a statement (`\textbf{Bonus:}`) stays as it is.
 - Multi-part problems: `\item[(a)]` and `\item[(b)]` inside an enumerate (0004), or plain "(a)" and "(b)" paragraphs (0048).
+
+### Several solutions
+
+- Number every solution, the first one too: `\textit{Solution 1.}`, `\textit{Solution 2.}`, ... Never "Second solution", "Alternate solution" or "Alternative proof". A short name may follow the number: `\textit{Solution 1. of $A=I_n$}` (0030).
+- The label stands alone on its line and a `\\\\` line follows it; the solution starts on the next line. If the solution opens with an environment, the `\\\\` line is left out (`\textit{Solution 2.}` directly followed by `\begin{lemma}`, 0041).
+- Between two solutions, the `\\\\` line comes directly under the last line of text, never after an empty line: a `\\\\` after an empty line does not compile ("There's no line here to end"). After a display `\]` there is no `\\\\` line: the label follows the display directly (0027).
+- A setting shared by all the solutions comes first, without a label, and `\textit{Solution 1.}` follows it (0046).
+- In a multi-part problem every part numbers its own solutions: "(a)" alone on its line, then `\textit{Solution 1.}` (0048).
+
+```latex
+\begin{solution}
+\textit{Solution 1.}
+\\\\
+Since \( A \equiv I_n \pmod{m} \), there exists ...
+... Thus, \( A = I_n \).
+\\\\
+\textit{Solution 2.}
+\\\\
+Let \( \alpha \) be an eigenvalue of \( A \). ...
+\[
+\ldots
+\]
+\textit{Solution 3.}
+\\\\
+...
+\end{solution}
+```
 
 ### Cases
 
@@ -199,7 +228,7 @@ Absolute values and cardinalities use bars: `|G|` inline, `\left| G \right|` in 
 8. **Commands.** `\frac` only (151; `\dfrac`, `\tfrac`, `\displaystyle`: 0). `\leq` 66, `\geq` 27, `\neq` 11 (`\le`, `\ge`, `\ne`: 0). `\dots` 7, `\cdots` 3 (0016), `\ldots` 4 (0043, 0048). `:=` 14 (`\coloneqq`: 0). `\cdot` 53 in 11. `\quad` 21 in 7, between formulas on one display line: `N = 121 + 100|z|^2 + 220 \Im z, \quad D = 100 + 121|z|^2 + 220 \Im z,` (0003).
 9. **Operator names.** `\operatorname{...}` (15 in 4: Im, tr, diag, ran) and `\mathrm{...}` (35 in 4: Stab, Orb, tr, ran, Mat, GL, Aut, Ens, d) are both used. Built-in commands otherwise: `\ker`, `\dim`, `\det`, `\ln`, `\log_2`, `\Im`, `\lim`.
 10. **Equation numbers.** `\label`, `\tag` and `\eqref` occur 3 times each, all in 0036. Elsewhere an earlier formula is named in words: "Dividing the second equation by the first, we obtain" (0022); `Using the defining relation for \( f(\lambda) \), we see that for $\lambda \geq 1$:` (0013).
-11. **Text commands.** `\textbf` (11 in 4) and `\textit` (4 in 3) serve only as labels; `\emph`: 0. `\href` 2 times, for an outside definition: `\href{https://en.wikipedia.org/wiki/Dense_order}{dense order}` (0047). `\footnote` 2 times (0036, app), for a side construction. `\appendixref` once (0018). `\textcolor` 90 times, only in 0032.
+11. **Text commands.** `\textit` serves only as labels (17 in 6); `\textbf`: 0 in the solutions since 2026-10-02 (its 11 label uses became `\textit`); `\emph`: 0. `\href` 2 times, for an outside definition: `\href{https://en.wikipedia.org/wiki/Dense_order}{dense order}` (0047). `\footnote` 2 times (0036, app), for a side construction. `\appendixref` once (0018). `\textcolor` 90 times, only in 0032.
 12. **Lists.** `enumerate` 3 times (the parts of 0004, the steps of 0043, the theorem of app), `itemize` once (0005).
 13. **Hyphen after math.** A compound with a math prefix keeps the hyphen outside the math (28 in 6): `$\mathbb{F}_{2}$-vector space` (0018), `an $n^2$-dimensional space` (0004), `\( \mathbb{R} \)-linear` (0042). 0018 twice puts it inside the math (`$\mathbb{F}_2-$subspace`); do not copy that.
 14. **Source layout.** Prose lines are not wrapped (0). The body is indented by 4 spaces in 3 bodies (0001, 0003, 0016) and inside the enumerate of 0004 and 0043; the other bodies start at column 0.
@@ -244,7 +273,7 @@ Counts are over the 25 bodies unless stated.
 - No lemma, claim or proof environment inside a solution (0).
 - No macro definitions: `\newcommand` (0).
 - No `\cite` (0): results are named in words.
-- No `\emph` (0). No bold or italic for emphasis inside a sentence: all 15 uses of `\textbf` and `\textit` are labels.
+- No `\emph` (0). No bold or italic for emphasis inside a sentence: every `\textit` is a label, and `\textbf` is not used.
 - No `\dfrac`, `\tfrac`, `\displaystyle` (0). No `\le`, `\ge`, `\ne` (0). No `\iff`, `\Longrightarrow` (0). No `\varepsilon`, `\mathfrak`, `\overline` (0).
 - No `cases` environment in a solution (0; one in the 0005 statement).
 - No figures: `tikz`, `\includegraphics` (0).
@@ -391,9 +420,9 @@ Since \( Q^{\perp}\subset E \) is a \( K \)-subspace, we must have:
 
 **Dominant and minority formats.** 20 of the 24 solutions follow the habits above. Four read differently; prefer the dominant habits to theirs:
 
-- 0043: an enumerate of four steps with bold labels (`\item \textbf{Decomposing the Sum:}`), short imperatives ("Group terms by", "Split into two reindexed sums:"), no "we", no punctuation in its 5 displays, no closing sentence.
-- 0048: chattier and partly impersonal ("One can easily construct a legal set", "That leaves proving that one cannot do better."), parts "(a)" and "(b)", two `\textit{Alternate solution}` paragraphs, the answer in `\boxed{67}`.
-- 0054: `\textbf{Step 1.}` and `\textbf{Step 2.}` with blank lines, `\mathrm{Mat}_{n \times n}(\mathbb{C})`, `\mathbb{C}[x]`, `w^t`, no `\left`.
+- 0043: an enumerate of four steps with labels (`\item \textit{Decomposing the Sum:}`), short imperatives ("Group terms by", "Split into two reindexed sums:"), no "we", no punctuation in its 5 displays, no closing sentence.
+- 0048: chattier and partly impersonal ("One can easily construct a legal set", "That leaves proving that one cannot do better."), parts "(a)" and "(b)", two solutions in each part (`\textit{Solution 1.}`, `\textit{Solution 2.}`; until 2026-10-02 the second one was an inline `\textit{Alternate solution}`), the answer in `\boxed{67}`.
+- 0054: `\textit{Step 1.}` and `\textit{Step 2.}` with blank lines, `\mathrm{Mat}_{n \times n}(\mathbb{C})`, `\mathbb{C}[x]`, `w^t`, no `\left`.
 - 0058: a two-line sketch (55 words) that opens with a formula, says "by a simple derivative test" and has no display.
 
 **Three registers inside the dominant group.** 0022, 0029 and 0036 mix the second with passages of the third.

@@ -21,6 +21,10 @@ area:
         description: Functions of one real variable, sequences, series, limits, derivatives and integrals.
         aliases: [calculus, single variable, real functions]
         children:
+          - slug: bounds
+            name: Bounds
+            description: Upper and lower bounds, supremum (least upper bound), infimum (greatest lower bound), and completeness.
+            aliases: [bound, bounds, upper bound, lower bound, supremum, infimum, sup, inf, least upper bound, greatest lower bound, completeness axiom]
           - slug: sequences
             name: Sequences & recursive sequences
             description: Convergence and limits of real sequences, including recursively defined ones.
@@ -165,6 +169,10 @@ area:
             name: Free groups & commutators
             description: Free groups, words, relations and commutator identities.
             aliases: [free group, commutator, word problem, generators and relations, presentation]
+          - slug: group-center
+            name: Center & Centralizers
+            description: Group center, centralizers, normalizers, and the class equation.
+            aliases: [center, centralizer, normalizer, z(g), class equation, conjugacy class]
       - slug: rings-fields
         name: Rings & fields
         description: Rings, ideals, fields, field extensions and Galois theory.
@@ -648,6 +656,10 @@ methods:
         name: Field norm
         description: Norm (or trace) map of a field extension as a multiplicative invariant.
         aliases: [norm of an extension, norm map, algebraic norm]
+      - slug: gcd
+        name: Greatest common divisor
+        description: "Use gcd properties: gcd(a, b) = gcd(a, b - ka), the Euclidean algorithm, gcd of consecutive terms, gcd(a^m - 1, a^n - 1) = a^gcd(m,n) - 1."
+        aliases: [gcd, greatest common divisor, euclidean algorithm, gcd trick, gcd argument, highest common factor, hcf]
       - slug: bezout
         name: Bézout's identity
         description: gcd(a, b) = au + bv; extended Euclidean algorithm.
@@ -722,6 +734,10 @@ methods:
         aliases: [smoothing, mixing variables, smoothing argument, sos method, uvw method]
   - group: Analysis
     tags:
+      - slug: monotonicity
+        name: Monotonicity
+        description: Properties of monotonic functions and sequences, including the monotone convergence theorem.
+        liases: [monotonic, monotone, increasing, decreasing, non-decreasing, non-increasing, monotone convergence]
       - slug: telescoping
         name: Telescoping
         description: Write terms as differences so that a sum or product collapses.
