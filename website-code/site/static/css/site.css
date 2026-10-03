@@ -3,8 +3,33 @@
    rules instead of boxes. The palette follows xent.ai; the light/dark switch is <html data-theme> (site.js).
    The scripts build some of the markup with these class names: bank-ui.js, bank-propose-ui.js. */
 
-@font-face { font-family: "MOC Typewriter"; src: url("../fonts/moc-typewriter-400.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
-@font-face { font-family: "MOC Typewriter"; src: url("../fonts/moc-typewriter-700.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: swap; }
+/* Each weight comes in two files: the basic Latin every page uses, and the rest (ě ă ț, accents, Greek), which a browser
+   downloads only for a page that shows one of these characters. The ranges are those of tools/subset_fonts.py. */
+@font-face { font-family: "MOC Typewriter"; src: url("../fonts/moc-typewriter-400.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap;
+  unicode-range: U+0020-007E, U+00A0-00FF, U+0131, U+0152-0153, U+2000-206F, U+20AC, U+2122, U+2190-2199, U+2212, U+FB00-FB06; }
+@font-face { font-family: "MOC Typewriter"; src: url("../fonts/moc-typewriter-400-ext.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap;
+  unicode-range: U+0100-0130, U+0132-0151, U+0154-017F, U+0218-021B, U+02BC, U+02C6-02C7, U+02D8-02DD, U+0300-030C, U+0326-0328, U+0370-03FF; }
+@font-face { font-family: "MOC Typewriter"; src: url("../fonts/moc-typewriter-700.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: swap;
+  unicode-range: U+0020-007E, U+00A0-00FF, U+0131, U+0152-0153, U+2000-206F, U+20AC, U+2122, U+2190-2199, U+2212, U+FB00-FB06; }
+@font-face { font-family: "MOC Typewriter"; src: url("../fonts/moc-typewriter-700-ext.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: swap;
+  unicode-range: U+0100-0130, U+0132-0151, U+0154-017F, U+0218-021B, U+02BC, U+02C6-02C7, U+02D8-02DD, U+0300-030C, U+0326-0328, U+0370-03FF; }
+/* Until the font has arrived (and for the few characters it lacks), a monospace font of the system, scaled to its
+   width: the text takes the same room before and after the swap, so nothing moves. size-adjust = 0.525 em (the
+   advance of Computer Modern Typewriter) / the advance of the local font; the overrides are CMU's ascent and descent
+   (regular .827 / .233, bold .866 / .230) divided by size-adjust. Menlo and DejaVu Sans Mono: 0.602 em; Consolas:
+   0.550 em; Courier New, Liberation Mono, Roboto Mono, Noto Sans Mono, Droid Sans Mono: 0.600 em. */
+@font-face { font-family: "MOC Menlo"; src: local("Menlo"), local("Menlo-Regular"), local("DejaVu Sans Mono"), local("DejaVuSansMono"); font-weight: 400;
+  size-adjust: 87.2%; ascent-override: 94.84%; descent-override: 26.72%; line-gap-override: 0%; }
+@font-face { font-family: "MOC Menlo"; src: local("Menlo Bold"), local("Menlo-Bold"), local("DejaVu Sans Mono Bold"), local("DejaVuSansMono-Bold"); font-weight: 700;
+  size-adjust: 87.2%; ascent-override: 99.31%; descent-override: 26.38%; line-gap-override: 0%; }
+@font-face { font-family: "MOC Consolas"; src: local("Consolas"); font-weight: 400;
+  size-adjust: 95.49%; ascent-override: 86.61%; descent-override: 24.4%; line-gap-override: 0%; }
+@font-face { font-family: "MOC Consolas"; src: local("Consolas Bold"), local("Consolas-Bold"); font-weight: 700;
+  size-adjust: 95.49%; ascent-override: 90.69%; descent-override: 24.09%; line-gap-override: 0%; }
+@font-face { font-family: "MOC Mono"; src: local("Courier New"), local("CourierNewPSMT"), local("Liberation Mono"), local("LiberationMono"), local("Roboto Mono"), local("RobotoMono-Regular"), local("Noto Sans Mono"), local("NotoSansMono-Regular"), local("Droid Sans Mono"), local("DroidSansMono"); font-weight: 400;
+  size-adjust: 87.49%; ascent-override: 94.53%; descent-override: 26.63%; line-gap-override: 0%; }
+@font-face { font-family: "MOC Mono"; src: local("Courier New Bold"), local("CourierNewPS-BoldMT"), local("Liberation Mono Bold"), local("LiberationMono-Bold"), local("Roboto Mono Bold"), local("RobotoMono-Bold"), local("Noto Sans Mono Bold"), local("NotoSansMono-Bold"); font-weight: 700;
+  size-adjust: 87.49%; ascent-override: 98.98%; descent-override: 26.29%; line-gap-override: 0%; }
 
 /* ===================== tokens ===================== */
 /* Contrast on --bg: ink 14.0:1 (dark 16.6), ink-dim 6.4 (5.4), accent-text 4.8 (14.2), danger 6.0 (8.8), ok 5.6 (11.1).
@@ -27,7 +52,7 @@
   --ok: #3f6a2a;
   --backdrop: rgba(38, 34, 28, .45);
 
-  --mono: "MOC Typewriter", ui-monospace, Menlo, Consolas, monospace;
+  --mono: "MOC Typewriter", "MOC Menlo", "MOC Consolas", "MOC Mono", ui-monospace, monospace;
   --fs: 16.5px;  --lh: 26.4px;          /* body */
   --fs-h1: 44px; --lh-h1: 52.8px;
   --fs-h2: 24px; --lh-h2: 33px;
@@ -135,9 +160,9 @@ main { flex: 1 0 auto; padding-top: calc(var(--u) * 7); padding-bottom: calc(var
   font-weight: 700; font-size: var(--fs-sm); line-height: var(--lh-sm); letter-spacing: .02em; text-transform: lowercase;
 }
 .brand:hover { color: var(--ink); }
-/* logos are CSS backgrounds, so a visitor downloads only the current theme's file */
-.club-logo { flex: none; width: var(--logo); height: var(--logo); background: url("../images/club_logo_light_280.png") center / contain no-repeat; }
-[data-theme="dark"] .club-logo { background-image: url("../images/club_logo_dark_280.png"); }
+/* logos are CSS backgrounds, so a visitor downloads only the current theme's file (96 px: sharp up to 3x screens) */
+.club-logo { flex: none; width: var(--logo); height: var(--logo); background: url("../images/club_logo_light_96.webp") center / contain no-repeat; }
+[data-theme="dark"] .club-logo { background-image: url("../images/club_logo_dark_96.webp"); }
 .site-nav { justify-self: end; }
 .site-nav ul { display: flex; column-gap: 26px; list-style: none; white-space: nowrap; }
 .site-nav a {
@@ -551,9 +576,13 @@ input[type="checkbox"]:hover { border-color: var(--accent-text); }
 #pp-errors ul { padding-left: 2ch; }
 
 /* ===================== motion: colour only ===================== */
+/* A theme switch fades every colour together (site.js sets .theme-fade on <html> for that moment only), so no text is
+   ever drawn in the new colour on the old background. Hover feedback is a short fade of the element itself. */
 @media (prefers-reduced-motion: no-preference) {
-  body { transition: background-color .3s ease, color .3s ease; }
-  a, .btn, .theme, .act .u, .bank-chip, .bank-chip-x, .site-nav a { transition: color .18s ease, border-color .18s ease, background-color .18s ease, text-decoration-color .18s ease; }
+  a, .btn, .theme, .act .u, .bank-chip, .bank-chip-x { transition: color .18s ease, border-color .18s ease, background-color .18s ease, text-decoration-color .18s ease; }
+  .theme-fade, .theme-fade *, .theme-fade *::before, .theme-fade *::after {
+    transition: color .3s ease, background-color .3s ease, border-color .3s ease, text-decoration-color .3s ease, box-shadow .3s ease !important;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   .form-switch input[type="checkbox"]::before { transition: none; }

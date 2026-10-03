@@ -4,7 +4,7 @@ import { createReadStream, statSync } from 'node:fs';
 import { extname, join, normalize } from 'node:path';
 
 const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.mjs': 'text/javascript', '.css': 'text/css', '.json': 'application/json',
-  '.wasm': 'application/wasm', '.gz': 'application/gzip', '.pdf': 'application/pdf', '.png': 'image/png', '.svg': 'image/svg+xml', '.txt': 'text/plain', '.tex': 'text/plain', '.woff2': 'font/woff2' };
+  '.wasm': 'application/wasm', '.gz': 'application/gzip', '.pdf': 'application/pdf', '.png': 'image/png', '.svg': 'image/svg+xml', '.txt': 'text/plain', '.tex': 'text/plain', '.woff2': 'font/woff2', '.webp': 'image/webp' };
 
 export function startServer(root, port = 0) {
   const server = http.createServer((req, res) => {

@@ -29,6 +29,7 @@ git-ignored: CI runs the build and deploys its own copies. Only the sources are 
 """
 import argparse
 import concurrent.futures
+import datetime
 import glob
 import hashlib
 import json
@@ -238,7 +239,8 @@ def render_pages(index, catalogue, preview, build=None, items=()):
         if name.endswith(".html"):
             os.remove(os.path.join(OUTPUT_DIR, name))
     for template_name, context in pages:
-        html = env.get_template(template_name).render(url_for=url_for, asset_version=version, **context)
+        html = env.get_template(template_name).render(url_for=url_for, asset_version=version,
+                                                      year=datetime.date.today().year, **context)   # site.js updates the year
         with open(os.path.join(OUTPUT_DIR, template_name), "w", encoding="utf-8") as f:
             f.write(html)
         print(f"built site/{template_name}")

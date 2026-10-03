@@ -128,6 +128,13 @@ export function prefetchEngine() {
   initEngine().catch(() => { /* reported when the user actually clicks Create */ });
 }
 
+/* The problem texts too (bodies.json, about 90 KB compressed), so the first Create waits for neither.  Same rules:
+   skipped on data-saver connections, never throws (a failed download is retried and reported by the Create). */
+export function prefetchBodies() {
+  try { if (navigator.connection && navigator.connection.saveData) return; } catch (e) { /* ignore */ }
+  loadBodies().catch(() => { /* reported when the user actually clicks Create */ });
+}
+
 /* Queue a compile.  Options: timeoutMs (counted from the moment pdfTeX starts on it), signal (AbortSignal: a waiting
    job is dropped, a running one stops the worker; rejects with name 'AbortError'), order + names (the problem IDs in
    the document and their titles, to name the problem a stuck compile is in), label (what else to name), kind. */

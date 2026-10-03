@@ -1,7 +1,15 @@
 {% extends "base.html" %}
 
-{% block content %}
+{% block head %}
 {% set v = ('?v=' ~ asset_version) if asset_version else '' %}{# one version per build: see bank-ui.js #}
+    <!-- the page's modules start downloading with the page, not after its data -->
+    <link rel="modulepreload" href="{{ url_for('static', filename='js/bank-ui.js') }}{{ v }}">
+    <link rel="modulepreload" href="{{ url_for('static', filename='js/bank-search.js') }}{{ v }}">
+    <link rel="modulepreload" href="{{ url_for('static', filename='js/bank-compile.js') }}{{ v }}">
+{% endblock %}
+
+{% block content %}
+{% set v = ('?v=' ~ asset_version) if asset_version else '' %}
 <div class="bank">
   <div class="bank-head">
     <h1 class="node lit">Problems</h1>
@@ -77,7 +85,7 @@
   </div>
 
   <!-- results -->
-  <div id="bank-results-head" class="bank-results-head">
+  <div id="bank-results-head" class="bank-results-head" hidden>
     <div id="bank-select-all-wrap" class="form-check">
       <input class="form-check-input" type="checkbox" id="bank-select-all">
       <label class="form-check-label" for="bank-select-all">Select all</label>
@@ -125,8 +133,6 @@
   </section>
 
   <script type="application/json" id="bank-data">{{ bank_data_json }}</script>
-  <link rel="modulepreload" href="{{ url_for('static', filename='js/bank-search.js') }}{{ v }}">
-  <link rel="modulepreload" href="{{ url_for('static', filename='js/bank-compile.js') }}{{ v }}">
   <script type="module" src="{{ url_for('static', filename='js/bank-ui.js') }}{{ v }}"></script>
 </div>
 {% endblock %}

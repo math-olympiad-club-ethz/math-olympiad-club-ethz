@@ -1,7 +1,17 @@
 {% extends "base.html" %}
 
-{% block content %}
+{% block head %}
 {% set v = ('?v=' ~ asset_version) if asset_version else '' %}{# one version per build: see bank-propose.js #}
+    <!-- the page's modules start downloading with the page, not after its data -->
+    <link rel="modulepreload" href="{{ url_for('static', filename='js/bank-propose-ui.js') }}{{ v }}">
+    <link rel="modulepreload" href="{{ url_for('static', filename='js/bank-search.js') }}{{ v }}">
+    <link rel="modulepreload" href="{{ url_for('static', filename='js/bank-compile.js') }}{{ v }}">
+    <link rel="modulepreload" href="{{ url_for('static', filename='js/bank-tex.js') }}{{ v }}">
+    <link rel="modulepreload" href="{{ url_for('static', filename='js/bank-propose.js') }}{{ v }}">
+{% endblock %}
+
+{% block content %}
+{% set v = ('?v=' ~ asset_version) if asset_version else '' %}
 <div class="propose">
   <div class="bank-head">
     <h1 class="node lit">Propose a problem</h1>
@@ -143,10 +153,6 @@
   </dialog>
 
   <script type="application/json" id="propose-data">{{ propose_data_json }}</script>
-  <link rel="modulepreload" href="{{ url_for('static', filename='js/bank-search.js') }}{{ v }}">
-  <link rel="modulepreload" href="{{ url_for('static', filename='js/bank-compile.js') }}{{ v }}">
-  <link rel="modulepreload" href="{{ url_for('static', filename='js/bank-tex.js') }}{{ v }}">
-  <link rel="modulepreload" href="{{ url_for('static', filename='js/bank-propose.js') }}{{ v }}">
   <script type="module" src="{{ url_for('static', filename='js/bank-propose-ui.js') }}{{ v }}"></script>
 </div>
 {% endblock %}

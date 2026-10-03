@@ -783,10 +783,10 @@ async function onCreateSolutions() {
   }
 }
 
-/* The engine (25 MB) is fetched ahead only on a clear sign that a PDF is coming: a first tick, a Preview, the pointer
-   or the focus on Create.  Not on a mere scroll or click on the page. */
+/* The engine (25 MB) and the problem texts are fetched ahead only on a clear sign that a PDF is coming: a first tick,
+   a Preview, the pointer or the focus on Create.  Not on a mere scroll or click on the page. */
 let prefetched = false;
-function prefetch() { if (prefetched) return; prefetched = true; C.prefetchEngine(); }
+function prefetch() { if (prefetched) return; prefetched = true; C.prefetchEngine(); C.prefetchBodies(); }
 
 /* ------------------------------------------------------------------ wiring */
 function wire() {

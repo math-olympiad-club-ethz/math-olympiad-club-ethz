@@ -111,7 +111,18 @@ The audit's code fixes are done (report: session scratchpad `audit/REPORT.md`). 
       of LaTeX's `\texttt`). Bootstrap is gone: one stylesheet of our own, `website-code/site/static/css/site.css`, the
       fonts in `site/static/fonts/` (cut by `tools/subset_fonts.py`), nothing loaded from another site, and the
       Content-Security-Policy allows no inline style. The page links are always shown (no menu button on phones).
-- [ ] Then after that we should care really about the optimality of the website: it should run hyper fast as fast as possible wihtouth glitch and so on...
+- [x] Then after that we should care really about the optimality of the website: it should run hyper fast as fast as possible wihtouth glitch and so on... (2026-10-02, second pass, no feature removed): each font weight split in
+      two files (basic Latin always, accents and Greek only on a page that shows them: 61 KB instead of 100 KB); a
+      system monospace font scaled to Computer Modern's width until the font arrives, so nothing moves (layout shift 0
+      on every page, measured on a throttled phone); the page modules start downloading from `<head>`; the problem texts
+      download with the engine on the first sign of a PDF; the PDF bar no longer flashes on arrival; the footer year is
+      written by the build; the club logo is a 96 px WebP (5 KB instead of 13 KB); a theme switch fades all colours
+      together, and a page restored by Back, or another tab, follows the new choice.
+  - [ ] Ideas not done, to decide: fonts without hinting (31 KB instead of 61 KB, but less crisp on Windows at 100 %
+        scaling); a build step that strips the comments of site.css (−2 KB compressed); zopfli instead of gzip -9 for the
+        LaTeX engine (a few % of 25 MB, minutes more per CI build); a service worker for instant repeat visits.
+  - [ ] `site/static/images/club_logo_dark_280.png` and the four 1024+ px PNGs are no longer used by any page (only
+        `club_logo_light_280.png` is, as the link preview image): keep them as sources, or move them out of `site/`.
 
 ## Repository
 
