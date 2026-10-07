@@ -31,6 +31,11 @@ try {
     process.exit(2);
   }
 } catch (e) { console.log('site/problems.html is missing. Run:  npm run build:preview'); process.exit(2); }
+// The problems of this build, in ID order.  On main, bank/leave_out.py may have left broken ones out, so the links
+// below take their numbers from here, never fixed ones (range(i, j): the i-th to the j-th problem, j - i + 1 of them).
+const IDS = JSON.parse(readFileSync(join(DOCS, 'static', 'bank', 'index.json'), 'utf8')).problems.map(p => p.id);
+const range = (i, j) => `${IDS[i]}-${IDS[j]}`;
+const pad = n => String(n).padStart(4, '0');
 const failures = [];
 const check = (cond, msg) => { if (!cond) { failures.push(msg); console.log('  ✗ ' + msg); } else console.log('  ✓ ' + msg); };
 // the problem IDs of a stitched document, in PDF order (from its \bankproblem{k}{title}{origin}{NNNN} lines)
@@ -283,10 +288,10 @@ try {
   check(engineRequests.some(u => u.endsWith('manifest.json')), 'ticking problems starts fetching the engine');
   await page.click('#bank-clear-selection');
   await page.fill('#bank-search', '');
-  await page.goto(`${base}/problems.html?sel=1-20`);
+  await page.goto(`${base}/problems.html?sel=${range(0, 19)}`);
   await page.waitForSelector('#bank-results-head:not([hidden])');
   const n20 = await page.evaluate(() => window.bank.state.selection.size);
-  check(n20 === 20, `a link with sel=1-20 ticks ${n20} problems`);
+  check(n20 === 20, `a link with sel=${range(0, 19)} ticks ${n20} problems`);
   check((await page.locator(ROWS).count()) === 0 && (await page.textContent('#bank-selected-count')) === '20 selected',
     'a link with ticked problems only: the page stays calm, the PDF bar says "20 selected"');
   check(!(await page.locator('#bank-create').isDisabled()), 'Create enabled');
@@ -454,7 +459,7 @@ try {
   check((await rowIds()).length === n20 - 1, 'unticking a problem removes it from the order panel');
 
   console.log('7b. after Create, changing the ticks withdraws the solutions offer');
-  await page.goto(`${base}/problems.html?sel=1-3`);
+  await page.goto(`${base}/problems.html?sel=${range(0, 2)}`);
   await page.waitForSelector('#bank-results-head:not([hidden])');
   await page.click('#bank-create');
   await waitPdf('problems');
@@ -469,12 +474,12 @@ try {
     const ctx = await browser.newContext();
     await ctx.route(/\/static\/bank\/bodies\.json/, async r => {
       const res = await r.fetch(); const j = await res.json();
-      j.problems['0001'].statement = '\\def\\bankloop{\\bankloop}\\bankloop';            // pdfTeX never ends
-      j.problems['0002'].statement = 'Broken: \\undefinedcontrolsequencexyz.';        // a LaTeX error
+      j.problems[pad(IDS[0])].statement = '\\def\\bankloop{\\bankloop}\\bankloop';            // pdfTeX never ends
+      j.problems[pad(IDS[1])].statement = 'Broken: \\undefinedcontrolsequencexyz.';        // a LaTeX error
       await r.fulfill({ response: res, json: j });
     });
     const p7 = await ctx.newPage();
-    await p7.goto(`${base}/problems.html?sel=1`);
+    await p7.goto(`${base}/problems.html?sel=${IDS[0]}`);
     await p7.waitForSelector('#bank-results-head:not([hidden])');
     await p7.click('#bank-create');
     check(await p7.locator('#bank-cancel').isVisible(), 'while the PDF is made, a Cancel button shows');
@@ -488,7 +493,7 @@ try {
       focus: document.activeElement && document.activeElement.id }));
     check(after.status === 'Cancelled.' && Date.now() - t0 < 5000 && after.cancel && after.output && after.create && after.focus === 'bank-create',
       `Cancel stops a compile that never ends at once: "${after.status}", no PDF card, Create ready and focused (${Date.now() - t0} ms)`);
-    await p7.goto(`${base}/problems.html?sel=2`);
+    await p7.goto(`${base}/problems.html?sel=${IDS[1]}`);
     await p7.waitForSelector('#bank-results-head:not([hidden])');
     await p7.click('#bank-create');
     await p7.waitForSelector('#bank-out-problems .alert-danger', { timeout: 120000 });
@@ -501,7 +506,7 @@ try {
     const ctx2 = await browser.newContext();
     await ctx2.route(/\/static\/bank\/bodies\.json/, r => r.fulfill({ status: 404, body: 'not found' }));
     const p8 = await ctx2.newPage();
-    await p8.goto(`${base}/problems.html?sel=1`);
+    await p8.goto(`${base}/problems.html?sel=${IDS[0]}`);
     await p8.waitForSelector('#bank-results-head:not([hidden])');
     await p8.click('#bank-create');
     await p8.waitForSelector('#bank-out-problems .alert-danger', { timeout: 30000 });
@@ -519,7 +524,7 @@ try {
   await waitPdf('problems'); await askSolutions();
   check(await page.evaluate(() => !!(window.bank.output.problems.pdf && window.bank.output.solutions.pdf)),
     'both PDFs build with the filter "Arithmetic functions (φ, σ, τ, …)" active');
-  await page.goto(`${base}/problems.html?q=zqx%5E%7B%7D%5Cinput%7Bzqy%7D&sel=1,2`);
+  await page.goto(`${base}/problems.html?q=zqx%5E%7B%7D%5Cinput%7Bzqy%7D&sel=${IDS[0]},${IDS[1]}`);
   await page.waitForSelector('#bank-results-head:not([hidden])');
   await page.click('#bank-create');
   await waitPdf('problems');
@@ -533,7 +538,7 @@ try {
   await page.waitForSelector('#bank-results-head:not([hidden])', { timeout: 15000 });
   await showAll();
   check((await page.locator(ROWS).count()) === total, 'a crafted ?sel= link with millions of IDs still gives a working page');
-  await page.goto(`${base}/problems.html?sel=1-30`);
+  await page.goto(`${base}/problems.html?sel=${range(0, 29)}`);
   await page.waitForSelector('#bank-results-head:not([hidden])');
   await page.click('#bank-order-btn');
   const lastId = await page.evaluate(() => {
@@ -560,7 +565,7 @@ try {
     await ctx.exposeFunction('__cspViolation', s => cspViolations.push(s));
     await ctx.addInitScript(() => document.addEventListener('securitypolicyviolation', e => window.__cspViolation(`${e.effectiveDirective} ${e.blockedURI} ${e.sourceFile}:${e.lineNumber}`)));
     const p2 = await ctx.newPage();
-    await p2.goto(`${base}/problems.html?sel=1,2`);
+    await p2.goto(`${base}/problems.html?sel=${IDS[0]},${IDS[1]}`);
     await p2.waitForSelector('#bank-results-head:not([hidden])');
     await p2.click('#bank-create');
     await p2.waitForSelector('#bank-out-problems iframe.bank-pdf', { timeout: 240000 });
@@ -633,7 +638,7 @@ try {
     if (SHOTS) {
       await p4.click('#theme-toggle');
       await p4.setViewportSize({ width: 1280, height: 900 });
-      await p4.goto(`${base}/problems.html?sel=1,2&a=algebra&sm=1`);
+      await p4.goto(`${base}/problems.html?sel=${IDS[0]},${IDS[1]}&a=algebra&sm=1`);
       await p4.waitForSelector(ROWS);
       await p4.screenshot({ path: join(SHOTS, 'problems-1280-dark.png') });
     }
