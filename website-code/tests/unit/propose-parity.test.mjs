@@ -152,6 +152,7 @@ test('files made by the page pass the Python validator with the same fields; inv
     { ...base, originDate: '0050-01-31', statement: 'See \\cite*{own} and \\cite [p.~3] {own}.\n% \\begin{tikzpicture}\n\\begin {align*} x \\end{align*}',
       bibtex: '@misc{own, title = {Own}}' },
     { ...base, statement: 'Show (\\ref{eq}).\\begin{equation}\\label{eq} x \\end{equation}', solution: 'By \\eqref{eq} and \\cref{l}. \\label{l}' },
+    { ...base, newArea: ['Graph colourings: proper ones'], newMethods: ['Zig-zag pairing', 'A % sign'] },   // a comment line for the board
   ];
   const bad = [
     { ...base, title: 'A & B' }, { ...base, title: 'one two three four five six seven' }, { ...base, originDate: '1989-13' },

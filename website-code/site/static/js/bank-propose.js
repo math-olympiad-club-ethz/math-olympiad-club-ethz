@@ -17,8 +17,8 @@ const TITLE_FORBIDDEN = '\\&%#{}~^_$';
 const DIFFICULTIES = ['easy', 'medium', 'hard', 'extreme'];
 
 export function emptyDraft() {
-  return { title: '', statement: '', solution: '', area: [], methods: [], difficulty: '', origin: '', originDate: '',
-    originNumber: '', references: '', bibtex: '' };
+  return { title: '', statement: '', solution: '', area: [], methods: [], newArea: [], newMethods: [], difficulty: '', origin: '',
+    originDate: '', originNumber: '', references: '', bibtex: '' };
 }
 
 /* Lowercase letters that NFKD does not reduce to ASCII: spelled out, so that they do not vanish from file names.
@@ -57,6 +57,17 @@ export function originLabel(cat, origin, originDate, originNumber) {
 
 const header = (key, value) => (value ? `% ${key}:`.padEnd(18) + value : `% ${key}:`);
 
+/* Tags the proposer asks for that are not in tags.yml yet (newArea, newMethods: names as typed).  They go into the
+   file as one plain comment line of the header, which the validator skips (it does not look like "% key:"), for the
+   board member who reviews the file and adds them to tags.yml. */
+export const MAX_NEW_TAG = 60;
+export const newTagName = s => oneLine(s).replace(/"/g, "'");
+export function newTagsLine(draft) {
+  const d = { ...emptyDraft(), ...draft };
+  const parts = [...d.newArea.map(n => `area "${newTagName(n)}"`), ...d.newMethods.map(n => `method "${newTagName(n)}"`)];
+  return parts.length ? `% Proposed new tags, not in tags.yml yet (a board member adds them): ${parts.join('; ')}` : '';
+}
+
 /* The problem file, in the layout of problems/_template.tex.  Blank fields stay blank; no solution = no block. */
 export function problemFile(draft) {
   const d = { ...emptyDraft(), ...draft };
@@ -64,6 +75,7 @@ export function problemFile(draft) {
     header('title', effectiveTitle(d)),
     header('area', d.area.join(', ')),
     header('methods', d.methods.join(', ')),
+    ...(newTagsLine(d) ? [newTagsLine(d)] : []),
     header('difficulty', d.difficulty),
     header('difficulty-ai', ''),
     header('status', ''),
@@ -266,7 +278,20 @@ export function validateDraft(draft, cat, bibKeys = null, appendix = null) {
     }
   }
 
-  if (!d.area.length) err('area', 'Pick at least one area (required).');
+  if (!d.area.length) err('area', d.newArea.length ? 'Pick at least one existing area too, the closest one: the new area is proposed with it.'
+    : 'Pick at least one area (required).');
+  for (const [type, names] of [['area', d.newArea], ['methods', d.newMethods]]) {
+    const seen = new Set();
+    for (const raw of names) {
+      const name = newTagName(raw), key = name.toLowerCase();
+      if (!name) continue;
+      if (name.length > MAX_NEW_TAG) err(type, `The new tag "${name.slice(0, 24)}…" is too long: keep it to ${MAX_NEW_TAG} characters.`);
+      const known = [...cat.byType[type].values()].find(t => t.name.toLowerCase() === key || t.slug === key);
+      if (known) err(type, `"${name}" is already a tag (${known.name}): pick it in the list instead.`);
+      else if (seen.has(key)) err(type, `The new tag "${name}" is proposed twice.`);
+      seen.add(key);
+    }
+  }
   for (const a of d.area) if (!cat.byType.area.has(a)) err('area', `Unknown area "${a}".`);
   for (const m of d.methods) if (!cat.byType.methods.has(m)) err('methods', `Unknown method "${m}".`);
   for (const k of ['area', 'methods']) {

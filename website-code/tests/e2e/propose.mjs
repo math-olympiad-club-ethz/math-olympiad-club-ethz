@@ -120,6 +120,19 @@ try {
   await page.waitForSelector('#pp-methods-list [role=option]');
   await page.keyboard.press('ArrowDown'); await page.keyboard.press('Enter');
   check(JSON.stringify(await page.evaluate(() => window.propose.readDraft().methods)) === '["induction"]', 'a method picked with the keyboard');
+  await page.fill('#pp-methods-input', 'Zig-zag pairing');
+  await page.waitForSelector('#pp-methods-list .bank-option-propose');
+  check((await page.textContent('#pp-methods-list .bank-option-propose')) === 'Propose “Zig-zag pairing” as a new method', 'a method that is not in the list can be proposed');
+  await page.click('#pp-methods-list .bank-option-propose');
+  check(JSON.stringify(await page.evaluate(() => { const d = window.propose.readDraft(); return [d.methods, d.newMethods]; })) === '[["induction"],["Zig-zag pairing"]]'
+    && (await page.locator('#pp-methods .bank-chip-new').count()) === 1, 'the proposed method shows as a chip marked new');
+  await page.fill('#pp-methods-input', 'induction');
+  await page.waitForSelector('#pp-methods-list [role=option]');
+  check((await page.locator('#pp-methods-list .bank-option-propose').count()) === 0, 'an existing tag is never offered as a new one');
+  await page.fill('#pp-methods-input', '');
+  await page.keyboard.press('Escape');
+  check(/% Proposed new tags, not in tags\.yml yet \(a board member adds them\): method "Zig-zag pairing"\n/.test(await page.evaluate(() => window.propose.P.problemFile(window.propose.readDraft()))),
+    'the file carries the proposed method as a comment line for the board');
   await page.selectOption('#pp-difficulty', 'medium');
   await page.selectOption('#pp-origin', 'putnam');
   await page.fill('#pp-origin-date', '1989-13');

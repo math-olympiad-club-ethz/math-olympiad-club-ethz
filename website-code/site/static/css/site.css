@@ -430,6 +430,8 @@ input[type="checkbox"]:hover { border-color: var(--accent-text); }
 .bank-chip-clickable:hover { border-style: solid; border-color: var(--ink-dim); }
 .bank-chip-clickable:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .bank-chip-alsoin { border-style: dotted; }
+.pp-chips .bank-chip-new { border-style: dashed; }                       /* a proposed tag, not in tags.yml yet */
+.bank-option-propose .bank-option-label { color: var(--accent-text); }
 .bank-chip-unrated > span:nth-child(2), .bank-ai { color: var(--ink-dim); }
 .bank-chip-x {
   position: relative; align-self: center; margin: 0 -3px 0 2px; padding: 0 3px; border: 0; background: none; cursor: pointer;

@@ -32,6 +32,27 @@ test('the file: header in the layout of _template.tex, blank fields blank, no so
   assert.ok(!P.problemFile(draft({ solution: '  \n ' })).includes('solution'));
 });
 
+test('proposed new tags: one plain comment line after the methods, for the board member who adds them', () => {
+  const file = P.problemFile(draft({ methods: ['induction'], newArea: ['Graph  colourings'], newMethods: ['Double "counting"'] }));
+  const lines = file.split('\n');
+  assert.equal(lines[2], '% methods:        induction');
+  assert.equal(lines[3], `% Proposed new tags, not in tags.yml yet (a board member adds them): area "Graph colourings"; method "Double 'counting'"`);
+  assert.equal(lines[4], '% difficulty:');
+  assert.ok(!/Proposed new tags/.test(P.problemFile(draft())), 'no line without proposed tags');
+  assert.ok(!/^%\s*[A-Za-z][A-Za-z-]*\s*:/.test(lines[3]), 'the validator sees a comment, not a header field');
+});
+
+test('checks: proposed new tags', () => {
+  assert.deepEqual(P.validateDraft(draft({ newArea: ['Graph colourings'], newMethods: ['Double counting'] }), cat), []);
+  const onlyNew = P.validateDraft(draft({ area: [], newArea: ['Graph colourings'] }), cat);
+  assert.deepEqual(fields(onlyNew), ['area']);
+  assert.match(onlyNew[0].message, /existing area too/);
+  assert.match(P.validateDraft(draft({ newMethods: ['induction'] }), cat)[0].message, /already a tag \(Induction\)/);
+  assert.match(P.validateDraft(draft({ newArea: ['PRIMES'] }), cat)[0].message, /already a tag \(Primes\)/);
+  assert.match(P.validateDraft(draft({ newMethods: ['Zig', 'zig'] }), cat)[0].message, /proposed twice/);
+  assert.match(P.validateDraft(draft({ newMethods: ['x'.repeat(P.MAX_NEW_TAG + 1)] }), cat)[0].message, /too long/);
+});
+
 test('file name: new-<kebab title>.tex; blank title = Untitled problem', () => {
   assert.equal(P.fileName(draft({ title: 'Sum of two cubes' })), 'new-sum-of-two-cubes.tex');
   assert.equal(P.fileName(draft()), 'new-untitled-problem.tex');

@@ -41,6 +41,8 @@ const state = {
 
 function tagPicker(root, type, onChange) {
   const selected = [];
+  const proposed = [];            // new tags, names as typed (bank-propose.js::newTagsLine): not in tags.yml yet
+  const kind = type === 'area' ? 'area' : 'method';
   const input = el('input', { id: `pp-${type}-input`, type: 'text', class: 'form-control form-control-sm pp-picker-input', role: 'combobox',
     'aria-autocomplete': 'list', 'aria-expanded': 'false', 'aria-controls': `pp-${type}-list`, autocomplete: 'off', spellcheck: 'false',
     placeholder: type === 'area' ? 'Search areas or click to browse' : 'Search methods or click to browse' });
@@ -55,7 +57,20 @@ function tagPicker(root, type, onChange) {
   function renderChips() {
     chips.replaceChildren(...selected.map(slug => el('span', { class: `bank-chip bank-chip-${type}`, title: type === 'area' ? S.areaPath(cat, slug) : '' },
       el('span', { text: label(slug) }),
-      el('button', { type: 'button', class: 'bank-chip-x', 'aria-label': `Remove ${label(slug)}`, onclick: () => remove(slug) }, '×'))));
+      el('button', { type: 'button', class: 'bank-chip-x', 'aria-label': `Remove ${label(slug)}`, onclick: () => remove(slug) }, '×'))),
+    ...proposed.map(name => el('span', { class: `bank-chip bank-chip-${type} bank-chip-new`, title: `Proposed new ${kind}: a board member adds it` },
+      el('span', { text: name }), el('span', { class: 'bank-chip-type', text: 'new' }),
+      el('button', { type: 'button', class: 'bank-chip-x', 'aria-label': `Remove the proposed ${kind} ${name}`, onclick: () => removeNew(name) }, '×'))));
+  }
+  function addNew(name) {
+    name = P.newTagName(name);
+    if (name && !proposed.some(n => n.toLowerCase() === name.toLowerCase())) { proposed.push(name); renderChips(); onChange(); }
+  }
+  function removeNew(name) {                            // like remove(): the focus goes to the next chip, or the search box
+    const i = selected.length + proposed.indexOf(name);
+    proposed.splice(proposed.indexOf(name), 1);
+    renderChips(); if (open) renderList(); onChange();
+    (chips.querySelectorAll('.bank-chip-x')[i] || input).focus();
   }
   function remove(slug) {                               // the chip goes away: focus the next one, or the search box
     const i = selected.indexOf(slug);
@@ -66,8 +81,12 @@ function tagPicker(root, type, onChange) {
   function options() {
     const q = input.value;
     if (S.normalize(q)) {
-      return S.suggest(cat, q, { ...S.emptyFilters(), [type]: [] }, 30, [type]).map(({ tag }) => ({ tag, depth: 0,
+      const found = S.suggest(cat, q, { ...S.emptyFilters(), [type]: [] }, 30, [type]).map(({ tag }) => ({ tag, depth: 0,
         sub: type === 'area' ? (tag.parent ? S.areaPath(cat, tag.slug) : tag.description) : tag.group }));
+      const name = P.newTagName(q), key = name.toLowerCase();
+      const exists = [...cat.byType[type].values()].some(t => t.name.toLowerCase() === key || t.slug === key)
+        || proposed.some(n => n.toLowerCase() === key);
+      return exists || name.length > P.MAX_NEW_TAG ? found : [...found, { propose: name }];
     }
     const out = [];
     if (type === 'area') {
@@ -92,7 +111,17 @@ function tagPicker(root, type, onChange) {
     if (!open) { list.hidden = true; input.setAttribute('aria-expanded', 'false'); input.removeAttribute('aria-activedescendant'); return; }
     items = options();
     list.replaceChildren();
+    const matches = items.some(it => it.tag || it.groupHead);
     items.forEach((it, i) => {
+      if (it.propose) {                        // "Propose “…” as a new method": the board adds it to tags.yml
+        if (!matches) list.append(el('div', { class: 'bank-list-empty', role: 'presentation', text: 'No tag matches.' }));
+        const row = el('div', { id: `pp-${type}-opt-${i}`, class: 'bank-option bank-option-propose' + (i === active ? ' bank-option-active' : ''),
+          role: 'option', 'aria-selected': 'false' }, el('span', { class: 'bank-option-label', text: `Propose “${it.propose}” as a new ${kind}` }));
+        row.addEventListener('mousedown', e => e.preventDefault());
+        row.addEventListener('click', e => { e.stopPropagation(); choose(i); });
+        list.append(row);
+        return;
+      }
       if (it.groupHead) {                      // a method group: an option the keyboard reaches; Enter or → opens it, ← closes it
         const head = el('div', { id: `pp-${type}-opt-${i}`, class: 'bank-list-subheader bank-list-section' + (i === active ? ' bank-option-active' : ''), role: 'option', 'aria-selected': 'false' },
           el('span', { class: 'bank-list-caret', 'aria-hidden': 'true', text: it.collapsed ? '+' : '−' }), el('span', { text: it.groupHead }),
@@ -116,14 +145,14 @@ function tagPicker(root, type, onChange) {
       row.addEventListener('click', e => { e.stopPropagation(); choose(i); });
       list.append(row);
     });
-    if (!items.some(it => it.tag || it.groupHead)) list.append(el('div', { class: 'bank-list-empty', role: 'presentation', text: 'No tag matches. Try another word.' }));
+    if (!matches && !items.some(it => it.propose)) list.append(el('div', { class: 'bank-list-empty', role: 'presentation', text: 'No tag matches. Try another word.' }));
     list.hidden = false;
     input.setAttribute('aria-expanded', 'true');
-    if (active >= 0 && items[active] && (items[active].tag || items[active].groupHead)) input.setAttribute('aria-activedescendant', `pp-${type}-opt-${active}`);
+    if (active >= 0 && items[active] && (items[active].tag || items[active].groupHead || items[active].propose)) input.setAttribute('aria-activedescendant', `pp-${type}-opt-${active}`);
     else input.removeAttribute('aria-activedescendant');
   }
   function move(delta) {
-    const opts = items.map((it, k) => (it.tag || it.groupHead ? k : -1)).filter(k => k >= 0);
+    const opts = items.map((it, k) => (it.tag || it.groupHead || it.propose ? k : -1)).filter(k => k >= 0);
     if (!opts.length) return;
     const pos = opts.indexOf(active);
     active = opts[pos < 0 ? (delta > 0 ? 0 : opts.length - 1) : Math.min(opts.length - 1, Math.max(0, pos + delta))];
@@ -141,6 +170,7 @@ function tagPicker(root, type, onChange) {
   function choose(i) {
     const it = items[i];
     if (it && it.groupHead) { toggleGroup(it.groupHead); input.focus(); return; }
+    if (it && it.propose) { addNew(it.propose); input.value = ''; active = -1; open = false; renderList(); input.focus(); return; }
     if (!it || !it.tag) return;
     const searching = !!S.normalize(input.value);
     toggle(it.tag.slug);
@@ -155,13 +185,15 @@ function tagPicker(root, type, onChange) {
     else if (e.key === 'ArrowUp') { e.preventDefault(); move(-1); }
     else if (e.key === 'Enter') {
       e.preventDefault();
-      const i = active >= 0 ? active : (S.normalize(input.value) ? items.findIndex(it => it.tag) : -1);
+      const first = items.findIndex(it => it.tag);
+      const i = active >= 0 ? active : (S.normalize(input.value) ? (first >= 0 ? first : items.findIndex(it => it.propose)) : -1);
       if (i >= 0) choose(i);
     } else if ((e.key === 'ArrowRight' || e.key === 'ArrowLeft') && open && items[active]) {
       const it = items[active], wantOpen = e.key === 'ArrowRight';          // otherwise the arrows move the text cursor
       if (it.toggle && (it.toggle === 'open') !== wantOpen) { e.preventDefault(); toggleNode(it.tag.slug); }
       else if (it.groupHead && it.collapsed === wantOpen) { e.preventDefault(); toggleGroup(it.groupHead); }
     } else if (e.key === 'Escape') { if (open) { e.preventDefault(); open = false; active = -1; renderList(); } }
+    else if (e.key === 'Backspace' && !input.value && proposed.length) removeNew(proposed[proposed.length - 1]);
     else if (e.key === 'Backspace' && !input.value && selected.length) toggle(selected[selected.length - 1]);
   });
   document.addEventListener('click', e => { if (!root.contains(e.target)) { open = false; active = -1; renderList(); } });
@@ -169,6 +201,8 @@ function tagPicker(root, type, onChange) {
   return {
     get: () => [...selected],
     set(slugs) { selected.splice(0, selected.length, ...(slugs || []).filter(s => cat.byType[type].has(s))); renderChips(); renderList(); },
+    getNew: () => [...proposed],
+    setNew(names) { proposed.splice(0, proposed.length, ...(names || []).map(P.newTagName).filter(Boolean)); renderChips(); renderList(); },
     input,
   };
 }
@@ -184,6 +218,8 @@ function readDraft() {
   for (const [k, id] of Object.entries(TEXT_FIELDS)) d[k] = $(id).value;
   d.area = pickers.area.get();
   d.methods = pickers.methods.get();
+  d.newArea = pickers.area.getNew();
+  d.newMethods = pickers.methods.getNew();
   return d;
 }
 
@@ -192,6 +228,8 @@ function setDraft(d) {
   for (const [k, id] of Object.entries(TEXT_FIELDS)) $(id).value = d[k] || '';
   pickers.area.set(d.area);
   pickers.methods.set(d.methods);
+  pickers.area.setNew(d.newArea);
+  pickers.methods.setNew(d.newMethods);
   onDraftChange({ save: false });
 }
 
