@@ -26,6 +26,8 @@ Steps (any failure stops the build — nothing deploys):
   6. the HTML pages from templates/ into site/.
 Everything this script writes (site/static/bank/, site/static/busytex/, site/*.html) is a build output and
 git-ignored: CI runs the build and deploys its own copies. Only the sources are committed.
+On main, CI first runs bank/leave_out.py, which deletes broken problem files from its own checkout (the run still
+ends red), so one broken file no longer stops the deploy; this script itself stays strict.
 """
 import argparse
 import datetime

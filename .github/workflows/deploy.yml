@@ -20,6 +20,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 45          # a first run (TeX Live + engine assets uncached) takes about 15 min; a stuck compile stops here
+    outputs:
+      left_out: ${{ steps.leave_out.outputs.left_out }}
+      left_out_files: ${{ steps.leave_out.outputs.files }}
     defaults:
       run:
         working-directory: website-code
@@ -87,6 +90,16 @@ jobs:
           path: ~/.cache/ms-playwright
           key: playwright-${{ hashFiles('website-code/package-lock.json') }}
 
+      # main only (a push, or the run started by number-new-problems.yml): a problem file or shared result that fails
+      # the build's checks is deleted from this throwaway checkout, with the problems that cite a broken result, so one
+      # broken file no longer stops the whole site (bank/leave_out.py; it stops the deploy as before when the cause is
+      # a shared file).  The steps below stay strict on what is left, and the job "left-out" turns the run red after
+      # the deploy, naming the files to fix.  Pull requests skip this step: they stay strict.
+      - name: Leave out broken problems (main only)
+        id: leave_out
+        if: github.event_name != 'pull_request'
+        run: python3 -m bank.leave_out --delete
+
       # Preview build: validates + compiles EVERY problem (reviewed or not, and proposed new-*.tex files under
       # their provisional number) and trims the engine bundle against all of them, so the deployed bundle is
       # always a superset of what the public site needs and a proposal is tested in the browser engine too.
@@ -132,3 +145,20 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  # A deploy that left files out (bank/leave_out.py) still ends red: GitHub mails whoever pushed, and the build job's
+  # summary says what is wrong with each file.
+  left-out:
+    if: github.event_name != 'pull_request' && needs.build.outputs.left_out != '' && needs.build.outputs.left_out != '0'
+    needs: [build, deploy]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Problems left out of the site
+        env:
+          COUNT: ${{ needs.build.outputs.left_out }}
+          FILES: ${{ needs.build.outputs.left_out_files }}
+        run: |
+          echo "::error title=Problems left out of the site::The site was deployed without $COUNT file(s): fix them and push again (the build job's summary says what is wrong with each one)."
+          echo "$FILES" | jq -r '.[]'
+          exit 1
