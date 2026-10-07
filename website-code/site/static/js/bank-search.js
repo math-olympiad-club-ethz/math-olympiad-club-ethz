@@ -5,7 +5,7 @@
      tags.json   {area:[{slug,name,description,aliases,parent,children,depth}], methods:[{…,group}],
                   difficulty:[…], origin:[{…,kind}]}
      index.json  {preview, count, problems:[{id,title,file,area:[],methods:[],difficulty,difficultySource,
-                  origin,alsoIn:[],originDate,originYear,originLabel,hasSolution,partial,solved,review,provisional}]}
+                  origin,alsoIn:[],originDate,originYear,originLabel,hasSolution,partial,solved,review,provisional,proposed}]}
 */
 
 export const TAG_TYPES = ['area', 'methods', 'difficulty', 'origin'];
@@ -18,6 +18,7 @@ export const DEFAULT_FILTERS = Object.freeze({
   showMethods: false,   // methods are spoilers: hidden by default in the list and the PDFs
   yearFrom: null, yearTo: null,   // origin-date range (years)
   solved: 'all',        // 'all' | 'full' | 'partial' | 'none' (solution), the words of the row markers
+  showProposed: false,  // proposed problems (no review yet, bank/data.py) are listed only when the visitor asks
 });
 
 export function emptyFilters() {
@@ -97,9 +98,10 @@ export function matchesText(problem, query) {
 
 /* match = [title text] ∧ [Area+Methods: AND → every selected tag | OR → at least one]
          ∧ [difficulty ∈ selected, or any if none] ∧ [origin ∈ selected (origin or also-in), or any if none]
-         ∧ [origin-year range] ∧ [full / partial / no solution / all]                                               */
+         ∧ [origin-year range] ∧ [full / partial / no solution / all] ∧ [not proposed, unless "Show proposed problems"] */
 export function matches(problem, filters, cat) {
   const f = { ...DEFAULT_FILTERS, ...filters };
+  if (problem.proposed && !f.showProposed) return false;
   if (!matchesText(problem, f.text)) return false;
   const sel = [...f.area.map(s => ['area', s]), ...f.methods.map(s => ['methods', s])];
   if (sel.length) {
@@ -319,6 +321,7 @@ export function encodeState(filters, selection = [], order = null) {
   if (f.showMethods) p.set('sm', '1');
   if (f.yearFrom != null || f.yearTo != null) p.set('y', `${f.yearFrom ?? ''}-${f.yearTo ?? ''}`);
   if (f.solved !== 'all') p.set('s', f.solved);
+  if (f.showProposed) p.set('pr', '1');
   if (order && order.length) { p.set('sel', formatIdList(order)); p.set('ord', 'manual'); }
   else if (selection && selection.length) p.set('sel', formatRanges(selection));
   return p.toString().replace(/%2C/g, ',').replace(/%2D/g, '-');
@@ -344,6 +347,7 @@ export function decodeState(qs, cat = null) {
   };
   [f.yearFrom, f.yearTo] = range('y');
   f.solved = ['full', 'partial', 'none'].includes(p.get('s')) ? p.get('s') : 'all';
+  f.showProposed = p.get('pr') === '1';
   if (p.get('ord') === 'manual') {
     const order = parseIdList(p.get('sel'));
     return { filters: f, selection: [...order].sort((a, b) => a - b), order: order.length ? order : null };
@@ -368,5 +372,6 @@ export function describeFilters(filters, cat) {
   if (f.origin.length) parts.push('Origin: ' + names('origin', f.origin));
   if (f.yearFrom != null || f.yearTo != null) parts.push(`Origin year ${f.yearFrom ?? ''}–${f.yearTo ?? ''}`);
   if (f.solved !== 'all') parts.push({ full: 'Full solution', partial: 'Partial solution', none: 'No solution' }[f.solved]);
+  if (f.showProposed) parts.push('With proposed problems');
   return parts.length ? parts.join(' · ') : 'no filter (all problems)';
 }

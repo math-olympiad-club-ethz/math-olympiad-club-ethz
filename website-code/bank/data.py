@@ -1,20 +1,35 @@
 """Site data for the problem bank: the problem index and the tag catalogue as JSON.
 
-Visibility rule: only problems with `review: human` and a final number are published.  In preview mode
-(build.py --preview) every problem is included and carries its review status so the maintainer can
-review in the real UI; proposed problems (new-*.tex) appear under their provisional number.
+Visibility rule: every problem with a final number is published.  The ones without `review: human` are proposed
+(is_proposed): their index row says so, the origin line of their PDF heading ends with PROPOSED_NOTE, and the Problems
+page lists them only behind its "Show proposed problems" switch.  In preview mode (build.py --preview) every problem is
+included and carries its review status so the maintainer can review in the real UI (nothing is marked proposed there);
+new-*.tex files appear under their provisional number.
 """
 import re
 
 from .problems import origin_label
 
 
+PROPOSED_NOTE = "proposed, not reviewed yet"
+
+
+def is_proposed(p):
+    """A published problem that nobody has reviewed yet: no `review: human` (unknown values count as unreviewed)."""
+    return p.get("review") != "human"
+
+
+def proposed_origin(origin):
+    """The origin line of a proposed problem's PDF heading: its origin, then PROPOSED_NOTE."""
+    return f"{origin}; {PROPOSED_NOTE}" if origin else PROPOSED_NOTE[0].upper() + PROPOSED_NOTE[1:]
+
+
 def visible_problems(problems, preview=False):
-    """The problems that go to the site.  Never raises; unknown review values count as unreviewed.
-    A problem without an ID (new-*.tex) is never listed; a provisional ID is shown only in preview."""
+    """The problems that go to the site.  Never raises.  A problem without an ID (new-*.tex) is never listed; a
+    provisional ID is shown only in preview.  Unreviewed problems are published too, marked proposed (is_proposed)."""
     if preview:
         return [p for p in problems if p.get("id") is not None]
-    return [p for p in problems if p.get("review") == "human" and p.get("id") is not None and not p.get("provisional")]
+    return [p for p in problems if p.get("id") is not None and not p.get("provisional")]
 
 
 def origin_year(p):
@@ -46,7 +61,7 @@ def index_entry(p, tags):
 
 
 def build_index(problems, tags, preview=False):
-    rows = [index_entry(p, tags) for p in visible_problems(problems, preview)]
+    rows = [dict(index_entry(p, tags), proposed=not preview and is_proposed(p)) for p in visible_problems(problems, preview)]
     rows.sort(key=lambda r: r["id"])
     return {"preview": bool(preview), "count": len(rows), "problems": rows}
 

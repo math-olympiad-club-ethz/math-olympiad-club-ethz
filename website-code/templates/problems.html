@@ -19,7 +19,7 @@
 
   {% if preview %}
   <div class="alert alert-warning small" role="status">
-    <strong>Preview build.</strong> Includes unreviewed problems; the public site shows only problems marked <code>review: human</code>.
+    <strong>Preview build.</strong> Includes unreviewed problems; the public site shows them as “proposed”, only behind the Show proposed problems switch.
   </div>
   {% endif %}
 
@@ -52,6 +52,13 @@
             <label class="form-check-label" for="bank-show-methods">Show methods <span class="text-muted small">(spoilers)</span></label>
           </div>
           <div class="form-text">Hidden by default in the list and in the PDFs; always searchable.</div>
+        </div>
+        <div class="col-12 col-md-6 col-lg-3" id="bank-proposed-option" hidden>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="bank-show-proposed">
+            <label class="form-check-label" for="bank-show-proposed">Show proposed problems</label>
+          </div>
+          <div class="form-text">Sent by members and not reviewed yet: they may contain mistakes.</div>
         </div>
         <div class="col-12 col-md-6 col-lg-3">
           <div class="bank-advanced-title" id="bank-op-label">Several tags</div>

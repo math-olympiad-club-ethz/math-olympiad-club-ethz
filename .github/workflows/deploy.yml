@@ -120,7 +120,8 @@ jobs:
       - name: Public build (published problems only; keeps the bundle built above)
         run: python3 build.py --no-compile --no-bundle
 
-      # What gets deployed: only review: human problems with a final number, their figures, the public pages.
+      # What gets deployed: every problem with a final number (without review: human: marked proposed), their figures,
+      # the public pages.
       - name: Check the public build
         run: python3 tests/python/check_public_build.py
 

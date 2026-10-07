@@ -17,8 +17,8 @@ Steps (any failure stops the build — nothing deploys):
   3. every problem is compiled standalone with pdflatex, with and without its solution (the solution with the shared
      results it cites), and every shared result on its own (successes are remembered in .cache/proofs/ by a hash of
      everything that goes in, so an unchanged problem is not compiled again).
-  4. site data: site/static/bank/{tags.json,index.json,bodies.json,figures/} (published problems only,
-     or all with --preview, where new-title.tex files appear under their provisional number, see bank/number.py).  bodies.json carries the CI-side transforms (namespaced labels, externalised
+  4. site data: site/static/bank/{tags.json,index.json,bodies.json,figures/} (every numbered problem, the unreviewed
+     ones marked proposed, see bank/data.py; or all with --preview, where new-title.tex files appear under their provisional number, see bank/number.py).  bodies.json carries the CI-side transforms (namespaced labels, externalised
      TikZ figures, pre-resolved citations) and the shared results those problems cite ("appendix").
   5. the in-browser engine bundle site/static/busytex/ (trimmed TeX Live + format file), unless --no-bundle and
      the bundle exists and was made from the current preamble.tex.  The texlyre-busytex assets are checked against
@@ -46,7 +46,7 @@ from bank import appendix as A  # noqa: E402
 from bank import paths  # noqa: E402
 from bank import stitch  # noqa: E402
 from bank.number import assign_provisional_ids, read_last_id  # noqa: E402
-from bank.data import build_index, build_tag_catalogue, visible_problems  # noqa: E402
+from bank.data import build_index, build_tag_catalogue, is_proposed, proposed_origin, visible_problems  # noqa: E402
 from bank.tags import TagError, load_tags  # noqa: E402
 from bank.validate import PROOF_CACHE, check_bank, compile_failures  # noqa: E402
 
@@ -108,6 +108,11 @@ def write_site_data(probs, items, tags, preview):
         shutil.rmtree(fig_dir)
     os.makedirs(fig_dir, exist_ok=True)
     source = stitch.bank_sources(visible, tags)
+    if not preview:                     # a PDF says it too: the origin line of a proposed problem ends with a note
+        proposed = {f"{p['id']:04d}" for p in visible if is_proposed(p)}
+        for s in source:
+            if s["id"] in proposed:
+                s["origin"] = proposed_origin(s["origin"])
     # the shared results these problems cite, and the ones those cite (bank/appendix.py): only those are published
     cites_of = {it["name"]: it["cites"] for it in items if it["name"]}
     wanted = A.closure([n for s in source for n in s["cites"]], cites_of)
@@ -129,7 +134,8 @@ def write_site_data(probs, items, tags, preview):
               f"(time to split it, e.g. one file per problem)")
     shutil.copyfile(paths.PREAMBLE_FILE, os.path.join(BANK_DATA_DIR, "preamble.tex"))   # "Download .tex", "Show available LaTeX"
     shutil.copyfile(paths.BIB_FILE, os.path.join(BANK_DATA_DIR, "references.bib"))      # \cite in the propose page's preview
-    print(f"site data: {index['count']} problem(s) {'(PREVIEW: all, with review badges)' if preview else 'published'}, "
+    n_proposed = sum(1 for r in index["problems"] if r["proposed"])
+    print(f"site data: {index['count']} problem(s) {'(PREVIEW: all, with review badges)' if preview else f'published ({n_proposed} proposed)'}, "
           f"{astats['results']} shared result(s) cited, "
           f"{stats['figures'] + astats['figures']} figure(s), {stats['citations'] + astats['citations']} citation(s), "
           f"{len(catalogue['area'])} area / {len(catalogue['methods'])} methods tags")

@@ -3,9 +3,11 @@ build.
 
     python3 tests/python/check_public_build.py [--site site]
 
-Exit 1 with one line per problem if the site holds more (or less) than the rule "only review: human problems with a
-final number" allows: index.json, bodies.json and figures/ must hold exactly those problems and the shared results
-their solutions cite (bank/appendix.py), the pages must embed the public index, and the engine bundle must be complete.
+Exit 1 with one line per problem if the site holds more (or less) than the rule "every problem with a final number,
+the ones without review: human marked proposed" allows (bank/data.py): index.json, bodies.json and figures/ must hold
+exactly those problems and the shared results their solutions cite (bank/appendix.py), the proposed ones marked as
+such in the index and in their PDF origin line, the pages must embed the public index, and the engine bundle must be
+complete.
 """
 import argparse
 import json
@@ -17,7 +19,7 @@ sys.path.insert(0, ROOT)
 from bank import appendix as A  # noqa: E402
 from bank import paths  # noqa: E402
 from bank import problems as P  # noqa: E402
-from bank.data import visible_problems  # noqa: E402
+from bank.data import PROPOSED_NOTE, is_proposed, visible_problems  # noqa: E402
 from bank.validate import problem_cites  # noqa: E402
 
 
@@ -36,6 +38,7 @@ def check(site_dir, problems, items=()):
             return None
 
     want = sorted(p["id"] for p in visible_problems(problems, preview=False))
+    proposed_ids = {p["id"] for p in visible_problems(problems, preview=False) if is_proposed(p)}
     index = load("index.json")
     if index is not None:
         if index.get("preview") is not False:
@@ -43,9 +46,14 @@ def check(site_dir, problems, items=()):
         got = [r.get("id") for r in index.get("problems", [])]
         if got != want or index.get("count") != len(want):
             errors.append(f"static/bank/index.json lists {got} (count {index.get('count')}), the published problems are {want}")
-        hidden = [r.get("id") for r in index.get("problems", []) if r.get("review") != "human" or r.get("provisional")]
+        hidden = [r.get("id") for r in index.get("problems", []) if r.get("provisional")]
         if hidden:
-            errors.append(f"static/bank/index.json lists problems that are not published (not review: human, or provisional): {hidden}")
+            errors.append(f"static/bank/index.json lists provisional problems (new-*.tex, not merged): {hidden}")
+        unmarked = [r.get("id") for r in index.get("problems", []) if r.get("id") in proposed_ids and r.get("proposed") is not True]
+        marked = [r.get("id") for r in index.get("problems", []) if r.get("id") not in proposed_ids and r.get("proposed")]
+        if unmarked or marked:
+            errors.append(f"static/bank/index.json: proposed must be true exactly for the problems without review: human "
+                          f"(not marked: {unmarked}; marked but reviewed: {marked})")
     bodies = load("bodies.json")
     html = ""
     try:
@@ -62,6 +70,11 @@ def check(site_dir, problems, items=()):
         bodies = bodies.get("problems", {})
         if sorted(bodies) != [f"{i:04d}" for i in want]:
             errors.append(f"static/bank/bodies.json holds {sorted(bodies)}, the published problems are {want}")
+        notes = {k: str(b.get("origin") or "").lower().endswith(PROPOSED_NOTE) for k, b in bodies.items()}
+        wrong = sorted(k for k, noted in notes.items() if noted != (int(k) in proposed_ids))
+        if wrong:
+            errors.append(f"static/bank/bodies.json: the PDF origin line must end with '{PROPOSED_NOTE}' exactly for the "
+                          f"proposed problems: wrong in {wrong}")
         published = [p for p in visible_problems(problems, preview=False)]
         cites_of = {it["name"]: it["cites"] for it in items if it["name"]}
         want_results = sorted(A.closure([n for p in published for n in problem_cites(p)], cites_of))

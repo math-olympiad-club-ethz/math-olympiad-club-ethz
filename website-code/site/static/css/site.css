@@ -527,6 +527,7 @@ input[type="checkbox"]:hover { border-color: var(--accent-text); }
 .bank-review { padding: 1px 6px; font-size: var(--fs-xs); line-height: var(--lh-xs); color: var(--ink-dim); border: 1px dashed var(--chip-line); }
 .bank-review-human { border-style: solid; color: var(--ok); }
 .bank-review-new { color: var(--ok); border-color: var(--ok); }
+.bank-review-proposed { color: var(--accent-text); border-color: var(--accent-dim); }
 .bank-preview-panel { grid-column: 1 / -1; margin-top: 4px; padding: 8px 0 8px 14px; border-left: 1px solid var(--accent-dim); }
 @media (max-width: 40rem) {
   .bank-row { column-gap: 14px; }

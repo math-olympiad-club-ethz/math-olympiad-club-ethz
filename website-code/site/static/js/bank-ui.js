@@ -28,8 +28,11 @@ const data = JSON.parse($('bank-data').textContent);
 const cat = S.buildCatalogue(data.tags);
 const problems = S.sortProblems(data.index.problems);
 const byId = new Map(problems.map(p => [p.id, p]));
-const counts = S.tagCounts(problems, cat);                  // problems per tag: the list offers only tags that have some
-const countOf = (type, slug) => counts.get(type + ':' + slug) || 0;
+const reviewed = problems.filter(p => !p.proposed);          // proposed problems (not reviewed yet) wait behind their switch
+const shownTotal = () => (state.filters.showProposed ? problems : reviewed).length;
+// problems per tag: the list offers only tags that have some (among the problems the switch lets through)
+const counts = { all: S.tagCounts(problems, cat), reviewed: S.tagCounts(reviewed, cat) };
+const countOf = (type, slug) => (state.filters.showProposed ? counts.all : counts.reviewed).get(type + ':' + slug) || 0;
 const inlinePdf = navigator.pdfViewerEnabled !== false;     // no built-in PDF viewer (Chrome on Android): links, no frame
 const smooth = () => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'; } catch (e) { return 'auto'; } };
 const state = {
@@ -52,6 +55,7 @@ function loadFromUrl() {
   state.selection = new Set(selection.filter(id => byId.has(id)));
   state.order = order ? order.filter(id => byId.has(id)) : null;
   if (state.order && !state.order.length) state.order = null;
+  if ([...state.selection].some(id => byId.get(id).proposed)) state.filters.showProposed = true;   // a link to a proposed problem shows it
 }
 let urlTimer = null;
 function syncUrl() {
@@ -307,6 +311,7 @@ function onYearInput(e) {
 function readAdvanced() {
   const f = state.filters;
   f.showMethods = $('bank-show-methods').checked;
+  f.showProposed = $('bank-show-proposed').checked;
   f.op = $('bank-op-or').checked ? 'or' : 'and';
   f.solved = document.querySelector('input[name="bank-solved"]:checked').value;
   update();
@@ -315,6 +320,7 @@ function readAdvanced() {
 function writeAdvanced() {
   const f = state.filters;
   $('bank-show-methods').checked = f.showMethods;
+  $('bank-show-proposed').checked = f.showProposed;
   $('bank-op-and').checked = f.op !== 'or'; $('bank-op-or').checked = f.op === 'or';
   $('bank-op-help').textContent = f.op === 'or' ? 'Problems with at least one of the tags.' : 'Problems with all the tags.';
   if (YEARS.length > 1) {
@@ -324,7 +330,7 @@ function writeAdvanced() {
     drawYears(lo, hi);
   }
   document.querySelector(`input[name="bank-solved"][value="${f.solved}"]`).checked = true;
-  const n = (f.op === 'or' ? 1 : 0) + (f.showMethods ? 1 : 0) + (f.yearFrom != null || f.yearTo != null ? 1 : 0) + (f.solved !== 'all' ? 1 : 0);
+  const n = (f.op === 'or' ? 1 : 0) + (f.showMethods ? 1 : 0) + (f.showProposed ? 1 : 0) + (f.yearFrom != null || f.yearTo != null ? 1 : 0) + (f.solved !== 'all' ? 1 : 0);
   $('bank-filter-count').textContent = n ? String(n) : '';
   $('bank-filter-count').hidden = !n;
 }
@@ -387,7 +393,7 @@ function hasQuery() {
   const f = state.filters;
   return !!S.normalize(f.text) || S.TAG_TYPES.some(t => f[t].length > 0) || f.yearFrom != null || f.yearTo != null || f.solved !== 'all';
 }
-function listShown() { return problems.length > 0 && (state.showAll || hasQuery()); }
+function listShown() { return shownTotal() > 0 && (state.showAll || hasQuery()); }
 
 /* Every row is built once, the first time the list is shown (in ID order, the order of the results), and afterwards
    only hidden or shown: typing, filtering and ticking do not rebuild the list, and focus stays where it was. */
@@ -408,7 +414,8 @@ function buildRow(p) {
   for (const m of p.methods) tags.append(tagBadge('methods', m, { clickable: true }));      // visible only with "Show methods" (CSS)
   const marker = !p.hasSolution ? el('span', { class: 'bank-marker bank-marker-unsolved', title: 'No solution in the bank yet', text: 'no solution' })
     : p.partial ? el('span', { class: 'bank-marker bank-marker-partial', title: 'The solution is unfinished', text: 'partial solution' }) : null;
-  const review = data.index.preview ? el('span', { class: `bank-review bank-review-${p.review}`, text: `review: ${p.review}` }) : null;
+  const review = data.index.preview ? el('span', { class: `bank-review bank-review-${p.review}`, text: `review: ${p.review}` })
+    : p.proposed ? el('span', { class: 'bank-review bank-review-proposed', title: 'Not reviewed by the board yet: it may contain mistakes', text: 'proposed' }) : null;
   // no per-problem Edit link for now: it comes back with the administrator mode (TODO.md)
   const edit = p.provisional ? el('span', { class: 'bank-review bank-review-new', title: 'Proposed problem, not merged yet', text: 'new' }) : null;
   const previewBtn = el('button', { type: 'button', class: 'btn btn-sm btn-link bank-preview-btn', 'aria-expanded': 'false', 'aria-label': `Preview “${p.title}”`,
@@ -450,14 +457,15 @@ function renderResults() {
   }
   list.classList.toggle('bank-show-methods', !!state.filters.showMethods);
   for (const chip of list.querySelectorAll('.bank-chip-alsoin')) chip.hidden = !state.filters.origin.includes(chip.dataset.slug);
-  $('bank-count').textContent = `${state.results.length} of ${problems.length} problem${problems.length === 1 ? '' : 's'}`;
+  const total = shownTotal();
+  $('bank-count').textContent = `${state.results.length} of ${total} problem${total === 1 ? '' : 's'}`;
   $('bank-count').hidden = !shown;
   $('bank-hide-all').hidden = !(shown && state.showAll && !hasQuery());      // back to the calm page
   $('bank-select-all-wrap').hidden = !shown;
-  $('bank-idle-count').textContent = `${problems.length} problem${problems.length === 1 ? '' : 's'}.`;
-  $('bank-idle').hidden = shown || problems.length === 0;
+  $('bank-idle-count').textContent = `${total} problem${total === 1 ? '' : 's'}.`;
+  $('bank-idle').hidden = shown || total === 0;
   $('bank-empty').hidden = !shown || state.results.length > 0;
-  $('bank-none-published').hidden = problems.length > 0;
+  $('bank-none-published').hidden = total > 0;
   renderSelectionState();
 }
 
@@ -826,7 +834,8 @@ function wire() {
     $('bank-filter-btn').setAttribute('aria-expanded', String(!panel.hidden));
     if (!panel.hidden) $('bank-show-methods').focus();
   });
-  for (const id of ['bank-show-methods', 'bank-op-and', 'bank-op-or']) $(id).addEventListener('change', readAdvanced);
+  for (const id of ['bank-show-methods', 'bank-show-proposed', 'bank-op-and', 'bank-op-or']) $(id).addEventListener('change', readAdvanced);
+  $('bank-proposed-option').hidden = reviewed.length === problems.length;     // the switch only when there is something behind it
   $('bank-year-box').hidden = YEARS.length < 2;                       // nothing to choose between
   for (const id of ['bank-year-lo', 'bank-year-hi']) { $(id).max = String(YMAX); $(id).addEventListener('input', onYearInput); }
   document.querySelectorAll('input[name="bank-solved"]').forEach(r => r.addEventListener('change', readAdvanced));
