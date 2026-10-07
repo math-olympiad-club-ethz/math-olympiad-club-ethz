@@ -661,6 +661,47 @@ try {
     await nojs.close();
   }
 
+  console.log('12. proposed problems (not reviewed yet) wait behind their switch (the public build, simulated)');
+  {
+    // the public build marks the problems without review: human as proposed (bank/data.py); this preview build has
+    // their rows with proposed: false, so the page is served as the public build would make it
+    const ctx = await browser.newContext();
+    await ctx.route(/\/problems\.html/, async r => {
+      const res = await r.fetch();
+      const html = (await res.text()).replace('"preview":true', '"preview":false')
+        .replaceAll('"review":"none","provisional":false,"proposed":false', '"review":"none","provisional":false,"proposed":true');
+      await r.fulfill({ response: res, body: html });
+    });
+    const pp = await ctx.newPage();
+    watch(pp);
+    await pp.goto(`${base}/problems.html`);
+    await pp.waitForSelector('#bank-idle:not([hidden])');
+    const ids = await pp.evaluate(() => ({ all: window.bank.problems.length, proposed: window.bank.problems.filter(p => p.proposed).map(p => p.id) }));
+    if (!ids.proposed.length) check(true, 'every problem of this build is reviewed: nothing behind the switch (not tested)');
+    else {
+      const nReviewed = ids.all - ids.proposed.length;
+      check((await pp.textContent('#bank-idle-count')) === `${nReviewed} problem${nReviewed === 1 ? '' : 's'}.`,
+        `the page counts the ${nReviewed} reviewed problems, not the ${ids.proposed.length} proposed ones`);
+      await showAll(pp);
+      await pp.waitForSelector(ROWS);
+      check((await pp.locator(ROWS).count()) === nReviewed && (await pp.locator(`${ROWS} .bank-review-proposed`).count()) === 0,
+        'Show all lists the reviewed problems only');
+      await pp.click('#bank-filter-btn');
+      check(await pp.locator('#bank-show-proposed').isVisible(), 'the Filters menu has a "Show proposed problems" switch');
+      await pp.click('#bank-show-proposed');
+      await pp.waitForFunction(n => document.querySelectorAll('#bank-results > li:not([hidden])').length === n, ids.all, { timeout: 5000 }).catch(() => {});
+      check((await pp.locator(ROWS).count()) === ids.all && (await pp.locator(`${ROWS} .bank-review-proposed`).count()) === ids.proposed.length,
+        `with the switch on, the ${ids.proposed.length} proposed problems are listed with a "proposed" badge`);
+      await pp.waitForFunction(() => location.search.includes('pr=1'), null, { timeout: 5000 }).catch(() => {});
+      check(new URL(pp.url()).searchParams.get('pr') === '1', 'the switch is in the link (pr=1)');
+      await pp.goto(`${base}/problems.html?sel=${ids.proposed[0]}`);
+      await pp.waitForSelector('#bank-results-head:not([hidden])');
+      check(await pp.evaluate(id => window.bank.state.filters.showProposed && window.bank.state.selection.has(id), ids.proposed[0]),
+        'a link that ticks a proposed problem turns the switch on');
+    }
+    await ctx.close();
+  }
+
   check(cspViolations.length === 0, 'no Content-Security-Policy violation in any of the above' + (cspViolations.length ? ': ' + cspViolations.slice(0, 3).join(' | ') : ''));
   check(consoleErrors.length === 0, 'no console errors' + (consoleErrors.length ? ': ' + consoleErrors.slice(0, 3).join(' | ') : ''));
 } catch (e) {

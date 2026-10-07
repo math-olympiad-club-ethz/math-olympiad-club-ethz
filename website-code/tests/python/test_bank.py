@@ -15,7 +15,7 @@ from bank import appendix as A  # noqa: E402
 from bank import paths  # noqa: E402
 from bank import problems as P  # noqa: E402
 from bank import number  # noqa: E402
-from bank.data import build_index, visible_problems  # noqa: E402
+from bank.data import build_index, proposed_origin, visible_problems  # noqa: E402
 from bank.stitch import bank_sources, build_bodies, figure_context, find_figures, make_main, namespace_labels, parse_ids, resolve_citations, parse_bib, split_body  # noqa: E402
 from bank.validate import proof_sources  # noqa: E402
 from bank.tags import load_tags  # noqa: E402
@@ -100,16 +100,26 @@ class HeaderValidation(unittest.TestCase):
 
 
 class Visibility(unittest.TestCase):
-    def test_only_human_reviewed_are_published(self):
+    def test_unreviewed_problems_are_published_as_proposed(self):
         good = parse("0001-good-problem.tex")       # review: human
         other = parse("0002-wrong-title.tex")       # review: none
-        self.assertEqual([p["id"] for p in visible_problems([good, other])], [1])
+        self.assertEqual([p["id"] for p in visible_problems([good, other])], [1, 2])
         self.assertEqual([p["id"] for p in visible_problems([good, other], preview=True)], [1, 2])
         idx = build_index([other, good], TAGS, preview=True)
         self.assertEqual([r["id"] for r in idx["problems"]], [1, 2])      # sorted by ID
         self.assertEqual(idx["problems"][1]["difficulty"], "unrated")
         self.assertTrue(idx["preview"])
-        self.assertEqual(build_index([other, good], TAGS)["count"], 1)
+        self.assertEqual([r["proposed"] for r in idx["problems"]], [False, False])    # preview: review badges instead
+        pub = build_index([other, good], TAGS)
+        self.assertEqual([(r["id"], r["proposed"]) for r in pub["problems"]], [(1, False), (2, True)])
+        self.assertEqual(proposed_origin("Putnam 1989, A3"), "Putnam 1989, A3; proposed, not reviewed yet")
+        self.assertEqual(proposed_origin(""), "Proposed, not reviewed yet")
+
+    def test_new_files_are_never_public(self):
+        new = parse("new-a-proposed-problem.tex", CONTRIB)
+        number.assign_provisional_ids([new], 7)
+        self.assertEqual([p["id"] for p in visible_problems([new], preview=True)], [8])
+        self.assertEqual(visible_problems([new]), [])
 
 
 class Stitch(unittest.TestCase):
@@ -843,7 +853,8 @@ class PublicBuildCheck(unittest.TestCase):
                 with open(os.path.join(site, rel), "w", encoding="utf-8") as f:
                     f.write(data if isinstance(data, str) else json.dumps(data))
             write("static/bank/index.json", build_index([good, other], TAGS))
-            write("static/bank/bodies.json", {"build": "b1", "problems": {"0001": {"figures": {"fig0001-1.pdf": {}}}}})
+            write("static/bank/bodies.json", {"build": "b1", "problems": {"0001": {"figures": {"fig0001-1.pdf": {}}},
+                                                                       "0002": {"figures": {}, "origin": "Proposed, not reviewed yet"}}})
             write("static/bank/figures/fig0001-1.pdf", "%PDF")
             for f in ("static/bank/tags.json", "static/bank/preamble.tex", "static/bank/references.bib", "index.html", "propose.html"):
                 write(f, "{}")
@@ -851,12 +862,23 @@ class PublicBuildCheck(unittest.TestCase):
             write("static/busytex/busytex.wasm.gz", "12345")
             write("static/busytex/manifest.json", {"version": "e1", "files": {"busytex.wasm.gz": {"bytes": 5}}})
             self.assertEqual(check(site, [good, other]), [])
-            write("static/bank/figures/fig0002-1.pdf", "%PDF")                            # a figure of an unpublished problem
+            index = build_index([good, other], TAGS)
+            index["problems"][1]["proposed"] = False                                    # an unreviewed problem shown as reviewed
+            write("static/bank/index.json", index)
+            write("static/bank/bodies.json", {"build": "b1", "problems": {"0001": {"figures": {"fig0001-1.pdf": {}}},
+                                                                       "0002": {"figures": {}, "origin": "Putnam 1989"}}})
+            errors = "\n".join(check(site, [good, other]))
+            self.assertIn("(not marked: [2]; marked but reviewed: [])", errors)
+            self.assertIn("must end with 'proposed, not reviewed yet' exactly for the proposed problems: wrong in ['0002']", errors)
+            write("static/bank/bodies.json", {"build": "b1", "problems": {"0001": {"figures": {"fig0001-1.pdf": {}}},
+                                                                       "0002": {"figures": {}, "origin": "Proposed, not reviewed yet"}}})
+            write("static/bank/figures/fig0003-1.pdf", "%PDF")                            # a figure of no published problem
             write("static/bank/index.json", build_index([good, other], TAGS, preview=True))
             errors = "\n".join(check(site, [good, other]))
-            self.assertIn("figures of no published problem or shared result: ['fig0002-1.pdf']", errors)
+            self.assertIn("figures of no published problem or shared result: ['fig0003-1.pdf']", errors)
             self.assertIn("'preview' is not false", errors)
-            write("static/bank/bodies.json", {"build": "b2", "problems": {"0001": {"figures": {"fig0001-1.pdf": {}}}}})
+            write("static/bank/bodies.json", {"build": "b2", "problems": {"0001": {"figures": {"fig0001-1.pdf": {}}},
+                                                                       "0002": {"figures": {}, "origin": "Proposed, not reviewed yet"}}})
             self.assertIn("come from different builds", "\n".join(check(site, [good, other])))
 
     def test_check_wants_exactly_the_results_the_published_solutions_cite(self):

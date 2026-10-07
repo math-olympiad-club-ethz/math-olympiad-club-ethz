@@ -88,6 +88,18 @@ test('solutions filter: full / partial / no solution / all (the words of the row
   assert.deepEqual(S.filterProblems(problems, f({ solved: 'all' }), cat).length, 4);
 });
 
+test('proposed problems (not reviewed yet) are listed only with "Show proposed problems"; the URL says pr=1', () => {
+  const withProposed = [...problems, P(5, { area: ['sequences'], review: 'none', proposed: true })];
+  assert.deepEqual(S.filterProblems(withProposed, f({}), cat).map(p => p.id), [1, 2, 3, 4]);
+  assert.deepEqual(S.filterProblems(withProposed, f({ area: ['sequences'] }), cat).map(p => p.id), [1]);
+  assert.deepEqual(S.filterProblems(withProposed, f({ showProposed: true, area: ['sequences'] }), cat).map(p => p.id), [1, 5]);
+  assert.equal(S.encodeState(f({ showProposed: true })), 'pr=1');
+  assert.equal(S.encodeState(f({})), '');
+  assert.equal(S.decodeState('?pr=1').filters.showProposed, true);
+  assert.equal(S.decodeState('?pr=0').filters.showProposed, false);
+  assert.match(S.describeFilters(f({ showProposed: true }), cat), /With proposed problems/);
+});
+
 test('suggestions: names, slugs, descriptions and aliases; children of a matching area; selected tags excluded', () => {
   const names = q => S.suggest(cat, q).map(s => s.tag.name);
   assert.deepEqual(names('abstract algebra'), ['Algebra', 'Group theory']);
