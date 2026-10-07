@@ -94,17 +94,19 @@
       <legend class="node">Where it comes from <span class="fw-normal small">(optional)</span></legend>
       <div class="row g-3">
         <div class="col-12 col-md-4">
-          <label class="form-label fw-semibold" for="pp-origin">Origin</label>
-          <select id="pp-origin" class="form-select"></select>
-          <div class="form-text">Not in the list? Write it in References.</div>
+          <label class="form-label fw-semibold" for="pp-origin">Competition or source</label>
+          <select id="pp-origin" class="form-select" aria-describedby="pp-origin-help"></select>
+          <div class="form-text" id="pp-origin-help">Not in the list? Write it in References.</div>
         </div>
         <div class="col-6 col-md-4">
           <label class="form-label fw-semibold" for="pp-origin-date">Date</label>
-          <input id="pp-origin-date" class="form-control" type="text" inputmode="numeric" autocomplete="off">
+          <input id="pp-origin-date" class="form-control" type="text" inputmode="numeric" autocomplete="off" aria-describedby="pp-origin-date-help">
+          <div class="form-text" id="pp-origin-date-help">E.g. 1989 or 1989-12-02.</div>
         </div>
         <div class="col-6 col-md-4">
-          <label class="form-label fw-semibold" for="pp-origin-number">Number</label>
-          <input id="pp-origin-number" class="form-control" type="text" autocomplete="off">
+          <label class="form-label fw-semibold" for="pp-origin-number">Problem number</label>
+          <input id="pp-origin-number" class="form-control" type="text" autocomplete="off" aria-describedby="pp-origin-number-help">
+          <div class="form-text" id="pp-origin-number-help">E.g. A3 or Problem 6.</div>
         </div>
         <div class="col-12">
           <label class="form-label fw-semibold" for="pp-references">References</label>
