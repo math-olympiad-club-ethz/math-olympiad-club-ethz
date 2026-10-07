@@ -106,7 +106,8 @@ as a link, so write it as you would write a number: `see Appendix~\appendixref{c
   request (an extra tag, a second solution, a fix).
 - Only people with write access to the repository merge. Merging = approved, not finished: tags, solutions and
   history can be added later by anyone, through another pull request.
-- `review: human` publishes the problem on the website.
+- `review: human` publishes the problem on the website as reviewed; without it, the problem is listed as "proposed",
+  only behind the Problems page's "Show proposed problems" switch.
 - Two independent fields say who checked what:
   - `review` — the problem itself (statement, solution, tags): `none` nobody yet, `ai` a tool looked at it,
     `human` a board member accepted it → published.
@@ -127,6 +128,7 @@ as a link, so write it as you would write a number: `see Appendix~\appendixref{c
   citing it gets `review: human`.)
 - IDs are sequential integers without meaning, given automatically after the merge; they never change and are never reused.
 - Every header field except `area` may be empty; an empty field never breaks anything.
-- Only `review: human` problems appear on the website. The repository itself is public: every file here (unreviewed
+- Only `review: human` problems appear on the website as reviewed (the others only as "proposed", behind a switch).
+  The repository itself is public: every file here (unreviewed
   problems and their solutions, `known-errors.md`, `history-review.md`) can be read on GitHub, and stays in the history.
 - The ID never appears on the website (list, search, PDFs); it only names the file.

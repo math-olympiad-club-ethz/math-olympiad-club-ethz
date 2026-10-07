@@ -37,7 +37,9 @@ with the bundle); a second button then builds the PDF with the solutions, only i
 PDF is stored anywhere but in your browser's cache (the cover prints the current filters, so the same problems under
 other filters give a different PDF).
 
-Only problems whose header says `review: human` appear on the website. The repository itself is public: every
+Problems whose header says `review: human` appear on the website as they are; the others are "proposed", shown only
+behind the Problems page's **Show proposed problems** switch, with a "proposed" badge and a note on their PDF heading.
+The repository itself is public: every
 problem file, reviewed or not and solution included, can be read on GitHub (and stays in the git history). The PDF
 lists the ticked problems easiest first (difficulty, then area, then ID); the **PDF order** button lets you drag them
 into your own order, which is kept in the shareable link. The ID only names the file: the website never shows it.
@@ -52,7 +54,7 @@ into your own order, which is kept in the shareable link. The ID only names the 
 - To improve an existing problem (a tag, a second solution, a fix), edit its file on GitHub: that becomes a pull
   request too. (An Edit link per problem on the website comes with the planned administrator mode, see TODO.md.)
 - Only people with write access merge. Merging = approved, not finished: the board can add tags or solutions later;
-  `review: human` publishes the problem.
+  until `review: human`, the problem shows on the website as "proposed" (behind its switch).
 - After the merge, the Action `.github/workflows/number-new-problems.yml` renames `new-<title>.tex` to the next free
   `NNNN-<title>.tex` and redeploys the site. Nobody chooses a number.
 
