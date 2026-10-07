@@ -4,8 +4,8 @@ Open work across the repository. Tick items off (`- [x]`) or delete them when do
 
 ## Problem bank — publish
 
-- [ ] Review the 80 problems and set `review: human` on each one you accept. Until then the public site shows
-      **no problems** (only `review: human` is published; `python3 build.py --preview` shows all).
+- [ ] Review the 87 problems and set `review: human` on each one you accept (67 done in the last commit, 2026-10-06).
+      Until then a problem shows on the site only as "proposed", behind its switch.
 - [ ] After checking a problem's history header, set `history: human` (the AI pass set `history: ai`).
 - [ ] 0081–0087 (VJIMC 2002–2014, added 2026-09-29/30): statement **and** solution written by AI at Antoine's request
       (see the `% AI-WRITTEN` comment in each file); review them like the others before `review: human`. Review
@@ -38,7 +38,6 @@ Details, sources and the full change table: [`problem-bank/history-review.md`](p
 
 ## Problem bank — LaTeX fixes (humans only)
 
-- [x] Pure typos in the problem files fixed (59 entries, 2026-09-23, with Antoine's OK; check the diff before committing).
 - [ ] The 87 errors that need a mathematical fix, each with an AI **Proposal**, in
       [`problem-bank/known-errors.md`](problem-bank/known-errors.md). Plan (decided 2026-09-23, for later):
       - 13 are only cosmetic (unusual notation, compiles fine): delete those entries.
@@ -54,32 +53,40 @@ Details, sources and the full change table: [`problem-bank/history-review.md`](p
 - [ ] Partial solutions: 0019, 0031, 0034, 0038–0040, 0049, 0063, 0064, 0069.
 - [ ] 0003 solution 2 seems not to follow the writing style: to be done by an agent and then put to be reviewed by human (the solution 2 only)
 
+## Problem bank — tags (minor, ideas 2026-10-06)
+
+- [ ] **Areas vs methods**: there are too many areas (themes), and some area tags are really methods. Go through the
+      `area` tree of `problem-bank/tags.yml`, move those tags to `methods` and update the problems that use them.
+- [ ] **Aliases that should be tags of their own**: e.g. the Euclidean algorithm (gcd) and Bézout's lemma must stay
+      separate. The methods `gcd` and `bezout` already exist, but the area "Divisibility & gcd" also lists `gcd`,
+      `euclidean algorithm` and `bezout` among its aliases. Check whether other aliases hide a separate tag
+      (hopefully an isolated case).
+
 ## Problem bank — later
 
 - [ ] To be done by Antoine: must review all current problems and solutions and precisely identify the partial one, the ai one and the unsolved one. Be sure that fully solved one together with their statement really are good. This cannot be done by an AI. THen Anotine must provide/finish the partial solution/empty solutions. 
 - [ ] Magic problems (hat problems, picture hanging) in `problem-bank/work-in-progress/magic/`: separate category, not migrated yet.
-- [x] Website "+" flow: Propose page + Edit links + automatic numbering (2026-09-22).
-- [ ] After the first push to `main`: check that the Action `number-new-problems.yml` can push (if `main` gets branch
-      protection, let github-actions bypass it) — try it once with a test proposal.
+- [ ] Later (Antoine, 2026-10-07): stress-test the website with several agents (bugs, speed, …). The numbering Action
+      `number-new-problems.yml` has never run yet: the first real proposal merged into `main` is its first test.
 - [ ] Idea (Antoine, 2026-09-22), not now: review problems **from the website** — an administrator mode behind a
       password where a board member sets `review: human`, edits tags or fixes a statement without going through
       GitHub. Needs thought: a static GitHub Pages site has no server and no safe place for a password.
       With it comes back the **Edit** link next to each problem (removed from the Problems page on 2026-09-23 until then).
 - [ ] Later: CI posts the compiled PDF of a proposed problem on its pull request.
-- [ ] Idea (Antoine, 2026-09-23): a **"proposed"** tag. Today a proposed problem stays invisible on the site until
-      someone sets `review: human`. Instead it could be listed at once with a "proposed" badge, and lose it when
-      reviewed. To decide: shown to everyone, or only behind a "show proposed problems" switch (unreviewed content,
-      possibly wrong). Needs the build to publish `review: none` problems in that case.
-- [ ] Raised by Spas (2026-09-28): **one broken problem blocks the whole site.** `build.py` stops at the first
-      validation or pdflatex error in any problem file (`load_and_validate` / `compile_all` call `fail()`), and the
-      deploy job needs the build, so nothing deploys, not even correct edits made later, until that file is fixed.
-      This is the repository's own build design, not a GitHub Pages limit. Idea: deploy the site without the broken
-      problems (named in the build log) while CI still shows them as failed, so they get fixed. To decide: only on
-      `main` or also for pull requests; how to report (red check, GitHub issue, note on the Problems page).
-- [x] Shared **appendix of reusable results** (Antoine, 2026-09-30; built the night of 2026-09-30, not committed):
-      `problem-bank/appendix/<name>.tex`, cited with `\appendixref{<name>}`, printed once per PDF as A.1, A.2, …
-      (see problem-bank/README.md, "Shared results"). The appendices of 0018, 0030, 0034, 0041 moved there verbatim
-      (10 results) plus Cauchy's theorem (AI-written, from 0085). Follow-ups:
+- [x] Idea (Antoine, 2026-09-23): a **"proposed"** tag. Done 2026-10-07: the public build publishes
+      every numbered problem; the ones without `review: human` carry a "proposed" badge, are listed only behind the
+      "Show proposed problems" switch of the Filters menu (off by default, in the link as `pr=1`, turned on by a link
+      that ticks one), and their PDF heading says "proposed, not reviewed yet". To show them to everyone instead:
+      `showProposed: true` in `bank-search.js::DEFAULT_FILTERS`.
+- [x] Raised by Spas (2026-09-28), again on 2026-10-06: **one broken problem blocked the whole site.** Done
+      2026-10-06. On `main`, CI first runs `python3 -m bank.leave_out --delete`: the build's own checks
+      (validation, pdflatex, TikZ figures), then every broken problem file or shared result is deleted from the CI
+      checkout, with the problems that cite a broken result. The build, the tests and the deploy run on the rest; the
+      job "left-out" then turns the run red, and the build job's summary names each file and its error. Nothing
+      deploys, as before, when more than 5 problems break at once or the cause is tags.yml, references.bib or
+      `_last-id.txt`. Pull requests stay strict. Locally, `python3 -m bank.leave_out` lists what a deploy would leave
+      out. The browser test no longer uses fixed problem numbers.
+- Shared **appendix of reusable results** (`problem-bank/appendix/`, see problem-bank/README.md, "Shared results"), follow-ups:
   - [ ] Gauss's Lemma (I, II, III) is cited by name in 0035 and 0041 but never stated or proved anywhere: a candidate
         result for the library (a human writes it).
   - [ ] Candidates found inside solutions (could become shared results): 0049 (injective continuous => monotone;
@@ -91,13 +98,14 @@ Details, sources and the full change table: [`problem-bank/history-review.md`](p
         `appendix/gelfond-schneider-theorem.tex` says "Proof not yet written" (0034's known error). Write the proofs,
         or cite a reference instead.
 
-## Audit follow-ups (yours, 2026-09-23)
+## Website — Propose page (ideas, 2026-10-06)
 
-The audit's code fixes are done (report: session scratchpad `audit/REPORT.md`). Left for you:
-- [ ] After the first push: on GitHub, add a ruleset on `main`: "Require a pull request before merging" +
-      "Require review from Code Owners" (+ require the `build` check). `.github/CODEOWNERS` names you for `.github/`,
-      `.vscode/`, `website-code/` and the preamble. Put GitHub Actions in the bypass list, or the numbering bot can
-      no longer push its renames to `main`.
+- [x] **Origin fields** (done 2026-10-06): "Competition or source", "Date" (e.g. 1989 or 1989-12-02)
+      and "Problem number" (e.g. A3 or Problem 6), each with its example under the field.
+- [x] **Propose a tag** (done 2026-10-06): typing a name that is no tag offers "Propose “…” as a new
+      area" (or method); it shows as a chip marked "new" and goes into the file as one comment line of the header,
+      `% Proposed new tags, not in tags.yml yet (a board member adds them): …`, which the validator skips. The reviewer
+      adds the tag to `tags.yml` and to the problem. An existing tag is never offered as new.
 
 ## Website — later
 
@@ -106,36 +114,15 @@ The audit's code fixes are done (report: session scratchpad `audit/REPORT.md`). 
 
 - [ ] look at the picture image.png stored in the repo (only on Antoine local machine), it contains some task tod o given by Georg.
 
-- [x] The website looks AI, lets get inspried by xent.ai or claustel.com fonts and behaving (2026-10-02): style "Terminal"
-      chosen from three previews (xent.ai's palette and structure, everything in Computer Modern Typewriter, the face
-      of LaTeX's `\texttt`). Bootstrap is gone: one stylesheet of our own, `website-code/site/static/css/site.css`, the
-      fonts in `site/static/fonts/` (cut by `tools/subset_fonts.py`), nothing loaded from another site, and the
-      Content-Security-Policy allows no inline style. The page links are always shown (no menu button on phones).
-- [x] Then after that we should care really about the optimality of the website: it should run hyper fast as fast as possible wihtouth glitch and so on... (2026-10-02, second pass, no feature removed): each font weight split in
-      two files (basic Latin always, accents and Greek only on a page that shows them: 61 KB instead of 100 KB); a
-      system monospace font scaled to Computer Modern's width until the font arrives, so nothing moves (layout shift 0
-      on every page, measured on a throttled phone); the page modules start downloading from `<head>`; the problem texts
-      download with the engine on the first sign of a PDF; the PDF bar no longer flashes on arrival; the footer year is
-      written by the build; the club logo is a 96 px WebP (5 KB instead of 13 KB); a theme switch fades all colours
-      together, and a page restored by Back, or another tab, follows the new choice.
-  - [ ] Ideas not done, to decide: fonts without hinting (31 KB instead of 61 KB, but less crisp on Windows at 100 %
-        scaling); a build step that strips the comments of site.css (−2 KB compressed); zopfli instead of gzip -9 for the
-        LaTeX engine (a few % of 25 MB, minutes more per CI build); a service worker for instant repeat visits.
-  - [ ] `site/static/images/club_logo_dark_280.png` and the four 1024+ px PNGs are no longer used by any page (only
-        `club_logo_light_280.png` is, as the link preview image): keep them as sources, or move them out of `site/`.
+- Website speed pass (2026-10-02), follow-ups:
+  - [x] Logos (2026-10-07): the 1024 px club logo originals, light and dark, moved to
+        `association-documents/logo/` (kept for events, never deployed); the site keeps only what it uses, made from
+        them at a size sharp on every screen: header logo 176 px WebP (was 96), sponsor logo 512 px WebP (was 400),
+        link preview 600 px on the site's background (was a transparent 280). Unused copies deleted (git history keeps
+        them, and Jane Street's official 2968 px logo files: `static/images/LOGO_stacked_w_registration_*`).
 
 ## Repository
 
-- [x] Reorganisation, problem bank, history pass and website committed as a themed series, merged into `main` and
-      live (2026-09-23).
-- [x] `.gitignore` decided (2026-09-22): signed minutes public, `website-code/site/*.html` ignored, `* 2.*` narrowed
-      to the build folders.
-- [ ] The repository stays in iCloud (decided 2026-09-23), which keeps making " 2" copies of files that change while
-      it syncs. Check `git status` before `git add -A`. To delete the copies identical to their original:
-
-      ```sh
-      git ls-files --others --exclude-standard | grep ' 2\.' | while IFS= read -r d; do cmp -s "$d" "${d/ 2./.}" && rm -v "$d"; done
-      ```
 - [ ] Local `inspiration/` folder (each member's own, git-ignored), later: are the two images of the Bernoulli 2026 P5
       solution the same write-up; have the problems in `proposals/` been added to the bank; is
       `competitions/putnam/Very Nice Putnam problem.png` in the bank; clean the old 2025 notes in `problem_collection.tex`.
