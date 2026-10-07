@@ -51,11 +51,11 @@ const waitPreview = async (what) => {
 };
 
 try {
-  console.log('1. from the Problems page, "+" opens the propose page; the email fallback is always shown');
+  console.log('1. from the Problems page, the header link opens the propose page; the email fallback is always shown');
   await page.goto(`${base}/problems.html`);
-  await page.click('#bank-propose');
+  await page.click('#site-nav a[href="propose.html"]');
   await page.waitForSelector('#pp-area-input');
-  check(page.url().endsWith('/propose.html'), 'the "+ Propose a problem" button opens propose.html');
+  check(page.url().endsWith('/propose.html'), 'the header link "Propose a problem" opens propose.html');
   check((await page.locator('a[href="mailto:olympiadclub@math.ethz.ch"]').count()) >= 1 && /No GitHub account\?/.test(await page.textContent('body')),
     '"No GitHub account? Send your problem to olympiadclub@math.ethz.ch" is shown');
   const modules = await page.evaluate(() => performance.getEntriesByType('resource').map(e => e.name).filter(n => /\/static\/js\/bank-[a-z-]+\.js/.test(n)));

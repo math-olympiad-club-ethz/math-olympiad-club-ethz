@@ -320,13 +320,6 @@ h2.node { margin-bottom: calc(var(--u) * 2); }
 .btn-close::before { content: "\00D7"; }
 .btn-close:hover { color: var(--accent-text); }
 
-/* "+ propose a problem": a quiet link, the plus in amber */
-.act { display: inline-flex; align-items: center; gap: .8ch; min-height: 44px; font-size: var(--fs-sm); line-height: var(--lh-sm);
-  color: var(--ink); text-decoration: none; text-transform: lowercase; white-space: nowrap; }
-.act .plus { color: var(--accent-text); font-weight: 700; }
-.act .u { text-decoration: underline dashed var(--accent) 1px; text-underline-offset: .28em; }
-.act:hover { color: var(--accent-text); }
-.act:hover .u { text-decoration-style: solid; }
 
 /* ===================== forms ===================== */
 .form-label { display: block; margin-bottom: 4px; font-size: var(--fs-sm); line-height: var(--lh-sm); }
@@ -583,7 +576,7 @@ input[type="checkbox"]:hover { border-color: var(--accent-text); }
 /* A theme switch fades every colour together (site.js sets .theme-fade on <html> for that moment only), so no text is
    ever drawn in the new colour on the old background. Hover feedback is a short fade of the element itself. */
 @media (prefers-reduced-motion: no-preference) {
-  a, .btn, .theme, .act .u, .bank-chip, .bank-chip-x { transition: color .18s ease, border-color .18s ease, background-color .18s ease, text-decoration-color .18s ease; }
+  a, .btn, .theme, .bank-chip, .bank-chip-x { transition: color .18s ease, border-color .18s ease, background-color .18s ease, text-decoration-color .18s ease; }
   .theme-fade, .theme-fade *, .theme-fade *::before, .theme-fade *::after {
     transition: color .3s ease, background-color .3s ease, border-color .3s ease, text-decoration-color .3s ease, box-shadow .3s ease !important;
   }

@@ -94,6 +94,7 @@ try {
   await page.mouse.wheel(0, 300); await page.mouse.click(5, 300); await page.keyboard.press('Tab');
   await page.waitForTimeout(300);
   check(engineRequests.length === 0, 'nor after a scroll, a click on the page and a key press');
+  await page.keyboard.press('Escape');                                  // the Tab may have opened the tag list over Show all
   await page.click('#bank-show-all');
   check(await page.locator(ROWS).count() === total, 'Show all lists every problem');
   await page.click('#bank-hide-all');
@@ -106,7 +107,8 @@ try {
   check(/Difficulty\s*none\s*AI: (easy|medium|hard|extreme)/.test(diffChip), `an unrated problem's chip says "Difficulty none", the AI estimate in small print on its right (${diffChip})`);
   check(await page.locator('#bank-create').isDisabled(), 'Create is disabled with no selection');
   check((await page.locator('#bank-results a.bank-edit').count()) === 0, 'no Edit link per problem (it comes with the administrator mode)');
-  check((await page.getAttribute('#bank-propose', 'href')) === 'propose.html', 'the "+ Propose a problem" button links to propose.html');
+  check((await page.locator('#bank-propose').count()) === 0 && (await page.locator('#site-nav a[href="propose.html"]').count()) === 1,
+    'the Problems page links to the propose page only from the header');
   check(!/\bunsolved\b/.test(await page.locator('#bank-results').textContent()) && (await page.locator(`${ROWS} .bank-marker-unsolved`).first().textContent()) === 'no solution',
     'a problem without a solution is marked "no solution" (the same words as the filter)');
 
