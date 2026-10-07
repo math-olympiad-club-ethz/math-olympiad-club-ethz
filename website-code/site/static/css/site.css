@@ -160,9 +160,10 @@ main { flex: 1 0 auto; padding-top: calc(var(--u) * 7); padding-bottom: calc(var
   font-weight: 700; font-size: var(--fs-sm); line-height: var(--lh-sm); letter-spacing: .02em; text-transform: lowercase;
 }
 .brand:hover { color: var(--ink); }
-/* logos are CSS backgrounds, so a visitor downloads only the current theme's file (96 px: sharp up to 3x screens) */
-.club-logo { flex: none; width: var(--logo); height: var(--logo); background: url("../images/club_logo_light_96.webp") center / contain no-repeat; }
-[data-theme="dark"] .club-logo { background-image: url("../images/club_logo_dark_96.webp"); }
+/* logos are CSS backgrounds, so a visitor downloads only the current theme's file (176 px: sharp up to 4x screens;
+   made from the 1024 px originals in association-documents/logo/) */
+.club-logo { flex: none; width: var(--logo); height: var(--logo); background: url("../images/club_logo_light_176.webp") center / contain no-repeat; }
+[data-theme="dark"] .club-logo { background-image: url("../images/club_logo_dark_176.webp"); }
 .site-nav { justify-self: end; }
 .site-nav ul { display: flex; column-gap: 26px; list-style: none; white-space: nowrap; }
 .site-nav a {
@@ -223,8 +224,8 @@ h2.node { margin-bottom: calc(var(--u) * 2); }
 .dash li + li { margin-top: calc(var(--u) / 2); }
 .dash li::before { content: "\2013"; position: absolute; left: 0; color: var(--ink-dim); }
 .sponsor-logo { display: block; margin-top: var(--u); width: 168px; max-width: 100%; aspect-ratio: 1238 / 322;
-  background: url("../images/janestreet_logo_light_400.png") left center / contain no-repeat; }
-[data-theme="dark"] .sponsor-logo { background-image: url("../images/janestreet_logo_dark_400.png"); }
+  background: url("../images/janestreet_logo_light_512.webp") left center / contain no-repeat; }
+[data-theme="dark"] .sponsor-logo { background-image: url("../images/janestreet_logo_dark_512.webp"); }
 .team > div { display: grid; grid-template-columns: 33ch minmax(0, 1fr); column-gap: 2ch; padding: var(--u) 0; border-top: 1px solid var(--edge); }
 .team > div:last-child { border-bottom: 1px solid var(--edge); }
 .team dt { color: var(--ink-dim); }
