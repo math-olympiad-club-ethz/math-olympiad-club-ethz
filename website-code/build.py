@@ -28,7 +28,6 @@ Everything this script writes (site/static/bank/, site/static/busytex/, site/*.h
 git-ignored: CI runs the build and deploys its own copies. Only the sources are committed.
 """
 import argparse
-import concurrent.futures
 import datetime
 import glob
 import hashlib
@@ -43,13 +42,11 @@ from jinja2 import Environment, FileSystemLoader
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from bank import appendix as A  # noqa: E402
 from bank import paths  # noqa: E402
-from bank import problems as P  # noqa: E402
 from bank import stitch  # noqa: E402
-from bank.bib import parse_bib  # noqa: E402
 from bank.number import assign_provisional_ids, read_last_id  # noqa: E402
 from bank.data import build_index, build_tag_catalogue, visible_problems  # noqa: E402
 from bank.tags import TagError, load_tags  # noqa: E402
-from bank.validate import appendix_errors, compile_item, compile_problem, folder_errors  # noqa: E402
+from bank.validate import PROOF_CACHE, check_bank, compile_failures  # noqa: E402
 
 ROOT = paths.WEBSITE
 REPO = paths.REPO
@@ -59,7 +56,6 @@ BANK_DATA_DIR = paths.BANK_DATA_DIR
 TEMPLATES_DIR = paths.TEMPLATES_DIR
 PROBLEMS_DIR = paths.PROBLEMS_DIR
 DEFAULT_ASSETS = os.path.join(paths.CACHE_DIR, "busytex-assets", "busytex")
-PROOF_CACHE = os.path.join(paths.CACHE_DIR, "proofs")
 BODIES_WARN_BYTES = 2_000_000        # every visitor downloads bodies.json on the first Create / Preview
 ASSETS_URL = "https://github.com/TeXlyre/texlyre-busytex/releases/download/assets-v1.4.0/busytex-assets.tar.gz"
 
@@ -74,21 +70,11 @@ def step(msg):
 
 
 def load_and_validate(tags):
-    probs = P.load_problems(PROBLEMS_DIR)
-    items = A.load_items()
-    bib_keys = set(parse_bib(paths.BIB_FILE))
-    cat = A.catalogue(items)
-    n_err = 0
-    for p in probs:
-        P.validate(p, tags, bib_keys, cat)
-        for line, msg in sorted(p["errors"]):
-            print(f"{os.path.relpath(p['path'], REPO)}:{line}: {msg}")
-            n_err += 1
-    for path, line, msg in folder_errors(PROBLEMS_DIR, probs) + appendix_errors(items, bib_keys):
+    probs, items, errors = check_bank(tags, PROBLEMS_DIR)
+    for path, line, msg in errors:
         print(f"{os.path.relpath(path, REPO)}:{line}: {msg}")
-        n_err += 1
-    if n_err:
-        fail(f"{n_err} problem(s) in the problem files and shared results — fix them (messages above are file:line: what is wrong)")
+    if errors:
+        fail(f"{len(errors)} problem(s) in the problem files and shared results — fix them (messages above are file:line: what is wrong)")
     n_new = sum(1 for p in probs if p["new"])
     print(f"{len(probs)} problem files valid" + (f" ({n_new} proposed new-*.tex, numbered after the merge)" if n_new else "")
           + f", {len(items)} shared result{'' if len(items) == 1 else 's'} in problem-bank/appendix/")
@@ -96,23 +82,13 @@ def load_and_validate(tags):
 
 
 def compile_all(probs, items, tags, jobs):
-    jobs_list = [(p, True) for p in probs] + [(p, False) for p in probs if p["has_solution"]] + [(it, None) for it in items]
-    failed = []
-    with concurrent.futures.ThreadPoolExecutor(max_workers=jobs) as ex:
-        futs = {(ex.submit(compile_item, p, items, cache_dir=PROOF_CACHE) if ws is None
-                 else ex.submit(compile_problem, p, tags, ws, cache_dir=PROOF_CACHE, items=items)): (p, ws)
-                for p, ws in jobs_list}
-        for fut in concurrent.futures.as_completed(futs):
-            p, ws = futs[fut]
-            ok, err = fut.result()
-            if not ok:
-                failed.append((p, ws, err))
+    failed, n_compiles = compile_failures(probs, items, tags, jobs, PROOF_CACHE)
     for p, ws, err in failed:
         tag = "shared result" if ws is None else "with solution" if ws else "statement only"
         print(f"FAIL {os.path.relpath(p['path'], REPO)} ({tag}):\n{err}\n")
     if failed:
         fail(f"{len(failed)} compile failure(s)")
-    print(f"{len(jobs_list)} standalone compiles OK")
+    print(f"{n_compiles} standalone compiles OK")
 
 
 def write_site_data(probs, items, tags, preview):

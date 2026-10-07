@@ -179,6 +179,43 @@ def appendix_errors(items, bib_keys, whole_folder=True):
     return out
 
 
+PROOF_CACHE = os.path.join(paths.CACHE_DIR, "proofs")   # successful standalone compiles (build.py, bank/leave_out.py)
+
+
+def check_bank(tags, problems_dir=None):
+    """What build.py checks before it compiles: every file of problems/ and every shared result, against tags.yml and
+    references.bib, plus the folder checks.  Returns (probs, items, [(path, line, message)]), errors in file order."""
+    problems_dir = problems_dir or paths.PROBLEMS_DIR
+    probs = P.load_problems(problems_dir)
+    items = A.load_items()
+    bib_keys = set(parse_bib(paths.BIB_FILE))
+    cat = A.catalogue(items)
+    errors = []
+    for p in probs:
+        P.validate(p, tags, bib_keys, cat)
+        errors += [(p["path"], line, msg) for line, msg in sorted(p["errors"])]
+    errors += folder_errors(problems_dir, probs) + appendix_errors(items, bib_keys)
+    return probs, items, errors
+
+
+def compile_failures(probs, items, tags, jobs, cache_dir=PROOF_CACHE):
+    """The build's standalone compiles: every problem with and without its solution, every shared result on its own.
+    Returns ([(problem or result, with_solution, error_excerpt)] of the failures, number of compiles); with_solution
+    is None for a shared result.  Successes are remembered in cache_dir, so a second run compiles only what changed."""
+    jobs_list = [(p, True) for p in probs] + [(p, False) for p in probs if p["has_solution"]] + [(it, None) for it in items]
+    failed = []
+    with concurrent.futures.ThreadPoolExecutor(max_workers=jobs) as ex:
+        futs = {(ex.submit(compile_item, p, items, cache_dir=cache_dir) if ws is None
+                 else ex.submit(compile_problem, p, tags, ws, cache_dir=cache_dir, items=items)): (p, ws)
+                for p, ws in jobs_list}
+        for fut in concurrent.futures.as_completed(futs):
+            p, ws = futs[fut]
+            ok, err = fut.result()
+            if not ok:
+                failed.append((p, ws, err))
+    return failed, len(jobs_list)
+
+
 def _is_item_path(f):
     return os.path.dirname(os.path.realpath(f)) == os.path.realpath(paths.APPENDIX_DIR)
 
