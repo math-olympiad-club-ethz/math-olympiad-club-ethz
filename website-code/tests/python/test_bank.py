@@ -890,5 +890,83 @@ class PublicBuildCheck(unittest.TestCase):
             self.assertIn("figures of no published problem or shared result: ['figa-alpha-1.pdf']", errors)
 
 
+
+class LeaveOut(unittest.TestCase):
+    """bank/leave_out.py: on main, CI deletes broken problem files from its checkout instead of stopping the deploy."""
+
+    def test_spread_follows_the_citations(self):
+        from bank.leave_out import spread
+        lp, lr, why = spread({"p1"}, {"a"}, {"p1": [], "p2": ["b"], "p3": ["c"], "p4": []},
+                             {"a": [], "b": ["a"], "c": [], "d": ["b"]})
+        self.assertEqual(lp, {"p1", "p2"})                  # p2 cites b, which cites the broken a
+        self.assertEqual(lr, {"a", "b", "d"})               # d cites b: left out too
+        self.assertIn("cites the shared result b", why["p2"])
+        self.assertIn("cites the shared result a", why["b"])
+
+    def _folder(self, d, files, last_id=None):
+        for src, name in files:
+            shutil.copy(src, os.path.join(d, name))
+        if last_id is not None:
+            number.write_last_id(d, last_id)
+
+    def test_only_the_broken_files_are_left_out(self):
+        from bank import leave_out
+        with tempfile.TemporaryDirectory() as d:
+            self._folder(d, [(os.path.join(FIX, "0001-good-problem.tex"), "0001-good-problem.tex"),
+                             (os.path.join(FIX, "0002-wrong-title.tex"), "0002-wrong-title.tex"),
+                             (os.path.join(FIX, "0004-no-area.tex"), "0004-no-area.tex")], last_id=7)
+            open(os.path.join(d, "notes.txt"), "w").close()           # not a problem file: it goes too
+            left, fatal = leave_out.plan(problems_dir=d, compile=False)
+            self.assertIsNone(fatal)
+            self.assertEqual(sorted(os.path.basename(p) for p in left), ["0002-wrong-title.tex", "0004-no-area.tex", "notes.txt"])
+            self.assertTrue(all(left[p] for p in left), "every file left out says why")
+
+    def test_too_many_broken_problems_stop_the_deploy(self):
+        from bank import leave_out
+        with tempfile.TemporaryDirectory() as d:
+            self._folder(d, [(os.path.join(FIX, "0004-no-area.tex"), f"{i:04d}-no-area.tex")
+                             for i in range(10, 11 + leave_out.MAX_LEFT_OUT)], last_id=99)
+            left, fatal = leave_out.plan(problems_dir=d, compile=False)
+            self.assertIn("fail at once", fatal)                     # a shared file is the likely cause: nothing deploys
+            self.assertEqual(len(left), leave_out.MAX_LEFT_OUT + 1)  # but the report still names them
+
+    def test_a_wrong_last_id_stops_the_deploy(self):
+        from bank import leave_out
+        with tempfile.TemporaryDirectory() as d:
+            self._folder(d, [(os.path.join(FIX, "0001-good-problem.tex"), "0001-good-problem.tex")])   # no _last-id.txt
+            left, fatal = leave_out.plan(problems_dir=d, compile=False)
+            self.assertIn("_last-id.txt", fatal)
+
+    def test_delete_runs_only_in_github_actions(self):
+        from unittest import mock
+        from bank import leave_out
+        env = {k: v for k, v in os.environ.items() if k != "GITHUB_ACTIONS"}
+        with mock.patch.dict(os.environ, env, clear=True), mock.patch.object(leave_out, "plan") as plan:
+            self.assertEqual(leave_out.main(["--delete"]), 2)
+            plan.assert_not_called()                                 # nothing checked, nothing deleted
+
+    def test_workflow_command_escaping(self):
+        from bank.leave_out import _data, _prop
+        self.assertEqual(_data("100% sure\nnext"), "100%25 sure%0Anext")
+        self.assertEqual(_prop("a:b,c"), "a%3Ab%2Cc")
+
+    @unittest.skipUnless(shutil.which("pdflatex"), "needs pdflatex")
+    def test_a_problem_that_does_not_compile_is_left_out(self):
+        from bank import leave_out
+        with open(os.path.join(FIX, "0001-good-problem.tex"), encoding="utf-8") as f:
+            good = f.read()
+        bad = good.replace("% title:          Good problem", "% title:          Bad macro").replace(
+            "\\begin{problem}\n", "\\begin{problem}\nThis uses \\nosuchmacroanywhere.\n", 1)
+        self.assertNotEqual(bad, good)
+        with tempfile.TemporaryDirectory() as d:
+            self._folder(d, [(os.path.join(FIX, "0001-good-problem.tex"), "0001-good-problem.tex")], last_id=2)
+            with open(os.path.join(d, "0002-bad-macro.tex"), "w", encoding="utf-8") as f:
+                f.write(bad)
+            left, fatal = leave_out.plan(jobs=2, problems_dir=d)
+            self.assertIsNone(fatal)
+            self.assertEqual([os.path.basename(p) for p in left], ["0002-bad-macro.tex"])
+            self.assertIn("pdflatex fails", left[os.path.join(d, "0002-bad-macro.tex")][0][1])
+
+
 if __name__ == "__main__":
     unittest.main()
