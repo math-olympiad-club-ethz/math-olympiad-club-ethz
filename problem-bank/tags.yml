@@ -248,6 +248,15 @@ area:
         name: Integral & functional inequalities
         description: Inequalities involving integrals, derivatives, sums of functions or function values.
         aliases: [integral inequality, functional inequality, analytic inequality, inequality for functions]
+        children:
+          - slug: differential-inequalities
+            name: Differential inequalities
+            description: Inequalities satisfied by a function and its derivatives, and the bounds they force (comparison and Grönwall-type arguments).
+            aliases: [differential inequality, gronwall, comparison theorem, derivative inequality]
+          - slug: integral-inequalities
+            name: Integral inequalities
+            description: Inequalities between integrals of functions, and extremal values of integrals under constraints.
+            aliases: [integral inequality, inequality between integrals, minimal integral]
       - slug: geometric-inequalities
         name: Geometric inequalities
         description: Inequalities between lengths, angles, areas and volumes.
@@ -590,6 +599,10 @@ methods:
         name: Roots of unity filter
         description: Extract every k-th coefficient of a polynomial with roots of unity.
         aliases: [filter, multisection, series multisection]
+      - slug: dilworth-theorem
+        name: Dilworth's theorem
+        description: In a finite poset, the largest antichain equals the least number of chains covering it (and the dual theorem of Mirsky).
+        aliases: [dilworth, mirsky, "mirsky's theorem", chains and antichains, poset, partially ordered set]
   - group: Algebra & number theory
     tags:
       - slug: sfft
@@ -672,6 +685,18 @@ methods:
         name: Algebraic conjugates
         description: Use the conjugate(s) of an algebraic number, e.g. (a + b sqrt d)^n + (a - b sqrt d)^n is an integer.
         aliases: [conjugate surd, conjugates, conjugate trick, irrational conjugate]
+      - slug: cauchy-functional-equation
+        name: Cauchy's functional equation
+        description: "Solve or use f(x + y) = f(x) + f(y): additive maps are linear over the rationals, and over the reals under a regularity assumption such as continuity."
+        aliases: [cauchy equation, additive function, additive map, "cauchy's equation"]
+      - slug: integer-polynomial-divisibility
+        name: Integer polynomial divisibility
+        description: For a polynomial P with integer coefficients, a - b divides P(a) - P(b) for all integers a, b.
+        aliases: [a-b divides p(a)-p(b), difference of polynomial values, integer coefficients divisibility]
+      - slug: permutation-sign
+        name: Sign of a permutation
+        description: "Use the sign (parity) homomorphism of permutations: signs of cycles, transpositions and products give parity conditions."
+        aliases: [sign, signature, parity of a permutation, even permutation, odd permutation, transpositions]
   - group: Linear algebra
     tags:
       - slug: trace-argument
@@ -710,6 +735,14 @@ methods:
         name: Orthogonal complement
         description: Dimension and double-complement arguments for a (non-degenerate) bilinear form.
         aliases: [orthogonal complement, perpendicular subspace, double orthogonal complement]
+      - slug: invertibility-argument
+        name: Invertibility arguments
+        description: "Show that a matrix is invertible or use its inverse: a one-sided inverse of a square matrix is two-sided, I - N is invertible for nilpotent N, invertible factors cancel."
+        aliases: [inverse, invertible matrix, one-sided inverse, left inverse, right inverse, inverse manipulation]
+      - slug: commutator-identities
+        name: Commutator identities
+        description: "Manipulate commutators [X, Y] = XY - YX: the Jacobi identity, the Leibniz rule [X, YZ] = [X, Y]Z + Y[X, Z], sums of commutator relations."
+        aliases: [commutator, commutators, jacobi identity, lie bracket]
   - group: Inequalities
     tags:
       - slug: am-gm
@@ -737,7 +770,7 @@ methods:
       - slug: monotonicity
         name: Monotonicity
         description: Properties of monotonic functions and sequences, including the monotone convergence theorem.
-        liases: [monotonic, monotone, increasing, decreasing, non-decreasing, non-increasing, monotone convergence]
+        aliases: [monotonic, monotone, increasing, decreasing, non-decreasing, non-increasing, monotone convergence]
       - slug: telescoping
         name: Telescoping
         description: Write terms as differences so that a sum or product collapses.
@@ -810,6 +843,18 @@ methods:
         name: Finite differences
         description: Difference operators, Newton forward differences, polynomial degree via differences.
         aliases: [finite difference method, difference operator, newton forward difference]
+      - slug: darboux-theorem
+        name: Darboux's theorem
+        description: A derivative has the intermediate value property, even when it is not continuous.
+        aliases: [darboux, darboux property, intermediate value property of derivatives]
+      - slug: riemann-sums
+        name: Riemann sums
+        description: Recognise a sum as a Riemann sum and pass to the corresponding integral.
+        aliases: [riemann sum, sum as an integral, limit of a sum]
+      - slug: absolute-convergence
+        name: Absolute convergence & rearrangement
+        description: Use absolute convergence to reorder or regroup the terms of a (multiple) series without changing its sum.
+        aliases: [absolute convergence, rearrangement, reordering a series, fubini for series]
   - group: Geometry
     tags:
       - slug: angle-chasing
