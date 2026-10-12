@@ -4,7 +4,8 @@
 # A problem file has no \documentclass, so LaTeX Workshop finds no root file and does not tell which file was saved:
 # the script compiles the .tex file saved last, when it is a bank problem (problem-bank/problems/NNNN-*.tex or
 # new-*.tex), a shared result (problem-bank/appendix/<name>.tex) or a seminar sheet file
-# (problem-bank/seminar_antoine_problems_solutions/<sheet>/<name>.tex), through problem-bank/problems/_preview.tex
+# (problem-bank/seminar_antoine_problems_solutions/<sheet>/<name>.tex) or a staged seminar-repo problem
+# (problem-bank/topics-in-competition-seminar/<group>/<sheet>/<name>.tex), through problem-bank/problems/_preview.tex
 # (the shared preamble). The PDF is written next to the .tex (git-ignored): open it once from the Explorer, it
 # refreshes after every save. Any other .tex (statutes.tex, preamble.tex, templates, ...) is left alone.
 PATH="/Library/TeX/texbin:/usr/local/bin:/opt/homebrew/bin:$PATH"
@@ -28,9 +29,10 @@ EOF
 
 case "$f" in
     "$WS"/problem-bank/problems/[0-9][0-9][0-9][0-9]-*.tex | "$WS"/problem-bank/problems/new-*.tex | \
-    "$WS"/problem-bank/appendix/[a-z0-9]*.tex | "$WS"/problem-bank/seminar_antoine_problems_solutions/*/[a-z0-9]*.tex) ;;
+    "$WS"/problem-bank/appendix/[a-z0-9]*.tex | "$WS"/problem-bank/seminar_antoine_problems_solutions/*/[a-z0-9]*.tex | \
+    "$WS"/problem-bank/topics-in-competition-seminar/*/*/[a-z0-9]*.tex) ;;
     *)
-        echo "bank-preview: the last saved .tex is not a problem, a shared result or a seminar sheet file: nothing to build."
+        echo "bank-preview: the last saved .tex is not a problem, a shared result or a seminar file: nothing to build."
         echo "  ($f)"
         exit 0 ;;
 esac
