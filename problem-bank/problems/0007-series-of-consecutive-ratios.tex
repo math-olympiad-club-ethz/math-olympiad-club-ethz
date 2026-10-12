@@ -1,6 +1,6 @@
 % title:          Series of consecutive ratios
 % area:           sequences, series
-% methods:        telescoping, induction
+% methods:        telescoping, monotonicity, growth-rate-comparison
 % difficulty:     easy
 % difficulty-ai:  easy
 % status:
@@ -10,47 +10,45 @@
 % origin-date:    2012-07-29
 % origin-number:  Day 2, Problem 2
 % also-in:
-% taken-from:
-% references:     Earliest known appearance (to the best of our knowledge): IMC 2012 (19th IMC, Blagoevgrad, Bulgaria), Day 2 (29 July 2012), Problem 2, proposed by Christophe Debry (KU Leuven, Belgium) - https://www.imc-math.org.uk/imc2012/IMC2012-day2-questions.pdf ; official solution - https://www.imc-math.org.uk/imc2012/IMC2012-day2-solutions.pdf ; index page - https://www.imc-math.org.uk/?year=2012&item=problems
+% taken-from:     Topics in Competition Mathematics, Telescoping sums and products, Problem 3
+% references:     Earliest known appearance (to the best of our knowledge): IMC 2012 (19th IMC, Blagoevgrad, Bulgaria), Day 2 (29 July 2012), Problem 2, proposed by Christophe Debry (KU Leuven, Belgium) - https://www.imc-math.org.uk/imc2012/IMC2012-day2-questions.pdf ; official solution - https://www.imc-math.org.uk/imc2012/IMC2012-day2-solutions.pdf ; index page - https://www.imc-math.org.uk/?year=2012&item=problems ; generalised here: the first term a_0 > 0 is arbitrary and the series sums to a_0 (the IMC problem starts from a_1 = 1/2 and adds the term a_1/a_0 with a_0 = 1, hence its value 1)
 % history:        human
 \begin{problem}
-Define the sequence \( a_0, a_1, \dots \) inductively by \( a_0 = 1 \), \( a_1 = \frac{1}{2} \) and
+Fix any \( a_0 \in \mathbb{R}_{>0} \) and define recursively, for all \( n \in \mathbb{N}_{\geq 1} \), assuming \( a_{n-1} \in \mathbb{R}_{>0} \) is defined,
 \[
-a_{n+1} = \frac{n a_n^2}{1 + (n+1)a_n} \quad \text{for } n \geq 1.
+    a_n := \frac{n a_{n-1}^2}{1 + \left(n+1\right) a_{n-1}},
 \]
-Show that the series 
+which clearly lies in \( \mathbb{R}_{>0} \). Show that
 \[
-\sum_{k=0}^{\infty} \frac{a_{k+1}}{a_k}
+    \sum_{n=0}^{+\infty} \frac{a_{n+1}}{a_n}
 \]
-converges and determine its value.
+converges and find the limit.
 \end{problem}
 \begin{solution}
-By induction, we establish that \( a_i > 0 \) for all \( i \geq 0 \), ensuring that the partial sums are well defined and form an increasing sequence. Furthermore, we observe that  
-\[
-k a_k = \frac{(1 + (k+1)a_k) a_{k+1}}{a_k} = \frac{a_{k+1}}{a_k} + (k+1)a_{k+1} \quad \text{for all } k \geq 1.
-\]
-Summing from \( k = 0 \) to \( n \), we obtain  
-\[
-\sum_{k=0}^{n} \frac{a_{k+1}}{a_k} = \frac{a_1}{a_0} + \sum_{k=1}^{n} (k a_k - (k+1)a_{k+1}) = \frac{1}{2} + 1 \cdot a_1 - (n+1)a_{n+1} = 1 - (n+1)a_{n+1}
-\]
-for all \( n \geq 1 \). A quick verification confirms that this equality also holds for \( n = 0 \).  
-\\\\
-Since \( (n+1)a_{n+1} > 0 \), we deduce that for each \( n \geq 0 \),  
-\[
-\sum_{k=0}^{n} \frac{a_{k+1}}{a_k} = 1 - (n+1)a_{n+1} < 1.
-\]
-This implies that the partial sums are bounded, and thus, the series \( \sum_{k=0}^{\infty} \frac{a_{k+1}}{a_k} \) is convergent (converging to the supremum of the partial sums). Consequently, the sequence \( \frac{a_{k+1}}{a_k} \) must tend to zero. In particular, there exists an index \( N \in \mathbb{N} \) such that \( \frac{a_{n+1}}{a_n} < \frac{1}{2} \) for all \( n > N \).  
-\\\\
-For all \( n > N \), we then have  
-\[
-a_n = \prod_{i=N}^{n-1} \frac{a_{i+1}}{a_i} < \frac{1}{a_N 2^{n-1-N}} = \frac{a_N^{-1} 2^N + 1}{2^n}.
-\]
-In particular, for all \( n > N \),  
-\[
-n a_n < \left( a_N^{-1} 2^N + 1 \right) \left( \frac{n}{2^n} \right).
-\]
-Since \( \frac{n}{2^n} \to 0 \) as \( n \to +\infty \), it follows that \( n a_n \to 0 \) as $ n \to +\infty$. Therefore,  
-\[
-\sum_{k=0}^{\infty} \frac{a_{k+1}}{a_k} = \lim_{n \to \infty} \sum_{k=0}^{n} \frac{a_{k+1}}{a_k} = \lim_{n \to \infty} \left( 1 - (n+1)a_{n+1} \right) = 1.
-\]
+    First, we prove that \( \frac{a_{n+1}}{a_n} = \left(n+1\right) a_n - \left(n+2\right) a_{n+1} \) for all \( n \in \mathbb{N} \). By construction, for all \( n \in \mathbb{N} \),
+    \[
+        a_n^2 \left(n+1\right) = a_{n+1} \left(1 + \left(n+2\right) a_n\right) = a_{n+1} + \left(n+2\right) a_{n+1} a_n
+    \]
+    \[
+        \implies a_{n+1} = \left(n+1\right) a_n^2 - \left(n+2\right) a_{n+1} a_n \implies \frac{a_{n+1}}{a_n} = \left(n+1\right) a_n - \left(n+2\right) a_{n+1}.
+    \]
+    Thus, for all \( N \in \mathbb{N} \),
+    \[
+        \sum_{n=0}^{N} \frac{a_{n+1}}{a_n} = \sum_{n=0}^{N} \left(\left(n+1\right) a_n - \left(n+2\right) a_{n+1}\right)
+    \]
+    \[
+        = \left(\sum_{n=0}^{N} \left(n+1\right) a_n\right) - \left(\sum_{n=1}^{N+1} \left(n+1\right) a_n\right) = a_0 - \left(N+2\right) a_{N+1}.
+    \]
+    We now show that \( \left(n+1\right) a_n \overset{n \to +\infty}{\longrightarrow} 0 \) which implies that the partial sums converge to \( a_0 \). As \( \left(n+1\right) a_n - \left(n+2\right) a_{n+1} = \frac{a_{n+1}}{a_n} > 0 \) for all \( n \in \mathbb{N} \), we have
+    \[
+        \left(n+1\right) a_n > \left(n+2\right) a_{n+1} > 0,
+    \]
+    and hence \(\left\langle\left(n+1\right) a_n \mid n \in \mathbb{N}\right\rangle\) is a strictly decreasing bounded below sequence, and so classically, there exists \( L \in \mathbb{R}_{\geq 0} \) with \( L = \lim_{n \to +\infty} \left(n+1\right) a_n \). Since for all \( n \in \mathbb{N} \),
+    \[
+        \left(n+2\right) a_{n+1} = \frac{\left(n+2\right) \left(n+1\right) a_n^2}{1 + \left(n+2\right) a_n} = \frac{\frac{n+2}{n+1} \left(\left(n+1\right) a_n\right)^2}{1 + \frac{n+2}{n+1} \left(\left(n+1\right) a_n\right)},
+    \]
+    the limit \( L \) must satisfy (since \( 0<\frac{n+2}{n+1} \overset{n \to +\infty}{\longrightarrow} 1 \), \( 0<\left(n+1\right) a_n \overset{n \to +\infty}{\longrightarrow} L \) and \( \left(t, x\right) \mapsto \frac{t x^2}{1 + t x} \) is continuous on \( \mathbb{R}_{>0} \times \mathbb{R}_{\geq 0} \), (its denominator is at least \( 1 \)))
+    \[
+        L = \frac{L^2}{1+L}, \quad \text{i.e.} \quad L + L^2 = L^2, \quad \text{that is} \quad L = 0.
+    \]
 \end{solution}
