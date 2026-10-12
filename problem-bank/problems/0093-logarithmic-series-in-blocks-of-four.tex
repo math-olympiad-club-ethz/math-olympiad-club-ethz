@@ -1,0 +1,71 @@
+% title:          Logarithmic series in blocks of four
+% area:           series
+% methods:        telescoping, lhopital-rule, monotonicity
+% difficulty:     medium
+% difficulty-ai:  medium
+% status:
+% review:         human
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         putnam
+% origin-date:    2017-12-02
+% origin-number:  B4
+% also-in:
+% references:     Earliest known appearance (to the best of our knowledge): Putnam 2017, 78th William Lowell Putnam Mathematical Competition, 2 December 2017, Problem B4 - https://kskedlaya.org/putnam-archive/2017.tex; official solution - https://kskedlaya.org/putnam-archive/2017s.tex
+% history:        ai
+\begin{problem}
+Show that
+\[
+    \sum_{n=0}^{+\infty} \left(\frac{3\log\left(4n+2\right)}{4n+2}-\frac{\log\left(4n+3\right)}{4n+3}-\frac{\log\left(4n+4\right)}{4n+4}-\frac{\log\left(4n+5\right)}{4n+5}\right),
+\]
+where you will notice that the denominators are all at least \( 2 \), converges and find the limit.
+\end{problem}
+\begin{solution}
+    Define \( a_{-} \colon \mathbb{N}_{\geq 1} \to \mathbb{R}_{\geq 0} \), \( n \mapsto \frac{\log\left(n\right)}{n} \). Notice that for all \( N \in \mathbb{N} \),
+    \[
+        S_N := \sum_{n=0}^{N} \left(\frac{3\log\left(4n+2\right)}{4n+2}-\frac{\log\left(4n+3\right)}{4n+3}-\frac{\log\left(4n+4\right)}{4n+4}-\frac{\log\left(4n+5\right)}{4n+5}\right)
+    \]
+    \[
+        = \sum_{n=0}^{N} \left(3a_{4n+2}-a_{4n+3}-a_{4n+4}-a_{4n+5}\right)
+    \]
+    \[
+        = \left(\sum_{n=0}^{N} \left(a_{4n+2}-a_{4n+3}+a_{4n+4}-a_{4n+5}\right)\right)+\left(2 \cdot \sum_{n=0}^{N} \left(a_{4n+2}-a_{4n+4}\right)\right)
+    \]
+    \begin{equation}
+        = \left(\sum_{n=2}^{4N+5} \left(-1\right)^n a_n\right)+\left(2 \cdot \sum_{n=0}^{N} \left(a_{4n+2}-a_{4n+4}\right)\right),
+        \label{eq:tel10-split}
+    \end{equation}
+    where the last equality is clear.
+    \\\\
+    For all \( n \in \mathbb{N} \) we have
+    \[
+        a_{4n+2}-a_{4n+4} = \frac{\log\left(2\right)+\log\left(2n+1\right)}{2\left(2n+1\right)}-\frac{\log\left(2\right)+\log\left(2n+2\right)}{2\left(2n+2\right)}
+    \]
+    \[
+        = \frac{\log\left(2\right)}{2}\left(\frac{1}{2n+1}-\frac{1}{2n+2}\right)+\frac{1}{2}\left(a_{2n+1}-a_{2n+2}\right),
+    \]
+    so that for all \( N \in \mathbb{N} \),
+    \[
+        2\sum_{n=0}^{N} \left(a_{4n+2}-a_{4n+4}\right) = \log\left(2\right)\left(\sum_{n=0}^{N} \left(\frac{1}{2n+1}-\frac{1}{2n+2}\right)\right)+\left(\sum_{n=0}^{N} \left(a_{2n+1}-a_{2n+2}\right)\right)
+    \]
+    \begin{equation}
+        = \log\left(2\right)\left(\sum_{n=1}^{2N+2} \left(-1\right)^{n+1}\frac{1}{n}\right)+\left(\sum_{n=1}^{2N+2} \left(-1\right)^{n+1} a_n\right).
+        \label{eq:tel10-even}
+    \end{equation}
+    Therefore, by \eqref{eq:tel10-split} and \eqref{eq:tel10-even}, as \( a_1 = 0 \), for all \( N \in \mathbb{N} \),
+    \[
+        S_N = \left(\sum_{n=2}^{4N+5} \left(-1\right)^n a_n\right)+\log\left(2\right)\left(\sum_{n=1}^{2N+2} \left(-1\right)^{n+1}\frac{1}{n}\right)-\left(\sum_{n=2}^{2N+2} \left(-1\right)^n a_n\right).
+    \]
+    Now, famously, \( \sum_{n=1}^{2N+2} \left(-1\right)^{n+1}\frac{1}{n} \overset{N \to +\infty}{\longrightarrow} \log\left(2\right) \) (Mercator series, valid for \( -1 < x \leq 1 \), plug \( x = 1 \)). Moreover, by the alternating series criterion, \( \sum_{n=2}^{+\infty} \left(-1\right)^n a_n \) converges if \( a|_{\mathbb{N}_{\geq 2}} \) is eventually positive or eventually negative, if \( \left|a|_{\mathbb{N}_{\geq 2}}\right|_{\mathbb{R}} \) is eventually decreasing and if \( \lim_{n \to +\infty} a_n = 0 \). First, \( a|_{\mathbb{N}_{\geq 2}} \) is eventually positive. Second, for all \( x \in \left]0;+\infty\right[ \),
+        \[
+        \left(\frac{\log}{\mathrm{Id}}\right)'\left(x\right) = \frac{\log'\left(x\right)x-\log\left(x\right)\mathrm{Id}'\left(x\right)}{x^2} = \frac{1-\log\left(x\right)}{x^2} < 0 \Leftrightarrow 1 < \log\left(x\right) \Leftrightarrow x \in \left]e;+\infty\right[,
+    \]
+    so \( a|_{\mathbb{N}_{\geq 3}} \) is decreasing (since \( 3 > e \)), and thus \( a|_{\mathbb{N}_{\geq 2}} = \left|a|_{\mathbb{N}_{\geq 2}}\right|_{\mathbb{R}} \) is eventually decreasing. Third, by l'H\^opital's rule,
+    \[
+        \lim_{n \to +\infty} a_n = \lim_{n \to +\infty} \frac{\log\left(n\right)}{n} = \lim_{n \to +\infty} \frac{1}{n} = 0.
+    \]
+    We thus know that there exists a unique \( L \in \mathbb{R} \) with \( \sum_{n=2}^{N} \left(-1\right)^n a_n \overset{N \to +\infty}{\longrightarrow} L \). Hence, as all these limits clearly exist, the limit of the sum is the sum of the limits, and
+    \[
+        S_N \overset{N \to +\infty}{\longrightarrow} L+\log\left(2\right)^2-L = \log\left(2\right)^2.
+    \]
+    Therefore, the series converges and its limit is \( \log\left(2\right)^2 \).
+\end{solution}

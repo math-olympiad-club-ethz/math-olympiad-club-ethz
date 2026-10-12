@@ -1,0 +1,171 @@
+% title:          Logarithmic growth of a recursive sequence
+% area:           sequences, asymptotics
+% methods:        telescoping, stolz-cesaro, squeeze, lhopital-rule, contradiction
+% difficulty:     hard
+% difficulty-ai:  hard
+% status:
+% review:         human
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         jarnik
+% origin-date:    2024-04-13
+% origin-number:  Category II, Problem 3
+% also-in:
+% references:     Earliest known appearance (to the best of our knowledge): VJIMC 2024, Category II, Problem 3 - https://vjimc.osu.cz/storage/uploads/j31problems2.pdf
+% history:        ai
+\begin{problem}
+Fix any \( \delta \in \mathbb{R}_{>0} \) and define recursively \( a_\delta \in \left(\mathbb{R}_{>0}\right)^{\mathbb{N}} \) by \( a_\delta\left(0\right) := \delta \) and, for all \( n \in \mathbb{N}_{\geq 1} \), assuming \( a_\delta|_n \in \left(\mathbb{R}_{>0}\right)^n \) is defined,
+\[
+    a_\delta\left(n\right) := a_\delta\left(n-1\right)+\left(\sum_{i=0}^{n-1} a_\delta\left(i\right)\right)^{-1},
+\]
+which is bigger than \( a_\delta\left(n-1\right) \) and clearly lies in \( \mathbb{R}_{>0} \), as the sum lies in \( \mathbb{R}_{>0} \). So we have a unique \( a_\delta \in \left(\mathbb{R}_{>0}\right)^{\mathbb{N}} \), which must be strictly increasing. Show that \( \left\langle \frac{a_\delta\left(n\right)^2}{\log\left(n\right)} \,\middle|\, n \in \mathbb{N}_{\geq 2} \right\rangle \in \left(\mathbb{R}_{>0}\right)^{\mathbb{N}_{\geq 2}} \) converges to \( 2 \).
+\end{problem}
+\begin{solution}
+    Define \( S_\delta \colon \mathbb{N} \to \mathbb{R}_{>0} \) by \( n \mapsto \sum_{i=0}^{n} a_\delta\left(i\right) \).
+    \\\\
+    \textit{Solution 1.}
+    \\\\
+    Notice that \( \sup \operatorname{ran}\left(a_\delta\right) \in \mathbb{R}_{>0} \cup \left\{+\infty\right\} \). Suppose that there exists \( L \in \mathbb{R}_{>0} \) with \( L = \sup \operatorname{ran}\left(a_\delta\right) \). Then we would have (by induction) \( S_\delta\left(n\right) \leq \left(n+1\right) \cdot L \) for all \( n \in \mathbb{N} \), so that, for all \( n \in \mathbb{N} \),
+    \[
+        a_\delta\left(n\right) = a_\delta\left(0\right)+\sum_{k=0}^{n-1} S_\delta\left(k\right)^{-1} \geq a_\delta\left(0\right)+\frac{1}{L}\left(\sum_{k=0}^{n-1} \frac{1}{k+1}\right) = a_\delta\left(0\right)+\frac{1}{L}\left(\sum_{k=1}^{n} \frac{1}{k}\right),
+    \]
+    where the first equality follows by induction (and it is true even for \( n = 0 \): recall that the empty sum is \( 0 \)). But as \( \sup\left\{ \sum_{k=1}^{N} \frac{1}{k} \,\middle|\, N \in \mathbb{N}_{\geq 1} \right\} = +\infty \), we would get \( L = \sup \operatorname{ran}\left(a_\delta\right) = +\infty \), which is a contradiction. Thus, \( \sup \operatorname{ran}\left(a_\delta\right) = +\infty \).
+    \\\\
+    We want to show that \( \left\langle \frac{a_\delta\left(n\right)^2}{\log\left(n\right)} \,\middle|\, n \in \mathbb{N}_{\geq 2} \right\rangle \) converges to \( 2 \). As \( \log|_{\mathbb{N}_{\geq 2}} \in \mathbb{R}^{\mathbb{N}_{\geq 2}} \) is strictly increasing, \( 0 \notin \operatorname{ran}\left(\log|_{\mathbb{N}_{\geq 2}}\right) \) and \( \log\left(n\right) \overset{n \to +\infty}{\longrightarrow} +\infty \), the Stolz–Ces\`aro theorem [\appendixref{stolz-cesaro-theorem}] applies to \( \left\langle a_\delta\left(n\right)^2 \,\middle|\, n \in \mathbb{N}_{\geq 2} \right\rangle \) and \( \log|_{\mathbb{N}_{\geq 2}} \), which means that it is sufficient to show that \( \left\langle \frac{a_\delta\left(n\right)^2-a_\delta\left(n-1\right)^2}{\log\left(n\right)-\log\left(n-1\right)} \,\middle|\, n \in \mathbb{N}_{\geq 3} \right\rangle \) converges to \( 2 \).
+    \\\\
+    Fix \( n \in \mathbb{N}_{\geq 3} \). Then
+    \[
+        a_\delta\left(n\right)^2-a_\delta\left(n-1\right)^2 = \left(a_\delta\left(n\right)-a_\delta\left(n-1\right)\right)\left(a_\delta\left(n\right)+a_\delta\left(n-1\right)\right)
+    \]
+    \[
+        = S_\delta\left(n-1\right)^{-1}\left(a_\delta\left(n\right)+a_\delta\left(n-1\right)\right)
+    \]
+    and \( \log\left(n\right)-\log\left(n-1\right) = -\log\left(1-\frac{1}{n}\right) \), so that
+    \[
+        \frac{a_\delta\left(n\right)^2-a_\delta\left(n-1\right)^2}{\log\left(n\right)-\log\left(n-1\right)} = \frac{a_\delta\left(n\right)+a_\delta\left(n-1\right)}{-\log\left(1-\frac{1}{n}\right)\,S_\delta\left(n-1\right)}
+    \]
+    \[
+        = 2\left(\frac{a_\delta\left(n\right)}{-\log\left(1-\frac{1}{n}\right)\,S_\delta\left(n-1\right)}\right)+\left(\frac{a_\delta\left(n\right)-a_\delta\left(n-1\right)}{\log\left(1-\frac{1}{n}\right)\,S_\delta\left(n-1\right)}\right)
+    \]
+    \[
+        = 2\left(\frac{1}{-n\log\left(1-\frac{1}{n}\right)}\right)\left(\frac{n\,a_\delta\left(n\right)}{S_\delta\left(n-1\right)}\right)+\frac{a_\delta\left(n\right)-a_\delta\left(n-1\right)}{\log\left(1-\frac{1}{n}\right)\,S_\delta\left(n-1\right)}.
+    \]
+    Now, it suffices to show that the three terms \( \frac{1}{-n\log\left(1-\frac{1}{n}\right)} \), \( \frac{n\,a_\delta\left(n\right)}{S_\delta\left(n-1\right)} \), and \( \frac{a_\delta\left(n\right)-a_\delta\left(n-1\right)}{\log\left(1-\frac{1}{n}\right)\,S_\delta\left(n-1\right)} \) have as limit \( 1 \), \( 1 \), and \( 0 \) respectively, as \( n \to +\infty \). For the first term, it is clear since
+    \[
+        \frac{1}{-n\log\left(1-\frac{1}{n}\right)} = -\frac{1}{\log\left(\left(1+\frac{\left(-1\right)}{n}\right)^n\right)} \overset{n \to +\infty}{\longrightarrow} -\frac{1}{\log\left(e^{-1}\right)} = 1.
+    \]
+    For the third term, we have, as \( a_\delta \) is strictly increasing, for all \( n \in \mathbb{N}_{\geq 3} \),
+    \[
+        0 < n\,a_\delta\left(0\right) \leq S_\delta\left(n-1\right) \leq n\,a_\delta\left(n-1\right),
+    \]
+    so that \( 0 < a_\delta\left(n\right)-a_\delta\left(n-1\right) = S_\delta\left(n-1\right)^{-1} \leq \frac{1}{n\,a_\delta\left(0\right)} \), and hence, by the squeeze theorem, \( a_\delta\left(n\right)-a_\delta\left(n-1\right) \overset{n \to +\infty}{\longrightarrow} 0 \). Furthermore, as \( \log\left(1-\frac{1}{n}\right) < 0 \), we have
+    \[
+        \log\left(1-\frac{1}{n}\right)\,S_\delta\left(n-1\right) \leq \log\left(1-\frac{1}{n}\right)\,n\,a_\delta\left(0\right) < 0,
+    \]
+    so that, by inverting the inequalities, we get
+    \[
+        \frac{1}{\delta\,\log\left(\left(1-\frac{1}{n}\right)^n\right)} \leq \frac{1}{\log\left(1-\frac{1}{n}\right)\,S_\delta\left(n-1\right)} < 0,
+    \]
+    which is equivalent to (since \( a_\delta\left(n\right)-a_\delta\left(n-1\right) > 0 \))
+    \[
+        \frac{\left(a_\delta\left(n\right)-a_\delta\left(n-1\right)\right)}{\delta\,n\,\log\left(1-\frac{1}{n}\right)} \leq \frac{a_\delta\left(n\right)-a_\delta\left(n-1\right)}{\log\left(1-\frac{1}{n}\right)\,S_\delta\left(n-1\right)} < 0.
+    \]
+    Now, we know that \( \frac{\left(a_\delta\left(n\right)-a_\delta\left(n-1\right)\right)}{\delta\,n\,\log\left(1-\frac{1}{n}\right)} \overset{n \to +\infty}{\longrightarrow} \frac{0}{\delta\,\log\left(e^{-1}\right)} = 0 \), so that, by the squeeze theorem, \( \frac{a_\delta\left(n\right)-a_\delta\left(n-1\right)}{\log\left(1-\frac{1}{n}\right)\,S_\delta\left(n-1\right)} \overset{n \to +\infty}{\longrightarrow} 0 \).
+    \\\\
+    Lastly, for the second term, since \( a_\delta \) is strictly increasing and \( a_\delta\left(0\right) > 0 \), the sequence \( \left\langle S_\delta\left(n-1\right) \,\middle|\, n \in \mathbb{N}_{\geq 3} \right\rangle \) is strictly increasing, and, as \( S_\delta\left(n-1\right) \geq n\,a_\delta\left(0\right) > 0 \) for all \( n \in \mathbb{N}_{\geq 3} \) (seen above), it does not take the value \( 0 \) and converges to \( +\infty \). Hence, the Stolz–Ces\`aro theorem [\appendixref{stolz-cesaro-theorem}] applies again, to \( \left\langle n\,a_\delta\left(n\right) \,\middle|\, n \in \mathbb{N}_{\geq 3} \right\rangle \) and this sequence, which means that, to show that \( \left\langle \frac{n\,a_\delta\left(n\right)}{S_\delta\left(n-1\right)} \,\middle|\, n \in \mathbb{N}_{\geq 3} \right\rangle \) converges to \( 1 \), it is sufficient to show that
+    \[
+        \left\langle \frac{n\,a_\delta\left(n\right)-\left(n-1\right)\,a_\delta\left(n-1\right)}{S_\delta\left(n-1\right)-S_\delta\left(n-2\right)} \,\middle|\, n \in \mathbb{N}_{\geq 4} \right\rangle
+    \]
+    converges to \( 1 \).
+    \\\\
+    Fix \( n \in \mathbb{N}_{\geq 4} \). Then
+    \[
+        \frac{n\,a_\delta\left(n\right)-\left(n-1\right)\,a_\delta\left(n-1\right)}{S_\delta\left(n-1\right)-S_\delta\left(n-2\right)} = \frac{n\left(a_\delta\left(n\right)-a_\delta\left(n-1\right)\right)+a_\delta\left(n-1\right)}{a_\delta\left(n-1\right)}
+    \]
+    \[
+        = \frac{n\,S_\delta\left(n-1\right)^{-1}}{a_\delta\left(n-1\right)}+\frac{a_\delta\left(n-1\right)}{a_\delta\left(n-1\right)} = 1+\frac{n}{a_\delta\left(n-1\right)\,S_\delta\left(n-1\right)}.
+    \]
+    As \( n\,a_\delta\left(0\right) \leq S_\delta\left(n-1\right) \leq n\,a_\delta\left(n-1\right) \), we get
+    \[
+        \frac{1}{a_\delta\left(n-1\right)^2} \leq \frac{n}{a_\delta\left(n-1\right)\,S_\delta\left(n-1\right)} < \frac{1}{a_\delta\left(0\right)\,a_\delta\left(n-1\right)},
+    \]
+    and by the squeeze theorem we clearly get \( \frac{n}{a_\delta\left(n-1\right)\,S_\delta\left(n-1\right)} \overset{n \to +\infty}{\longrightarrow} 0 \) (since \( \lim_{n \to +\infty} a_\delta\left(n\right) = +\infty \)). So
+    \[
+        \frac{n\,a_\delta\left(n\right)-\left(n-1\right)\,a_\delta\left(n-1\right)}{S_\delta\left(n-1\right)-S_\delta\left(n-2\right)} \overset{n \to +\infty}{\longrightarrow} 1.
+    \]
+    Therefore, by the two reductions above, \( \left\langle \frac{a_\delta\left(n\right)^2}{\log\left(n\right)} \,\middle|\, n \in \mathbb{N}_{\geq 2} \right\rangle \) converges to \( 2 \).
+    \\\\
+    % Solution 2 is not in the notebook: written by AI on 2026-10-10 at Antoine's request; he chose to keep both solutions.
+    \textit{Solution 2.}
+    \\\\
+    We want to show that \( \left\langle \frac{a_\delta\left(n\right)^2}{\log\left(n\right)} \,\middle|\, n \in \mathbb{N}_{\geq 2} \right\rangle \) converges to \( 2 \). As \( a_\delta \) is strictly positive and strictly increasing, we have, for all \( n \in \mathbb{N}_{\geq 1} \),
+    \[
+        0 < n\,a_\delta\left(0\right) \leq S_\delta\left(n-1\right) \leq n\,a_\delta\left(n-1\right),
+    \]
+    so that \( \log\left(\frac{S_\delta\left(n\right)}{a_\delta\left(0\right)}\right) \geq \log\left(n+1\right) > 0 \) for all \( n \in \mathbb{N}_{\geq 1} \), and we can write, for all \( n \in \mathbb{N}_{\geq 2} \),
+    \[
+        \frac{a_\delta\left(n\right)^2}{\log\left(n\right)} = \frac{a_\delta\left(n\right)^2}{\log\left(\frac{S_\delta\left(n\right)}{a_\delta\left(0\right)}\right)} \cdot \frac{1}{\log\left(n\right)}\log\left(\frac{S_\delta\left(n\right)}{a_\delta\left(0\right)}\right).
+    \]
+    Now, it suffices to show that the two terms \( \frac{a_\delta\left(n\right)^2}{\log\left(\frac{S_\delta\left(n\right)}{a_\delta\left(0\right)}\right)} \) and \( \frac{1}{\log\left(n\right)}\log\left(\frac{S_\delta\left(n\right)}{a_\delta\left(0\right)}\right) \) have as limit \( 2 \) and \( 1 \) respectively, as \( n \to +\infty \). For the second term, inverting the inequalities above gives \( 0 < a_\delta\left(n\right)-a_\delta\left(n-1\right) = S_\delta\left(n-1\right)^{-1} \leq \frac{1}{n\,a_\delta\left(0\right)} \) for all \( n \in \mathbb{N}_{\geq 1} \), so that, summing these inequalities, we obtain, for all \( n \in \mathbb{N}_{\geq 1} \),
+    \begin{equation}
+        a_\delta\left(n\right) = a_\delta\left(0\right)+\sum_{k=1}^{n} \left(a_\delta\left(k\right)-a_\delta\left(k-1\right)\right) \leq a_\delta\left(0\right)+\frac{1}{a_\delta\left(0\right)}\sum_{k=1}^{n} \frac{1}{k} \leq a_\delta\left(0\right)+\frac{1+\log\left(n\right)}{a_\delta\left(0\right)},
+        \label{eq:tel12-bound}
+    \end{equation}
+    since \( \frac{1}{k} \leq \int_{k-1}^{k} \frac{\mathrm{d}t}{t} \) for all \( k \in \mathbb{N}_{\geq 2} \). Hence, as \( S_\delta\left(n\right) \leq \left(n+1\right)\,a_\delta\left(n\right) \) for all \( n \in \mathbb{N} \) (seen above), we have, for all \( n \in \mathbb{N}_{\geq 2} \),
+    \[
+        \log\left(n+1\right) \leq \log\left(\frac{S_\delta\left(n\right)}{a_\delta\left(0\right)}\right) \leq \log\left(n+1\right)+\log\left(\frac{a_\delta\left(n\right)}{a_\delta\left(0\right)}\right)
+    \]
+    \[
+        \leq \log\left(n+1\right)+\log\left(1+\frac{1+\log\left(n\right)}{a_\delta\left(0\right)^2}\right),
+    \]
+    and we divide by \( \log\left(n\right) > 0 \). On the one hand, as \( \log\left(1+\frac{1}{n}\right) \overset{n \to +\infty}{\longrightarrow} 0 \) and \( \log\left(n\right) \overset{n \to +\infty}{\longrightarrow} +\infty \),
+    \[
+        \frac{\log\left(n+1\right)}{\log\left(n\right)} = 1+\frac{\log\left(1+\frac{1}{n}\right)}{\log\left(n\right)} \overset{n \to +\infty}{\longrightarrow} 1.
+    \]
+    On the other hand, the functions \( x \mapsto \log\left(1+\frac{1+x}{a_\delta\left(0\right)^2}\right) \) and \( x \mapsto x \) are differentiable on \( \left]0;+\infty\right[ \), both tend to \( +\infty \) at \( +\infty \), the derivative of the second one is \( 1 \neq 0 \), and the quotient of their derivatives is \( \frac{1}{a_\delta\left(0\right)^2+1+x} \overset{x \to +\infty}{\longrightarrow} 0 \), so that, by L'Hôpital's theorem, \( \frac{1}{x}\log\left(1+\frac{1+x}{a_\delta\left(0\right)^2}\right) \overset{x \to +\infty}{\longrightarrow} 0 \), and hence, as \( \log\left(n\right) \overset{n \to +\infty}{\longrightarrow} +\infty \),
+        \[
+            \frac{1}{\log\left(n\right)}\log\left(1+\frac{1+\log\left(n\right)}{a_\delta\left(0\right)^2}\right) \overset{n \to +\infty}{\longrightarrow} 0.
+        \]
+        Thus, by the squeeze theorem, \( \frac{1}{\log\left(n\right)}\log\left(\frac{S_\delta\left(n\right)}{a_\delta\left(0\right)}\right) \overset{n \to +\infty}{\longrightarrow} 1 \).
+        \\\\
+        Lastly, for the first term, since \( a_\delta \) is strictly increasing and \( a_\delta\left(0\right) > 0 \), the sequence \( \left\langle \log\left(\frac{S_\delta\left(n\right)}{a_\delta\left(0\right)}\right) \,\middle|\, n \in \mathbb{N}_{\geq 1} \right\rangle \) is strictly increasing, and, as \( \log\left(\frac{S_\delta\left(n\right)}{a_\delta\left(0\right)}\right) \geq \log\left(n+1\right) > 0 \) for all \( n \in \mathbb{N}_{\geq 1} \) (seen above), it does not take the value \( 0 \) and converges to \( +\infty \). Hence, the Stolz–Ces\`aro theorem [\appendixref{stolz-cesaro-theorem}] applies to \( \left\langle a_\delta\left(n\right)^2 \,\middle|\, n \in \mathbb{N}_{\geq 1} \right\rangle \) and this sequence, which means that, to show that \( \left\langle \frac{a_\delta\left(n\right)^2}{\log\left(\frac{S_\delta\left(n\right)}{a_\delta\left(0\right)}\right)} \,\middle|\, n \in \mathbb{N}_{\geq 1} \right\rangle \) converges to \( 2 \), it is sufficient to show that
+        \[
+            \left\langle \frac{a_\delta\left(n\right)^2-a_\delta\left(n-1\right)^2}{\log\left(\frac{S_\delta\left(n\right)}{a_\delta\left(0\right)}\right)-\log\left(\frac{S_\delta\left(n-1\right)}{a_\delta\left(0\right)}\right)} \,\middle|\, n \in \mathbb{N}_{\geq 2} \right\rangle
+        \]
+        converges to \( 2 \).
+        \\\\
+        Fix \( n \in \mathbb{N}_{\geq 2} \). Then, as \( S_\delta\left(n\right) = S_\delta\left(n-1\right)+a_\delta\left(n\right) \),
+        \[
+            \frac{a_\delta\left(n\right)^2-a_\delta\left(n-1\right)^2}{\log\left(\frac{S_\delta\left(n\right)}{a_\delta\left(0\right)}\right)-\log\left(\frac{S_\delta\left(n-1\right)}{a_\delta\left(0\right)}\right)} = \frac{\left(a_\delta\left(n\right)+a_\delta\left(n-1\right)\right)\,S_\delta\left(n-1\right)^{-1}}{\log\left(1+\frac{a_\delta\left(n\right)}{S_\delta\left(n-1\right)}\right)}
+        \]
+        \[
+            = \left(1+\frac{a_\delta\left(n-1\right)}{a_\delta\left(n\right)}\right)\frac{\frac{a_\delta\left(n\right)}{S_\delta\left(n-1\right)}}{\log\left(1+\frac{a_\delta\left(n\right)}{S_\delta\left(n-1\right)}\right)}.
+        \]
+        Now, it suffices to show that the two terms \( 1+\frac{a_\delta\left(n-1\right)}{a_\delta\left(n\right)} \) and \( \frac{\frac{a_\delta\left(n\right)}{S_\delta\left(n-1\right)}}{\log\left(1+\frac{a_\delta\left(n\right)}{S_\delta\left(n-1\right)}\right)} \) have as limit \( 2 \) and \( 1 \) respectively, as \( n \to +\infty \). For the first one, we have, as \( 0 < a_\delta\left(n\right)-a_\delta\left(n-1\right) \leq \frac{1}{n\,a_\delta\left(0\right)} \) (seen above) and \( a_\delta\left(n\right) \geq a_\delta\left(0\right) > 0 \),
+        \[
+            \frac{a_\delta\left(n-1\right)}{a_\delta\left(n\right)} = 1-\frac{a_\delta\left(n\right)-a_\delta\left(n-1\right)}{a_\delta\left(n\right)},
+        \]
+        where
+        \[
+            0 < \frac{a_\delta\left(n\right)-a_\delta\left(n-1\right)}{a_\delta\left(n\right)} \leq \frac{1}{n\,a_\delta\left(0\right)\,a_\delta\left(n\right)} \leq \frac{1}{n\,a_\delta\left(0\right)^2},
+        \]
+        so that \( 1-\frac{1}{n\,a_\delta\left(0\right)^2} \leq \frac{a_\delta\left(n-1\right)}{a_\delta\left(n\right)} < 1 \), and hence, by the squeeze theorem, \( \frac{a_\delta\left(n-1\right)}{a_\delta\left(n\right)} \overset{n \to +\infty}{\longrightarrow} 1 \), i.e., \( 1+\frac{a_\delta\left(n-1\right)}{a_\delta\left(n\right)} \overset{n \to +\infty}{\longrightarrow} 2 \). For the second one, we first show that \( \frac{a_\delta\left(n\right)}{S_\delta\left(n-1\right)} \overset{n \to +\infty}{\longrightarrow} 0 \). As \( 0 < n\,a_\delta\left(0\right) \leq S_\delta\left(n-1\right) \) (seen above), we get, by \eqref{eq:tel12-bound},
+        \[
+            0 < \frac{a_\delta\left(n\right)}{S_\delta\left(n-1\right)} \leq \frac{a_\delta\left(n\right)}{n\,a_\delta\left(0\right)} \leq \frac{1}{n\,a_\delta\left(0\right)}\left(a_\delta\left(0\right)+\frac{1+\log\left(n\right)}{a_\delta\left(0\right)}\right)
+        \]
+        \[
+            = \frac{1}{n}+\frac{1}{a_\delta\left(0\right)^2} \cdot \frac{1}{n}+\frac{1}{a_\delta\left(0\right)^2} \cdot \frac{\log\left(n\right)}{n}.
+        \]
+        Moreover, the functions \( x \mapsto \log\left(x\right) \) and \( x \mapsto x \) are differentiable on \( \left]1;+\infty\right[ \), both tend to \( +\infty \) at \( +\infty \), the derivative of the second one is \( 1 \neq 0 \), and the quotient of their derivatives is \( \frac{1}{x} \overset{x \to +\infty}{\longrightarrow} 0 \), so that, by L'Hôpital's theorem, \( \frac{\log\left(x\right)}{x} \overset{x \to +\infty}{\longrightarrow} 0 \), and in particular \( \frac{\log\left(n\right)}{n} \overset{n \to +\infty}{\longrightarrow} 0 \). Hence, by the squeeze theorem, \( \frac{a_\delta\left(n\right)}{S_\delta\left(n-1\right)} \overset{n \to +\infty}{\longrightarrow} 0 \). Now, as \( \log \) is differentiable at \( 1 \) with derivative \( 1 \), we have
+    \[
+        \frac{\log\left(1+t\right)}{t} = \frac{\log\left(1+t\right)-\log\left(1\right)}{t} \overset{t \to 0}{\longrightarrow} 1,
+    \]
+    so that \( \frac{t}{\log\left(1+t\right)} \overset{t \to 0}{\longrightarrow} 1 \), and hence, as \( \frac{a_\delta\left(n\right)}{S_\delta\left(n-1\right)} > 0 \) and \( \frac{a_\delta\left(n\right)}{S_\delta\left(n-1\right)} \overset{n \to +\infty}{\longrightarrow} 0 \),
+    \[
+        \frac{\frac{a_\delta\left(n\right)}{S_\delta\left(n-1\right)}}{\log\left(1+\frac{a_\delta\left(n\right)}{S_\delta\left(n-1\right)}\right)} \overset{n \to +\infty}{\longrightarrow} 1.
+    \]
+    So
+    \[
+        \frac{a_\delta\left(n\right)^2-a_\delta\left(n-1\right)^2}{\log\left(\frac{S_\delta\left(n\right)}{a_\delta\left(0\right)}\right)-\log\left(\frac{S_\delta\left(n-1\right)}{a_\delta\left(0\right)}\right)} \overset{n \to +\infty}{\longrightarrow} 2 \cdot 1 = 2.
+    \]
+    Therefore, by the two reductions above, \( \left\langle \frac{a_\delta\left(n\right)^2}{\log\left(n\right)} \,\middle|\, n \in \mathbb{N}_{\geq 2} \right\rangle \) converges to \( 2 \).
+\end{solution}

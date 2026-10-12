@@ -1,0 +1,64 @@
+% title:          Exponential growth of a nonlinear recursion
+% area:           sequences
+% methods:        telescoping, induction, monotonicity
+% difficulty:     medium
+% difficulty-ai:  medium
+% status:
+% review:         human
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         imc
+% origin-date:    2024-08-08
+% origin-number:  Day 2, Problem 8
+% also-in:
+% references:     Earliest known appearance (to the best of our knowledge): IMC 2024, Blagoevgrad, Day 2, 8 August 2024, Problem 8 - https://www.imc-math.org.uk/imc2024/imc2024-day2-questions.pdf; official solution - https://www.imc-math.org.uk/imc2024/imc2024-day2-solutions.pdf
+% history:        ai
+\begin{problem}
+Let us define recursively \( a \in \left(\mathbb{R}_{>0}\right)^{\mathbb{N}_{\geq 1}} \), with \( a_{n-1} < a_n \) for all \( n \in \mathbb{N}_{\geq 2} \), by \( 0 < a_1 := 2 < a_2 := 4 \) and, for all \( n \in \mathbb{N}_{\geq 3} \), assuming \( a_{n-1}, a_{n-2} \in \mathbb{R}_{>0} \) are defined and \( a_{n-2} < a_{n-1} \),
+\[
+    a_n := 3a_{n-1}-2a_{n-2}+\frac{2^{n-2}}{a_{n-2}} > a_{n-1}+\frac{2^{n-2}}{a_{n-2}} > a_{n-1},
+\]
+where the first inequality holds as \( 2\left(a_{n-1}-a_{n-2}\right) > 0 \) and the second as \( \frac{2^{n-2}}{a_{n-2}} > 0 \). So we have a unique \( a \in \left(\mathbb{R}_{>0}\right)^{\mathbb{N}_{\geq 1}} \), which must be strictly increasing. Show that \( \left\langle \frac{a_n}{2^n} \,\middle|\, n \in \mathbb{N}_{\geq 1} \right\rangle \in \left(\mathbb{R}_{>0}\right)^{\mathbb{N}_{\geq 1}} \) converges and that
+\[
+    \frac{1+\sqrt{3}}{2} \leq \lim_{n \to +\infty} \frac{a_n}{2^n} \leq \frac{3}{2}.
+\]
+\end{problem}
+\begin{solution}
+    We prove by induction that \( 2a_n \leq a_{n+1} \) (equivalently \( \frac{a_n}{2^n} \leq \frac{a_{n+1}}{2^{n+1}} \), i.e., \( \left\langle \frac{a_n}{2^n} \,\middle|\, n \in \mathbb{N}_{\geq 1} \right\rangle \) is increasing) for all \( n \in \mathbb{N}_{\geq 1} \). For the base case \( n = 1 \), \( 2a_1 = 4 \leq 4 = a_2 \). Now, for the induction step, let \( n \in \mathbb{N}_{\geq 1} \) with \( 2a_n \leq a_{n+1} \). Then \( \left(n+1\right)+1 = n+2 \in \mathbb{N}_{\geq 3} \) and, by definition,
+    \[
+        a_{n+2} = 3a_{n+1}-2a_n+\frac{2^n}{a_n} = 2a_{n+1}+\left(a_{n+1}-2a_n\right)+\frac{2^n}{a_n} > 2a_{n+1}+\left(a_{n+1}-2a_n\right) \geq 2a_{n+1},
+    \]
+    as \( a_n > 0 \) and \( a_{n+1}-2a_n \geq 0 \) by the induction hypothesis.
+    \\\\
+    We now show that \( \frac{a_n}{2^n} < \frac{3}{2} \) for all \( n \in \mathbb{N}_{\geq 1} \). By the previous induction, we easily have (also by induction) \( a_n \geq 2^{n-1}a_1 = 2^n \) for all \( n \in \mathbb{N}_{\geq 1} \), so that, by definition, for all \( n \in \mathbb{N}_{\geq 3} \),
+    \begin{equation}
+        a_n-2a_{n-1} = a_{n-1}-2a_{n-2}+\frac{2^{n-2}}{a_{n-2}}
+        \label{eq:tel11-rec}
+    \end{equation}
+    \[
+        \leq a_{n-1}-2a_{n-2}+1.
+    \]
+    As \( a_2-2a_1 = 0 \), we also easily get by induction \( a_n-2a_{n-1} \leq n-2 \) for all \( n \in \mathbb{N}_{\geq 2} \), and hence, for all \( n \in \mathbb{N}_{\geq 2} \),
+    \[
+        \frac{a_n}{2^n} = \frac{a_2}{2^2}+\sum_{k=3}^{n} \left(\frac{a_k}{2^k}-\frac{a_{k-1}}{2^{k-1}}\right) = 1+\sum_{k=3}^{n} \frac{a_k-2a_{k-1}}{2^k} \leq 1+\sum_{k=3}^{n} \frac{k-2}{2^k}
+    \]
+    \[
+        = 1+\sum_{k=3}^{n} \left(\frac{k-1}{2^{k-1}}-\frac{k}{2^k}\right) = 1+\frac{2}{2^2}-\frac{n}{2^n} = \frac{3}{2}-\frac{n}{2^n} < \frac{3}{2},
+    \]
+    where we used that \( \frac{k-2}{2^k} = \frac{k-1}{2^{k-1}}-\frac{k}{2^k} \) for all \( k \in \mathbb{N} \).
+    This bound also holds for \( n = 1 \) as \( \frac{a_1}{2} = 1 < \frac{3}{2} \).
+    \\\\
+    Thus, \( \left\langle \frac{a_n}{2^n} \,\middle|\, n \in \mathbb{N}_{\geq 1} \right\rangle \in \left(\mathbb{R}_{>0}\right)^{\mathbb{N}_{\geq 1}} \) is an increasing sequence bounded above by \( \frac{3}{2} \), so it converges to \( L := \sup\left\{ \frac{a_n}{2^n} \,\middle|\, n \in \mathbb{N}_{\geq 1} \right\} \in \left[1;\frac{3}{2}\right] \) (as \( \frac{a_1}{2} = 1 \)).
+    \\\\
+    Since \( 0 < \frac{a_{n-2}}{2^{n-2}} \leq L \) for all \( n \in \mathbb{N}_{\geq 3} \), \eqref{eq:tel11-rec} also gives \( a_n-2a_{n-1} \geq a_{n-1}-2a_{n-2}+\frac{1}{L} \), so that, as \( a_2-2a_1 = 0 \), by induction \( a_n-2a_{n-1} \geq \frac{n-2}{L} \) for all \( n \in \mathbb{N}_{\geq 2} \). Hence, for all \( n \in \mathbb{N}_{\geq 2} \),
+    \[
+        \frac{a_n}{2^n} = 1+\sum_{k=3}^{n} \frac{a_k-2a_{k-1}}{2^k} \geq 1+\frac{1}{L}\sum_{k=3}^{n} \frac{k-2}{2^k} = 1+\frac{1}{L}\left(\frac{1}{2}-\frac{n}{2^n}\right),
+    \]
+    and letting \( n \to +\infty \), we obtain \( L \geq 1+\frac{1}{2L} \), i.e., as \( L > 0 \):
+    \[
+        0\leq L^2-L-\frac{1}{2} = \left(L-\frac{1+\sqrt{3}}{2}\right)\left(L-\frac{1-\sqrt{3}}{2}\right).
+    \]
+    Finally, since \( L > 0 > \frac{1-\sqrt{3}}{2} \), we must have \( L \geq \frac{1+\sqrt{3}}{2} \), and hence in total
+    \[
+        \frac{1+\sqrt{3}}{2} \leq L \leq \frac{3}{2}.
+    \]
+\end{solution}

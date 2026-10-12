@@ -1,0 +1,86 @@
+% title:          Composite values of a double exponential
+% area:           primes, divisibility
+% methods:        telescoping, induction
+% difficulty:     medium
+% difficulty-ai:  medium
+% status:
+% review:         human
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         folklore
+% origin-date:
+% origin-number:
+% also-in:        jarnik
+% references:     Earliest known appearance (to the best of our knowledge): question by Georges Z. on the Number Theory List, answered by Zhi-Wei Sun on 2005-03-25 that the numbers are composite for n>=3 (Fermat-number argument), quoted in the comments of OEIS A103743 - https://oeis.org/A103743; also VJIMC 2009, Category I, Problem 2 - https://vjimc.osu.cz/storage/uploads/j19problems1.pdf
+% history:        ai
+\begin{problem}
+Show that for all \( n \in \mathbb{N}_{\geq 3} \),
+\[
+    2^{\left(2^n-1\right)}-2^n-1 \in \mathbb{N} \setminus \mathbb{P}.
+\]
+\end{problem}
+\begin{solution}
+    Define \( r_{-} \colon \mathbb{N} \to \mathbb{N} \), \( n \mapsto v_2\left(n+1\right) \), which is well defined as \( n+1 \geq 1 \), and \( m_{-} \colon \mathbb{N} \to 2\mathbb{N}+1 \), \( n \mapsto \frac{n+1}{2^{r_n}} \), so that \( n+1 = 2^{r_n} \cdot m_n \) for all \( n \in \mathbb{N} \). Notice that \( r_n \in \llbracket 0;n \rrbracket \) for all \( n \in \mathbb{N} \), since \( r_n \leq \log_2\left(n+1\right) < n+1 \) (as \( n+1 > 0 \)).
+    \\\\
+    Recall that on any commutative ring \( R \) the following identities over \( R\left[X\right] \) hold. First, for all \( n \in \mathbb{N} \), by induction,
+    \begin{equation}
+        X^{\left(2^n\right)}-1_R = \left(X-1_R\right)\prod_{i=1}^{n} \left(X^{\left(2^{n-i}\right)}+1_R\right).
+        \label{eq:tel9-first}
+    \end{equation}
+    Second, for all \( n \in \mathbb{N} \),
+    \[
+        X^{n+1}+1_R = X^{2^{r_n} m_n}-\left(-1_R\right)^{m_n} = \left(X^{\left(2^{r_n}\right)}\right)^{m_n}-\left(-1_R\right)^{m_n}
+    \]
+    \[
+        = \left(X^{\left(2^{r_n}\right)}+1_R\right)\left(\sum_{i=0}^{m_n-1} \left(X^{\left(2^{r_n}\right)}\right)^i \left(-1_R\right)^{m_n-1-i}\right)
+    \]
+    \begin{equation}
+        = \left(X^{\left(2^{r_n}\right)}+1_R\right)\left(\sum_{i=0}^{m_n-1} \left(-X^{\left(2^{r_n}\right)}\right)^i\right),
+        \label{eq:tel9-second}
+    \end{equation}
+    where the second equality is the standard identity over a commutative ring and the third holds as \( m_n \) is odd.
+    \\\\
+    Now, for \( R = \mathbb{Z} \) and for all \( n \in \mathbb{N} \), evaluating \eqref{eq:tel9-first} at \( 2 \) gives
+    \[
+        2^{\left(2^n\right)}-1 = \prod_{i=1}^{n} \left(2^{\left(2^{n-i}\right)}+1\right),
+    \]
+    (for \( n = 0 \) this works: recall that the empty product is \( 1 \)), and, as long as \( n \geq 1 \), each of these \( n \) factors is at least \( 3 \). Similarly, evaluating \eqref{eq:tel9-second} at \( 2 \) gives
+    \[
+        2^{n+1}+1 = \left(2^{\left(2^{r_n}\right)}+1\right)\left(\sum_{i=0}^{m_n-1} \left(-2^{\left(2^{r_n}\right)}\right)^i\right).
+    \]
+    Hence, for all \( n \in \mathbb{N} \),
+    \[
+        2^{\left(2^n-1\right)}-2^n-1 = \frac{1}{2}\left(\left(2^{\left(2^n\right)}-1\right)-\left(2^{n+1}+1\right)\right)
+    \]
+    \[
+        = \frac{1}{2}\left(\prod_{i=1}^{n} \left(2^{\left(2^{n-i}\right)}+1\right)-\left(2^{\left(2^{r_n}\right)}+1\right)\left(\sum_{i=0}^{m_n-1} \left(-2^{\left(2^{r_n}\right)}\right)^i\right)\right) \in \mathbb{Z}.
+    \]
+    Now, notice that if \( r_n \in \llbracket 0;n-1 \rrbracket \), we can factor \( 2^{\left(2^{r_n}\right)}+1 \) out of the product, as there must exist an \( i \in \llbracket 1;n \rrbracket \) such that \( r_n = n-i \) (namely \( i = n - r_n \)), and we can then hope to have a non-trivial factorization.
+    The rest of the exercise is to show that \( r_n \in \llbracket 0;n-1 \rrbracket \) for all \( n \in \mathbb{N}_{\geq 2} \), and then to show that we indeed have a non-trivial factorization for all \( n \in \mathbb{N}_{\geq 3} \).
+    \\\\
+    \textit{If \( n \geq 2 \), then \( r_n \in \llbracket 0;n-1 \rrbracket \) and \( 2^{\left(2^{r_n}\right)}+1 \) is a factor.}
+    \\\\
+    For all \( n \in \mathbb{N} \), having \( r_n \in \llbracket 0;n-1 \rrbracket \) is equivalent (as \( r_n \in \llbracket 0;n \rrbracket \)) to having \( r_n < n \), i.e., \( v_2\left(n+1\right) < n \). As \( 2^{n'} > n'+1 \) for all \( n' \in \mathbb{N}_{\geq 2} \), and \( 2^0 = 0+1 \), \( 2^1 = 1+1 \), we have that \( v_2\left(n+1\right) < n \) if and only if \( n \in \mathbb{N}_{\geq 2} \). Thus, for all \( n \in \mathbb{N}_{\geq 2} \), we have \( r_n \in \llbracket 0;n-1 \rrbracket \) and
+    \[
+        2^{\left(2^n-1\right)}-2^n-1 = \frac{1}{2}\left(2^{\left(2^{r_n}\right)}+1\right)\left(\prod_{\substack{i=1,\\ i \neq n-r_n}}^{n} \left(2^{\left(2^{n-i}\right)}+1\right)-\sum_{i=0}^{m_n-1} \left(-2^{\left(2^{r_n}\right)}\right)^i\right) \in \mathbb{Z}.
+    \]
+    So \( 2^{\left(2^{r_n}\right)}+1 \in 2\mathbb{N}_{\geq 1}+1 \) is always a factor of \( 2^{2^n-1}-2^n-1 \) (not necessarily a non-trivial one).
+    \\\\
+    \textit{If \( n \geq 3 \), then this factorization is non-trivial.}
+    Fix \( n \in \mathbb{N}_{\geq 3} \) and define
+    \[
+        c\left(n\right) := \prod_{\substack{i=1,\\ i \neq n-r_n}}^{n} \left(2^{\left(2^{n-i}\right)}+1\right)-\sum_{i=0}^{m_n-1} \left(-2^{\left(2^{r_n}\right)}\right)^i \in \mathbb{Z},
+    \]
+    so that \( 2^{\left(2^n-1\right)}-2^n-1 = \frac{1}{2}\left(2^{\left(2^{r_n}\right)}+1\right)c\left(n\right) \). Since \( 2^{\left(2^{r_n}\right)}+1 \in 2\mathbb{N}_{\geq 1}+1 \), we have \( 2 \underset{\mathbb{Z}}{\nmid} 2^{\left(2^{r_n}\right)}+1 \), so \( 2 \underset{\mathbb{Z}}{\mid} c\left(n\right) \), and \( k\left(n\right) := \frac{c\left(n\right)}{2} \in \mathbb{Z} \) satisfies
+    \[
+        2^{\left(2^n-1\right)}-2^n-1 = \left(2^{\left(2^{r_n}\right)}+1\right)k\left(n\right).
+    \]
+    As \(x \in \left]3;+\infty\right[ \Rightarrow 2^{x-1}-x-1 > 0\), and \( 2^n > 3 \) (since \( n \geq 2 \)), we have \( 2^{\left(2^n-1\right)}-2^n-1 \in \mathbb{N}_{\geq 1} \), hence \( k\left(n\right) \in \mathbb{N}_{\geq 1} \). So the factorization is non-trivial, i.e., \( 2^{\left(2^n-1\right)}-2^n-1 \in \mathbb{N} \setminus \mathbb{P} \), as soon as \( 2^{\left(2^{r_n}\right)}+1 < 2^{\left(2^n-1\right)}-2^n-1 \), that is, as soon as
+    \[
+        2^{\left(2^{r_n}\right)}+2^n+2 < 2^{\left(2^n-1\right)}.
+    \]
+    As \( 2^{r_n} \leq n \), we have \( 2^{\left(2^{r_n}\right)}+2^n+2 \leq 2^n+2^n+2 = 2\left(2^n+1\right) \), so it suffices to show that \( 2\left(2^n+1\right) < 2^{\left(2^n-1\right)} \), i.e., to show that \( 2^n+1 < 2^{\left(2^n-2\right)} \).
+    The latter holds as \( x \in \left[5;+\infty\right[ \Rightarrow x+1 < 2^{x-2} \) and \( 2^n \geq 5 \) (since \( n \geq 3 \)), which concludes.
+    \begin{remark}
+        This only holds for \( n \geq 3 \) since \( 2^{\left(2^0-1\right)}-2^0-1 = -1 \notin \mathbb{N} \), \( 2^{\left(2^1-1\right)}-2^1-1 = -1 \notin \mathbb{N} \) and \( 2^{\left(2^2-1\right)}-2^2-1 = 3 \in \mathbb{P} \).
+    \end{remark}
+\end{solution}

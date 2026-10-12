@@ -1,0 +1,45 @@
+% title:          Series along a logarithmic recursion
+% area:           series, sequences
+% methods:        telescoping, monotonicity
+% difficulty:     easy
+% difficulty-ai:  easy
+% status:
+% review:         human
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         putnam
+% origin-date:    2016-12-03
+% origin-number:  B1
+% also-in:
+% references:     Earliest known appearance (to the best of our knowledge): Putnam 2016, B1 - https://kskedlaya.org/putnam-archive/2016.tex
+% history:        ai
+\begin{problem}
+Let \( a_{-} \in \left(\mathbb{R}_{>0}\right)^{\mathbb{N}} \) be defined recursively by \( a_0 = 1 \) and, for all \( n \in \mathbb{N}_{\geq 1} \), assuming \( a_{n-1} \in \mathbb{R}_{>0} \),
+define
+\[
+    a_n := \log\left(\exp\left(a_{n-1}\right) - a_{n-1}\right),
+\]
+which must be strictly positive since \( \exp\left(a_{n-1}\right) - a_{n-1} > 1 \) for all \( n \in \mathbb{N}_{\geq 1} \) because \( \exp\left(x\right) - x > 1 \) for all \( x \in \mathbb{R} \setminus \left\{0\right\} \).
+Show that
+\[
+    \sum_{n=0}^{+\infty} a_n
+\]
+converges and find the limit.
+\end{problem}
+\begin{solution}
+    First, for all \( n \in \mathbb{N}_{\geq 1} \) we have by construction \( a_{n-1} = \exp\left(a_{n-1}\right) - \exp\left(a_n\right) \), so that for all \( N \in \mathbb{N}_{\geq 1} \),
+    \[
+        \sum_{n=0}^{N} a_n = \sum_{n=1}^{N+1} a_{n-1} = \sum_{n=1}^{N+1} \left(\exp\left(a_{n-1}\right) - \exp\left(a_n\right)\right)
+    \]
+    \[
+        = \exp\left(a_0\right) - \exp\left(a_{N+1}\right) = e - \exp\left(a_{N+1}\right).
+    \]
+    Now, for all \( n \in \mathbb{N}_{\geq 1} \),
+    \[
+        0 < a_{n+1} = \log\left(\exp\left(a_n\right) - a_n\right) < \log\left(\exp\left(a_n\right)\right) = a_n,
+    \]
+    where the second inequality holds since \( \log \) is strictly decreasing and \( a_n > 0 \), so that, classically, there exists \( L \in \mathbb{R}_{\geq 0} \) with \( L = \lim_{n \to +\infty} a_n \), which must satisfy
+    \[
+        L = \log\left(\exp\left(L\right) - L\right) \implies \exp\left(L\right) = \exp\left(L\right) - L \implies L = 0.
+    \]
+    Hence, by continuity of \( \exp \), the partial sums converge to \( e - \exp\left(L\right) = e - 1 \). Therefore, the series converges and its limit is \( e - 1 \).
+\end{solution}
