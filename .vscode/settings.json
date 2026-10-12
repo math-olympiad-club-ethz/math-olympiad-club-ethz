@@ -1,50 +1,24 @@
 // Math Olympiad Club ETHZ — LaTeX authoring settings for the problem bank.
-// Saving a problem-bank/problems/NNNN-title.tex compiles it through problem-bank/problems/_preview.tex
-// (which adds the shared preamble, and the shared results the solution cites); the PDF appears next to the .tex
-// (git-ignored).  Saving a shared result problem-bank/appendix/<name>.tex previews that result (and the results it
-// cites).
+// Live preview: saving a problem (problem-bank/problems/NNNN-title.tex or new-title.tex), a shared result
+// (problem-bank/appendix/<name>.tex) or a seminar sheet file (problem-bank/seminar_antoine_problems_solutions/
+// <sheet>/<name>.tex, local only) compiles it through problem-bank/problems/_preview.tex (shared preamble, cited
+// results); the PDF appears next to the .tex (git-ignored). Open that PDF once from the Explorer: it refreshes after
+// every save, and Cmd-click in it jumps to the source.
+// These files have no \documentclass, so LaTeX Workshop finds no "root file" for them and its recipes never run:
+// the build is the external command .vscode/bank-preview.sh, which compiles the .tex saved last (any other .tex,
+// e.g. statutes.tex or preamble.tex, is left alone).
 // Requires the "LaTeX Workshop" extension (see .vscode/extensions.json).
 {
-  "latex-workshop.latex.tools": [
-    {
-      // Compiles the problem file you are editing through problems/_preview.tex (adds the preamble).
-      // -norc: never run a latexmkrc / .latexmkrc (a pull request could add one next to the problems).
-      // The -e guard stops at once for any other .tex (statutes.tex, preamble.tex, ...): their PDFs stay untouched.
-      // Paths go through "env", never into Perl code, so any checkout folder name works.
-      "name": "bank-preview",
-      "command": "latexmk",
-      "args": [
-        "-norc",
-        "-e",
-        "die qq{bank-preview only builds problem-bank/problems/NNNN-*.tex, new-*.tex and problem-bank/appendix/<name>.tex\\n} unless ($ENV{BANK_DOC} // q{}) =~ m{/problem-bank/(?:problems/(?:[0-9]{4}|new)-[^/]+|appendix/[a-z0-9]+(?:-[a-z0-9]+)*)\\z};",
-        "-pdf",
-        "-f",
-        "-interaction=nonstopmode",
-        "-synctex=1",
-        "-file-line-error",
-        "-usepretex=\\def\\bankfile{%DOC%}",
-        "-jobname=%DOCFILE%",
-        "-outdir=%DIR%",
-        "%WORKSPACE_FOLDER%/problem-bank/problems/_preview.tex"
-      ],
-      "env": {
-        "BANK_DOC": "%DOC%",
-        "TEXINPUTS": "%WORKSPACE_FOLDER%/problem-bank:",
-        "BIBINPUTS": "%WORKSPACE_FOLDER%/problem-bank:",
-        "shell_escape": "f"
-      }
-    }
-  ],
-  "latex-workshop.latex.recipes": [
-    { "name": "problem preview (via problem-bank/problems/_preview.tex)", "tools": ["bank-preview"] }
-  ],
-  "latex-workshop.latex.recipe.default": "first",
+  // Runs from the workspace folder on every save of a .tex (autoBuild onSave below).
+  "latex-workshop.latex.external.build.command": "/bin/sh",
+  "latex-workshop.latex.external.build.args": [".vscode/bank-preview.sh"],
   "latex-workshop.latex.outDir": "%DIR%",
   "latex-workshop.latex.autoBuild.run": "onSave",
   "latex-workshop.latex.autoClean.run": "onBuilt",
   // After each build, delete the aux junk but KEEP *.synctex.gz (powers ⌘-click
-  // jump, both directions) and the .pdf. Each folder keeps just .tex + .pdf +
-  // .synctex.gz — all visible, nothing hidden, nothing stacks up.
+  // jump, both directions) and the .pdf (bank-preview.sh does the same). Each folder
+  // keeps just .tex + .pdf + .synctex.gz, and the .synctex.gz is hidden in the
+  // Explorer (files.exclude below): it stays on disk, so the jump still works.
   "latex-workshop.latex.clean.fileTypes": [
     "*.aux", "*.bbl", "*.bcf", "*.blg", "*.fdb_latexmk", "*.fls",
     "*.log", "*.out", "*.run.xml",
@@ -60,6 +34,17 @@
   "latex-workshop.message.update.show": false,
   "latex-workshop.message.error.show": false,
   "latex-workshop.message.warning.show": false,
+
+  // Hide the SyncTeX files of the previews in the Explorer (VS Code's default exclusions kept).
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "**/*.synctex.gz": true
+  },
 
   // Lets a plain `latexmk` in the VS Code integrated terminal also find the
   // shared preamble.tex / references.bib in problem-bank/.

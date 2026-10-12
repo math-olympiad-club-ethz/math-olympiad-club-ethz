@@ -47,7 +47,8 @@ it is opened and stays in the history, even if it is not merged.
    CI compiles every file, so the validator rejects what could reach beyond the problem: `\def`, `\let`, `\global`,
    `\catcode`, `\csname`, `\makeatletter`, `\input`, `\includegraphics`, `\newtheorem`, `\today`, … (it names the
    command and the line).
-3. Preview: save the file in VS Code (LaTeX Workshop builds it through `_preview.tex`), or run
+3. Preview: save the file in VS Code (LaTeX Workshop runs `.vscode/bank-preview.sh`, which builds it through
+   `_preview.tex`; open the PDF next to the file once from the Explorer, it refreshes on every save), or run
    `cd website-code && python3 -m bank.validate --compile ../problem-bank/problems/new-*.tex`.
 4. Open a pull request. CI validates the file, compiles it (also in the website's engine, under its future
    number) and prints exactly what is wrong (`file:line: message`).
