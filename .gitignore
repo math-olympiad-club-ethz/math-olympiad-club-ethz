@@ -37,6 +37,12 @@ __pycache__/
 /problem-bank/work-in-progress/*
 !/problem-bank/work-in-progress/README.md
 
+# Antoine's scanned seminar sheets ("Topics in Competition Mathematics", ETH) and their transcription — kept local, never committed.
+/problem-bank/seminar_antoine_problems_solutions/
+
+# The seminar repo's problems (Topics in Competition Mathematics) with the students' solutions: staging, kept local.
+/problem-bank/topics-in-competition-seminar/
+
 # Personal Claude Code instructions — local only, never committed.
 CLAUDE.local.md
 
