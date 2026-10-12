@@ -3,7 +3,7 @@
 % methods:        telescoping, monotonicity
 % difficulty:     easy
 % difficulty-ai:  easy
-% status:         partial
+% status:
 % review:         human
 % --- history: all optional, leave EMPTY if unknown ---
 % origin:         imc
@@ -33,12 +33,13 @@ converges and is strictly bounded above by \( 2 \).
     \]
     where the equality is the computation above.
     \\\\
-    Therefore, for all \( N \in \mathbb{N}_{\geq 1} \),
+    Therefore, for all \( N \in \mathbb{N}_{\geq 1} \), keeping the first summand aside (recall that the empty sum is \( 0 \)),
     \[
-        \sum_{n=1}^{N} \frac{1}{\sqrt{n}\left(n+1\right)} \leq 2 \sum_{n=1}^{N} \left(\frac{1}{\sqrt{n}} - \frac{1}{\sqrt{n+1}}\right) = 2\left(1 - \frac{1}{\sqrt{N+1}}\right)
+        \sum_{n=1}^{N} \frac{1}{\sqrt{n}\left(n+1\right)} = \frac{1}{2} + \sum_{n=2}^{N} \frac{1}{\sqrt{n}\left(n+1\right)} \leq \frac{1}{2} + 2 \sum_{n=2}^{N} \left(\frac{1}{\sqrt{n}} - \frac{1}{\sqrt{n+1}}\right)
     \]
     \[
-        = 2 - \frac{2}{\sqrt{N+1}}\leq 2.
+        = \frac{1}{2} + 2\left(\frac{1}{\sqrt{2}} - \frac{1}{\sqrt{N+1}}\right) = \frac{1}{2} + \sqrt{2} - \frac{2}{\sqrt{N+1}} \leq \frac{1}{2} + \sqrt{2} < 2,
     \]
-    Since each summand is positive and the partial sums are bounded by \( 2 \), it is standard that the series converges and its limit is at most \( 2 \).
+    where the last inequality holds since \( \sqrt{2} < \frac{3}{2} \) (as \( 2 < \frac{9}{4} \)).
+    Since each summand is positive and the partial sums are bounded by \( \frac{1}{2} + \sqrt{2} \), it is standard that the series converges and its limit is at most \( \frac{1}{2} + \sqrt{2} < 2 \).
 \end{solution}
