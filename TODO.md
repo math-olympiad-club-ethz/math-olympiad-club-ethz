@@ -30,8 +30,6 @@ Details, sources and the full change table: [`problem-bank/history-review.md`](p
 - [ ] **0031** (collection): origin = first part (AMC 12B 2007) or oldest part (AIME 1998)?
 - [ ] **0010**: RMT year 1989 may be a misprint for 1987 — check a copy of Revista Matematică Timișoara.
 - [ ] **0020**: origin = Cover 1987 ("Pick the largest number") or the older envelope paradox (Kraitchik 1953)?
-- [ ] **taken-from**: move the "Club source: …" notes from `references` to `taken-from`
-      (0032, 0035, 0038–0040, 0046, 0051–0053, 0055–0057, 0066, 0067).
 - [ ] **Older-source searches**: re-run a search-only pass for the 63 problems listed in history-review.md
       (the web-search quota ran out during the checks).
 - [ ] **0025**: split into two problems (IMO 1988 P6 and IMO 2007 P5)?

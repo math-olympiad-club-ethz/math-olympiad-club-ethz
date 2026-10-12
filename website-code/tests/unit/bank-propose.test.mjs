@@ -22,12 +22,12 @@ test('the file: header in the layout of _template.tex, blank fields blank, no so
   assert.equal(P.problemFile(draft()), [
     '% title:          Untitled problem', '% area:           primes', '% methods:', '% difficulty:', '% difficulty-ai:', '% status:',
     '% review:         none', '% --- history: all optional, leave EMPTY if unknown ---', '% origin:', '% origin-date:', '% origin-number:',
-    '% also-in:', '% taken-from:', '% references:', '% history:        none',
+    '% also-in:', '% references:', '% history:        none',
     '\\begin{problem}', 'Prove it.', '\\end{problem}', ''].join('\n'));
   const full = P.problemFile(draft({ title: '  Sum   of cubes ', statement: '\n\nLine 1\n\nLine 2  \n\n', solution: 'Sol.\n', area: ['primes', 'number-theory'],
     methods: ['induction'], difficulty: 'hard', origin: 'putnam', originDate: '1989', originNumber: 'A3', references: 'first\n\n second \n', bibtex: '@misc{k, title={T}}\n' }));
   assert.match(full, /^% title:          Sum of cubes\n% area:           primes, number-theory\n% methods:        induction\n% difficulty:     hard\n/);
-  assert.match(full, /% origin:         putnam\n% origin-date:    1989\n% origin-number:  A3\n% also-in:\n% taken-from:\n% references:     first; second\n/);
+  assert.match(full, /% origin:         putnam\n% origin-date:    1989\n% origin-number:  A3\n% also-in:\n% references:     first; second\n/);
   assert.ok(full.endsWith('\\begin{problem}\nLine 1\n\nLine 2\n\\end{problem}\n\\begin{solution}\nSol.\n\\end{solution}\n\\begin{bibentries}\n@misc{k, title={T}}\n\\end{bibentries}\n'));
   assert.ok(!P.problemFile(draft({ solution: '  \n ' })).includes('solution'));
 });

@@ -12,8 +12,8 @@ import unicodedata
 from .bib import CITE_RE, bib_block, parse_bib_entries
 
 HEADER_KEYS = ["title", "area", "methods", "difficulty", "difficulty-ai", "status",
-               "review", "origin", "origin-date", "origin-number", "also-in", "taken-from",
-               "references", "history"]
+               "review", "origin", "origin-date", "origin-number", "also-in", "references",
+               "history"]
 LIST_KEYS = {"area", "methods", "also-in"}
 ENUMS = {
     "difficulty": {"", "easy", "medium", "hard", "extreme"},
@@ -142,7 +142,7 @@ def parse_problem_file(path):
         p[k.replace("-", "_")] = _split_list(h.get(k, ""))
     p["title"] = h.get("title", "").strip() or UNTITLED
     for k in ("difficulty", "difficulty-ai", "status", "review", "history", "origin",
-              "origin-date", "origin-number", "taken-from", "references"):
+              "origin-date", "origin-number", "references"):
         p[k.replace("-", "_")] = h.get(k, "").strip()
     p["review"] = p["review"] or "none"
     p["history"] = p["history"] or "none"

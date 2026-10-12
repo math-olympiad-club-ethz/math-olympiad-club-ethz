@@ -112,7 +112,7 @@ as a link, so write it as you would write a number: `see Appendix~\appendixref{c
 - Two independent fields say who checked what:
   - `review` — the problem itself (statement, solution, tags): `none` nobody yet, `ai` a tool looked at it,
     `human` a board member accepted it → published.
-  - `history` — only the history fields (`origin`, `origin-date`, `origin-number`, `also-in`, `taken-from`,
+  - `history` — only the history fields (`origin`, `origin-date`, `origin-number`, `also-in`,
     `references`): `none` nobody looked, `ai` filled by an AI pass from sources it found (what it changed and how
     sure it was: [`history-review.md`](history-review.md)), `human` checked by a person against the source.
     `history` never decides whether a problem is published.

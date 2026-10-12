@@ -85,7 +85,6 @@ export function problemFile(draft) {
     header('origin-date', oneLine(d.originDate)),
     header('origin-number', oneLine(d.originNumber)),
     header('also-in', ''),
-    header('taken-from', ''),
     header('references', refsLine(d.references)),
     header('history', 'none'),
     '\\begin{problem}', block(d.statement), '\\end{problem}',
