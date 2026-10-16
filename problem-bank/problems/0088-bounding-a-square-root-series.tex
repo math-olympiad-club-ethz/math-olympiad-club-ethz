@@ -13,33 +13,44 @@
 % references:     Earliest known appearance (to the best of our knowledge): IMC 2015, Day 2, Problem 6 - https://www.imc-math.org.uk/imc2015/imc2015-day2-questions.pdf
 % history:        ai
 \begin{problem}
-Show that
-\[
-    \sum_{n=1}^{+\infty} \frac{1}{\sqrt{n}\left(n+1\right)}
-\]
-converges and is strictly bounded above by \( 2 \).
+    Show that
+    \[
+        \sum_{n=1}^{+\infty} \frac{1}{\sqrt{n}\left(n+1\right)}
+    \]
+    converges and is strictly bounded above by \( 2 \).
 \end{problem}
 \begin{solution}
     Notice that for all \( n \in \mathbb{N}_{\geq 1} \),
     \[
-        \frac{1}{\sqrt{n}} - \frac{1}{\sqrt{n+1}} = \frac{\sqrt{n+1} - \sqrt{n}}{\sqrt{n\left(n+1\right)}}
+        \frac{1}{\sqrt{n}} - \frac{1}{\sqrt{n+1}} =
+        \frac{\sqrt{n+1} - \sqrt{n}}{\sqrt{n\left(n+1\right)}}
     \]
     \[
-        = \frac{\left(n+1\right) - n}{\sqrt{n\left(n+1\right)} \left(\sqrt{n+1} + \sqrt{n}\right)} = \frac{1}{\sqrt{n}\left(n+1\right) + n\sqrt{n+1}}.
+        = \frac{\left(n+1\right) - n}{\sqrt{n\left(n+1\right)} \left(\sqrt{n+1} + \sqrt{n}\right)} =
+        \frac{1}{\sqrt{n}\left(n+1\right) + n\sqrt{n+1}}.
     \]
-    Now, since \( 0<n\sqrt{n+1} \leq \sqrt{n}\left(n+1\right) \), as \( \frac{n}{n+1} \leq \sqrt{\frac{n}{n+1}} \) (because \( \frac{n}{n+1} \in \left]0;1\right[ \)), we have \( \sqrt{n}\left(n+1\right) + n\sqrt{n+1} \leq 2\sqrt{n}\left(n+1\right) \), and hence
+    Now, since \( 0<n\sqrt{n+1} \leq \sqrt{n}\left(n+1\right) \), as \( \frac{n}{n+1} \leq
+    \sqrt{\frac{n}{n+1}} \) (because \( \frac{n}{n+1} \in \left]0;1\right[ \)), we have
+    \( \sqrt{n}\left(n+1\right) + n\sqrt{n+1} \leq 2\sqrt{n}\left(n+1\right) \), and hence
     \[
-        \frac{1}{\sqrt{n}\left(n+1\right)} \leq \frac{2}{\sqrt{n}\left(n+1\right) + n\sqrt{n+1}} = 2\left(\frac{1}{\sqrt{n}} - \frac{1}{\sqrt{n+1}}\right),
+        \frac{1}{\sqrt{n}\left(n+1\right)} \leq \frac{2}{\sqrt{n}\left(n+1\right) + n\sqrt{n+1}} =
+        2\left(\frac{1}{\sqrt{n}} - \frac{1}{\sqrt{n+1}}\right),
     \]
     where the equality is the computation above.
     \\\\
-    Therefore, for all \( N \in \mathbb{N}_{\geq 1} \), keeping the first summand aside (recall that the empty sum is \( 0 \)),
+    Therefore, for all \( N \in \mathbb{N}_{\geq 1} \), keeping the first summand aside (recall that
+    the empty sum is \( 0 \)),
     \[
-        \sum_{n=1}^{N} \frac{1}{\sqrt{n}\left(n+1\right)} = \frac{1}{2} + \sum_{n=2}^{N} \frac{1}{\sqrt{n}\left(n+1\right)} \leq \frac{1}{2} + 2 \sum_{n=2}^{N} \left(\frac{1}{\sqrt{n}} - \frac{1}{\sqrt{n+1}}\right)
+        \sum_{n=1}^{N} \frac{1}{\sqrt{n}\left(n+1\right)} = \frac{1}{2} + \sum_{n=2}^{N}
+        \frac{1}{\sqrt{n}\left(n+1\right)} \leq \frac{1}{2} + 2 \sum_{n=2}^{N}
+        \left(\frac{1}{\sqrt{n}} - \frac{1}{\sqrt{n+1}}\right)
     \]
     \[
-        = \frac{1}{2} + 2\left(\frac{1}{\sqrt{2}} - \frac{1}{\sqrt{N+1}}\right) = \frac{1}{2} + \sqrt{2} - \frac{2}{\sqrt{N+1}} \leq \frac{1}{2} + \sqrt{2} < 2,
+        = \frac{1}{2} + 2\left(\frac{1}{\sqrt{2}} - \frac{1}{\sqrt{N+1}}\right) = \frac{1}{2} +
+        \sqrt{2} - \frac{2}{\sqrt{N+1}} \leq \frac{1}{2} + \sqrt{2} < 2,
     \]
     where the last inequality holds since \( \sqrt{2} < \frac{3}{2} \) (as \( 2 < \frac{9}{4} \)).
-    Since each summand is positive and the partial sums are bounded by \( \frac{1}{2} + \sqrt{2} \), it is standard that the series converges and its limit is at most \( \frac{1}{2} + \sqrt{2} < 2 \).
+    Since each summand is positive and the partial sums are bounded by \( \frac{1}{2} + \sqrt{2} \),
+    it is standard that the series converges and its limit is at most \( \frac{1}{2} + \sqrt{2} <
+    2 \).
 \end{solution}

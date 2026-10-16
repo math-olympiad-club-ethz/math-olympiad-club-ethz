@@ -13,7 +13,9 @@
 % references:     Earliest known appearance (to the best of our knowledge): IMC 2015 (Blagoevgrad), Day 1, Problem 3, proposed by Gerhard Woeginger (Eindhoven University of Technology) - https://www.imc-math.org.uk/?year=2015&section=problems&item=prob3q; official paper and solutions (F(n) = 2^n - 2^{-n}, sum = 1) - https://www.imc-math.org.uk/imc2015/imc2015-day1-questions.pdf, https://www.imc-math.org.uk/imc2015/imc2015-day1-solutions.pdf; underlying identity sum_{n>=0} x^{2^n}/(1-x^{2^{n+1}}) = x/(1-x) for 0<x<1 is Putnam 1977 A4 (the IMC problem is the case x = 1/2, used in official Solution 2) - https://prase.cz/kalva/putnam/putn77.html, https://prase.cz/kalva/putnam/psoln/psol774.html
 % history:        human
 \begin{problem}
-    Let \( a_{-} \in \mathbb{R}^{\mathbb{N}} \) be defined recursively by \( a_0 = 0 \), \( a_1 := \frac{3}{2} \) and, for all \( n \in \mathbb{N}_{\geq 2} \), assuming \( a_{n-2}, a_{n-1} \in \mathbb{R} \) are defined,
+    Let \( a_{-} \in \mathbb{R}^{\mathbb{N}} \) be defined recursively by \( a_0 = 0 \),
+    \( a_1 := \frac{3}{2} \) and, for all \( n \in \mathbb{N}_{\geq 2} \), assuming \( a_{n-2},
+    a_{n-1} \in \mathbb{R} \) are defined,
     \[
         a_n := \frac{5}{2} a_{n-1} - a_{n-2}.
     \]
@@ -24,50 +26,81 @@
     converges, and determine whether the limit is rational or not.
 \end{problem}
 \begin{solution}
-    First, notice that for \( A := \begin{pmatrix} \frac{5}{2} & -1 \\ 1 & 0 \end{pmatrix} \in \mathbb{Q}^{2 \times 2} \) we have, for all \( n \in \mathbb{N}_{\geq 2} \),
+    First, notice that for \( A := \begin{pmatrix} \frac{5}{2} & -1 \\ 1 & 0 \end{pmatrix} \in
+    \mathbb{Q}^{2 \times 2} \) we have, for all \( n \in \mathbb{N}_{\geq 2} \),
     \[
-        A \begin{pmatrix} a_{n-1} \\ a_{n-2} \end{pmatrix} = \begin{pmatrix} \frac{5}{2} a_{n-1} - a_{n-2} \\ a_{n-1} \end{pmatrix} = \begin{pmatrix} a_n \\ a_{n-1} \end{pmatrix},
+        A \begin{pmatrix} a_{n-1} \\ a_{n-2} \end{pmatrix}
+        = \begin{pmatrix} \frac{5}{2} a_{n-1} - a_{n-2} \\ a_{n-1} \end{pmatrix}
+        = \begin{pmatrix} a_n \\ a_{n-1} \end{pmatrix},
     \]
     so that for all \( n \in \mathbb{N}_{\geq 1} \),
     \[
-        \begin{pmatrix} a_n \\ a_{n-1} \end{pmatrix} = A^{n-1} \cdot \begin{pmatrix} a_1 \\ a_0 \end{pmatrix}.
+        \begin{pmatrix} a_n \\ a_{n-1} \end{pmatrix} = A^{n-1} \cdot \begin{pmatrix} a_1 \\ a_0
+        \end{pmatrix}.
     \]
     Now,
     \[
-        P_{\mathrm{car},A}\left(X\right) = {\det}_{\mathbb{Q}\left(X\right)}\left(\begin{pmatrix} X-\frac{5}{2} & 1 \\ -1 & X-0 \end{pmatrix}\right) = X\left(X-\frac{5}{2}\right)+1 = X^2-\frac{5}{2}X+1
+        P_{\mathrm{car},A}\left(X\right) =
+            {\det}_{\mathbb{Q}\left(X\right)}\left(\begin{pmatrix} X-\frac{5}{2} & 1 \\ -1 & X-0 \end{pmatrix}\right)
+        = X\left(X-\frac{5}{2}\right)+1 = X^2-\frac{5}{2}X+1
     \]
     \[
         = \left(X-\frac{1}{2}\right)\left(X-2\right) \in \mathbb{Q}\left[X\right],
     \]
     and for all \( v \in \mathbb{R}^2 \),
     \[
-        Av = 2v \Leftrightarrow \begin{pmatrix} \frac{5}{2} v_1 - v_2 \\ v_1 \end{pmatrix} = \begin{pmatrix} 2 v_1 \\ 2 v_2 \end{pmatrix} \Leftrightarrow v_1 = 2 v_2,
+        Av = 2v \Leftrightarrow \begin{pmatrix} \frac{5}{2} v_1 - v_2 \\ v_1 \end{pmatrix}
+        = \begin{pmatrix} 2 v_1 \\ 2 v_2 \end{pmatrix} \Leftrightarrow v_1 = 2 v_2,
     \]
     \[
-        Av = \frac{1}{2} v \Leftrightarrow \begin{pmatrix} \frac{5}{2} v_1 - v_2 \\ v_1 \end{pmatrix} = \begin{pmatrix} \frac{1}{2} v_1 \\ \frac{1}{2} v_2 \end{pmatrix} \Leftrightarrow v_1 = \frac{1}{2} v_2.
+        Av = \frac{1}{2} v
+        \Leftrightarrow \begin{pmatrix} \frac{5}{2} v_1 - v_2 \\ v_1 \end{pmatrix}
+        = \begin{pmatrix} \frac{1}{2} v_1 \\ \frac{1}{2} v_2 \end{pmatrix} \Leftrightarrow v_1 =
+        \frac{1}{2} v_2.
     \]
-    So for \( P = \begin{pmatrix} 2 & \frac{1}{2} \\ 1 & 1 \end{pmatrix} \) we have \( P^{-1} = \begin{pmatrix} \frac{2}{3} & -\frac{1}{3} \\ -\frac{2}{3} & \frac{4}{3} \end{pmatrix} \) and \( AP = P \begin{pmatrix} 2 & 0 \\ 0 & \frac{1}{2} \end{pmatrix} \), i.e., \( A = P \begin{pmatrix} 2 & 0 \\ 0 & \frac{1}{2} \end{pmatrix} P^{-1} \). Hence, for all \( n \in \mathbb{N}_{\geq 1} \),
+    So for \( P = \begin{pmatrix} 2 & \frac{1}{2} \\ 1 & 1 \end{pmatrix} \) we have \( P^{-1}
+    = \begin{pmatrix} \frac{2}{3} & -\frac{1}{3} \\ -\frac{2}{3} & \frac{4}{3} \end{pmatrix} \) and
+    \( AP = P \begin{pmatrix} 2 & 0 \\ 0 & \frac{1}{2} \end{pmatrix} \), i.e., \( A =
+    P \begin{pmatrix} 2 & 0 \\ 0 & \frac{1}{2} \end{pmatrix} P^{-1} \). Hence, for all \( n \in
+    \mathbb{N}_{\geq 1} \),
     \[
-        \begin{pmatrix} a_n \\ a_{n-1} \end{pmatrix} = P \begin{pmatrix} 2^{n-1} & 0 \\ 0 & \left(\frac{1}{2}\right)^{n-1} \end{pmatrix} P^{-1} \begin{pmatrix} a_1 \\ a_0 \end{pmatrix} = \begin{pmatrix} 2^n & \left(\frac{1}{2}\right)^n \\ 2^{n-1} & \left(\frac{1}{2}\right)^{n-1} \end{pmatrix} \begin{pmatrix} \frac{2}{3} & -\frac{1}{3} \\ -\frac{2}{3} & \frac{4}{3} \end{pmatrix} \begin{pmatrix} a_1 \\ a_0 \end{pmatrix}
+        \begin{pmatrix} a_n \\ a_{n-1} \end{pmatrix} = P \begin{pmatrix} 2^{n-1} & 0 \\ 0 &
+            \left(\frac{1}{2}\right)^{n-1} \end{pmatrix} P^{-1} \begin{pmatrix} a_1 \\ a_0 \end{pmatrix}
+        = \begin{pmatrix} 2^n & \left(\frac{1}{2}\right)^n \\ 2^{n-1} &
+            \left(\frac{1}{2}\right)^{n-1} \end{pmatrix} \begin{pmatrix} \frac{2}{3} & -\frac{1}{3} \\
+            -\frac{2}{3} & \frac{4}{3} \end{pmatrix} \begin{pmatrix} a_1 \\ a_0 \end{pmatrix}
     \]
     \[
-        = \frac{1}{3} \begin{pmatrix} 2^{n+1} - \left(\frac{1}{2}\right)^{n-1} & \left(\frac{1}{2}\right)^{n-2} - 2^n \\ 2^n - \left(\frac{1}{2}\right)^{n-2} & \left(\frac{1}{2}\right)^{n-3} - 2^{n-1} \end{pmatrix} \begin{pmatrix} \frac{3}{2} \\ 0 \end{pmatrix} = \frac{1}{3} \begin{pmatrix} \frac{3}{2}\left(2^{n+1} - \left(\frac{1}{2}\right)^{n-1}\right) \\ \frac{3}{2}\left(2^n - \left(\frac{1}{2}\right)^{n-2}\right) \end{pmatrix}
+        =
+        \frac{1}{3} \begin{pmatrix} 2^{n+1} - \left(\frac{1}{2}\right)^{n-1} & \left(\frac{1}{2}\right)^{n-2} - 2^n \\ 2^n - \left(\frac{1}{2}\right)^{n-2} & \left(\frac{1}{2}\right)^{n-3} - 2^{n-1} \end{pmatrix} \begin{pmatrix} \frac{3}{2} \\ 0 \end{pmatrix}
+        =
+        \frac{1}{3} \begin{pmatrix} \frac{3}{2}\left(2^{n+1} - \left(\frac{1}{2}\right)^{n-1}\right) \\ \frac{3}{2}\left(2^n - \left(\frac{1}{2}\right)^{n-2}\right) \end{pmatrix}
     \]
     \[
         = \begin{pmatrix} 2^n - \left(\frac{1}{2}\right)^n \\ 2^{n-1} - \left(\frac{1}{2}\right)^{n-1} \end{pmatrix}.
     \]
-    This means that \( a_n = 2^n - 2^{-n} \) for all \( n \in \mathbb{N} \), and in particular \( a_{2^n} = 2^{\left(2^n\right)} - 2^{-\left(2^n\right)} \) for all \( n \in \mathbb{N} \). Notice that \(a_n>0\) for all \( n \in \mathbb{N}_{\geq 1} \), so that \( a_{2^n} \neq 0 \) for all \( n \in \mathbb{N} \).
+    This means that \( a_n = 2^n - 2^{-n} \) for all \( n \in \mathbb{N} \), and in particular
+    \( a_{2^n} = 2^{\left(2^n\right)} - 2^{-\left(2^n\right)} \) for all \( n \in \mathbb{N} \).
+    Notice that \(a_n>0\) for all \( n \in \mathbb{N}_{\geq 1} \), so that \( a_{2^n} \neq 0 \) for
+    all \( n \in \mathbb{N} \).
     \\\\
-    Now, let us define \( b_{-} \colon \mathbb{N} \to \mathbb{N}_{\geq 2} \), \( n \mapsto 2^{\left(2^n\right)} \). Then \( a_{2^n} = b_n - b_n^{-1} \) and \(b_n^2=b_{n+1}\) for all \( n \in \mathbb{N} \), so that
+    Now, let us define \( b_{-} \colon \mathbb{N} \to \mathbb{N}_{\geq 2} \), \( n \mapsto
+    2^{\left(2^n\right)} \). Then \( a_{2^n} = b_n - b_n^{-1} \) and \(b_n^2=b_{n+1}\) for all
+    \( n \in \mathbb{N} \), so that
     \[
-        \frac{1}{a_{2^n}} = \frac{1}{b_n - b_n^{-1}} = \frac{b_n}{b_n^2 - 1} = \frac{b_n + 1 - 1}{b_n^2 - 1} = \frac{1}{b_n - 1} - \frac{1}{b_n^2 - 1}
+        \frac{1}{a_{2^n}} = \frac{1}{b_n - b_n^{-1}} = \frac{b_n}{b_n^2 - 1} =
+        \frac{b_n + 1 - 1}{b_n^2 - 1} = \frac{1}{b_n - 1} - \frac{1}{b_n^2 - 1}
     \]
     \[
         = \frac{1}{b_n - 1} - \frac{1}{b_{n+1} - 1}.
     \]
     Hence, for all \( N \in \mathbb{N} \),
     \[
-        \sum_{n=0}^{N} \frac{1}{a_{2^n}} = \sum_{n=0}^{N} \left(\frac{1}{b_n - 1} - \frac{1}{b_{n+1} - 1}\right) = \frac{1}{b_0 - 1} - \frac{1}{b_{N+1} - 1}= 1 - \frac{1}{b_{N+1} - 1},
+        \sum_{n=0}^{N} \frac{1}{a_{2^n}} = \sum_{n=0}^{N} \left(\frac{1}{b_n - 1} -
+        \frac{1}{b_{n+1} - 1}\right) = \frac{1}{b_0 - 1} - \frac{1}{b_{N+1} - 1}= 1 -
+        \frac{1}{b_{N+1} - 1},
     \]
-    and since clearly \( \frac{1}{b_{N+1} - 1} \overset{N \to +\infty}{\longrightarrow} 0 \), the partial sums converge to \( 1 \in \mathbb{Q} \). Therefore, the series converges and its limit \( 1 \) is rational.
+    and since clearly \( \frac{1}{b_{N+1} - 1} \overset{N \to +\infty}{\longrightarrow} 0 \), the
+    partial sums converge to \( 1 \in \mathbb{Q} \). Therefore, the series converges and its limit
+    \( 1 \) is rational.
 \end{solution}

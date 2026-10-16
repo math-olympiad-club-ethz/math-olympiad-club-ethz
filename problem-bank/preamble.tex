@@ -71,36 +71,36 @@
 % ===== Graphics =====
 \usepackage{graphicx}
 \ifdefined\BankStitched
-  % Stitched mode has no TikZ (figures arrive as PDFs): TikZ/pgfplots settings written outside a
-  % picture do nothing here, so a problem that uses them still compiles in the browser.
-  \providecommand{\usetikzlibrary}[1]{}
-  \providecommand{\tikzset}[1]{}
-  \providecommand{\pgfplotsset}[1]{}
-  \providecommand{\pgfdeclarelayer}[1]{}
-  \providecommand{\pgfsetlayers}[1]{}
-  \providecommand{\pgfmathdeclarefunction}[3]{}
-  \providecommand{\usepgfplotslibrary}[1]{}
-  \providecommand{\tikzcdset}[1]{}
-  \def\tikzstyle#1=#2[#3]{}      % \tikzstyle{name}=[...] and \tikzstyle{name} = [...]
+    % Stitched mode has no TikZ (figures arrive as PDFs): TikZ/pgfplots settings written outside a
+    % picture do nothing here, so a problem that uses them still compiles in the browser.
+    \providecommand{\usetikzlibrary}[1]{}
+    \providecommand{\tikzset}[1]{}
+    \providecommand{\pgfplotsset}[1]{}
+    \providecommand{\pgfdeclarelayer}[1]{}
+    \providecommand{\pgfsetlayers}[1]{}
+    \providecommand{\pgfmathdeclarefunction}[3]{}
+    \providecommand{\usepgfplotslibrary}[1]{}
+    \providecommand{\tikzcdset}[1]{}
+    \def\tikzstyle#1=#2[#3]{}      % \tikzstyle{name}=[...] and \tikzstyle{name} = [...]
 \else
-  \usepackage{tikz}
-  \usepackage{tikz-cd}
-  \usepackage{pgfplots}
-  \pgfplotsset{compat=1.18}
-  \usetikzlibrary{trees}
-  \usetikzlibrary{decorations.markings}
+    \usepackage{tikz}
+    \usepackage{tikz-cd}
+    \usepackage{pgfplots}
+    \pgfplotsset{compat=1.18}
+    \usetikzlibrary{trees}
+    \usetikzlibrary{decorations.markings}
 \fi
 
 % ===== Bibliography (author / CI mode only; the site pre-resolves citations) =====
 \ifdefined\BankStitched\else
-  \usepackage[backend=biber]{biblatex}
-  \addbibresource{references.bib}
+    \usepackage[backend=biber]{biblatex}
+    \addbibresource{references.bib}
 \fi
 % Pre-resolved reference list emitted by build.py after a problem's solution.
 \newenvironment{problemreferences}
-  {\par\medskip\noindent{\small\textbf{References}}\par\nopagebreak
-   \begin{list}{}{\setlength{\leftmargin}{2em}\setlength{\itemsep}{0pt}\small}}
-  {\end{list}}
+{\par\medskip\noindent{\small\textbf{References}}\par\nopagebreak
+    \begin{list}{}{\setlength{\leftmargin}{2em}\setlength{\itemsep}{0pt}\small}}
+        {\end{list}}
 \newcommand{\refitem}[1]{\item[{[#1]}]}
 
 % ===== Colours =====
@@ -123,9 +123,9 @@
 % start time, so two compiles seconds apart differ in the trailer.  A non-empty argument fixes the
 % /ID to the MD5 of that text.  The browser worker additionally sets SOURCE_DATE_EPOCH=0.
 \ifdefined\pdfinfoomitdate
-  \pdfinfoomitdate=1
-  \pdftrailerid{Math Olympiad Club ETHZ problem bank}
-  \pdfsuppressptexinfo=-1
+    \pdfinfoomitdate=1
+    \pdftrailerid{Math Olympiad Club ETHZ problem bank}
+    \pdfsuppressptexinfo=-1
 \fi
 
 % ===== Problem-bank environments =====
@@ -139,13 +139,13 @@
 % (author mode) show it as "Problem 3 (#0042). Title" so maintainers can find the file.
 \ifdefined\BankStitched\newcommand{\bankidtag}[1]{}\else\newcommand{\bankidtag}[1]{ (\##1)}\fi
 \newcommand{\bankproblem}[4]{%
-  \par\addvspace{1.5\baselineskip}\penalty-300%
-  \setcounter{equation}{0}\setcounter{theorem}{0}\setcounter{lemma}{0}\setcounter{definition}{0}%
-  \setcounter{figure}{0}\setcounter{table}{0}\setcounter{footnote}{0}%
-  \setcounter{section}{0}\setcounter{subsection}{0}\renewcommand{\thesection}{\arabic{section}}%
-  \noindent{\Large\bfseries Problem #1\bankidtag{#4}.\ #2}\par\nopagebreak
-  \ifx\relax#3\relax\else\noindent{\small\textcolor{gray}{#3}}\par\nopagebreak\fi
-  \addvspace{0.5\baselineskip}}
+    \par\addvspace{1.5\baselineskip}\penalty-300%
+    \setcounter{equation}{0}\setcounter{theorem}{0}\setcounter{lemma}{0}\setcounter{definition}{0}%
+    \setcounter{figure}{0}\setcounter{table}{0}\setcounter{footnote}{0}%
+    \setcounter{section}{0}\setcounter{subsection}{0}\renewcommand{\thesection}{\arabic{section}}%
+    \noindent{\Large\bfseries Problem #1\bankidtag{#4}.\ #2}\par\nopagebreak
+    \ifx\relax#3\relax\else\noindent{\small\textcolor{gray}{#3}}\par\nopagebreak\fi
+    \addvspace{0.5\baselineskip}}
 % Optional line under the heading when the user asked to show the methods (spoilers, off by default).
 \newcommand{\bankmethods}[1]{\noindent{\small\textcolor{gray}{Methods: #1}}\par\nopagebreak\addvspace{0.3\baselineskip}}
 % "Not solved yet." marker used by the solutions PDF for unsolved / partial problems.
@@ -176,7 +176,7 @@
 \crefname{bankappendixitem}{Appendix}{Appendices}\Crefname{bankappendixitem}{Appendix}{Appendices}
 \newcommand{\bankappendixitemautorefname}{Appendix}
 \newcommand{\bankappendix}{\clearpage\setcounter{bankappendixitem}{0}%
-  \noindent{\Large\bfseries Appendix}\par\nopagebreak\addvspace{0.5\baselineskip}}
+    \noindent{\Large\bfseries Appendix}\par\nopagebreak\addvspace{0.5\baselineskip}}
 % \bankappendixitem{<name>}: the next appendixitem is the result <name> (its heading gets the label appendix:<name>).
 % Like the problem IDs, the name is printed in author mode only: "A.1 (spectral-mapping-theorem). Title".
 \newcommand{\bankappendixname}{}
@@ -184,50 +184,50 @@
 \ifdefined\BankStitched\newcommand{\bankappendixtag}[1]{}\else\newcommand{\bankappendixtag}[1]{ (#1)}\fi
 \makeatletter
 \newenvironment{appendixitem}[1]{%
-  \par\addvspace{1.5\baselineskip}\penalty-300%
-  \setcounter{equation}{0}\setcounter{theorem}{0}\setcounter{lemma}{0}\setcounter{definition}{0}%
-  \setcounter{figure}{0}\setcounter{table}{0}\setcounter{footnote}{0}%
-  \setcounter{section}{0}\setcounter{subsection}{0}\renewcommand{\thesection}{\arabic{section}}%
-  \refstepcounter{bankappendixitem}\def\@currentlabelname{#1}\label{appendix:\bankappendixname}% (\nameref: the title)
-  \noindent{\large\bfseries\thebankappendixitem\bankappendixtag{\bankappendixname}.\ #1}\par\nopagebreak
-  \addvspace{0.5\baselineskip}\ignorespaces}
-  {\par}
+    \par\addvspace{1.5\baselineskip}\penalty-300%
+    \setcounter{equation}{0}\setcounter{theorem}{0}\setcounter{lemma}{0}\setcounter{definition}{0}%
+    \setcounter{figure}{0}\setcounter{table}{0}\setcounter{footnote}{0}%
+    \setcounter{section}{0}\setcounter{subsection}{0}\renewcommand{\thesection}{\arabic{section}}%
+    \refstepcounter{bankappendixitem}\def\@currentlabelname{#1}\label{appendix:\bankappendixname}% (\nameref: the title)
+    \noindent{\large\bfseries\thebankappendixitem\bankappendixtag{\bankappendixname}.\ #1}\par\nopagebreak
+    \addvspace{0.5\baselineskip}\ignorespaces}
+{\par}
 \makeatother
 \ifdefined\BankStitched
-  \newcommand{\bankappendixneed}[1]{}
-  \newcommand{\bankappendixall}{}
+    \newcommand{\bankappendixneed}[1]{}
+    \newcommand{\bankappendixall}{}
 \else
-  % Author mode: \appendixref queues the name; \bankappendixall prints the Appendix and \input's every queued result
-  % once (a result read there may queue more: they are printed after it).
-  \ExplSyntaxOn
-  \seq_new:N \g__bank_appendix_seq
-  \int_new:N \g__bank_appendix_int
-  % Only a result name (lowercase kebab-case) is queued: nothing else is ever \input (e.g. ../x in a file not yet
-  % validated, opened in the local preview).
-  \cs_new_protected:Npn \bankappendixneed #1
+    % Author mode: \appendixref queues the name; \bankappendixall prints the Appendix and \input's every queued result
+    % once (a result read there may queue more: they are printed after it).
+    \ExplSyntaxOn
+    \seq_new:N \g__bank_appendix_seq
+    \int_new:N \g__bank_appendix_int
+    % Only a result name (lowercase kebab-case) is queued: nothing else is ever \input (e.g. ../x in a file not yet
+    % validated, opened in the local preview).
+    \cs_new_protected:Npn \bankappendixneed #1
     {
-      \str_set:Nx \l_tmpa_str {#1}
-      \exp_args:NnV \regex_match:nnT { \A [a-z0-9]+ (\-[a-z0-9]+)* \Z } \l_tmpa_str
-        {
-          \seq_if_in:NVF \g__bank_appendix_seq \l_tmpa_str
-            { \seq_gput_right:NV \g__bank_appendix_seq \l_tmpa_str }
-        }
+    \str_set:Nx \l_tmpa_str {#1}
+    \exp_args:NnV \regex_match:nnT { \A [a-z0-9]+ (\-[a-z0-9]+)* \Z } \l_tmpa_str
+    {
+        \seq_if_in:NVF \g__bank_appendix_seq \l_tmpa_str
+        { \seq_gput_right:NV \g__bank_appendix_seq \l_tmpa_str }
     }
-  \cs_new_protected:Npn \__bank_appendix_print:n #1
+    }
+    \cs_new_protected:Npn \__bank_appendix_print:n #1
     { \bankappendixitem {#1} \input { appendix/#1 } }
-  \cs_generate_variant:Nn \__bank_appendix_print:n { x }
-  \cs_new_protected:Npn \__bank_appendix_next:
+    \cs_generate_variant:Nn \__bank_appendix_print:n { x }
+    \cs_new_protected:Npn \__bank_appendix_next:
     {
-      \int_compare:nNnT { \g__bank_appendix_int } < { \seq_count:N \g__bank_appendix_seq }
-        {
-          \int_gincr:N \g__bank_appendix_int
-          \__bank_appendix_print:x { \seq_item:Nn \g__bank_appendix_seq { \g__bank_appendix_int } }
-          \__bank_appendix_next:
-        }
+        \int_compare:nNnT { \g__bank_appendix_int } < { \seq_count:N \g__bank_appendix_seq }
+            {
+                \int_gincr:N \g__bank_appendix_int
+                \__bank_appendix_print:x { \seq_item:Nn \g__bank_appendix_seq { \g__bank_appendix_int } }
+                \__bank_appendix_next:
+            }
     }
-  \cs_new_protected:Npn \bankappendixall
+    \cs_new_protected:Npn \bankappendixall
     { \int_compare:nNnT { \seq_count:N \g__bank_appendix_seq } > { 0 } { \bankappendix \__bank_appendix_next: } }
-  \ExplSyntaxOff
+    \ExplSyntaxOff
 \fi
 \DeclareRobustCommand{\appendixref}[1]{\bankappendixneed{#1}\hyperref[appendix:#1]{\ref*{appendix:#1}}}
 

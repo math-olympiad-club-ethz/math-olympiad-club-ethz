@@ -20,63 +20,96 @@
 % say m+1, which is what the solution below uses.
 % Restyled on 2026-10-01 after problem-bank/writing-style.md (the style of the fully solved problems); the mathematics is unchanged.
 \begin{problem}
-Let \( \left(R, +, \cdot, 0_R\right) \) be a (possibly non-commutative) ring, not necessarily unital, i.e., \( \left(R, +\right) \) is an abelian group with neutral element \( 0_R \), and the multiplication \( \cdot \) (we write \( ab := a \cdot b \)) is associative and distributes over \( + \) on both sides. Denote by
-\[
-Z\left(R\right) := \left\{ a \in R \setminus \left\{0_R\right\} \mid \exists b \in R \setminus \left\{0_R\right\}, \, ab = 0_R \text{ or } ba = 0_R \right\}
-\]
-the set of zero divisors of \( R \). Suppose that \( Z\left(R\right) \) is non-empty and finite. Prove that \( R \) is finite.
+    Let \( \left(R, +, \cdot, 0_R\right) \) be a (possibly non-commutative) ring, not necessarily
+    unital, i.e., \( \left(R, +\right) \) is an abelian group with neutral element \( 0_R \), and
+    the multiplication \( \cdot \) (we write \( ab := a \cdot b \)) is associative and distributes
+    over \( + \) on both sides. Denote by
+    \[
+        Z\left(R\right) := \left\{ a \in R \setminus \left\{0_R\right\} \mid \exists b \in R
+        \setminus \left\{0_R\right\}, \, ab = 0_R \text{ or } ba = 0_R \right\}
+    \]
+    the set of zero divisors of \( R \). Suppose that \( Z\left(R\right) \) is non-empty and finite.
+    Prove that \( R \) is finite.
 \end{problem}
 \begin{solution}
-We only use the ring axioms from the statement (in particular, no multiplicative identity). First note that distributivity gives, for all \( x, y, z \in R \),
-\[
-x \cdot 0_R = 0_R, \quad \left(x - y\right)z = xz - yz.
-\]
-Indeed, \( x \cdot 0_R = x\left(0_R + 0_R\right) = x \cdot 0_R + x \cdot 0_R \), and adding \( -\left(x \cdot 0_R\right) \) to both sides gives \( x \cdot 0_R = 0_R \). For the same reason, \( 0_R \cdot z = 0_R \), so \( yz + \left(-y\right)z = \left(y + \left(-y\right)\right)z = 0_R \cdot z = 0_R \), that is, \( \left(-y\right)z = -\left(yz\right) \). Therefore, \( \left(x - y\right)z = xz + \left(-y\right)z = xz - yz \).
-\\\\
-Let \( m := \left|Z\left(R\right)\right| \); by hypothesis \( m \in \mathbb{N}_{>0} \). Since a zero divisor is non-zero by definition, \( 0_R \notin Z\left(R\right) \) and
-\[
-\left|Z\left(R\right) \cup \left\{0_R\right\}\right| = m + 1.
-\]
-Since \( Z\left(R\right) \) is non-empty, take \( a \in Z\left(R\right) \). By definition, \( a \neq 0_R \) and there exists \( b \in R \setminus \left\{0_R\right\} \) such that \( ab = 0_R \) or \( ba = 0_R \). If \( ab = 0_R \), set \( u := a \) and \( v := b \). Else \( ba = 0_R \), and set \( u := b \) and \( v := a \). In both cases,
-\[
-u \neq 0_R, \quad v \neq 0_R, \quad uv = 0_R,
-\]
-i.e., \( u \) and \( v \) are two non-zero elements with product zero.
-\\\\
-Now define the map
-\[
-\varphi \colon R \to R, \quad x \mapsto xu.
-\]
-We claim that \( \operatorname{Im}\left(\varphi\right) \subseteq Z\left(R\right) \cup \left\{0_R\right\} \). Let \( x \in R \). By associativity and the first identity above,
-\[
-\left(xu\right)v = x\left(uv\right) = x \cdot 0_R = 0_R.
-\]
-If \( xu \neq 0_R \), then \( xu \) is a non-zero element whose product with the non-zero element \( v \) is \( 0_R \), so \( xu \in Z\left(R\right) \) by definition. Hence, \( xu \in Z\left(R\right) \cup \left\{0_R\right\} \) in all cases, which proves the claim. Thus,
-\[
-\left|\operatorname{Im}\left(\varphi\right)\right| \leq \left|Z\left(R\right) \cup \left\{0_R\right\}\right| = m + 1,
-\]
-i.e., \( \varphi \) takes at most \( m + 1 \) values.
-\\\\
-We show that each value of \( \varphi \) is taken at most \( m + 1 \) times. Let \( w \in \operatorname{Im}\left(\varphi\right) \) and fix some \( x_0 \in \varphi^{-1}\left[\left\{w\right\}\right] \). The map
-\[
-\psi \colon \varphi^{-1}\left[\left\{w\right\}\right] \to R, \quad y \mapsto y - x_0
-\]
-is injective, since \( y - x_0 = y' - x_0 \) implies \( y = y' \). Moreover, \( \psi \) takes its values in \( Z\left(R\right) \cup \left\{0_R\right\} \). Indeed, let \( y \in \varphi^{-1}\left[\left\{w\right\}\right] \), that is, \( yu = w = x_0 u \). If \( y = x_0 \), then \( \psi\left(y\right) = 0_R \). Else \( y - x_0 \neq 0_R \) and, by the second identity above,
-\[
-\left(y - x_0\right)u = yu - x_0 u = w - w = 0_R
-\]
-with \( u \neq 0_R \), so \( \psi\left(y\right) = y - x_0 \in Z\left(R\right) \) by definition. Since \( \psi \) is an injection into \( Z\left(R\right) \cup \left\{0_R\right\} \), we have
-\[
-\left|\varphi^{-1}\left[\left\{w\right\}\right]\right| \leq \left|Z\left(R\right) \cup \left\{0_R\right\}\right| = m + 1,
-\]
-and since \( w \in \operatorname{Im}\left(\varphi\right) \) was arbitrary, each value of \( \varphi \) is taken at most \( m + 1 \) times.
-\\\\
-The fibres \( \varphi^{-1}\left[\left\{w\right\}\right] \), for \( w \in \operatorname{Im}\left(\varphi\right) \), are pairwise disjoint and cover \( R \):
-\[
-R = \bigsqcup_{w \in \operatorname{Im}\left(\varphi\right)} \varphi^{-1}\left[\left\{w\right\}\right].
-\]
-As \( \varphi \) takes at most \( m + 1 \) values, this is a union of at most \( m + 1 \) sets, and we have just seen that each of them has at most \( m + 1 \) elements. A finite union of finite sets is finite, so \( R \) is finite, as required. More precisely, we have
-\[
-\left|R\right| = \sum_{w \in \operatorname{Im}\left(\varphi\right)} \left|\varphi^{-1}\left[\left\{w\right\}\right]\right| \leq \left(m + 1\right)\left(m + 1\right) = \left(m + 1\right)^2.
-\]
+    We only use the ring axioms from the statement (in particular, no multiplicative identity).
+    First note that distributivity gives, for all \( x, y, z \in R \),
+    \[
+        x \cdot 0_R = 0_R, \quad \left(x - y\right)z = xz - yz.
+    \]
+    Indeed, \( x \cdot 0_R = x\left(0_R + 0_R\right) = x \cdot 0_R + x \cdot 0_R \), and adding
+    \( -\left(x \cdot 0_R\right) \) to both sides gives \( x \cdot 0_R = 0_R \). For the same
+    reason, \( 0_R \cdot z = 0_R \), so \( yz + \left(-y\right)z = \left(y + \left(-y\right)\right)z
+    = 0_R \cdot z = 0_R \), that is, \( \left(-y\right)z = -\left(yz\right) \). Therefore,
+    \( \left(x - y\right)z = xz + \left(-y\right)z = xz - yz \).
+    \\\\
+    Let \( m := \left|Z\left(R\right)\right| \); by hypothesis \( m \in \mathbb{N}_{>0} \). Since a
+    zero divisor is non-zero by definition, \( 0_R \notin Z\left(R\right) \) and
+    \[
+        \left|Z\left(R\right) \cup \left\{0_R\right\}\right| = m + 1.
+    \]
+    Since \( Z\left(R\right) \) is non-empty, take \( a \in Z\left(R\right) \). By definition,
+    \( a \neq 0_R \) and there exists \( b \in R \setminus \left\{0_R\right\} \) such that
+    \( ab = 0_R \) or \( ba = 0_R \). If \( ab = 0_R \), set \( u := a \) and \( v := b \). Else
+    \( ba = 0_R \), and set \( u := b \) and \( v := a \). In both cases,
+    \[
+        u \neq 0_R, \quad v \neq 0_R, \quad uv = 0_R,
+    \]
+    i.e., \( u \) and \( v \) are two non-zero elements with product zero.
+    \\\\
+    Now define the map
+    \[
+        \varphi \colon R \to R, \quad x \mapsto xu.
+    \]
+    We claim that \( \operatorname{Im}\left(\varphi\right) \subseteq Z\left(R\right) \cup
+    \left\{0_R\right\} \). Let \( x \in R \). By associativity and the first identity above,
+    \[
+        \left(xu\right)v = x\left(uv\right) = x \cdot 0_R = 0_R.
+    \]
+    If \( xu \neq 0_R \), then \( xu \) is a non-zero element whose product with the non-zero
+    element \( v \) is \( 0_R \), so \( xu \in Z\left(R\right) \) by definition. Hence, \( xu \in
+    Z\left(R\right) \cup \left\{0_R\right\} \) in all cases, which proves the claim. Thus,
+    \[
+        \left|\operatorname{Im}\left(\varphi\right)\right| \leq \left|Z\left(R\right) \cup
+        \left\{0_R\right\}\right| = m + 1,
+    \]
+    i.e., \( \varphi \) takes at most \( m + 1 \) values.
+    \\\\
+    We show that each value of \( \varphi \) is taken at most \( m + 1 \) times. Let \( w \in
+    \operatorname{Im}\left(\varphi\right) \) and fix some \( x_0 \in
+    \varphi^{-1}\left[\left\{w\right\}\right] \). The map
+    \[
+        \psi \colon \varphi^{-1}\left[\left\{w\right\}\right] \to R, \quad y \mapsto y - x_0
+    \]
+    is injective, since \( y - x_0 = y' - x_0 \) implies \( y = y' \). Moreover, \( \psi \) takes
+    its values in \( Z\left(R\right) \cup \left\{0_R\right\} \). Indeed, let \( y \in
+    \varphi^{-1}\left[\left\{w\right\}\right] \), that is, \( yu = w = x_0 u \). If \( y = x_0 \),
+    then \( \psi\left(y\right) = 0_R \). Else \( y - x_0 \neq 0_R \) and, by the second identity
+    above,
+    \[
+        \left(y - x_0\right)u = yu - x_0 u = w - w = 0_R
+    \]
+    with \( u \neq 0_R \), so \( \psi\left(y\right) = y - x_0 \in Z\left(R\right) \) by definition.
+    Since \( \psi \) is an injection into \( Z\left(R\right) \cup \left\{0_R\right\} \), we have
+    \[
+        \left|\varphi^{-1}\left[\left\{w\right\}\right]\right| \leq \left|Z\left(R\right) \cup
+        \left\{0_R\right\}\right| = m + 1,
+    \]
+    and since \( w \in \operatorname{Im}\left(\varphi\right) \) was arbitrary, each value of
+    \( \varphi \) is taken at most \( m + 1 \) times.
+    \\\\
+    The fibres \( \varphi^{-1}\left[\left\{w\right\}\right] \), for \( w \in
+    \operatorname{Im}\left(\varphi\right) \), are pairwise disjoint and cover \( R \):
+    \[
+        R = \bigsqcup_{w \in \operatorname{Im}\left(\varphi\right)}
+        \varphi^{-1}\left[\left\{w\right\}\right].
+    \]
+    As \( \varphi \) takes at most \( m + 1 \) values, this is a union of at most \( m + 1 \) sets,
+    and we have just seen that each of them has at most \( m + 1 \) elements. A finite union of
+    finite sets is finite, so \( R \) is finite, as required. More precisely, we have
+    \[
+        \left|R\right| = \sum_{w \in \operatorname{Im}\left(\varphi\right)}
+        \left|\varphi^{-1}\left[\left\{w\right\}\right]\right| \leq \left(m + 1\right)\left(m +
+        1\right) = \left(m + 1\right)^2.
+    \]
 \end{solution}

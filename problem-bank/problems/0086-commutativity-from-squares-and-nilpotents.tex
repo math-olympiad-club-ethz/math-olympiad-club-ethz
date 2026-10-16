@@ -22,52 +22,91 @@
 % x + xy"; the right side should end in yx.
 % Restyled on 2026-10-01 after problem-bank/writing-style.md (the style of the fully solved problems); the mathematics is unchanged.
 \begin{problem}
-Let \( \left( A, +, \cdot, 0_A, 1_A \right) \) be a (possibly non-commutative) unital ring, i.e., \( \left( A, +, 0_A \right) \) is an abelian group, the multiplication \( \cdot \) (we write \( xy := x \cdot y \)) is associative and distributes over \( + \) on both sides, and \( 1_A x = x 1_A = x \) for every \( x \in A \). Suppose that every \( x \in A \) satisfies
-\[
-x^{2} = 1_A \quad \text{or} \quad x^{n} = 0_A \text{ for some integer } n \geq 1
-\]
-(possibly both). Prove that \( A \) is commutative, i.e., \( xy = yx \) for all \( x, y \in A \).
+    Let \( \left( A, +, \cdot, 0_A, 1_A \right) \) be a (possibly non-commutative) unital ring,
+    i.e., \( \left( A, +, 0_A \right) \) is an abelian group, the multiplication \( \cdot \) (we
+    write \( xy := x \cdot y \)) is associative and distributes over \( + \) on both sides, and
+    \( 1_A x = x 1_A = x \) for every \( x \in A \). Suppose that every \( x \in A \) satisfies
+    \[
+        x^{2} = 1_A \quad \text{or} \quad x^{n} = 0_A \text{ for some integer } n \geq 1
+    \]
+    (possibly both). Prove that \( A \) is commutative, i.e., \( xy = yx \) for all \( x, y \in
+    A \).
 \end{problem}
 \begin{solution}
-For \( x \in A \) and \( k \in \mathbb{N} \), define recursively \( x^{0} := 1_A \) and \( x^{k+1} := x^{k} x \); by associativity, \( x^{k} x^{l} = x^{k+l} \) for all \( k, l \in \mathbb{N} \). An element \( x \in A \) is nilpotent if \( x^{n} = 0_A \) for some integer \( n \geq 1 \). An element \( u \in A \) is a unit if \( uv = vu = 1_A \) for some \( v \in A \); this \( v \) is unique (if also \( uv' = v'u = 1_A \), then \( v' = v' \left( uv \right) = \left( v'u \right) v = v \)), and we denote it by \( u^{-1} \). Denote by \( A^{\times} \) the set of units of \( A \). It contains \( 1_A \), with \( u \) it contains \( u^{-1} \), and it is closed under multiplication since \( \left( uu' \right) \left( u'^{-1} u^{-1} \right) = 1_A = \left( u'^{-1} u^{-1} \right) \left( uu' \right) \) for \( u, u' \in A^{\times} \). Thus, \( \left( A^{\times}, \cdot, 1_A \right) \) is a group.
-\\\\
-If \( 1_A = 0_A \), then \( x = x \cdot 1_A = x \cdot 0_A = 0_A \) for every \( x \in A \) (since \( x \cdot 0_A = x \left( 0_A + 0_A \right) = x \cdot 0_A + x \cdot 0_A \) gives \( x \cdot 0_A = 0_A \) after adding \( -\left( x \cdot 0_A \right) \)), so \( A = \left\{ 0_A \right\} \) is commutative. Else \( 1_A \neq 0_A \), which we assume from now on.
-\\\\
-We claim that every unit \( u \in A^{\times} \) satisfies \( u^{2} = 1_A \). Indeed, if \( u^{n} = 0_A \) for some \( n \geq 1 \), then
-\[
-1_A = \left( u^{-1} \right)^{n} u^{n} = \left( u^{-1} \right)^{n} \cdot 0_A = 0_A,
-\]
-where the first equality follows by induction on \( n \), since \( \left( u^{-1} \right)^{k+1} u^{k+1} = \left( u^{-1} \right)^{k} \left( u^{-1} u \right) u^{k} = \left( u^{-1} \right)^{k} u^{k} \). This is a contradiction to \( 1_A \neq 0_A \). Thus, \( u \) is not nilpotent, and by the given assumption \( u^{2} = 1_A \).
-\\\\
-We now show that the group \( A^{\times} \) is commutative. Let \( x, y \in A^{\times} \). Then \( xy \in A^{\times} \), so the above claim applied to \( x \), \( y \) and \( xy \) gives \( x^{2} = y^{2} = 1_A \) and \( xyxy = \left( xy \right)^{2} = 1_A \). Multiplying the last equality by \( x \) on the left and by \( y \) on the right, we obtain
-\[
-yx = x^{2} \, yx \, y^{2} = x \left( xyxy \right) y = x \cdot 1_A \cdot y = xy.
-\]
-Thus, \( A^{\times} \) is commutative.
-\\\\
-Next, we claim that if \( x \notin A^{\times} \), then \( 1_A - x \in A^{\times} \). Suppose, for the sake of contradiction, that \( x \notin A^{\times} \) and \( y := 1_A - x \notin A^{\times} \). If \( x^{2} = 1_A \), then \( x \) would be a unit (with inverse \( x \)); hence \( x^{2} \neq 1_A \), and by the given assumption \( x^{n} = 0_A \) for some \( n \geq 1 \). In the same way, \( y^{m} = 0_A \) for some \( m \geq 1 \). Thus, \( x^{i} = x^{i-n} x^{n} = 0_A \) for every \( i \geq n \), and \( y^{j} = 0_A \) for every \( j \geq m \). Moreover, \( x \) and \( y \) commute:
-\[
-xy = x \left( 1_A - x \right) = x - x^{2} = \left( 1_A - x \right) x = yx,
-\]
-and then \( y^{j} x = x y^{j} \) for every \( j \in \mathbb{N} \) (by induction on \( j \)). For such commuting elements the binomial formula holds (by induction on \( N \) as for numbers, the binomial coefficients acting as integer multiples), so with \( N := n + m \) we have
-\[
-\left( x + y \right)^{N} = \sum_{i=0}^{N} \binom{N}{i} x^{i} y^{N-i}.
-\]
-In every term, either \( i \geq n \), and then \( x^{i} = 0_A \), or \( i \leq n - 1 \), and then \( N - i \geq m + 1 \), so \( y^{N-i} = 0_A \). Hence, \( \left( x + y \right)^{N} = 0_A \). But \( x + y = 1_A \), so \( 1_A = 1_A^{N} = 0_A \), which is a contradiction. This proves the claim.
-\\\\
-Now let \( x, y \in A \), and consider the cases:
-\\\\
-If \( x, y \in A^{\times} \), then \( xy = yx \) since \( A^{\times} \) is commutative.
-\\\\
-If \( x \in A^{\times} \) and \( y \notin A^{\times} \), then \( 1_A - y \in A^{\times} \) as shown above, so since \( A^{\times} \) is commutative, \( x \left( 1_A - y \right) = \left( 1_A - y \right) x \), i.e., \( x - xy = x - yx \), hence \( xy = yx \).
-\\\\
-If \( x \notin A^{\times} \) and \( y \in A^{\times} \), the previous case with the roles of \( x \) and \( y \) exchanged gives \( yx = xy \).
-\\\\
-If \( x, y \notin A^{\times} \), then \( 1_A - x, 1_A - y \in A^{\times} \) as shown above, so since \( A^{\times} \) is commutative, we have
-\[
-1_A - x - y + xy = \left( 1_A - x \right) \left( 1_A - y \right) = \left( 1_A - y \right) \left( 1_A - x \right) = 1_A - y - x + yx,
-\]
-hence \( xy = yx \).
-\\\\
-In all cases \( xy = yx \), and since \( x, y \in A \) were arbitrary, \( A \) is commutative.
+    For \( x \in A \) and \( k \in \mathbb{N} \), define recursively \( x^{0} := 1_A \) and
+    \( x^{k+1} := x^{k} x \); by associativity, \( x^{k} x^{l} = x^{k+l} \) for all \( k, l \in
+    \mathbb{N} \). An element \( x \in A \) is nilpotent if \( x^{n} = 0_A \) for some integer
+    \( n \geq 1 \). An element \( u \in A \) is a unit if \( uv = vu = 1_A \) for some \( v \in
+    A \); this \( v \) is unique (if also \( uv' = v'u = 1_A \), then \( v' = v' \left( uv \right) =
+    \left( v'u \right) v = v \)), and we denote it by \( u^{-1} \). Denote by \( A^{\times} \) the
+    set of units of \( A \). It contains \( 1_A \), with \( u \) it contains \( u^{-1} \), and it is
+    closed under multiplication since \( \left( uu' \right) \left( u'^{-1} u^{-1} \right) = 1_A =
+    \left( u'^{-1} u^{-1} \right) \left( uu' \right) \) for \( u, u' \in A^{\times} \). Thus,
+    \( \left( A^{\times}, \cdot, 1_A \right) \) is a group.
+    \\\\
+    If \( 1_A = 0_A \), then \( x = x \cdot 1_A = x \cdot 0_A = 0_A \) for every \( x \in A \)
+    (since \( x \cdot 0_A = x \left( 0_A + 0_A \right) = x \cdot 0_A + x \cdot 0_A \) gives
+    \( x \cdot 0_A = 0_A \) after adding \( -\left( x \cdot 0_A \right) \)), so \( A = \left\{ 0_A
+    \right\} \) is commutative. Else \( 1_A \neq 0_A \), which we assume from now on.
+    \\\\
+    We claim that every unit \( u \in A^{\times} \) satisfies \( u^{2} = 1_A \). Indeed, if
+    \( u^{n} = 0_A \) for some \( n \geq 1 \), then
+    \[
+        1_A = \left( u^{-1} \right)^{n} u^{n} = \left( u^{-1} \right)^{n} \cdot 0_A = 0_A,
+    \]
+    where the first equality follows by induction on \( n \), since \( \left( u^{-1} \right)^{k+1}
+    u^{k+1} = \left( u^{-1} \right)^{k} \left( u^{-1} u \right) u^{k} = \left( u^{-1} \right)^{k}
+    u^{k} \). This is a contradiction to \( 1_A \neq 0_A \). Thus, \( u \) is not nilpotent, and by
+    the given assumption \( u^{2} = 1_A \).
+    \\\\
+    We now show that the group \( A^{\times} \) is commutative. Let \( x, y \in A^{\times} \). Then
+    \( xy \in A^{\times} \), so the above claim applied to \( x \), \( y \) and \( xy \) gives
+    \( x^{2} = y^{2} = 1_A \) and \( xyxy = \left( xy \right)^{2} = 1_A \). Multiplying the last
+    equality by \( x \) on the left and by \( y \) on the right, we obtain
+    \[
+        yx = x^{2} \, yx \, y^{2} = x \left( xyxy \right) y = x \cdot 1_A \cdot y = xy.
+    \]
+    Thus, \( A^{\times} \) is commutative.
+    \\\\
+    Next, we claim that if \( x \notin A^{\times} \), then \( 1_A - x \in A^{\times} \). Suppose,
+    for the sake of contradiction, that \( x \notin A^{\times} \) and \( y := 1_A - x \notin
+    A^{\times} \). If \( x^{2} = 1_A \), then \( x \) would be a unit (with inverse \( x \)); hence
+    \( x^{2} \neq 1_A \), and by the given assumption \( x^{n} = 0_A \) for some \( n \geq 1 \). In
+    the same way, \( y^{m} = 0_A \) for some \( m \geq 1 \). Thus, \( x^{i} = x^{i-n} x^{n} = 0_A \)
+    for every \( i \geq n \), and \( y^{j} = 0_A \) for every \( j \geq m \). Moreover, \( x \) and
+    \( y \) commute:
+    \[
+        xy = x \left( 1_A - x \right) = x - x^{2} = \left( 1_A - x \right) x = yx,
+    \]
+    and then \( y^{j} x = x y^{j} \) for every \( j \in \mathbb{N} \) (by induction on \( j \)). For
+    such commuting elements the binomial formula holds (by induction on \( N \) as for numbers, the
+    binomial coefficients acting as integer multiples), so with \( N := n + m \) we have
+    \[
+        \left( x + y \right)^{N} = \sum_{i=0}^{N} \binom{N}{i} x^{i} y^{N-i}.
+    \]
+    In every term, either \( i \geq n \), and then \( x^{i} = 0_A \), or \( i \leq n - 1 \), and
+    then \( N - i \geq m + 1 \), so \( y^{N-i} = 0_A \). Hence, \( \left( x + y \right)^{N} =
+    0_A \). But \( x + y = 1_A \), so \( 1_A = 1_A^{N} = 0_A \), which is a contradiction. This
+    proves the claim.
+    \\\\
+    Now let \( x, y \in A \), and consider the cases:
+    \\\\
+    If \( x, y \in A^{\times} \), then \( xy = yx \) since \( A^{\times} \) is commutative.
+    \\\\
+    If \( x \in A^{\times} \) and \( y \notin A^{\times} \), then \( 1_A - y \in A^{\times} \) as
+    shown above, so since \( A^{\times} \) is commutative, \( x \left( 1_A - y \right) = \left( 1_A
+    - y \right) x \), i.e., \( x - xy = x - yx \), hence \( xy = yx \).
+    \\\\
+    If \( x \notin A^{\times} \) and \( y \in A^{\times} \), the previous case with the roles of
+    \( x \) and \( y \) exchanged gives \( yx = xy \).
+    \\\\
+    If \( x, y \notin A^{\times} \), then \( 1_A - x, 1_A - y \in A^{\times} \) as shown above, so
+    since \( A^{\times} \) is commutative, we have
+    \[
+        1_A - x - y + xy = \left( 1_A - x \right) \left( 1_A - y \right) = \left( 1_A - y \right)
+        \left( 1_A - x \right) = 1_A - y - x + yx,
+    \]
+    hence \( xy = yx \).
+    \\\\
+    In all cases \( xy = yx \), and since \( x, y \in A \) were arbitrary, \( A \) is commutative.
 \end{solution}

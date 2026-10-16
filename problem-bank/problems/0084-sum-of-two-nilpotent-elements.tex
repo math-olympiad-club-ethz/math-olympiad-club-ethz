@@ -22,54 +22,99 @@
 % e.g. (u+v)^2 = -4I; the solution uses (u+v)^2 = -4I, and checks that uv and vu differ.
 % Restyled on 2026-10-01 after problem-bank/writing-style.md (the style of the fully solved problems); the mathematics is unchanged.
 \begin{problem}
-In this problem, a ring \( \left(R, +, \cdot, 0_R\right) \) is not necessarily unital: \( \left(R, +\right) \) is an abelian group with neutral element \( 0_R \), and the multiplication \( \cdot \), written \( xy := x \cdot y \), is associative and distributes over \( + \) on both sides. The ring is commutative if \( xy = yx \) for all \( x, y \in R \). For \( x \in R \) and \( k \in \mathbb{N}_{>0} \), define the power \( x^{k} \) by \( x^{1} := x \) and \( x^{k+1} := x^{k} x \); an element \( x \in R \) is nilpotent if \( x^{k} = 0_R \) for some \( k \in \mathbb{N}_{>0} \).
+    In this problem, a ring \( \left(R, +, \cdot, 0_R\right) \) is not necessarily unital:
+    \( \left(R, +\right) \) is an abelian group with neutral element \( 0_R \), and the
+    multiplication \( \cdot \), written \( xy := x \cdot y \), is associative and distributes over
+    \( + \) on both sides. The ring is commutative if \( xy = yx \) for all \( x, y \in R \). For
+    \( x \in R \) and \( k \in \mathbb{N}_{>0} \), define the power \( x^{k} \) by \( x^{1} := x \)
+    and \( x^{k+1} := x^{k} x \); an element \( x \in R \) is nilpotent if \( x^{k} = 0_R \) for
+    some \( k \in \mathbb{N}_{>0} \).
 
-(a) Let \( R \) be a commutative ring (with or without identity) and let \( u, v \in R \) be nilpotent. Prove that \( u + v \) is nilpotent.
+    (a) Let \( R \) be a commutative ring (with or without identity) and let \( u, v \in R \) be
+    nilpotent. Prove that \( u + v \) is nilpotent.
 
-(b) Give an example of a ring \( R \) (by (a), necessarily non-commutative) and of nilpotent elements \( u, v \in R \) such that \( u + v \) is not nilpotent.
+    (b) Give an example of a ring \( R \) (by (a), necessarily non-commutative) and of nilpotent
+    elements \( u, v \in R \) such that \( u + v \) is not nilpotent.
 \end{problem}
 \begin{solution}
-We begin by collecting some facts that are valid in any ring \( R \), commutative or not. Let \( x \in R \). Since \( \cdot \) is associative, we have \( x^{k} x^{l} = x^{k+l} \) for all \( k, l \in \mathbb{N}_{>0} \), by induction on \( l \): for \( l = 1 \), \( x^{k} x^{1} = x^{k} x = x^{k+1} \) by definition, and if the formula holds for some \( l \geq 1 \), then
-\[
-x^{k} x^{l+1} = x^{k} \left(x^{l} x\right) = \left(x^{k} x^{l}\right) x = x^{k+l} x = x^{k+l+1}.
-\]
-Hence, by induction on \( k \), we have \( \left(x^{2}\right)^{k} = x^{2k} \) for every \( k \in \mathbb{N}_{>0} \): for \( k = 1 \), \( \left(x^{2}\right)^{1} = x^{2} \), and if the formula holds for some \( k \geq 1 \), then
-\[
-\left(x^{2}\right)^{k+1} = \left(x^{2}\right)^{k} x^{2} = x^{2k} x^{2} = x^{2k+2}.
-\]
-Moreover, \( y \cdot 0_R = 0_R = 0_R \cdot y \) for every \( y \in R \): since \( \cdot \) distributes over \( + \), we have \( y \cdot 0_R = y \left(0_R + 0_R\right) = y \cdot 0_R + y \cdot 0_R \), and adding \( -\left(y \cdot 0_R\right) \) to both sides gives \( y \cdot 0_R = 0_R \); symmetrically, \( 0_R \cdot y = 0_R \). Thus, if \( x^{n} = 0_R \) for some \( n \in \mathbb{N}_{>0} \), then \( x^{t} = 0_R \) for every \( t \geq n \), since for \( t > n \) we have \( x^{t} = x^{t-n} x^{n} = x^{t-n} \cdot 0_R = 0_R \).
-\begin{enumerate}
-    \item[(a)] Let \( n, m \in \mathbb{N}_{>0} \) be such that \( u^{n} = 0_R \) and \( v^{m} = 0_R \), and define \( N := n + m \), \( w_{0} := u \) and \( w_{1} := v \). Since \( \cdot \) distributes over \( + \), expanding the product of the \( N \) factors \( u + v = w_{0} + w_{1} \) gives
+    We begin by collecting some facts that are valid in any ring \( R \), commutative or not. Let
+    \( x \in R \). Since \( \cdot \) is associative, we have \( x^{k} x^{l} = x^{k+l} \) for all
+    \( k, l \in \mathbb{N}_{>0} \), by induction on \( l \): for \( l = 1 \), \( x^{k} x^{1} = x^{k}
+    x = x^{k+1} \) by definition, and if the formula holds for some \( l \geq 1 \), then
     \[
-    \left(u + v\right)^{N} = \sum_{s \in \left\{0, 1\right\}^{N}} \prod_{i \in N} w_{s_{i}},
+        x^{k} x^{l+1} = x^{k} \left(x^{l} x\right) = \left(x^{k} x^{l}\right) x = x^{k+l} x =
+        x^{k+l+1}.
     \]
-    where each product is taken in the order of the natural number \( N = \left\{ i \in \mathbb{N} \mid i < N \right\} \) (one term for each choice of a summand in each factor; this also holds when \( u = v \)). Fix \( s \in \left\{0, 1\right\}^{N} \) and let \( r \) be the number of indices \( i \in N \) with \( s_{i} = 0 \). Since \( R \) is commutative, the factors can be reordered, so the product equals \( u^{r} v^{N-r} \) if \( 1 \leq r \leq N - 1 \), \( u^{N} \) if \( r = N \), and \( v^{N} \) if \( r = 0 \) (no identity element is needed). We show that it is \( 0_R \) in every case.
-    \\\\
-    If \( r \geq n \), then \( u^{r} = 0_R \) by the above, so the product is \( u^{N} = 0_R \) when \( r = N \), and \( u^{r} v^{N-r} = 0_R \cdot v^{N-r} = 0_R \) otherwise.
-    \\\\
-    If \( r \leq n - 1 \), then \( N - r \geq m + 1 \), so \( v^{N-r} = 0_R \) by the above, and the product is \( v^{N} = 0_R \) when \( r = 0 \), and \( u^{r} v^{N-r} = u^{r} \cdot 0_R = 0_R \) otherwise.
-    \\\\
-    Hence, all \( 2^{N} \) products vanish, so \( \left(u + v\right)^{N} = 0_R \) and \( u + v \) is nilpotent.
+    Hence, by induction on \( k \), we have \( \left(x^{2}\right)^{k} = x^{2k} \) for every
+    \( k \in \mathbb{N}_{>0} \): for \( k = 1 \), \( \left(x^{2}\right)^{1} = x^{2} \), and if the
+    formula holds for some \( k \geq 1 \), then
+    \[
+        \left(x^{2}\right)^{k+1} = \left(x^{2}\right)^{k} x^{2} = x^{2k} x^{2} = x^{2k+2}.
+    \]
+    Moreover, \( y \cdot 0_R = 0_R = 0_R \cdot y \) for every \( y \in R \): since \( \cdot \)
+    distributes over \( + \), we have \( y \cdot 0_R = y \left(0_R + 0_R\right) = y \cdot 0_R + y
+    \cdot 0_R \), and adding \( -\left(y \cdot 0_R\right) \) to both sides gives \( y \cdot 0_R =
+    0_R \); symmetrically, \( 0_R \cdot y = 0_R \). Thus, if \( x^{n} = 0_R \) for some \( n \in
+    \mathbb{N}_{>0} \), then \( x^{t} = 0_R \) for every \( t \geq n \), since for \( t > n \) we
+    have \( x^{t} = x^{t-n} x^{n} = x^{t-n} \cdot 0_R = 0_R \).
+    \begin{enumerate}
+        \item[(a)] Let \( n, m \in \mathbb{N}_{>0} \) be such that \( u^{n} = 0_R \) and \( v^{m} =
+            0_R \), and define \( N := n + m \), \( w_{0} := u \) and \( w_{1} := v \). Since
+            \( \cdot \) distributes over \( + \), expanding the product of the \( N \) factors
+            \( u + v = w_{0} + w_{1} \) gives
+            \[
+                \left(u + v\right)^{N} = \sum_{s \in \left\{0, 1\right\}^{N}} \prod_{i \in N}
+                w_{s_{i}},
+            \]
+            where each product is taken in the order of the natural number \( N = \left\{ i \in
+            \mathbb{N} \mid i < N \right\} \) (one term for each choice of a summand in each factor;
+            this also holds when \( u = v \)). Fix \( s \in \left\{0, 1\right\}^{N} \) and let
+            \( r \) be the number of indices \( i \in N \) with \( s_{i} = 0 \). Since \( R \) is
+            commutative, the factors can be reordered, so the product equals \( u^{r} v^{N-r} \) if
+            \( 1 \leq r \leq N - 1 \), \( u^{N} \) if \( r = N \), and \( v^{N} \) if \( r = 0 \)
+            (no identity element is needed). We show that it is \( 0_R \) in every case.
+            \\\\
+            If \( r \geq n \), then \( u^{r} = 0_R \) by the above, so the product is \( u^{N} =
+            0_R \) when \( r = N \), and \( u^{r} v^{N-r} = 0_R \cdot v^{N-r} = 0_R \) otherwise.
+            \\\\
+            If \( r \leq n - 1 \), then \( N - r \geq m + 1 \), so \( v^{N-r} = 0_R \) by the above,
+            and the product is \( v^{N} = 0_R \) when \( r = 0 \), and \( u^{r} v^{N-r} = u^{r}
+            \cdot 0_R = 0_R \) otherwise.
+            \\\\
+            Hence, all \( 2^{N} \) products vanish, so \( \left(u + v\right)^{N} = 0_R \) and
+            \( u + v \) is nilpotent.
 
-    \item[(b)] Take the ring \( \left(\mathbb{Z}^{2 \times 2}, +, \cdot, \mathbf{0}_{2 \times 2}\right) \) of \( 2 \times 2 \) integer matrices with the usual addition and multiplication (its identity is \( I_{2} \)), and
-    \[
-    u := \begin{pmatrix} 1 & -1 \\ 1 & -1 \end{pmatrix}, \quad v := \begin{pmatrix} -1 & -1 \\ 1 & 1 \end{pmatrix}.
-    \]
-    A direct computation gives
-    \[
-    u^{2} = \begin{pmatrix} 1 - 1 & -1 + 1 \\ 1 - 1 & -1 + 1 \end{pmatrix} = \mathbf{0}_{2 \times 2}, \quad v^{2} = \begin{pmatrix} 1 - 1 & 1 - 1 \\ -1 + 1 & -1 + 1 \end{pmatrix} = \mathbf{0}_{2 \times 2},
-    \]
-    so \( u \) and \( v \) are nilpotent, while
-    \[
-    u + v = \begin{pmatrix} 0 & -2 \\ 2 & 0 \end{pmatrix} \quad \text{and} \quad \left(u + v\right)^{2} = \begin{pmatrix} -4 & 0 \\ 0 & -4 \end{pmatrix} = -4 I_{2}.
-    \]
-    Suppose that \( \left(u + v\right)^{k} = \mathbf{0}_{2 \times 2} \) for some \( k \in \mathbb{N}_{>0} \). Then \( \left(u + v\right)^{2k} = \mathbf{0}_{2 \times 2} \) by the above (as \( 2k \geq k \)), whereas, again by the above,
-    \[
-    \left(u + v\right)^{2k} = \left(\left(u + v\right)^{2}\right)^{k} = \left(-4 I_{2}\right)^{k} = \left(-4\right)^{k} I_{2} \neq \mathbf{0}_{2 \times 2},
-    \]
-    which is a contradiction. Hence, \( u + v \) is not nilpotent, as required. By (a), this ring is necessarily non-commutative; indeed,
-    \[
-    uv = \begin{pmatrix} -2 & -2 \\ -2 & -2 \end{pmatrix} \neq \begin{pmatrix} -2 & 2 \\ 2 & -2 \end{pmatrix} = vu.
-    \]
-\end{enumerate}
+        \item[(b)] Take the ring \( \left(\mathbb{Z}^{2 \times 2}, +, \cdot,
+            \mathbf{0}_{2 \times 2}\right) \) of \( 2 \times 2 \) integer matrices with the usual
+            addition and multiplication (its identity is \( I_{2} \)), and
+            \[
+                u := \begin{pmatrix} 1 & -1 \\ 1 & -1 \end{pmatrix}, \quad v
+                := \begin{pmatrix} -1 & -1 \\ 1 & 1 \end{pmatrix}.
+            \]
+            A direct computation gives
+            \[
+                u^{2} = \begin{pmatrix} 1 - 1 & -1 + 1 \\ 1 - 1 & -1 + 1 \end{pmatrix} =
+                \mathbf{0}_{2 \times 2}, \quad v^{2}
+                = \begin{pmatrix} 1 - 1 & 1 - 1 \\ -1 + 1 & -1 + 1 \end{pmatrix} =
+                \mathbf{0}_{2 \times 2},
+            \]
+            so \( u \) and \( v \) are nilpotent, while
+            \[
+                u + v = \begin{pmatrix} 0 & -2 \\ 2 & 0 \end{pmatrix} \quad \text{and} \quad \left(u
+                + v\right)^{2} = \begin{pmatrix} -4 & 0 \\ 0 & -4 \end{pmatrix} = -4 I_{2}.
+            \]
+            Suppose that \( \left(u + v\right)^{k} = \mathbf{0}_{2 \times 2} \) for some \( k \in
+            \mathbb{N}_{>0} \). Then \( \left(u + v\right)^{2k} = \mathbf{0}_{2 \times 2} \) by the
+            above (as \( 2k \geq k \)), whereas, again by the above,
+            \[
+                \left(u + v\right)^{2k} = \left(\left(u + v\right)^{2}\right)^{k} = \left(-4
+                I_{2}\right)^{k} = \left(-4\right)^{k} I_{2} \neq \mathbf{0}_{2 \times 2},
+            \]
+            which is a contradiction. Hence, \( u + v \) is not nilpotent, as required. By (a), this
+            ring is necessarily non-commutative; indeed,
+            \[
+                uv = \begin{pmatrix} -2 & -2 \\ -2 & -2 \end{pmatrix}
+                \neq \begin{pmatrix} -2 & 2 \\ 2 & -2 \end{pmatrix} = vu.
+            \]
+    \end{enumerate}
 \end{solution}

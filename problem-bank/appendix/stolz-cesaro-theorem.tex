@@ -1,52 +1,137 @@
 % Shared result, cited from solutions with \appendixref{stolz-cesaro-theorem}.
 \begin{appendixitem}{Stolz–Cesàro Theorem}
-    Let \( m \in \mathbb{N} \) and \( a, b \in \mathbb{R}^{\mathbb{N}_{\geq m}} \) be such that \( b \) is strictly monotone and \( 0 \notin \operatorname{ran}\left(b\right) \). As \( b \) is strictly monotone, \( b_n-b_{n-1} \neq 0 \) for all \( n \in \mathbb{N}_{\geq m+1} \), so that the difference quotients \( \frac{a_n-a_{n-1}}{b_n-b_{n-1}} \) are well defined. Moreover, it is standard that \( \lim_{n \to +\infty} b_n \) exists in \( \left[-\infty;+\infty\right] := \mathbb{R} \cup \left\{-\infty, +\infty\right\} \) (it is \( \sup \operatorname{ran}\left(b\right) \) if \( b \) is increasing, and \( \inf \operatorname{ran}\left(b\right) \) if \( b \) is decreasing). For \( p \in \mathbb{N} \) and \( x \in \mathbb{R}^{\mathbb{N}_{\geq p}} \), recall the limit inferior and the limit superior
+    Let \( m \in \mathbb{N} \) and \( a, b \in \mathbb{R}^{\mathbb{N}_{\geq m}} \) be such that
+    \( b \) is strictly monotone and \( 0 \notin \operatorname{ran}\left(b\right) \). As \( b \) is
+    strictly monotone, \( b_n-b_{n-1} \neq 0 \) for all \( n \in \mathbb{N}_{\geq m+1} \), so that
+    the difference quotients \( \frac{a_n-a_{n-1}}{b_n-b_{n-1}} \) are well defined. Moreover, it is
+    standard that \( \lim_{n \to +\infty} b_n \) exists in \( \left[-\infty;+\infty\right] :=
+    \mathbb{R} \cup \left\{-\infty, +\infty\right\} \) (it is \( \sup
+    \operatorname{ran}\left(b\right) \) if \( b \) is increasing, and \( \inf
+    \operatorname{ran}\left(b\right) \) if \( b \) is decreasing). For \( p \in \mathbb{N} \) and
+    \( x \in \mathbb{R}^{\mathbb{N}_{\geq p}} \), recall the limit inferior and the limit superior
     \[
-        \liminf_{n \to +\infty} x_n := \sup_{n \in \mathbb{N}_{\geq p}} \inf\left\{ x_k \,\middle|\, k \in \mathbb{N}_{\geq n} \right\}, \quad \limsup_{n \to +\infty} x_n := \inf_{n \in \mathbb{N}_{\geq p}} \sup\left\{ x_k \,\middle|\, k \in \mathbb{N}_{\geq n} \right\},
+        \liminf_{n \to +\infty} x_n := \sup_{n \in \mathbb{N}_{\geq p}} \inf\left\{ x_k \,\middle|\,
+        k \in \mathbb{N}_{\geq n} \right\}, \quad \limsup_{n \to +\infty} x_n :=
+        \inf_{n \in \mathbb{N}_{\geq p}} \sup\left\{ x_k \,\middle|\, k \in \mathbb{N}_{\geq n}
+        \right\},
     \]
-    which are both in \( \left[-\infty;+\infty\right] \). Recall also that \( \liminf_{n \to +\infty} x_n \leq \limsup_{n \to +\infty} x_n \) and \( \limsup_{n \to +\infty} \left(-x_n\right) = -\liminf_{n \to +\infty} x_n \), and that, for \( L \in \left[-\infty;+\infty\right] \), we have \( x_n \overset{n \to +\infty}{\longrightarrow} L \) if and only if \( \liminf_{n \to +\infty} x_n = \limsup_{n \to +\infty} x_n = L \).
+    which are both in \( \left[-\infty;+\infty\right] \). Recall also that
+    \( \liminf_{n \to +\infty} x_n \leq \limsup_{n \to +\infty} x_n \) and
+    \( \limsup_{n \to +\infty} \left(-x_n\right) = -\liminf_{n \to +\infty} x_n \), and that, for
+    \( L \in \left[-\infty;+\infty\right] \), we have \( x_n
+    \overset{n \to +\infty}{\longrightarrow} L \) if and only if \( \liminf_{n \to +\infty} x_n =
+    \limsup_{n \to +\infty} x_n = L \).
     \begin{theorem}[Stolz–Cesàro]
-        In this setting, suppose that \( \lim_{n \to +\infty} b_n \in \left\{-\infty, +\infty\right\} \), or that \( \lim_{n \to +\infty} a_n = \lim_{n \to +\infty} b_n = 0 \). Then
+        In this setting, suppose that \( \lim_{n \to +\infty} b_n \in \left\{-\infty,
+        +\infty\right\} \), or that \( \lim_{n \to +\infty} a_n = \lim_{n \to +\infty} b_n = 0 \).
+        Then
         \[
-            \liminf_{n \to +\infty} \frac{a_n-a_{n-1}}{b_n-b_{n-1}} \leq \liminf_{n \to +\infty} \frac{a_n}{b_n} \leq \limsup_{n \to +\infty} \frac{a_n}{b_n} \leq \limsup_{n \to +\infty} \frac{a_n-a_{n-1}}{b_n-b_{n-1}}.
+            \liminf_{n \to +\infty} \frac{a_n-a_{n-1}}{b_n-b_{n-1}} \leq \liminf_{n \to +\infty}
+            \frac{a_n}{b_n} \leq \limsup_{n \to +\infty} \frac{a_n}{b_n} \leq
+            \limsup_{n \to +\infty} \frac{a_n-a_{n-1}}{b_n-b_{n-1}}.
         \]
-        In particular, if there exists \( L \in \left[-\infty;+\infty\right] \) with \( \frac{a_n-a_{n-1}}{b_n-b_{n-1}} \overset{n \to +\infty}{\longrightarrow} L \), then \( \frac{a_n}{b_n} \overset{n \to +\infty}{\longrightarrow} L \).
+        In particular, if there exists \( L \in \left[-\infty;+\infty\right] \) with
+        \( \frac{a_n-a_{n-1}}{b_n-b_{n-1}} \overset{n \to +\infty}{\longrightarrow} L \), then
+        \( \frac{a_n}{b_n} \overset{n \to +\infty}{\longrightarrow} L \).
     \end{theorem}
     \begin{proof}
-        From the properties of the limit superior and the limit inferior recalled above, the middle inequality and the last statement of the theorem follow. Moreover, the first inequality is the last inequality applied to \( \left(-a, b\right) \). Indeed, this pair satisfies the same hypotheses as \( \left(a, b\right) \), and the last inequality for \( \left(-a, b\right) \) reads
+        From the properties of the limit superior and the limit inferior recalled above, the middle
+        inequality and the last statement of the theorem follow. Moreover, the first inequality is
+        the last inequality applied to \( \left(-a, b\right) \). Indeed, this pair satisfies the
+        same hypotheses as \( \left(a, b\right) \), and the last inequality for \( \left(-a,
+        b\right) \) reads
         \[
-            -\liminf_{n \to +\infty} \frac{a_n}{b_n} = \limsup_{n \to +\infty} \frac{-a_n}{b_n} \leq \limsup_{n \to +\infty} \frac{-a_n-\left(-a_{n-1}\right)}{b_n-b_{n-1}} = -\liminf_{n \to +\infty} \frac{a_n-a_{n-1}}{b_n-b_{n-1}},
+            -\liminf_{n \to +\infty} \frac{a_n}{b_n} = \limsup_{n \to +\infty} \frac{-a_n}{b_n} \leq
+            \limsup_{n \to +\infty} \frac{-a_n-\left(-a_{n-1}\right)}{b_n-b_{n-1}} =
+            -\liminf_{n \to +\infty} \frac{a_n-a_{n-1}}{b_n-b_{n-1}},
         \]
-        which is equivalent to the first inequality. Hence, it is sufficient to show the last inequality of the chain,
+        which is equivalent to the first inequality. Hence, it is sufficient to show the last
+        inequality of the chain,
         \begin{equation}
-            \limsup_{n \to +\infty} \frac{a_n}{b_n} \leq \limsup_{n \to +\infty} \frac{a_n-a_{n-1}}{b_n-b_{n-1}}.
-            \label{eq:stolz-cesaro-last}
+            \limsup_{n \to +\infty} \frac{a_n}{b_n} \leq \limsup_{n \to +\infty}
+            \frac{a_n-a_{n-1}}{b_n-b_{n-1}}. \label{eq:stolz-cesaro-last}
         \end{equation}
-        It is clear that replacing \( \left(a, b\right) \) by \( \left(-a, -b\right) \) changes neither the quotients nor the difference quotients, and that it keeps the hypotheses: \( -b \) is strictly monotone, \( 0 \notin \operatorname{ran}\left(-b\right) \), \( \lim_{n \to +\infty} \left(-b_n\right) = -\lim_{n \to +\infty} b_n \in \left\{-\infty, +\infty\right\} \) in the first case, and \( \lim_{n \to +\infty} \left(-a_n\right) = \lim_{n \to +\infty} \left(-b_n\right) = 0 \) in the second case. As \( b \) or \( -b \) is strictly increasing, it is sufficient to show \eqref{eq:stolz-cesaro-last} when \( b \) is strictly increasing, which we assume from now on. Then \( \lim_{n \to +\infty} b_n = \sup \operatorname{ran}\left(b\right) \geq b_m > -\infty \), so that, in the first case, \( b_n \overset{n \to +\infty}{\longrightarrow} +\infty \), and, in the second case, \( b_n < b_{n+1} \leq \sup \operatorname{ran}\left(b\right) = 0 \), i.e., \( b_n < 0 \), for all \( n \in \mathbb{N}_{\geq m} \).
+        It is clear that replacing \( \left(a, b\right) \) by \( \left(-a, -b\right) \) changes
+        neither the quotients nor the difference quotients, and that it keeps the hypotheses:
+        \( -b \) is strictly monotone, \( 0 \notin \operatorname{ran}\left(-b\right) \),
+        \( \lim_{n \to +\infty} \left(-b_n\right) = -\lim_{n \to +\infty} b_n \in \left\{-\infty,
+        +\infty\right\} \) in the first case, and \( \lim_{n \to +\infty} \left(-a_n\right) =
+        \lim_{n \to +\infty} \left(-b_n\right) = 0 \) in the second case. As \( b \) or \( -b \) is
+        strictly increasing, it is sufficient to show \eqref{eq:stolz-cesaro-last} when \( b \) is
+        strictly increasing, which we assume from now on. Then \( \lim_{n \to +\infty} b_n = \sup
+        \operatorname{ran}\left(b\right) \geq b_m > -\infty \), so that, in the first case,
+        \( b_n \overset{n \to +\infty}{\longrightarrow} +\infty \), and, in the second case,
+        \( b_n < b_{n+1} \leq \sup \operatorname{ran}\left(b\right) = 0 \), i.e., \( b_n < 0 \), for
+        all \( n \in \mathbb{N}_{\geq m} \).
         \\\\
-        If the right-hand side of \eqref{eq:stolz-cesaro-last} is \( +\infty \), there is nothing to show. Otherwise, there exists \( M \in \mathbb{R} \) with \( M > \limsup_{n \to +\infty} \frac{a_n-a_{n-1}}{b_n-b_{n-1}} \), and it is sufficient to show that, for every \( M \in \left]\limsup_{n \to +\infty} \frac{a_n-a_{n-1}}{b_n-b_{n-1}}; +\infty\right[ \subset \left[-\infty;+\infty\right[ \),
+        If the right-hand side of \eqref{eq:stolz-cesaro-last} is \( +\infty \), there is nothing to
+        show. Otherwise, there exists \( M \in \mathbb{R} \) with \( M > \limsup_{n \to +\infty}
+        \frac{a_n-a_{n-1}}{b_n-b_{n-1}} \), and it is sufficient to show that, for every \( M \in
+        \left]\limsup_{n \to +\infty} \frac{a_n-a_{n-1}}{b_n-b_{n-1}}; +\infty\right[ \subset
+        \left[-\infty;+\infty\right[ \),
         \[
             \limsup_{n \to +\infty} \frac{a_n}{b_n} \leq M,
         \]
-        since then \( \limsup_{n \to +\infty} \frac{a_n}{b_n} \) is less than or equal to the infimum of these \( M \), which is \( \limsup_{n \to +\infty} \frac{a_n-a_{n-1}}{b_n-b_{n-1}} \) (when the latter is \( -\infty \), these \( M \) are all the real numbers, and then \( \limsup_{n \to +\infty} \frac{a_n}{b_n} = -\infty \)).
+        since then \( \limsup_{n \to +\infty} \frac{a_n}{b_n} \) is less than or equal to the
+        infimum of these \( M \), which is \( \limsup_{n \to +\infty}
+        \frac{a_n-a_{n-1}}{b_n-b_{n-1}} \) (when the latter is \( -\infty \), these \( M \) are all
+        the real numbers, and then \( \limsup_{n \to +\infty} \frac{a_n}{b_n} = -\infty \)).
         \\\\
-        Towards this goal, fix \( M \in \mathbb{R} \) with \( M > \limsup_{n \to +\infty} \frac{a_n-a_{n-1}}{b_n-b_{n-1}} \). As \( M \) is bigger than the limit superior, i.e., than the infimum of the suprema \( \sup\left\{ \frac{a_k-a_{k-1}}{b_k-b_{k-1}} \,\middle|\, k \in \mathbb{N}_{\geq n} \right\} \), for \( n \in \mathbb{N}_{\geq m+1} \), one of these suprema is smaller than \( M \): there exists \( p \in \mathbb{N}_{\geq m+1} \) such that \( \frac{a_k-a_{k-1}}{b_k-b_{k-1}} < M \), i.e., multiplying by \( b_k-b_{k-1} > 0 \) (\( b \) is strictly increasing), \( a_k-a_{k-1} < M\left(b_k-b_{k-1}\right) \), for all \( k \in \mathbb{N}_{\geq p} \). For all \( n, q \in \mathbb{N}_{\geq p} \) with \( n < q \), summing these inequalities over \( k \in \llbracket n+1;q \rrbracket \), we obtain, as both sums telescope,
+        Towards this goal, fix \( M \in \mathbb{R} \) with \( M > \limsup_{n \to +\infty}
+        \frac{a_n-a_{n-1}}{b_n-b_{n-1}} \). As \( M \) is bigger than the limit superior, i.e., than
+        the infimum of the suprema \( \sup\left\{ \frac{a_k-a_{k-1}}{b_k-b_{k-1}} \,\middle|\, k \in
+        \mathbb{N}_{\geq n} \right\} \), for \( n \in \mathbb{N}_{\geq m+1} \), one of these suprema
+        is smaller than \( M \): there exists \( p \in \mathbb{N}_{\geq m+1} \) such that
+        \( \frac{a_k-a_{k-1}}{b_k-b_{k-1}} < M \), i.e., multiplying by \( b_k-b_{k-1} > 0 \)
+        (\( b \) is strictly increasing), \( a_k-a_{k-1} < M\left(b_k-b_{k-1}\right) \), for all
+        \( k \in \mathbb{N}_{\geq p} \). For all \( n, q \in \mathbb{N}_{\geq p} \) with \( n <
+        q \), summing these inequalities over \( k \in \llbracket n+1;q \rrbracket \), we obtain, as
+        both sums telescope,
         \begin{equation}
-            a_q-a_n = \sum_{k=n+1}^{q} \left(a_k-a_{k-1}\right) < M\sum_{k=n+1}^{q} \left(b_k-b_{k-1}\right) = M\left(b_q-b_n\right).
-            \label{eq:stolz-cesaro-sum}
+            a_q-a_n = \sum_{k=n+1}^{q} \left(a_k-a_{k-1}\right) < M\sum_{k=n+1}^{q}
+            \left(b_k-b_{k-1}\right) = M\left(b_q-b_n\right). \label{eq:stolz-cesaro-sum}
         \end{equation}
-        Now, it suffices to show, in each of the two cases for \( b \), that \( \limsup_{n \to +\infty} \frac{a_n}{b_n} \leq M \). In the first case, \eqref{eq:stolz-cesaro-sum} with \( n = p \) gives \( a_q < M b_q+\left(a_p-M b_p\right) \) for all \( q \in \mathbb{N}_{\geq p+1} \). As \( b_q \overset{q \to +\infty}{\longrightarrow} +\infty \), there exists \( q_0 \in \mathbb{N}_{\geq p+1} \) with \( b_q > 0 \) for all \( q \in \mathbb{N}_{\geq q_0} \), so that, dividing by \( b_q > 0 \), we have, for all \( q \in \mathbb{N}_{\geq q_0} \),
+        Now, it suffices to show, in each of the two cases for \( b \), that
+        \( \limsup_{n \to +\infty} \frac{a_n}{b_n} \leq M \). In the first case,
+        \eqref{eq:stolz-cesaro-sum} with \( n = p \) gives \( a_q < M b_q+\left(a_p-M b_p\right) \)
+        for all \( q \in \mathbb{N}_{\geq p+1} \). As \( b_q
+        \overset{q \to +\infty}{\longrightarrow} +\infty \), there exists \( q_0 \in
+        \mathbb{N}_{\geq p+1} \) with \( b_q > 0 \) for all \( q \in \mathbb{N}_{\geq q_0} \), so
+        that, dividing by \( b_q > 0 \), we have, for all \( q \in \mathbb{N}_{\geq q_0} \),
         \[
             \frac{a_q}{b_q} < M+\frac{a_p-M b_p}{b_q},
         \]
-        where \( \frac{a_p-M b_p}{b_q} \overset{q \to +\infty}{\longrightarrow} 0 \), as \( a_p-M b_p \) does not depend on \( q \) and \( b_q \overset{q \to +\infty}{\longrightarrow} +\infty \). Hence, using the properties of the limit superior, \( \limsup_{q \to +\infty} \frac{a_q}{b_q} \leq \limsup_{q \to +\infty} \left(M+\frac{a_p-M b_p}{b_q}\right) = M \), where, for the equality, we use the fact that the limit exists, and hence that it equals its limit superior. In the second case, fix \( n \in \mathbb{N}_{\geq p} \). As \( a_q \overset{q \to +\infty}{\longrightarrow} 0 \) and \( b_q \overset{q \to +\infty}{\longrightarrow} 0 \), letting \( q \to +\infty \) in \eqref{eq:stolz-cesaro-sum}, we obtain \( -a_n \leq -M b_n \), i.e., \( a_n \geq M b_n \), and hence, as dividing by \( b_n < 0 \) (seen above) reverses the inequality, \( \frac{a_n}{b_n} \leq M \). As \( n \in \mathbb{N}_{\geq p} \) was arbitrary, the suprema \( \sup\left\{ \frac{a_k}{b_k} \,\middle|\, k \in \mathbb{N}_{\geq n} \right\} \), for \( n \in \mathbb{N}_{\geq p} \), are at most \( M \), and hence so is their infimum, \( \limsup_{n \to +\infty} \frac{a_n}{b_n}\leq M \).
-        So, in both cases for \( b \), we have \( \limsup_{n \to +\infty} \frac{a_n}{b_n} \leq M \), which, by the three reductions above, concludes the proof.
+        where \( \frac{a_p-M b_p}{b_q} \overset{q \to +\infty}{\longrightarrow} 0 \), as \( a_p-M
+        b_p \) does not depend on \( q \) and \( b_q \overset{q \to +\infty}{\longrightarrow}
+        +\infty \). Hence, using the properties of the limit superior, \( \limsup_{q \to +\infty}
+        \frac{a_q}{b_q} \leq \limsup_{q \to +\infty} \left(M+\frac{a_p-M b_p}{b_q}\right) = M \),
+        where, for the equality, we use the fact that the limit exists, and hence that it equals its
+        limit superior. In the second case, fix \( n \in \mathbb{N}_{\geq p} \). As \( a_q
+        \overset{q \to +\infty}{\longrightarrow} 0 \) and \( b_q
+        \overset{q \to +\infty}{\longrightarrow} 0 \), letting \( q \to +\infty \) in
+        \eqref{eq:stolz-cesaro-sum}, we obtain \( -a_n \leq -M b_n \), i.e., \( a_n \geq M b_n \),
+        and hence, as dividing by \( b_n < 0 \) (seen above) reverses the inequality,
+        \( \frac{a_n}{b_n} \leq M \). As \( n \in \mathbb{N}_{\geq p} \) was arbitrary, the suprema
+        \( \sup\left\{ \frac{a_k}{b_k} \,\middle|\, k \in \mathbb{N}_{\geq n} \right\} \), for
+        \( n \in \mathbb{N}_{\geq p} \), are at most \( M \), and hence so is their infimum,
+        \( \limsup_{n \to +\infty} \frac{a_n}{b_n}\leq M \). So, in both cases for \( b \), we have
+        \( \limsup_{n \to +\infty} \frac{a_n}{b_n} \leq M \), which, by the three reductions above,
+        concludes the proof.
     \end{proof}
     \begin{remark}
-        The converse fails: for \( m = 1 \), \( a_n := \left(-1\right)^n \) and \( b_n := n \), we have \( 0 \leq \left|\frac{a_n}{b_n}\right| = \frac{1}{n} \overset{n \to +\infty}{\longrightarrow} 0 \), so that, by the squeeze theorem, \( \frac{a_n}{b_n} \overset{n \to +\infty}{\longrightarrow} 0 \), while, for all \( n \in \mathbb{N}_{\geq 2} \),
+        The converse fails: for \( m = 1 \), \( a_n := \left(-1\right)^n \) and \( b_n := n \), we
+        have \( 0 \leq \left|\frac{a_n}{b_n}\right| = \frac{1}{n}
+        \overset{n \to +\infty}{\longrightarrow} 0 \), so that, by the squeeze theorem,
+        \( \frac{a_n}{b_n} \overset{n \to +\infty}{\longrightarrow} 0 \), while, for all \( n \in
+        \mathbb{N}_{\geq 2} \),
         \[
-            \frac{a_n-a_{n-1}}{b_n-b_{n-1}} = \frac{\left(-1\right)^n-\left(-1\right)^{n-1}}{n-\left(n-1\right)} = 2\left(-1\right)^n,
+            \frac{a_n-a_{n-1}}{b_n-b_{n-1}} =
+            \frac{\left(-1\right)^n-\left(-1\right)^{n-1}}{n-\left(n-1\right)} = 2\left(-1\right)^n,
         \]
-        whose limit inferior is \( -2 \) and limit superior is \( 2 \): the chain reads \( -2 \leq 0 \leq 0 \leq 2 \), and the difference quotients do not converge. Also, as limits only depend on the terms of large index, the hypotheses of the theorem need only to hold from some index on. This means that you can apply the theorem to the restrictions of \( a \) and \( b \) to \( \mathbb{N}_{\geq m'} \) for a large enough \( m' \in \mathbb{N}_{\geq m} \).
+        whose limit inferior is \( -2 \) and limit superior is \( 2 \): the chain reads \( -2 \leq 0
+        \leq 0 \leq 2 \), and the difference quotients do not converge. Also, as limits only depend
+        on the terms of large index, the hypotheses of the theorem need only to hold from some index
+        on. This means that you can apply the theorem to the restrictions of \( a \) and \( b \) to
+        \( \mathbb{N}_{\geq m'} \) for a large enough \( m' \in \mathbb{N}_{\geq m} \).
     \end{remark}
 \end{appendixitem}

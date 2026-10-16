@@ -13,11 +13,11 @@
 % references:     Earliest known appearance (to the best of our knowledge): IMC 2019, Day 1, Problem 1 - https://www.imc-math.org.uk/imc2019/imc2019-day1-questions.pdf
 % history:        ai
 \begin{problem}
-Show that
-\[
-    \prod_{n=3}^{+\infty} \frac{\left(n^3+3n\right)^2}{n^6-64}
-\]
-converges and find the limit.
+    Show that
+    \[
+        \prod_{n=3}^{+\infty} \frac{\left(n^3+3n\right)^2}{n^6-64}
+    \]
+    converges and find the limit.
 \end{problem}
 \begin{solution}
     Notice that for every \( n \in \mathbb{N}_{\geq 3} \),
@@ -25,17 +25,24 @@ converges and find the limit.
         0\neq n^6-64 = \left(n^3\right)^2-8^2 = \left(n^3-8\right)\left(n^3+8\right)
     \]
     \[
-        = \left(n^3-2^3\right)\left(n^3+2^3\right) = \left(n-2\right)\left(n^2+2n+4\right)\left(n+2\right)\left(n^2-2n+4\right)
+        = \left(n^3-2^3\right)\left(n^3+2^3\right) =
+        \left(n-2\right)\left(n^2+2n+4\right)\left(n+2\right)\left(n^2-2n+4\right)
     \]
-    and \( \left(n^3+3n\right)^2 = n^2\left(n^2+3\right)^2 \). Moreover, for every \( n \in \mathbb{Z} \),
+    and \( \left(n^3+3n\right)^2 = n^2\left(n^2+3\right)^2 \). Moreover, for every \( n \in
+    \mathbb{Z} \),
     \[
         \left(n\pm 1\right)^2 \mp 2\left(n\pm 1\right)+4 = n^2 \pm 2n+1 \mp 2n-2+4 = n^2+3,
     \]
-    so that \(a_{-}\colon \mathbb{N}_{\geq 3} \to \mathbb{R}\) defined by \( n\mapsto  \frac{\left(n^3+3n\right)^2}{n^6-64} \) is well defined and for all \( n \in \mathbb{N}_{\geq 3} \) we have
+    so that \(a_{-}\colon \mathbb{N}_{\geq 3} \to \mathbb{R}\) defined by \( n\mapsto
+    \frac{\left(n^3+3n\right)^2}{n^6-64} \) is well defined and for all \( n \in
+    \mathbb{N}_{\geq 3} \) we have
     \[
-        a_n = \frac{n^2}{\left(n-2\right)\left(n+2\right)} \cdot \frac{\left(n-1\right)^2+2\left(n-1\right)+4}{n^2+2n+4} \cdot \frac{\left(n+1\right)^2-2\left(n+1\right)+4}{n^2-2n+4}.
+        a_n = \frac{n^2}{\left(n-2\right)\left(n+2\right)} \cdot
+        \frac{\left(n-1\right)^2+2\left(n-1\right)+4}{n^2+2n+4} \cdot
+        \frac{\left(n+1\right)^2-2\left(n+1\right)+4}{n^2-2n+4}.
     \]
-    This motivates the definition of the (therefore well-defined) functions \( b_{-}, c_{-}, d_{-} \colon \mathbb{N}_{\geq 3} \to \mathbb{R} \) where, for all \( n \in \mathbb{N}_{\geq 3} \),
+    This motivates the definition of the (therefore well-defined) functions \( b_{-}, c_{-}, d_{-}
+    \colon \mathbb{N}_{\geq 3} \to \mathbb{R} \) where, for all \( n \in \mathbb{N}_{\geq 3} \),
     \[
         \begin{aligned}
             b_n & := \frac{n^2}{\left(n-2\right)\left(n+2\right)},            \\
@@ -47,17 +54,25 @@ converges and find the limit.
     \\\\
     Clearly, for every \( N \in \mathbb{N}_{\geq 3} \) we have
     \[
-        \prod_{n=3}^{N} b_n = \left(\prod_{n=3}^{N} \frac{n}{n-2}\right)\left(\prod_{n=3}^{N} \frac{n}{n+2}\right) = \frac{\left(N-1\right)N}{2} \cdot \frac{12}{\left(N+1\right)\left(N+2\right)} = \frac{6\left(N-1\right)N}{\left(N+1\right)\left(N+2\right)},
+        \prod_{n=3}^{N} b_n = \left(\prod_{n=3}^{N} \frac{n}{n-2}\right)\left(\prod_{n=3}^{N}
+        \frac{n}{n+2}\right) = \frac{\left(N-1\right)N}{2} \cdot
+        \frac{12}{\left(N+1\right)\left(N+2\right)} =
+        \frac{6\left(N-1\right)N}{\left(N+1\right)\left(N+2\right)},
     \]
     \[
-        \prod_{n=3}^{N} c_n = \frac{\left(3-1\right)^2+2\left(3-1\right)+4}{N^2+2N+4} = \frac{12}{\left(N+1\right)^2+3},
+        \prod_{n=3}^{N} c_n = \frac{\left(3-1\right)^2+2\left(3-1\right)+4}{N^2+2N+4} =
+        \frac{12}{\left(N+1\right)^2+3},
     \]
     \[
-        \prod_{n=3}^{N} d_n = \frac{\left(N+1\right)^2-2\left(N+1\right)+4}{3^2-2 \cdot 3+4} = \frac{N^2+3}{7},
+        \prod_{n=3}^{N} d_n = \frac{\left(N+1\right)^2-2\left(N+1\right)+4}{3^2-2 \cdot 3+4} =
+        \frac{N^2+3}{7},
     \]
     so that
     \[
-        \prod_{n=3}^{N} a_n = \frac{6 \cdot 12}{7} \cdot \frac{\left(N-1\right)N}{\left(N+1\right)\left(N+2\right)} \cdot \frac{N^2+3}{\left(N+1\right)^2+3},
+        \prod_{n=3}^{N} a_n = \frac{6 \cdot 12}{7} \cdot
+        \frac{\left(N-1\right)N}{\left(N+1\right)\left(N+2\right)} \cdot
+        \frac{N^2+3}{\left(N+1\right)^2+3},
     \]
-    which clearly converges to \(\frac{6 \cdot 12}{7} = \frac{72}{7} \) as \( N \to +\infty \). Therefore, the product converges and its limit is \( \frac{72}{7} \).
+    which clearly converges to \(\frac{6 \cdot 12}{7} = \frac{72}{7} \) as \( N \to +\infty \).
+    Therefore, the product converges and its limit is \( \frac{72}{7} \).
 \end{solution}

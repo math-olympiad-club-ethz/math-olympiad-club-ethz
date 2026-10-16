@@ -13,20 +13,25 @@
 % references:     Earliest known appearance (to the best of our knowledge): ICMC 5 (2021-2022), Round 2, Problem 2 - https://icmathscomp.org/files/2021-2022/ICMC_5.2_paper.pdf
 % history:        ai
 \begin{problem}
-Show that
-\[
-    \sum_{n=1}^{+\infty} \frac{2^{-n}}{1+2^{\left(\frac{1}{2^n}\right)}}
-\]
-converges and find the limit.
+    Show that
+    \[
+        \sum_{n=1}^{+\infty} \frac{2^{-n}}{1+2^{\left(\frac{1}{2^n}\right)}}
+    \]
+    converges and find the limit.
 \end{problem}
 \begin{solution}
-    Define \( b_{-} \colon \mathbb{N}_{\geq 0} \to \left]1;2\right] \), \( n \mapsto 2^{\left(\frac{1}{2^n}\right)} \), which is clearly well defined, and notice that \( b_n^2 = b_{n-1} \) for all \( n \in \mathbb{N}_{\geq 1} \). Now, for all \( x \in \mathbb{R} \setminus \left\{\pm 1\right\} \),
+    Define \( b_{-} \colon \mathbb{N}_{\geq 0} \to \left]1;2\right] \), \( n \mapsto
+    2^{\left(\frac{1}{2^n}\right)} \), which is clearly well defined, and notice that \( b_n^2 =
+    b_{n-1} \) for all \( n \in \mathbb{N}_{\geq 1} \). Now, for all \( x \in \mathbb{R} \setminus
+    \left\{\pm 1\right\} \),
     \[
-        \frac{1}{x+1} - \frac{1}{x-1} = \frac{x-1-\left(x+1\right)}{x^2-1} = -\frac{2}{x^2-1}, \quad \text{i.e.} \quad \frac{1}{x+1} = \frac{1}{x-1} - 2\left(\frac{1}{x^2-1}\right).
+        \frac{1}{x+1} - \frac{1}{x-1} = \frac{x-1-\left(x+1\right)}{x^2-1} = -\frac{2}{x^2-1}, \quad
+        \text{i.e.} \quad \frac{1}{x+1} = \frac{1}{x-1} - 2\left(\frac{1}{x^2-1}\right).
     \]
     From this identity we have, as \( b_n > 1 \) for all \( n \in \mathbb{N}_{\geq 1} \),
     \[
-        \frac{1}{b_n+1} = \frac{1}{b_n-1} - 2\left(\frac{1}{b_n^2-1}\right) = \frac{1}{b_n-1} - 2\frac{1}{b_{n-1}-1},
+        \frac{1}{b_n+1} = \frac{1}{b_n-1} - 2\left(\frac{1}{b_n^2-1}\right) = \frac{1}{b_n-1} -
+        2\frac{1}{b_{n-1}-1},
     \]
     so that
     \[
@@ -34,20 +39,31 @@ converges and find the limit.
     \]
     Thus, for all \( N \in \mathbb{N}_{\geq 1} \),
     \[
-        \sum_{n=1}^{N} \frac{2^{-n}}{1+2^{\left(\frac{1}{2^n}\right)}} = \sum_{n=1}^{N} \frac{2^{-n}}{b_n+1} = \sum_{n=1}^{N} \left(\frac{2^{-n}}{b_n-1} - \frac{2^{-\left(n-1\right)}}{b_{n-1}-1}\right)
+        \sum_{n=1}^{N} \frac{2^{-n}}{1+2^{\left(\frac{1}{2^n}\right)}} = \sum_{n=1}^{N}
+        \frac{2^{-n}}{b_n+1} = \sum_{n=1}^{N} \left(\frac{2^{-n}}{b_n-1} -
+        \frac{2^{-\left(n-1\right)}}{b_{n-1}-1}\right)
     \]
     \[
-        = \frac{2^{-N}}{b_N-1} - \frac{2^0}{b_0-1} = \frac{2^{-N}}{b_N-1} - \frac{1}{2-1} = \frac{2^{-N}}{2^{\left(\frac{1}{2^N}\right)}-1} - 1.
+        = \frac{2^{-N}}{b_N-1} - \frac{2^0}{b_0-1} = \frac{2^{-N}}{b_N-1} - \frac{1}{2-1} =
+        \frac{2^{-N}}{2^{\left(\frac{1}{2^N}\right)}-1} - 1.
     \]
-    Since \( 2^{-x} \) and \( 2^{\frac{1}{2^x}}-1 \) tend to \( 0 \) as \( x \to +\infty \), since for all \( x \in \mathbb{R} \),
+    Since \( 2^{-x} \) and \( 2^{\frac{1}{2^x}}-1 \) tend to \( 0 \) as \( x \to +\infty \), since
+    for all \( x \in \mathbb{R} \),
     \[
-        \left(2^{-x}\right)' = -\log\left(2\right)2^{-x}, \quad \left(2^{\left(\frac{1}{2^x}\right)}-1\right)' = -\log\left(2\right)^2 2^{-x} 2^{\left(\frac{1}{2^x}\right)} \neq 0,
+        \left(2^{-x}\right)' = -\log\left(2\right)2^{-x}, \quad
+        \left(2^{\left(\frac{1}{2^x}\right)}-1\right)' = -\log\left(2\right)^2 2^{-x}
+        2^{\left(\frac{1}{2^x}\right)} \neq 0,
     \]
     and since clearly
     \[
-        \frac{-\log\left(2\right)2^{-x}}{-\log\left(2\right)^2 2^{-x} 2^{\left(\frac{1}{2^x}\right)}} = \frac{1}{\log\left(2\right) 2^{\left(\frac{1}{2^x}\right)}} \overset{x \to +\infty}{\longrightarrow} \frac{1}{\log\left(2\right)} = \log_2\left(e\right),
+        \frac{-\log\left(2\right)2^{-x}}{-\log\left(2\right)^2 2^{-x} 2^{\left(\frac{1}{2^x}\right)}}
+        = \frac{1}{\log\left(2\right) 2^{\left(\frac{1}{2^x}\right)}}
+        \overset{x \to +\infty}{\longrightarrow} \frac{1}{\log\left(2\right)} =
+        \log_2\left(e\right),
     \]
-    we have by l'H\^opital's rule that \( \frac{2^{-N}}{2^{\left(\frac{1}{2^N}\right)}-1} \overset{N \to +\infty}{\longrightarrow} \log_2\left(e\right) \).
+    we have by l'H\^opital's rule that \( \frac{2^{-N}}{2^{\left(\frac{1}{2^N}\right)}-1}
+    \overset{N \to +\infty}{\longrightarrow} \log_2\left(e\right) \).
     \\\\
-    Hence, the partial sums converge to \( \log_2\left(e\right) - 1 \). Therefore, the series converges and its limit is \( \log_2\left(e\right) - 1 \).
+    Hence, the partial sums converge to \( \log_2\left(e\right) - 1 \). Therefore, the series
+    converges and its limit is \( \log_2\left(e\right) - 1 \).
 \end{solution}

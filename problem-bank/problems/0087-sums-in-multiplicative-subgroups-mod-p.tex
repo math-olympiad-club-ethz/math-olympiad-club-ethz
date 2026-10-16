@@ -23,40 +23,68 @@
 % Alon and Bourgain's Claim 3.2 (see references).
 % Restyled on 2026-10-01 after problem-bank/writing-style.md (the style of the fully solved problems); the mathematics is unchanged.
 \begin{problem}
-Let \( p \) be a prime number and \( \mathbb{F}_{p} := \mathbb{Z}/p\mathbb{Z} \) be the field with \( p \) elements. Let \( A \) be a subgroup of the multiplicative group \( \left(\mathbb{F}_{p}^{\times}, \cdot, 1_{\mathbb{F}_{p}}\right) \), where \( \mathbb{F}_{p}^{\times} := \mathbb{F}_{p} \setminus \left\{ 0_{\mathbb{F}_{p}} \right\} \). Suppose that the order \( \left| A \right| \) of \( A \) is a multiple of \( 6 \). Prove that there exist \( x, y, z \in A \) such that
-\[
-x + y = z,
-\]
-where \( + \) is the addition of \( \mathbb{F}_{p} \).
+    Let \( p \) be a prime number and \( \mathbb{F}_{p} := \mathbb{Z}/p\mathbb{Z} \) be the field
+    with \( p \) elements. Let \( A \) be a subgroup of the multiplicative group
+    \( \left(\mathbb{F}_{p}^{\times}, \cdot, 1_{\mathbb{F}_{p}}\right) \), where
+    \( \mathbb{F}_{p}^{\times} := \mathbb{F}_{p} \setminus \left\{ 0_{\mathbb{F}_{p}} \right\} \).
+    Suppose that the order \( \left| A \right| \) of \( A \) is a multiple of \( 6 \). Prove that
+    there exist \( x, y, z \in A \) such that
+    \[
+        x + y = z,
+    \]
+    where \( + \) is the addition of \( \mathbb{F}_{p} \).
 \end{problem}
 \begin{solution}
-Since \( 6 \) divides \( \left| A \right| \), the primes \( 2 \) and \( 3 \) both divide the order of the finite group \( \left(A, \cdot, 1_{\mathbb{F}_{p}}\right) \). By Cauchy's theorem, if a prime \( q \) divides the order of a finite group, then the group has an element of order \( q \); for a proof of this classical fact, see the Appendix [\appendixref{cauchy-group-theorem}], where the prime is called \( p \). Applying it to \( A \) with \( q = 2 \) and with \( q = 3 \), we obtain \( h, \omega \in A \) such that
-\[
-h \neq 1_{\mathbb{F}_{p}}, \quad h^{2} = 1_{\mathbb{F}_{p}}, \qquad \omega \neq 1_{\mathbb{F}_{p}}, \quad \omega^{3} = 1_{\mathbb{F}_{p}}.
-\]
-In \( \mathbb{F}_{p} \), we have
-\[
-\left(h - 1_{\mathbb{F}_{p}}\right)\left(h + 1_{\mathbb{F}_{p}}\right) = h^{2} - 1_{\mathbb{F}_{p}} = 0_{\mathbb{F}_{p}},
-\]
-and \( h - 1_{\mathbb{F}_{p}} \neq 0_{\mathbb{F}_{p}} \). Since \( \mathbb{F}_{p} \) is a field, it is a domain, i.e., if \( u, v \in \mathbb{F}_{p} \) satisfy \( uv = 0_{\mathbb{F}_{p}} \), then \( u = 0_{\mathbb{F}_{p}} \) or \( v = 0_{\mathbb{F}_{p}} \). Hence, \( h + 1_{\mathbb{F}_{p}} = 0_{\mathbb{F}_{p}} \), that is \( h = -1_{\mathbb{F}_{p}} \). In particular, \( -1_{\mathbb{F}_{p}} \in A \).
-\\\\
-Similarly, we have
-\[
-\left(\omega - 1_{\mathbb{F}_{p}}\right)\left(\omega^{2} + \omega + 1_{\mathbb{F}_{p}}\right) = \omega^{3} - 1_{\mathbb{F}_{p}} = 0_{\mathbb{F}_{p}},
-\]
-and \( \omega - 1_{\mathbb{F}_{p}} \neq 0_{\mathbb{F}_{p}} \), so again because \( \mathbb{F}_{p} \) is a domain, we obtain
-\[
-\omega^{2} + \omega + 1_{\mathbb{F}_{p}} = 0_{\mathbb{F}_{p}}.
-\]
-Now define
-\[
-x := -\omega = h\omega, \qquad y := -\omega^{2} = h\omega^{2}, \qquad z := 1_{\mathbb{F}_{p}}.
-\]
-Since \( A \) contains \( h \), \( \omega \) and \( 1_{\mathbb{F}_{p}} \) and is closed under multiplication, we have \( x, y, z \in A \). Using \( \omega^{2} + \omega + 1_{\mathbb{F}_{p}} = 0_{\mathbb{F}_{p}} \), we obtain
-\[
-x + y = -\left(\omega + \omega^{2}\right) = 1_{\mathbb{F}_{p}} = z,
-\]
-as desired.
-\\\\
-We show that \( x \), \( y \) and \( z \) are even pairwise distinct. If \( x = y \), i.e., \( -\omega = -\omega^{2} \), then \( \omega = \omega^{2} \), hence \( \omega = 1_{\mathbb{F}_{p}} \) (multiply by \( \omega^{-1} \)). If \( x = z \), i.e., \( -\omega = 1_{\mathbb{F}_{p}} \), then \( \omega^{2} = 1_{\mathbb{F}_{p}} \), hence \( \omega = \omega^{3} \omega^{-2} = 1_{\mathbb{F}_{p}} \). If \( y = z \), i.e., \( -\omega^{2} = 1_{\mathbb{F}_{p}} \), then \( \omega^{4} = 1_{\mathbb{F}_{p}} \), hence \( \omega = \omega^{4} \omega^{-3} = 1_{\mathbb{F}_{p}} \). All three cases are a contradiction to \( \omega \neq 1_{\mathbb{F}_{p}} \). Thus, \( x \), \( y \) and \( z \) are pairwise distinct.
+    Since \( 6 \) divides \( \left| A \right| \), the primes \( 2 \) and \( 3 \) both divide the
+    order of the finite group \( \left(A, \cdot, 1_{\mathbb{F}_{p}}\right) \). By Cauchy's theorem,
+    if a prime \( q \) divides the order of a finite group, then the group has an element of order
+    \( q \); for a proof of this classical fact, see the
+    Appendix [\appendixref{cauchy-group-theorem}], where the prime is called \( p \). Applying it to
+    \( A \) with \( q = 2 \) and with \( q = 3 \), we obtain \( h, \omega \in A \) such that
+    \[
+        h \neq 1_{\mathbb{F}_{p}}, \quad h^{2} = 1_{\mathbb{F}_{p}}, \qquad \omega \neq
+        1_{\mathbb{F}_{p}}, \quad \omega^{3} = 1_{\mathbb{F}_{p}}.
+    \]
+    In \( \mathbb{F}_{p} \), we have
+    \[
+        \left(h - 1_{\mathbb{F}_{p}}\right)\left(h + 1_{\mathbb{F}_{p}}\right) = h^{2} -
+        1_{\mathbb{F}_{p}} = 0_{\mathbb{F}_{p}},
+    \]
+    and \( h - 1_{\mathbb{F}_{p}} \neq 0_{\mathbb{F}_{p}} \). Since \( \mathbb{F}_{p} \) is a field,
+    it is a domain, i.e., if \( u, v \in \mathbb{F}_{p} \) satisfy \( uv = 0_{\mathbb{F}_{p}} \),
+    then \( u = 0_{\mathbb{F}_{p}} \) or \( v = 0_{\mathbb{F}_{p}} \). Hence, \( h +
+    1_{\mathbb{F}_{p}} = 0_{\mathbb{F}_{p}} \), that is \( h = -1_{\mathbb{F}_{p}} \). In
+    particular, \( -1_{\mathbb{F}_{p}} \in A \).
+    \\\\
+    Similarly, we have
+    \[
+        \left(\omega - 1_{\mathbb{F}_{p}}\right)\left(\omega^{2} + \omega +
+        1_{\mathbb{F}_{p}}\right) = \omega^{3} - 1_{\mathbb{F}_{p}} = 0_{\mathbb{F}_{p}},
+    \]
+    and \( \omega - 1_{\mathbb{F}_{p}} \neq 0_{\mathbb{F}_{p}} \), so again because
+    \( \mathbb{F}_{p} \) is a domain, we obtain
+    \[
+        \omega^{2} + \omega + 1_{\mathbb{F}_{p}} = 0_{\mathbb{F}_{p}}.
+    \]
+    Now define
+    \[
+        x := -\omega = h\omega, \qquad y := -\omega^{2} = h\omega^{2}, \qquad z :=
+        1_{\mathbb{F}_{p}}.
+    \]
+    Since \( A \) contains \( h \), \( \omega \) and \( 1_{\mathbb{F}_{p}} \) and is closed under
+    multiplication, we have \( x, y, z \in A \). Using \( \omega^{2} + \omega + 1_{\mathbb{F}_{p}} =
+    0_{\mathbb{F}_{p}} \), we obtain
+    \[
+        x + y = -\left(\omega + \omega^{2}\right) = 1_{\mathbb{F}_{p}} = z,
+    \]
+    as desired.
+    \\\\
+    We show that \( x \), \( y \) and \( z \) are even pairwise distinct. If \( x = y \), i.e.,
+    \( -\omega = -\omega^{2} \), then \( \omega = \omega^{2} \), hence \( \omega =
+    1_{\mathbb{F}_{p}} \) (multiply by \( \omega^{-1} \)). If \( x = z \), i.e., \( -\omega =
+    1_{\mathbb{F}_{p}} \), then \( \omega^{2} = 1_{\mathbb{F}_{p}} \), hence \( \omega = \omega^{3}
+    \omega^{-2} = 1_{\mathbb{F}_{p}} \). If \( y = z \), i.e., \( -\omega^{2} =
+    1_{\mathbb{F}_{p}} \), then \( \omega^{4} = 1_{\mathbb{F}_{p}} \), hence \( \omega = \omega^{4}
+    \omega^{-3} = 1_{\mathbb{F}_{p}} \). All three cases are a contradiction to \( \omega \neq
+    1_{\mathbb{F}_{p}} \). Thus, \( x \), \( y \) and \( z \) are pairwise distinct.
 \end{solution}
