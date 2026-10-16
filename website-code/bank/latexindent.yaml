@@ -1,0 +1,50 @@
+# latexindent settings of this repository, used by texformat.py (also on save in VS Code, see .vscode/settings.json).
+# They give the indentation of problem-bank/writing-style.md, section 7 ("Source layout"): 4 spaces per nesting
+# level. latexindent only changes leading spaces with these settings; texformat.py wraps the long lines.
+defaultIndent: "    "
+
+# latexindent's own default leaves the body of an environment called "problem" unindented
+noAdditionalIndent:
+    problem: 0
+
+# the lines that continue an \item: 4 spaces further than the \item
+indentRules:
+    item: "    "
+
+# BibTeX blocks are left exactly as written
+verbatimEnvironments:
+    bibentries: 1
+
+# $...$ and $$...$$ are not treated as blocks: latexindent pairs the dollars differently from one run to the next
+# (texformat.py never breaks a line inside them anyway)
+specialBeginEnd:
+    inlineMath:
+        lookForThis: 0
+    displayMathTeX:
+        lookForThis: 0
+
+# no padding around & and \\ inside formulas, matrices and tables: the rows stay as written
+lookForAlignDelims:
+    tabular: 0
+    tabularx: 0
+    longtable: 0
+    tabu: 0
+    array: 0
+    matrix: 0
+    listabla: 0
+    align: 0
+    align*: 0
+    alignat: 0
+    alignat*: 0
+    aligned: 0
+    alignedat: 0
+    bmatrix: 0
+    Bmatrix: 0
+    cases: 0
+    flalign: 0
+    flalign*: 0
+    pmatrix: 0
+    split: 0
+    vmatrix: 0
+    Vmatrix: 0
+    cases*: 0
