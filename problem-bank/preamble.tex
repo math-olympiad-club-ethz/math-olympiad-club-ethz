@@ -219,11 +219,11 @@
     \cs_new_protected:Npn \__bank_appendix_next:
     {
         \int_compare:nNnT { \g__bank_appendix_int } < { \seq_count:N \g__bank_appendix_seq }
-            {
-                \int_gincr:N \g__bank_appendix_int
-                \__bank_appendix_print:x { \seq_item:Nn \g__bank_appendix_seq { \g__bank_appendix_int } }
-                \__bank_appendix_next:
-            }
+        {
+            \int_gincr:N \g__bank_appendix_int
+            \__bank_appendix_print:x { \seq_item:Nn \g__bank_appendix_seq { \g__bank_appendix_int } }
+            \__bank_appendix_next:
+        }
     }
     \cs_new_protected:Npn \bankappendixall
     { \int_compare:nNnT { \seq_count:N \g__bank_appendix_seq } > { 0 } { \bankappendix \__bank_appendix_next: } }

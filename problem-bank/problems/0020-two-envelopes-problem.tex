@@ -60,14 +60,23 @@
     other, i.e., $\alpha < 2\alpha$. \\
     To exploit this without knowing $\Omega$, the player, after having selected one envelope and
     having seen its content, introduces some randomization. Say, they will
-    generate\footnote{Practically, this could involve sampling from a physical source (e.g., thermal noise) or a deterministic \href{https://en.wikipedia.org/wiki/Pseudorandom_number_generator}{pseudorandom number generator} (PRNG) seeded by an unpredictable value (e.g., system clock nanoseconds); see \href{https://en.wikipedia.org/wiki/Hardware_random_number_generator}{Hardware random number generator} for more information.}
-    a number between $\left[0,1\right]$ and \textit{make a decision} with this number. Formally, we
-    introduce an auxiliary probability space $\left(\Sigma,\mathcal{A},\mu\right)$ and let
-    $U:\Sigma\rightarrow\left[0,1\right]$ be a uniform random variable, i.e.,
-    $U \sim \text{Unif}\left(\left[0,1\right]\right)$\footnote{We can construct $\left(\Sigma,\mathcal{A},\mu\right)$ as $\left(\left[0,1\right],\mathcal{B}\left(\left[0,1\right]\right),\lambda|_{\mathcal{B}\left(\left[0,1\right]\right)}\right)$, where $\mathcal{B}\left(\left[0,1\right]\right)$ is the Borel sigma-algebra and $\lambda$ is the Lebesgue measure on $\mathbb{R}$. $U$ can then be defined as the identity function, i.e., $U(x) = x$ for $x \in \left[0,1\right]$ and it is obviously a random variable with the uniform law on $[0,1]$.},
-    that is, for any $a,b \in\left[0,1\right]$ with $a\leq b$ and any non-empty interval
-    $I\subset \left[0,1\right]$ with $\inf I=a$ and $\sup I=b$ then $\mu_{U}(I)= b-a$. Adjoining
-    this new probability space to the preceding one, we obtain a product space (which is a
+    generate\footnote{Practically, this could involve sampling from a physical source (e.g., thermal
+    noise) or a deterministic
+    \href{https://en.wikipedia.org/wiki/Pseudorandom_number_generator}{pseudorandom number generator}
+    (PRNG) seeded by an unpredictable value (e.g., system clock nanoseconds); see
+    \href{https://en.wikipedia.org/wiki/Hardware_random_number_generator}{Hardware random number generator}
+    for more information.} a number between $\left[0,1\right]$ and \textit{make a decision} with
+    this number. Formally, we introduce an auxiliary probability space
+    $\left(\Sigma,\mathcal{A},\mu\right)$ and let $U:\Sigma\rightarrow\left[0,1\right]$ be a uniform
+    random variable, i.e., $U \sim \text{Unif}\left(\left[0,1\right]\right)$\footnote{We can
+    construct $\left(\Sigma,\mathcal{A},\mu\right)$ as
+    $\left(\left[0,1\right],\mathcal{B}\left(\left[0,1\right]\right),\lambda|_{\mathcal{B}\left(\left[0,1\right]\right)}\right)$,
+    where $\mathcal{B}\left(\left[0,1\right]\right)$ is the Borel sigma-algebra and $\lambda$ is the
+    Lebesgue measure on $\mathbb{R}$. $U$ can then be defined as the identity function, i.e.,
+    $U(x) = x$ for $x \in \left[0,1\right]$ and it is obviously a random variable with the uniform
+    law on $[0,1]$.}, that is, for any $a,b \in\left[0,1\right]$ with $a\leq b$ and any non-empty
+    interval $I\subset \left[0,1\right]$ with $\inf I=a$ and $\sup I=b$ then $\mu_{U}(I)= b-a$.
+    Adjoining this new probability space to the preceding one, we obtain a product space (which is a
     probability space):
     $$\left(\Omega\times\Sigma,\mathcal{F}\otimes\mathcal{A},\mathbb{P}\otimes\mu\right).$$ Choosing
     a $\left(w,\xi\right)\in \Omega\times\Sigma$, and looking at $\pi_1\left(w\right)$, we must now
@@ -130,7 +139,7 @@
         f_g\left(x, y\right) = \mathbbm{1}_{\left[0, g\left(x\right)\right]}\left(y\right),
     \]
     which means we keep the first envelope if the generated number \( U\left(\xi\right) \) satisfies
-    \(0\leq  U\left(\xi\right) \leq g\left(\pi_1\left(w\right)\right) \), and we switch otherwise.
+    \(0\leq U\left(\xi\right) \leq g\left(\pi_1\left(w\right)\right) \), and we switch otherwise.
     For example, if $g=\text{cte}_0$ then we always switch, while if $g=\text{cte}_1$ then we always
     keep.
     \\\\

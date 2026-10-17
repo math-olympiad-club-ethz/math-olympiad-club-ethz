@@ -65,8 +65,17 @@
     \begin{itemize}
         \item For each \(i \in \{1, \ldots, r\}\), we have \(e_i = 1\).
         \item Every odd prime \(p_i\) satisfies \(p_i - 1 = 2^{a_i}\) for some \(a_i \geq 0\). In
-            other words, every odd prime factor of \( m \) is a Fermat
-            prime\footnote{A Fermat prime is a prime number of the form \(2^j + 1\). One can easily see (mental exercise) that \(j\) is necessarily \textbf{again} a power of \(2\). Indeed, if \(j\) is not a power of \(2\), then there is an odd prime \(p \mid j\) and \(2^j + 1 = \left(2^{\frac{j}{p}}\right)^p - (-1)^p = \left(2^{\frac{j}{p}} + 1\right) \left( \sum_{s=0}^{p-1} (-1)^{p-1-s} \left(2^{\frac{j}{p}}\right)^s \right)\), which is a non-trivial factorization of \(2^j + 1\) since \(1 < 2^{\frac{j}{p}} + 1 < 2^j + 1\), contradicting the fact that \(2^j + 1\) is a prime number. \textit{Nota bene}: the only known Fermat primes are \(3 = 2^{(2^0)} + 1\), \(5 = 2^{(2^1)} + 1\), \(17 = 2^{(2^{2})} + 1\), \(257 = 2^{(2^{3})} + 1\), and \(65537 = 2^{(2^{4})} + 1\), and we don't know if there are infinitely many of them.}.
+            other words, every odd prime factor of \( m \) is a Fermat prime\footnote{A Fermat prime
+            is a prime number of the form \(2^j + 1\). One can easily see (mental exercise) that
+            \(j\) is necessarily \textbf{again} a power of \(2\). Indeed, if \(j\) is not a power of
+            \(2\), then there is an odd prime \(p \mid j\) and \(2^j + 1 =
+            \left(2^{\frac{j}{p}}\right)^p - (-1)^p = \left(2^{\frac{j}{p}} + 1\right) \left(
+            \sum_{s=0}^{p-1} (-1)^{p-1-s} \left(2^{\frac{j}{p}}\right)^s \right)\), which is a
+            non-trivial factorization of \(2^j + 1\) since \(1 < 2^{\frac{j}{p}} + 1 < 2^j + 1\),
+            contradicting the fact that \(2^j + 1\) is a prime number. \textit{Nota bene}: the only
+            known Fermat primes are \(3 = 2^{(2^0)} + 1\), \(5 = 2^{(2^1)} + 1\), \(17 = 2^{(2^{2})}
+            + 1\), \(257 = 2^{(2^{3})} + 1\), and \(65537 = 2^{(2^{4})} + 1\), and we don't know if
+            there are infinitely many of them.}.
     \end{itemize}
     Hence \(2^n = \varphi(m) = 2^{k-1} \prod_{i=1}^r 2^{a_i}\), and so the following equality holds:
     \[

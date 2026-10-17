@@ -22,9 +22,9 @@
     If $\alpha<0$ we notice that $\forall n\in\mathbb{N}^{*}$ we have:
     $\mathbb{N}\ni n^{\alpha}=\frac{1}{n^{|\alpha|}}$. Since
     $x\mapsto x^{|\alpha|}:=exp(|\alpha|\cdot ln(x))$ is strictly increasing over $]0;+\infty[$ (it
-        is derivable over $]0;+\infty[$ with positive derivative $|\alpha|\cdot x^{|\alpha|}$) we must
-        have (since $x\mapsto\frac{1}{x}$ is strictly decreasing over $]0;+\infty[$) that
-        $x\mapsto x^{\alpha}$ is strictly decreasing over $]0;+\infty[$. So:
+    is derivable over $]0;+\infty[$ with positive derivative $|\alpha|\cdot x^{|\alpha|}$) we must
+    have (since $x\mapsto\frac{1}{x}$ is strictly decreasing over $]0;+\infty[$) that
+    $x\mapsto x^{\alpha}$ is strictly decreasing over $]0;+\infty[$. So:
     $$1<2\rightarrow 1=1^{\alpha}>2^{\alpha}\in\mathbb{N}\Rightarrow 0=2^{\alpha}=exp(\alpha\cdot ln(2))$$
     a contradiction since $0\notin ran(exp)=\mathbb{R}_{>0}$. \\
     Therefore we cannot have $\alpha<0$ and we must have $\alpha\geq 0$.
@@ -75,49 +75,49 @@
     $$\alpha\cdot (n+\theta_1)^{\alpha-1}=\frac{(n+1)^{\alpha}-n^{\alpha}}{(n+1)-n}=(n+1)^{\alpha}-n^{\alpha}$$
     Our above feel that iterating this process
     ($x\mapsto x^{\alpha}\in C^{\infty}(]0;+\infty[,\mathbb{R})$) until some point is correct. In
-        fact after $\lfloor\alpha\rfloor+1$ iteration of the mean value theorem, the expression on the
-        LHS which really is  $\prod_{i=0}^{\lfloor\alpha\rfloor+1}(\alpha-i)$ multiplied by
-        $(n+\theta_{\lfloor\alpha\rfloor+1})^{(\alpha-(\lfloor\alpha\rfloor+1))<0}$ where
-        $\theta_{\lfloor\alpha\rfloor+1}\in]0;\lfloor\alpha\rfloor+1[$ should represent the
-        $\lfloor\alpha\rfloor+1$-th order distance (which is an integer) ! And this must hold for any
-        $n\in\mathbb{N}$ ! In particular balading $n$ to infinity we must have (as the distance is an
-        integer) that this distance is zero, (this uses $(\alpha-(\lfloor\alpha\rfloor+1))<0$).  This
-        tell us that such a distance at some point must be zero and therefore that
-        $\alpha=\lfloor\alpha\rfloor$ which will show that $\alpha\in\mathbb{N}$ !
-        \\\\
-        Let us make this more formally by defining the following operation the
-        \href{https://en.m.wikipedia.org/wiki/Finite_difference}{difference operator }:
-        \[\begin{tikzcd}
-                {\Delta:\mathcal{F}(\mathbb{R},\mathbb{R})} & {\mathcal{F}(\mathbb{R};\mathbb{R})} \\
-                f & {\Delta(f):\mathbb{R}} & {\mathbb{R}} \\
-                & x & {f(x+1)-f(x)}
-                \arrow[from=1-1, to=1-2]
-                \arrow[maps to, from=2-1, to=2-2]
-                \arrow[from=2-2, to=2-3]
-                \arrow[maps to, from=3-2, to=3-3]
-            \end{tikzcd}\]
-        It has the property that
-        $\Delta[C^{\infty}(\mathbb{R},\mathbb{R})]\subset C^{\infty}(\mathbb{R},\mathbb{R})$ and
-        that (restricted to $C^{\infty}(\mathbb{R},\mathbb{R})$) the following diagram commutes:
-        \[\begin{tikzcd}
-                {C^{\infty}(\mathbb{R},\mathbb{R})} & {C^{\infty}(\mathbb{R},\mathbb{R})} \\
-                {C^{\infty}(\mathbb{R},\mathbb{R})} & {C^{\infty}(\mathbb{R},\mathbb{R})}
-                \arrow["\Delta", from=1-1, to=1-2]
-                \arrow["{\frac{d}{dx}}"', from=1-1, to=2-1]
-                \arrow["{\frac{d}{dx}}", from=1-2, to=2-2]
-                \arrow["\Delta"', from=2-1, to=2-2]
-            \end{tikzcd}\]
-        Indeed for $f\in C^{\infty}(\mathbb{R},\mathbb{R})$ and $\tilde{x}\in\mathbb{R}$ we have:
-        $$\left((\frac{d}{dx}\circ\Delta) (f)\right)(\tilde{x})=\left(\frac{d}{dx}(\Delta(f))\right)(\tilde{x}+1)$$
-        $$=\left(\frac{d}{dx}(f)\right)(\tilde{x}+1)\cdot \left(\frac{d}{dx}(\_+1)\right)(\tilde{x})-\left(\frac{d}{dx}(f)\right)(\tilde{x})=\left(\frac{d}{dx}(f)\right)(\tilde{x}+1)-\left(\frac{d}{dx}(f)\right)(\tilde{x})$$
-        $$=\left(\Delta\left(\frac{d}{dx}(f)\right)\right)(\tilde{x})=\left((\Delta\circ\frac{d}{dx})(f)\right)(\tilde{x})$$
-        We define by recursion along the integers; for $k\in\mathbb{N}$:
-        $$\Delta^{(k)}=\begin{cases}
-            Id\text{ if } k = 0\\
-            \Delta\circ \Delta^{(k-1)}\text{ if } k\geq 1
-        \end{cases}$$
-        and we define the set:
-        $$\mathcal{A}:=\left\{k\in\mathbb{N}\,:\, \forall f\in C^{\infty}(\mathbb{R},\mathbb{R})\forall x\in\mathbb{R}\exists\theta_{k}\in]0;k[\, \left(\frac{d^k}{dx^k}(f)\right)(x+\theta_{k})=(\Delta^{(k)}(f))(x)\right\}$$
+    fact after $\lfloor\alpha\rfloor+1$ iteration of the mean value theorem, the expression on the
+    LHS which really is $\prod_{i=0}^{\lfloor\alpha\rfloor+1}(\alpha-i)$ multiplied by
+    $(n+\theta_{\lfloor\alpha\rfloor+1})^{(\alpha-(\lfloor\alpha\rfloor+1))<0}$ where
+    $\theta_{\lfloor\alpha\rfloor+1}\in]0;\lfloor\alpha\rfloor+1[$ should represent the
+    $\lfloor\alpha\rfloor+1$-th order distance (which is an integer) ! And this must hold for any
+    $n\in\mathbb{N}$ ! In particular balading $n$ to infinity we must have (as the distance is an
+    integer) that this distance is zero, (this uses $(\alpha-(\lfloor\alpha\rfloor+1))<0$). This
+    tell us that such a distance at some point must be zero and therefore that
+    $\alpha=\lfloor\alpha\rfloor$ which will show that $\alpha\in\mathbb{N}$ !
+    \\\\
+    Let us make this more formally by defining the following operation the
+    \href{https://en.m.wikipedia.org/wiki/Finite_difference}{difference operator }:
+    \[\begin{tikzcd}
+            {\Delta:\mathcal{F}(\mathbb{R},\mathbb{R})} & {\mathcal{F}(\mathbb{R};\mathbb{R})} \\
+            f & {\Delta(f):\mathbb{R}} & {\mathbb{R}} \\
+            & x & {f(x+1)-f(x)}
+            \arrow[from=1-1, to=1-2]
+            \arrow[maps to, from=2-1, to=2-2]
+            \arrow[from=2-2, to=2-3]
+            \arrow[maps to, from=3-2, to=3-3]
+        \end{tikzcd}\]
+    It has the property that
+    $\Delta[C^{\infty}(\mathbb{R},\mathbb{R})]\subset C^{\infty}(\mathbb{R},\mathbb{R})$ and that
+    (restricted to $C^{\infty}(\mathbb{R},\mathbb{R})$) the following diagram commutes:
+    \[\begin{tikzcd}
+            {C^{\infty}(\mathbb{R},\mathbb{R})} & {C^{\infty}(\mathbb{R},\mathbb{R})} \\
+            {C^{\infty}(\mathbb{R},\mathbb{R})} & {C^{\infty}(\mathbb{R},\mathbb{R})}
+            \arrow["\Delta", from=1-1, to=1-2]
+            \arrow["{\frac{d}{dx}}"', from=1-1, to=2-1]
+            \arrow["{\frac{d}{dx}}", from=1-2, to=2-2]
+            \arrow["\Delta"', from=2-1, to=2-2]
+        \end{tikzcd}\]
+    Indeed for $f\in C^{\infty}(\mathbb{R},\mathbb{R})$ and $\tilde{x}\in\mathbb{R}$ we have:
+    $$\left((\frac{d}{dx}\circ\Delta) (f)\right)(\tilde{x})=\left(\frac{d}{dx}(\Delta(f))\right)(\tilde{x}+1)$$
+    $$=\left(\frac{d}{dx}(f)\right)(\tilde{x}+1)\cdot \left(\frac{d}{dx}(\_+1)\right)(\tilde{x})-\left(\frac{d}{dx}(f)\right)(\tilde{x})=\left(\frac{d}{dx}(f)\right)(\tilde{x}+1)-\left(\frac{d}{dx}(f)\right)(\tilde{x})$$
+    $$=\left(\Delta\left(\frac{d}{dx}(f)\right)\right)(\tilde{x})=\left((\Delta\circ\frac{d}{dx})(f)\right)(\tilde{x})$$
+    We define by recursion along the integers; for $k\in\mathbb{N}$:
+    $$\Delta^{(k)}=\begin{cases}
+        Id\text{ if } k = 0\\
+        \Delta\circ \Delta^{(k-1)}\text{ if } k\geq 1
+    \end{cases}$$
+    and we define the set:
+    $$\mathcal{A}:=\left\{k\in\mathbb{N}\,:\, \forall f\in C^{\infty}(\mathbb{R},\mathbb{R})\forall x\in\mathbb{R}\exists\theta_{k}\in]0;k[\, \left(\frac{d^k}{dx^k}(f)\right)(x+\theta_{k})=(\Delta^{(k)}(f))(x)\right\}$$
     (This is just formal induction) \\We claim $\mathcal{A}=\mathbb{N}$. One inclusion is trivial.
     For the other inclusion: suppose $\mathbb{N}\setminus\mathcal{A}\neq\varnothing$ then we can
     take:

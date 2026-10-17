@@ -38,18 +38,28 @@
         any scalar multiple \( \lambda N^k \) with \( \lambda \in R \) and \( k \in
         \mathbb{N}_{>0} \) is nilpotent. Moreover, for any (possibly non-commutative) unital ring
         \( A \) (here \( R^{l \times l} \)), the set of nilpotent elements
-        \( \operatorname{Nil}\left( A \right) \) is
-        closed\footnote{For the finite product, the index of nilpotency is bounded above by the minimum of the respective indices of nilpotency (use the commutativity of the factors). For the finite sum, the index of nilpotency is bounded above by 1 plus the sum of the nilpotency indices minus the number of summands. To see this, use the multinomial theorem (which is valid since the summands commute) and use the pigeonhole principle.}
-        under finite sums and products, provided that the terms commute pairwise. Because \( R \) is
-        commutative, we get that for any \( \lambda, \lambda' \in R \) and \( k, k' \in
-        \mathbb{N}_{>0} \), the elements \( \lambda N^k \) and \( \lambda' N^{k'} \) commute. Hence
-        \( E \in \operatorname{Nil}\left(R^{l\times l}\right) \).
+        \( \operatorname{Nil}\left( A \right) \) is closed\footnote{For the finite product, the
+        index of nilpotency is bounded above by the minimum of the respective indices of nilpotency
+        (use the commutativity of the factors). For the finite sum, the index of nilpotency is
+        bounded above by 1 plus the sum of the nilpotency indices minus the number of summands. To
+        see this, use the multinomial theorem (which is valid since the summands commute) and use
+        the pigeonhole principle.} under finite sums and products, provided that the terms commute
+        pairwise. Because \( R \) is commutative, we get that for any \( \lambda, \lambda' \in R \)
+        and \( k, k' \in \mathbb{N}_{>0} \), the elements \( \lambda N^k \) and \( \lambda'
+        N^{k'} \) commute. Hence \( E \in \operatorname{Nil}\left(R^{l\times l}\right) \).
         \\\\
         Now \( r_{R} \in R^{\times} \), so we must have \( r_{R} I_{l} \in
         \left(R^{l\times l}\right)^{\times} \). As \( E \) is nilpotent and \( E \) commutes with
         \( r_{R} I_{l} \) (since \( R \) is commutative), the element \( S := r_{R} I_{l} + E \),
         being the sum of an invertible element of \( R^{l\times l} \) and a nilpotent one, must be
-        invertible\footnote{This is a general fact about any (possibly non-commutative) unital ring \( A \): if \( a \in A^{\times} \), \( b \in \operatorname{Nil}\left(A\right) \), and \( ab = ba \), then \( a + b \in A^{\times} \). Indeed, let \( v \in \mathbb{N}_{>0} \) be the index of nilpotency of \( b \). Then, since \( a \) and \( b \) commute, so do \( a^{-1} \) and \( b \), and we have \( \left(ba^{-1}\right)^v = b^va^{-v} = 0_{A} \). A simple computation (using the fact that \( \pm 1_{A} \) commutes with every element, and that \( a \), \( b \), and \( a^{-1} \) commute with one another, as do their powers) shows that the element
+        invertible\footnote{This is a general fact about any (possibly non-commutative) unital ring
+        \( A \): if \( a \in A^{\times} \), \( b \in \operatorname{Nil}\left(A\right) \), and
+        \( ab = ba \), then \( a + b \in A^{\times} \). Indeed, let \( v \in \mathbb{N}_{>0} \) be
+        the index of nilpotency of \( b \). Then, since \( a \) and \( b \) commute, so do
+        \( a^{-1} \) and \( b \), and we have \( \left(ba^{-1}\right)^v = b^va^{-v} = 0_{A} \). A
+        simple computation (using the fact that \( \pm 1_{A} \) commutes with every element, and
+        that \( a \), \( b \), and \( a^{-1} \) commute with one another, as do their powers) shows
+        that the element
         \[
             a^{-1} \left( \sum_{k=0}^{v-1} \left(-1_{A}\right)^k \left(b a^{-1}\right)^k \right)\in
             A,

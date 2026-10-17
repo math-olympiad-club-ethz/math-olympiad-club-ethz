@@ -16,15 +16,15 @@
     Define
     \[
         A := \left\{(x,y)\in\mathbb{R}_{\geq 0}\times\mathbb{R}_{\geq 0} \,:\, x^y =
-        y^x\right\}\footnote{Recall that the exponentiation $a^b:=\exp(b \cdot \log(a))$ where $a > 0$ and $b \in \mathbb{R}$ can be extended to $a = 0$ and $b \geq 0$ by:
-            \[
-                0^b = \begin{cases}
-                    0 & (b > 0), \\
-                    1 & (b = 0).
-                \end{cases}
-            \]
-            and extended in the obvious way for $a \in \mathbb{R}^{\times}$ with
-            $b \in \mathbb{Z}$.}
+        y^x\right\}\footnote{Recall that the exponentiation $a^b:=\exp(b \cdot \log(a))$ where
+        $a > 0$ and $b \in \mathbb{R}$ can be extended to $a = 0$ and $b \geq 0$ by:
+        \[
+            0^b = \begin{cases}
+                0 & (b > 0), \\
+                1 & (b = 0).
+            \end{cases}
+        \]
+        and extended in the obvious way for $a \in \mathbb{R}^{\times}$ with $b \in \mathbb{Z}$.}
     \]
     and find:
     \[
@@ -111,7 +111,7 @@
     let \( t \in \mathbb{R}_{> 0} \setminus \{1\} \). It suffices to check that we have:
     \[
         \left(t^{\frac{1}{t-1}}\right)^{\left(t^{\frac{t}{t-1}}\right)}=\left(t^{\frac{t}{t-1}}\right)^{\left(t^{\frac{1}{t-1}}\right)}
-        \text{ and } t^{\frac{1}{t-1}} \neq t^{\frac{t}{t-1}}=t\cdot  t^{\frac{1}{t-1}}
+        \text{ and } t^{\frac{1}{t-1}} \neq t^{\frac{t}{t-1}}=t\cdot t^{\frac{1}{t-1}}
     \]
     Indeed, using the properties of powers:
     \[
@@ -170,12 +170,12 @@
     \]
     which vanishes at \( e \), is positive on \( \left] 0,e \right[ \), and negative on \( \left]
     e,+\infty \right[ \). Therefore, by standard theorems relating monotonicity and derivatives,
-        \( f \) strictly increases on \( \left] 0,e \right[ \), strictly decreases on \( \left]
+    \( f \) strictly increases on \( \left] 0,e \right[ \), strictly decreases on \( \left]
     e,+\infty \right[ \), and thus attains a maximum at \( e \) (with value \( \frac{1}{e} <
     0.5 \)). In particular, the functions \( f|_{\left] 0,e \right[} \) and
     \( f|_{\left] e,+\infty \right[} \) are bijective. This means that for \( f(n) = f(m) \), we
-        must have (since \( n < m \) and \( n,m \neq e \)) that \( n \in \left] 0,e \right[ \) and
-        \( m \in \left] e,+\infty \right[ \).
+    must have (since \( n < m \) and \( n,m \neq e \)) that \( n \in \left] 0,e \right[ \) and
+    \( m \in \left] e,+\infty \right[ \).
     \\\\
     Hence, \( n \in \left\{ 1,2 \right\} \). If \( n = 1 \), then \( m^1 = 1^m \Rightarrow m = 1 \),
     which contradicts \( n \neq m \). So \( n = 2 \). Then \( m^2 = 2^m \). Since both sides are
@@ -485,7 +485,7 @@
     ring (a classical property), and \( m - n \in \mathbb{Z}_{>0} \), we get \( x^{m-n} \in
     \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z}) \). But:
     \[
-        x^{m-n} = \left( t^{\frac{1}{t-1}} \right)^{m-n} =  t^{\frac{m-n}{t-1}} =
+        x^{m-n} = \left( t^{\frac{1}{t-1}} \right)^{m-n} = t^{\frac{m-n}{t-1}} =
         t^{\frac{n(m-n)}{m-n}} = t^{n} = \frac{m^{n}}{n^{n}}.
     \]
     So \( \frac{m^{n}}{n^{n}} \in \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z}) \), but

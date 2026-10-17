@@ -20,14 +20,14 @@
 \end{problem}
 \begin{solution}
     \begin{itemize}
-        \item[(a)] No, first $f$ must be bijective.  Prove that \( f(0) = 0 \) and investigate the
+        \item[(a)] No, first $f$ must be bijective. Prove that \( f(0) = 0 \) and investigate the
             sign of \( f(x) \) for \( x > 0 \).
         \item[(b)] Prove that \( f \) is strictly increasing and that \( \inf f = a \in (-\infty,
             0) \), \( f(a) = 0 \). Fix an arbitrary strictly increasing function \( f_0 \in
             C([a,0]) \) satisfying the conditions \( f_0(a) = 0 \) and \( f_0(0) = e^a \), and
             extend it to \( \mathbb{R} \) by using the equation.
         \item[(c)] Prove that \( f \) must be strictly increasing on \( [0, +\infty) \) and strictly
-                    decreasing on \( (-\infty, 0] \) and that \( f(0) \geq 0 \), which is impossible,
+            decreasing on \( (-\infty, 0] \) and that \( f(0) \geq 0 \), which is impossible,
             because \( F \), and hence \( f \), takes negative values.
     \end{itemize}
     \textit{Bonus:} If $F(x)=\cos(x)$ ? \subsection*{Solution:} To begin we do some preliminary work
@@ -50,18 +50,18 @@
     $\varphi(0)=-1$ and $\varphi(1)=1-\cos(1)\overset{1\in]0;\frac{\pi}{2}[}{>}0$, we have that:
     $$\varphi\big[]-\infty;0]\big]\subset]-\infty;-1]\subset]-\infty;0[$$ and
     $$\varphi\big[[1;+\infty[\big]\subset[\varphi(1);+\infty[\subset]0;+\infty[$$
-        Thus $\varphi^{-1}[\{0\}]\subset]0;1[$ and moreover we have by the intermediate value
-    theorem (or the more general topological version: image of a connected set through a
-    continuous function is connected and knowing that only the intervals are precisely the
-    connected set of $(\mathbb{R},\mathcal{T}_{\mathbb{R}})$) that
+    Thus $\varphi^{-1}[\{0\}]\subset]0;1[$ and moreover we have by the intermediate value theorem
+    (or the more general topological version: image of a connected set through a continuous function
+    is connected and knowing that only the intervals are precisely the connected set of
+    $(\mathbb{R},\mathcal{T}_{\mathbb{R}})$) that
     $0\in[-1;\varphi(1)]\subset\varphi\big[[0;1]\big]$. This shows that
     $|\varphi^{-1}[\{0\}]|\geq 1$. We know by the property of $\sin$:
     $$\forall x\in\mathbb{R}\big((\frac{d}{dx}(\varphi))(x)=0\leftrightarrow x\in\frac{\pi}{2}+2\cdot\pi\mathbb{Z}\big)$$
     Therefore we have the refinement that $\varphi$ is strictly increasing over each connected
     component of $\mathbb{R}\setminus(\frac{\pi}{2}+2\cdot\pi\mathbb{Z})$. However
     $]\frac{\pi}{2}-2\cdot\pi;\frac{\pi}{2}[$ is one of the connected component. This means that
-        $\varphi$ is strictly increasing over $]0;1[\subset]\frac{\pi}{2}-2\cdot\pi;\frac{\pi}{2}[$ in
-        particular it is injective. We saw that $\varphi^{-1}[\{0\}]\subset]0;1[$ so this means that
+    $\varphi$ is strictly increasing over $]0;1[\subset]\frac{\pi}{2}-2\cdot\pi;\frac{\pi}{2}[$ in
+    particular it is injective. We saw that $\varphi^{-1}[\{0\}]\subset]0;1[$ so this means that
     $|\varphi^{-1}[\{0\}]|=1$. This concludes that there is a unique fixed point of $\cos$ over
     $\mathbb{R}$. For the culture, this fixed point is called the $\textit{Dottie}$ number. The
     decimal expansion of the Dottie number is $0.739085133215160641655312087673873404...$ and one
@@ -80,7 +80,7 @@
     common application of the Banach fixed point theorem for the complete metric space
     $([0;1],|\cdot|)$ tells us not only that there is a unique fixed point of $\cos$ over $[0;1]$
     (we already know this information) but also the way the fixed point is constructed. Take any
-    $x\in[0;1]$, the fixed point is the limit ($[0;1]$ is  complete) of the sequence
+    $x\in[0;1]$, the fixed point is the limit ($[0;1]$ is complete) of the sequence
     $(\cos^{\circ n}(x))_{n\in\mathbb{N}}\in[0;1]^{\mathbb{N}}$ where $\cos^{\circ n}$ denotes the
     functional composition of $\cos$ with itself $n$ times ($\cos^{\circ 0}=Id$). This means that
     $\lim _{n\rightarrow+\infty}(\cos|_{[0;1]})^{\circ n}=\mathrm{cte}_{\alpha}$ where $\alpha$ is
@@ -224,8 +224,9 @@
         strictly increasing. This contradicts the initial assumption that $\left. f \right|_{U}$ is
         strictly decreasing, and hence that $\left. f \right|_{I}$ is strictly decreasing: indeed,
         $\alpha \in I$ and $I$ is an interval, hence $I$ contains at least $2$ elements (in fact
-        uncountably many), which provide the intended
-        contradiction\footnote{If $S \subseteq \mathbb{R}$ and $h : S \to \mathbb{R}$ is a function then: $h$ is both strictly increasing and strictly decreasing if and only if $\left\lvert S \right\rvert \leq 1$}.
+        uncountably many), which provide the intended contradiction\footnote{If
+        $S \subseteq \mathbb{R}$ and $h : S \to \mathbb{R}$ is a function then: $h$ is both strictly
+        increasing and strictly decreasing if and only if $\left\lvert S \right\rvert \leq 1$}.
         Therefore, no such continuous $g$ exists.
     \end{proof}
 
