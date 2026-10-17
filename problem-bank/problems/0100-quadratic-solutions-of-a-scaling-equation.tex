@@ -1,0 +1,92 @@
+% title:          Quadratic solutions of a scaling equation
+% area:           limits-continuity, derivatives, functional-equations
+% methods:        fixed-points, induction
+% difficulty:     easy
+% difficulty-ai:  easy
+% status:
+% review:         human
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         imc
+% origin-date:    2023-08-02
+% origin-number:  Day 1, Problem 1
+% also-in:
+% references:     Earliest known appearance (to the best of our knowledge): IMC 2023, Day 1, 2 August 2023, Problem 1 - https://www.imc-math.org.uk/imc2023/imc2023-day1-questions.pdf; official solution - https://www.imc-math.org.uk/imc2023/imc2023-day1-solutions.pdf
+% history:        ai
+\begin{problem}
+    Find all \( f \in C^2\left(\mathbb{R},\mathbb{R}\right) \) such that, for all \( x \in
+    \mathbb{R} \),
+    \[
+        f\left(7x+1\right) = 49f\left(x\right).
+    \]
+\end{problem}
+\begin{solution}
+    Let \( f \in C^2\left(\mathbb{R},\mathbb{R}\right) \) be such a function. Differentiating the
+    equation, we have, for all \( x \in \mathbb{R} \),
+    \[
+        f'\left(x\right) = \frac{1}{49} \cdot 7 \cdot f'\left(7x+1\right) =
+        \frac{1}{7}f'\left(7x+1\right),
+    \]
+    and then, differentiating again,
+    \[
+        f''\left(x\right) = \frac{1}{7} \cdot 7 \cdot f''\left(7x+1\right) = f''\left(7x+1\right).
+    \]
+    In particular, for the bijection \( L \colon \mathbb{R} \to \mathbb{R} \), \( x \mapsto 7x+1 \),
+    we easily have by induction, for all \( n \in \mathbb{Z} \) and all \( x \in \mathbb{R} \),
+    \( f''\left(x\right) = f''\left(L^{\circ n}\left(x\right)\right) \).
+    \\\\
+    Since \( L^{-1} \colon \mathbb{R} \to \mathbb{R} \), \( x \mapsto \frac{x-1}{7} \) is a
+    contraction (as \( \left(L^{-1}\right)' \) is the constant function \( \frac{1}{7} \) and
+    \( \left|\frac{1}{7}\right| < 1 \)) of the complete metric space \( \mathbb{R} \), the Banach
+    fixed point theorem gives a unique \( x^{*} \in \mathbb{R} \) with \( L^{-1}\left(x^{*}\right) =
+    x^{*} \), and, for all \( x \in \mathbb{R} \), \( \left(L^{-1}\right)^{\circ n}\left(x\right)
+    \overset{n \to +\infty}{\longrightarrow} x^{*} \). Fix \( x \in \mathbb{R} \). By continuity of
+    \( f'' \), we get
+    \[
+        f''\left(x\right) = f''\left(\left(L^{-1}\right)^{\circ n}\left(x\right)\right)
+        \overset{n \to +\infty}{\longrightarrow} f''\left(x^{*}\right),
+    \]
+    where the equality was seen above (with \( -n \) in place of \( n \)). As the left-hand side
+    does not depend on \( n \), we have \( f''\left(x\right) = f''\left(x^{*}\right) \), i.e.,
+    \( f'' \) is constant.
+    \\\\
+    Thus, integrating twice, we have, for all \( x \in \mathbb{R} \), \( f\left(x\right) =
+    \frac{f''\left(0\right)}{2}x^2+f'\left(0\right)x+f\left(0\right) \), meaning that, for all
+    \( x \in \mathbb{R} \),
+    \[
+        \frac{f''\left(0\right)}{2}\left(7x+1\right)^2+f'\left(0\right)\left(7x+1\right)+f\left(0\right)
+        = 49\left(\frac{f''\left(0\right)}{2}x^2+f'\left(0\right)x+f\left(0\right)\right),
+    \]
+    i.e.,
+    \[
+        \frac{49}{2}f''\left(0\right)x^2+\left(7f''\left(0\right)+7f'\left(0\right)\right)x+\frac{1}{2}f''\left(0\right)+f'\left(0\right)+f\left(0\right)
+    \]
+    \[
+        = \frac{49}{2}f''\left(0\right)x^2+49f'\left(0\right)x+49f\left(0\right).
+    \]
+    This is an equality of polynomial functions over \( \mathbb{R} \), so the natural polynomial
+    from which they come must be the same (because \( \mathbb{R} \) has infinitely many elements).
+    Therefore, the coefficients must be the same, so we have \( 7f''\left(0\right)+7f'\left(0\right)
+    = 49f'\left(0\right) \) and \( 49f\left(0\right) =
+    \frac{1}{2}f''\left(0\right)+f'\left(0\right)+f\left(0\right) \), i.e., \( f''\left(0\right) =
+    6f'\left(0\right) \) and \( 48f\left(0\right) = 4f'\left(0\right) \) (as
+    \( \frac{1}{2}f''\left(0\right) = 3f'\left(0\right) \)), so that \( f'\left(0\right) =
+    12f\left(0\right) \) and \( f''\left(0\right) = 72f\left(0\right) \). Hence, \( f \) is the
+    function \( x \mapsto 36ax^2+12ax+a \) with \( a := f\left(0\right) \).
+    \\\\
+    Conversely, for all \( a \in \mathbb{R} \), the function \( x \mapsto 36ax^2+12ax+a \) is
+    clearly in \( C^2\left(\mathbb{R},\mathbb{R}\right) \), and, for all \( x \in \mathbb{R} \),
+    \[
+        36a\left(7x+1\right)^2+12a\left(7x+1\right)+a = 36 \cdot 7^2 \cdot a \cdot x^2+36 \cdot 7
+        \cdot 2 \cdot a \cdot x+36a+12 \cdot 7 \cdot a \cdot x+12a+a
+    \]
+    \[
+        = 49\left(36 \cdot a \cdot x^2\right)+49\left(12 \cdot a \cdot x\right)+49a =
+        49\left(36ax^2+12ax+a\right).
+    \]
+    Therefore,
+    \[
+        \left\{ f \in C^2\left(\mathbb{R},\mathbb{R}\right) \,\middle|\, f \circ \left(7 \cdot
+        \_+1\right) = 49f \right\} = \left\{ x \mapsto 36ax^2+12ax+a \,\middle|\, a \in \mathbb{R}
+        \right\}.
+    \]
+\end{solution}

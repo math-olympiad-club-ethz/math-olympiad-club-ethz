@@ -1,0 +1,59 @@
+% title:          Continuous function meeting a derivative
+% area:           limits-continuity, derivatives
+% methods:        darboux-theorem, intermediate-value-theorem
+% difficulty:     easy
+% difficulty-ai:  easy
+% status:
+% review:         human
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         imc
+% origin-date:    2019-07-31
+% origin-number:  Day 2, Problem 6
+% also-in:
+% references:     Earliest known appearance (to the best of our knowledge): IMC 2019, Day 2, Problem 6 - https://www.imc-math.org.uk/imc2019/imc2019-day2-questions.pdf
+% history:        ai
+\begin{problem}
+    Let \( f, g \in C^0\left(\mathbb{R},\mathbb{R}\right) \) be such that \( g \) is differentiable
+    and
+    \[
+        \left(f\left(0\right)-g'\left(0\right)\right)\left(g'\left(1\right)-f\left(1\right)\right) >
+        0.
+    \]
+    Show that there exists \( c \in \left]0;1\right[ \) with \( f\left(c\right) =
+    g'\left(c\right) \).
+\end{problem}
+\begin{solution}
+    Let \( F := f-g' \colon \mathbb{R} \to \mathbb{R} \). Then the condition reads
+    \[
+        0 <
+        \left(f\left(0\right)-g'\left(0\right)\right)\left(g'\left(1\right)-f\left(1\right)\right) =
+        -F\left(0\right)F\left(1\right), \quad \text{i.e.} \quad F\left(0\right)F\left(1\right) < 0.
+    \]
+    In particular, \( F\left(0\right), F\left(1\right) \neq 0 \) and
+    \( -\operatorname{sign}\left(F\left(0\right)\right) =
+    \operatorname{sign}\left(F\left(1\right)\right) \).
+    \\\\
+    If \( g' \) were continuous, then \( F \) would be continuous, so that, by the intermediate
+    value theorem, \( F\left[\left[0;1\right]\right] \) would be an interval containing
+    \( F\left(0\right) \) and \( F\left(1\right) \), which have opposite signs. Hence, \( 0 \in
+    F\left[\left[0;1\right]\right] \), which means that there would exist \( c \in
+    \left[0;1\right] \) with \( F\left(c\right) = 0 \), i.e., \( f\left(c\right) =
+    g'\left(c\right) \), and clearly \( c \in \left]0;1\right[ \) as \( F\left(0\right),
+    F\left(1\right) \neq 0 \).
+    \\\\
+    Now, \( g' \) is not necessarily continuous, but we can bypass this. Define
+    \[
+        H \colon \mathbb{R} \to \mathbb{R}, \quad x \mapsto \int_0^x f\left(t\right) \,
+        \mathrm{d}t-\left(g\left(x\right)-g\left(0\right)\right),
+    \]
+    which is well defined as \( f \) is continuous. By the fundamental theorem of calculus applied
+    to \( f \) and since \( g \) is differentiable, \( H \) is differentiable with \( H' = f-g' =
+    F \), so that \( H'\left(0\right)H'\left(1\right) < 0 \). Then, since \( H \) is differentiable
+    on the interval \( \mathbb{R} \), \( H' \) has the Darboux property by Darboux's
+    theorem [\appendixref{darboux-theorem}], so that \( H'\left[\left[0;1\right]\right] \) is an
+    interval containing \( F\left(0\right) \) and \( F\left(1\right) \), which have opposite signs.
+    Hence, \( 0 \in H'\left[\left[0;1\right]\right] \), which means that there exists \( c \in
+    \left[0;1\right] \) with \( H'\left(c\right) = 0 \), i.e., \( f\left(c\right) =
+    g'\left(c\right) \), and clearly \( c \in \left]0;1\right[ \) as \( F\left(0\right),
+    F\left(1\right) \neq 0 \).
+\end{solution}

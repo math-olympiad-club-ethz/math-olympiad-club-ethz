@@ -6,7 +6,7 @@ Open work across the repository. Tick items off (`- [x]`) or delete them when do
 
 - [ ] Review the 87 problems and set `review: human` on each one you accept (67 done in the last commit, 2026-10-06).
       Until then a problem shows on the site only as "proposed", behind its switch.
-- [ ] **History check**: check the problems with `history: ai` and set `history: human` (23 on 2026-10-12: 0013, 0030–0031, 0052, 0056, 0062, 0081–0097).
+- [ ] **History check**: check the problems with `history: ai` and set `history: human` (27 on 2026-10-17: 0013, 0030–0031, 0052, 0056, 0062, 0081–0101).
 - [ ] 0081–0087 (VJIMC 2002–2014, added 2026-09-29/30): statement **and** solution written by AI at Antoine's request
       (see the `% AI-WRITTEN` comment in each file); review them like the others before `review: human`. Review
       `problem-bank/appendix/cauchy-group-theorem.tex` (also AI-written) with 0085 and 0087: it is published with the first of

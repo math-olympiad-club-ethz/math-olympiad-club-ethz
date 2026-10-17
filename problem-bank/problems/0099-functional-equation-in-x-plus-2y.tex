@@ -1,0 +1,90 @@
+% title:          Functional equation in x plus 2y
+% area:           limits-continuity, functional-equations
+% methods:        substitution
+% difficulty:     easy
+% difficulty-ai:  easy
+% status:
+% review:         human
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         jarnik
+% origin-date:    2017-03-31
+% origin-number:  Category I, Problem 1
+% also-in:
+% references:     Earliest known appearance (to the best of our knowledge): Vojtech Jarnik International Mathematical Competition, 27th edition, Ostrava, 31 March 2017, Category I, Problem 1 - https://vjimc.osu.cz/storage/uploads/j27problems1.pdf
+% history:        ai
+\begin{problem}
+    Let \( f \in C^0\left(\mathbb{R},\mathbb{R}\right) \) be such that, for all \( x, y \in
+    \mathbb{R} \),
+    \[
+        f\left(x+2y\right) = 2f\left(x\right)f\left(y\right).
+    \]
+    Show that \( f \) is constant.
+\end{problem}
+\begin{solution}
+    \textit{Solution 1.}
+    \\\\
+    For all \( x, y \in \mathbb{R} \), we have
+    \[
+        f\left(x+2y\right) = 2f\left(x\right)f\left(y\right) = 2f\left(y\right)f\left(x\right) =
+        f\left(y+2x\right).
+    \]
+    Now, as the matrix \( \begin{pmatrix} 1 & 2 \\ 2 & 1 \end{pmatrix} \in
+    \mathbb{R}^{2 \times 2} \) has full rank (its determinant is \( 1 \cdot 1-2 \cdot 2 = -3 \neq
+    0 \)), for all \( a, b \in \mathbb{R} \), there exist \( x, y \in \mathbb{R} \) with
+    \[
+        \begin{pmatrix} 1 & 2 \\ 2 & 1 \end{pmatrix}\begin{pmatrix} x \\ y \end{pmatrix} =
+        \begin{pmatrix} a \\ b \end{pmatrix},
+    \]
+    i.e., \( x+2y = a \) and \( y+2x = b \), so that \( f\left(a\right) = f\left(x+2y\right) =
+    f\left(y+2x\right) = f\left(b\right) \). Hence, \( f \) must be constant.
+    \begin{remark}
+        This solution does not use the continuity of \( f \).
+    \end{remark}
+    \begin{remark}
+        Due to the symmetry of \( 2f\left(x\right)f\left(y\right) \) in \( x \) and \( y \),
+        Solution 1 only uses that \( f\left(u\left(v\right)\right) =
+        f\left(w\left(v\right)\right) \) for all \( v \in \mathbb{R}^2 \), where \( u, w \colon
+        \mathbb{R}^2 \to \mathbb{R} \) are the linear forms \( \left(x, y\right) \mapsto x+2y \) and
+        \( \left(x, y\right) \mapsto y+2x \), which are linearly independent. Hence the following
+        generalisation, with the same proof: let \( K \) be a field, \( m \in
+        \mathbb{N}_{\geq 2} \), \( u, w \colon K^m \to K \) two linearly independent \( K \)-linear
+        forms, \( Z \) a set and \( f \colon K \to Z \) a map such that
+        \( f\left(u\left(v\right)\right) = f\left(w\left(v\right)\right) \) for all \( v \in K^m \);
+        then \( f \) is constant. Indeed, the \( K \)-linear map \( K^m \to K^2 \), \( v \mapsto
+        \left(u\left(v\right), w\left(v\right)\right) \) has rank \( 2 \) (its matrix has the two
+        rows \( u \) and \( w \), which are linearly independent, and the rank of a matrix is
+        standardly equal to the dimension of the span of its rows), hence is surjective, so that,
+        for all \( a, b \in K \), there exists \( v \in K^m \) with \( u\left(v\right) = a \) and
+        \( w\left(v\right) = b \), and then \( f\left(a\right) = f\left(u\left(v\right)\right) =
+        f\left(w\left(v\right)\right) = f\left(b\right) \). In its most general form, the argument
+        shows: if \( X \), \( Y \) and \( Z \) are sets and \( g, h \colon X \to Y \) and
+        \( f \colon Y \to Z \) are maps such that \( f \circ g = f \circ h \) and the map
+        \( X \to Y \times Y \), \( v \mapsto \left(g\left(v\right), h\left(v\right)\right) \) is
+        surjective, then \( f \) is constant.
+    \end{remark}
+    \noindent\textit{Solution 2.}
+    \\\\
+    For all \( x \in \mathbb{R} \), we have \( f\left(x\right) = f\left(x+2 \cdot 0\right) =
+    2f\left(x\right)f\left(0\right) \), so that \( f\left(x\right)\left(1-2f\left(0\right)\right) =
+    0 \). If \( 1-2f\left(0\right) \neq 0 \), then \( f\left(x\right) = 0 \) for all \( x \in
+    \mathbb{R} \), and hence \( f \) is the constant function \( 0 \).
+    \\\\
+    Otherwise, \( 1-2f\left(0\right) = 0 \), so \( f\left(0\right) = \frac{1}{2} \), and we must
+    have, for all \( x \in \mathbb{R} \),
+    \[
+        f\left(2x\right) = f\left(0+2x\right) = 2f\left(0\right)f\left(x\right) = f\left(x\right).
+    \]
+    In particular, we easily have by induction, for all \( n \in \mathbb{Z} \) and all \( x \in
+    \mathbb{R} \), \( f\left(x\right) = f\left(x \cdot 2^n\right) \). Fix \( x \in \mathbb{R} \).
+    Since \( x \cdot 2^{-n} \overset{n \to +\infty}{\longrightarrow} 0 \) (as \( 2^{-n} =
+    \frac{1}{2^n} \overset{n \to +\infty}{\longrightarrow} 0 \)) and \( f \) is continuous, we get
+    \[
+        f\left(x\right) = f\left(x \cdot 2^{-n}\right) \overset{n \to +\infty}{\longrightarrow}
+        f\left(0\right),
+    \]
+    where the equality was seen above (with \( -n \) in place of \( n \)). As the left-hand side
+    does not depend on \( n \), we have \( f\left(x\right) = f\left(0\right) \), and hence \( f \)
+    is the constant function \( f\left(0\right) \).
+    \\\\
+    So, in both cases, \( f \) is constant.
+\end{solution}

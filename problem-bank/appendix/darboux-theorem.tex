@@ -1,0 +1,94 @@
+% Shared result, cited from solutions with \appendixref{darboux-theorem}.
+\begin{appendixitem}{Darboux's Theorem}
+    Let
+    \[
+        \mathcal{I} := \bigcup_{a, b \in \mathbb{R}} \left\{ \left[a;b\right], \left]a;b\right[,
+        \left[a;b\right[, \left]a;b\right], \left[a;+\infty\right[, \left]a;+\infty\right[,
+        \left]-\infty;b\right], \left]-\infty;b\right[ \right\} \cup \left\{ \mathbb{R} \right\}
+    \]
+    be the set of intervals of \( \mathbb{R} \), let \( I \in \mathcal{I} \), and let \( \varphi
+    \colon I \to \mathbb{R} \) be a map. Recall that a subset \( S \) of \( \mathbb{R} \) is an
+    interval, i.e., \( S \in \mathcal{I} \), if and only if it contains every real number lying
+    between two of its elements, that is, \( \left[a;b\right] \subset S \) for all \( a, b \in S \),
+    and also if and only if it is connected for the usual topology. Say that \( \varphi \) has the
+    Darboux property, or intermediate value property, if it sends connected sets (of \( I \)) to
+    connected sets, i.e., \( \varphi\left[J\right] \in \mathcal{I} \) for every \( J \in
+    \mathcal{I} \) with \( J \subset I \). Recall also that \( \varphi \) is differentiable at
+    \( x \in I \) if \( \frac{\varphi\left(t\right)-\varphi\left(x\right)}{t-x} \) has a limit
+    \( \ell \in \mathbb{R} \) as \( t \to x \) with \( t \in I \setminus
+    \left\{x\right\} \)\footnote{That is, for every open set \( U \) of \( \mathbb{R} \) containing
+    \( \ell \), there exists an open set \( E \) of \( I \) containing \( x \) such that
+    \( \frac{\varphi\left(t\right)-\varphi\left(x\right)}{t-x} \in U \) for all \( t \in E \setminus
+    \left\{x\right\} \). When \( I \) has at least two points, \( x \) is a limit point of
+    \( I \setminus \left\{x\right\} \), so that this limit is unique (\( \mathbb{R} \) is
+    Hausdorff). Equivalently, \( \varphi \) is differentiable at \( x \) with
+    \( \varphi'\left(x\right) = \ell \) if and only if
+    \( \frac{\varphi\left(t_n\right)-\varphi\left(x\right)}{t_n-x}
+    \overset{n \to +\infty}{\longrightarrow} \ell \) for every sequence \( t_{-} \in \left(I
+    \setminus \left\{x\right\}\right)^{\mathbb{N}_{\geq 1}} \) with \( t_n
+    \overset{n \to +\infty}{\longrightarrow} x \). The direct implication holds for limits in any
+    topological space. The converse only uses that \( x \) has a countable basis of neighbourhoods
+    \( V_1 \supset V_2 \supset \cdots \) in \( I \) (for instance \( V_n :=
+    \left]x-\frac{1}{n};x+\frac{1}{n}\right[ \cap I \)), i.e., that \( I \) is first countable at
+    \( x \). Indeed, by contraposition, if the quotient did not tend to \( \ell \) (in the first
+    sense), there would exist an open set \( U \) of \( \mathbb{R} \) containing \( \ell \) and, for
+    each \( n \in \mathbb{N}_{\geq 1} \), some \( t_n \in V_n \setminus \left\{x\right\} \) with
+    \( \frac{\varphi\left(t_n\right)-\varphi\left(x\right)}{t_n-x} \notin U \) (by the axiom of
+    countable choice), so that \( t_n \overset{n \to +\infty}{\longrightarrow} x \) while the
+    quotients \( \frac{\varphi\left(t_n\right)-\varphi\left(x\right)}{t_n-x} \) do not tend to
+    \( \ell \).}, denoted by \( \varphi'\left(x\right) \). In particular, at an endpoint of \( I \)
+    that lies in \( I \), this is a one-sided derivative.
+    \begin{theorem}[Darboux]
+        Let \( I \in \mathcal{I} \) and \( f \colon I \to \mathbb{R} \) be a differentiable map.
+        Then \( f' \) has the Darboux property, i.e., \( f'\left[J\right] \) is an interval for
+        every interval \( J \subset I \).
+    \end{theorem}
+    \begin{proof}
+        Fix \( J \in \mathcal{I} \) with \( J \subset I \). We show that \( f'\left[J\right] \) is
+        an interval. By the characterisation of the intervals recalled above, this is equivalent to
+        showing that \( \left[u;v\right] \subset f'\left[J\right] \) for all \( u, v \in
+        f'\left[J\right] \). If \( u > v \), then \( \left[u;v\right] = \emptyset \), and if
+        \( u = v \), then \( \left[u;v\right] = \left\{u\right\} \subset f'\left[J\right] \), so
+        that it is sufficient to treat the case \( u < v \). Clearly, it is sufficient to show that
+        \( \left[f'\left(a\right);f'\left(b\right)\right] \subset f'\left[J\right] \) for all
+        \( a, b \in J \) with \( f'\left(a\right) < f'\left(b\right) \) (since any such \( u, v \)
+        have preimages, and any such preimages will do). As \( f'\left(a\right) \) and
+        \( f'\left(b\right) \) themselves lie in \( f'\left[J\right] \), we need to show that
+        \( \left]f'\left(a\right);f'\left(b\right)\right[ \subset f'\left[J\right] \). It is then
+        sufficient to show the stronger statement that, for all \( y \in
+        \left]f'\left(a\right);f'\left(b\right)\right[ \), there exists \( c \) strictly between
+        \( a \) and \( b \) (i.e., \( c \in \left]a;b\right[ \cup \left]b;a\right[ \)) such that
+        \( f'\left(c\right) = y \), since such a \( c \) lies in \( J \) (\( J \) is an interval
+        containing \( a \) and \( b \)).
+        \\\\
+        Towards this goal, fix \( a, b \in J \) with \( f'\left(a\right) < f'\left(b\right) \) (in
+        particular, \( a \neq b \)) and \( y \in \left]f'\left(a\right);f'\left(b\right)\right[ \).
+        It is clear that replacing \( \left(f, y, a, b\right) \) by \( \left(-f, -y, b, a\right) \)
+        keeps the hypotheses (\( -f \) is differentiable with derivative \( -f' \), and
+        \( -f'\left(b\right) < -y < -f'\left(a\right) \)) and the conclusion (a point is in
+        \( \left]a;b\right[ \cup \left]b;a\right[ \) exactly when it is in \( \left]b;a\right[ \cup
+        \left]a;b\right[ \), and \( -f'\left(c\right) = -y \) if and only if \( f'\left(c\right) =
+        y \)). Hence, making this replacement if \( a > b \), we may assume that \( a < b \), so
+        that \( f'\left(a\right) < y < f'\left(b\right) \) and we look for \( c \in
+        \left]a;b\right[ \) such that \( f'\left(c\right) = y \).
+        \\\\
+        Define \( g \colon \left[a;b\right] \to \mathbb{R} \), \( x \mapsto f\left(x\right)-yx \),
+        which is differentiable (as \( f \) is, on \( \left[a;b\right] \subset I \)) with
+        \( g' = f'-y \), so that \( g'\left(a\right) < 0 < g'\left(b\right) \), and it is sufficient
+        to show that \( g'\left(c\right) = 0 \) for some \( c \in \left]a;b\right[ \). As \( g \) is
+        continuous on the compact interval \( \left[a;b\right] \), it attains its minimum at some
+        \( c \in \left[a;b\right] \). Since \( \frac{g\left(x\right)-g\left(a\right)}{x-a}
+        \overset{x \to a}{\longrightarrow} g'\left(a\right) < 0 \), there exists \( x \in
+        \left]a;b\right[ \) with \( \frac{g\left(x\right)-g\left(a\right)}{x-a} < 0 \), i.e.,
+        multiplying by \( x-a > 0 \), \( g\left(x\right) < g\left(a\right) \), so that \( c \neq
+        a \) (as \( g\left(c\right) \leq g\left(x\right) < g\left(a\right) \)). Likewise, since
+        \( \frac{g\left(x\right)-g\left(b\right)}{x-b} \overset{x \to b}{\longrightarrow}
+        g'\left(b\right) > 0 \), there exists \( x \in \left]a;b\right[ \) with
+        \( \frac{g\left(x\right)-g\left(b\right)}{x-b} > 0 \), i.e., multiplying by \( x-b < 0 \),
+        \( g\left(x\right) < g\left(b\right) \), so that \( c \neq b \) (again, as
+        \( g\left(c\right) \leq g\left(x\right) < g\left(b\right) \)). Hence, \( c \in
+        \left]a;b\right[ \) is a minimum of \( g \) at an interior point of \( \left[a;b\right] \),
+        where \( g \) is differentiable, so that \( g'\left(c\right) = 0 \) by Fermat's theorem, and
+        this concludes.
+    \end{proof}
+\end{appendixitem}
