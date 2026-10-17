@@ -13,7 +13,7 @@ that no line could take a word from the next one. Lines that stay alone, never j
 (so the % header keeps one field per line), `\\\\` lines, \begin and \end lines, display delimiters \[ \] and
 $$, labels such as \textit{Solution 1.}, and the contents of aligned formulas, matrices, tables, TikZ pictures, code
 listings, algorithms and BibTeX blocks. An \item starts a new paragraph; a line ending with a comment or with \\
-ends one. A line breaks only at a space outside braces and outside $ $ (where latexindent would indent the next
+ends one. Double spaces inside a paragraph become single spaces. A line breaks only at a space outside braces and outside $ $ (where latexindent would indent the next
 line), never right after \( or before \), and outside inline math when that costs at most an eighth of the line.
 Only whitespace changes (a line break is a space for LaTeX). Running it twice changes nothing more.
 Self-contained (standard library + latexindent), so VS Code can run it by its path.
@@ -39,23 +39,66 @@ BEGIN_END = re.compile(r"\\(begin|end)\{([^}]*)\}")
 # % header, the preamble's commands, one per line) keeps its lines
 CONTENT = {"problem", "solution", "appendixitem"}
 DISPLAY = re.compile(r"(?<!\\)(?:\\\\)*\\[\[\]]")       # \[ or \], not the line break \\ followed by [
-LABEL = re.compile(r"\\textit\{[^{}]*\}")
+LABEL = re.compile(r"(?:\\noindent\s*)?\\textit\{[^{}]*\}")
 # what may not start a line inside a paragraph (it would make that line stay alone or start a new paragraph)
 STARTERS = ("\\item", "\\begin{", "\\end{", "\\[", "\\]", "\\)", "\\\\", "$$", "%", "[")
+
+
+SIZER = re.compile(r"\\(?:left|right|bigl|bigr|Bigl|Bigr|biggl|biggr|Biggl|Biggr|big|Big|bigg|Bigg)(?![A-Za-z])")
+HIDE = {"[": "\u2045", "]": "\u2046"}                # stand-ins latexindent does not read as brackets
+
+
+def hide_math_brackets(text):
+    r"""The text with every [ and ] inside math or right after \left, \right, ... replaced by a stand-in. The house
+    style writes intervals as \left]0;1\right[: latexindent would pair such reversed brackets with others, many lines
+    away, as if they were optional arguments, and indent (or stop recognising a display) in between."""
+    out, math, dollar = [], False, False
+    for line in text.split("\n"):
+        code = code_part(line)
+        res, i = [], 0
+        while i < len(code):
+            c = code[i]
+            if c == "\\":
+                m = SIZER.match(code, i)
+                if m:
+                    res.append(m.group(0))
+                    i = m.end()
+                    if i < len(code) and code[i] in HIDE:
+                        res.append(HIDE[code[i]])
+                        i += 1
+                    continue
+                two = code[i:i + 2]
+                if two in ("\\(", "\\["):
+                    math = True
+                elif two in ("\\)", "\\]"):
+                    math = False
+                res.append(two)
+                i += 2
+                continue
+            if c == "$":
+                dollar = not dollar
+                step = 2 if code[i:i + 2] == "$$" else 1
+                res.append(code[i:i + step])
+                i += step
+                continue
+            res.append(HIDE[c] if c in HIDE and (math or dollar) else c)
+            i += 1
+        out.append("".join(res) + line[len(code):])
+    return "\n".join(out)
 
 
 def latexindent(text):
     """The text indented by latexindent with latexindent.yaml (leading spaces only)."""
     with tempfile.TemporaryDirectory() as tmp:
         src = pathlib.Path(tmp) / "file.tex"
-        src.write_text(text, encoding="utf-8")
+        src.write_text(hide_math_brackets(text), encoding="utf-8")
         # a fixed Perl hash seed: otherwise latexindent may give different outputs for the same input
         env = {**os.environ, "PERL_HASH_SEED": "0", "PERL_PERTURB_KEYS": "0"}
         run = subprocess.run(["latexindent", "-c", tmp + "/", f"-l={CONFIG}", str(src)],
                              capture_output=True, text=True, encoding="utf-8", env=env)
     if run.returncode != 0:
         sys.exit(f"texformat: latexindent failed: {run.stderr.strip()[-800:]}")
-    return run.stdout
+    return run.stdout.replace(HIDE["["], "[").replace(HIDE["]"], "]")
 
 
 def code_part(line):
@@ -140,6 +183,9 @@ def fill(lines, state, strict=True):
     indent = first[:len(first) - len(first.lstrip())]
     cont = indent + "    " if strict and first.lstrip().startswith("\\item") else indent   # latexindent's \item rule
     rest, current, out = " ".join(line.strip() for line in lines), indent, []
+    code = code_part(rest)
+    if "\\verb" not in code:                       # several spaces are one space for LaTeX: keep a single one
+        rest = re.sub(r"(?<=\S) {2,}(?=\S)", " ", code) + rest[len(code):]
     while len(current) + len(rest) > WIDTH:
         cut = break_point(rest, WIDTH - len(current), state, strict)
         if cut is None:
@@ -208,10 +254,47 @@ def join_lone_delimiters(text):
     return "\n".join(out)
 
 
+FOOT = {"{": "⦃", "}": "⦄"}                # stand-ins for the braces of \footnote{...}
+
+
+def mask_footnotes(text):
+    r"""The text with the two braces of every \footnote{...} replaced by stand-ins, so that the footnote's text is
+    refilled like the text around it (a line never breaks inside braces; latexindent.yaml gives a footnote no extra
+    indentation). Comments are skipped; escaped braces \{ \} are not braces."""
+    out, stack, i, comment = list(text), [], 0, False
+    while i < len(text):
+        c = text[i]
+        if c == "\n":
+            comment = False
+        elif comment:
+            pass
+        elif c == "%":
+            comment = True
+        elif c == "\\":
+            if text.startswith("\\footnote{", i):
+                out[i + len("\\footnote")] = FOOT["{"]
+                stack.append(True)
+                i += len("\\footnote{")
+                continue
+            i += 2
+            continue
+        elif c == "{":
+            stack.append(False)
+        elif c == "}" and stack:
+            if stack.pop():
+                out[i] = FOOT["}"]
+        i += 1
+    return "".join(out)
+
+
+def unmask_footnotes(text):
+    return text.replace(FOOT["{"], "{").replace(FOOT["}"], "}")
+
+
 def lay_out(text):
     text = latexindent(join_lone_delimiters(text))
     for _ in range(5):
-        refilled = reflow(text)
+        refilled = unmask_footnotes(reflow(mask_footnotes(text)))
         if refilled == text:
             return text
         text = latexindent(refilled)

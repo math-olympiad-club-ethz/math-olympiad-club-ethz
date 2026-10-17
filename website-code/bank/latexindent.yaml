@@ -6,10 +6,20 @@ defaultIndent: "    "
 # latexindent's own default leaves the body of an environment called "problem" unindented
 noAdditionalIndent:
     problem: 0
+    footnote: 1       # a footnote's text, refilled by texformat.py, keeps the indentation of its paragraph
 
 # the lines that continue an \item: 4 spaces further than the \item
 indentRules:
     item: "    "
+
+# a [ ... ] block never adds indentation: the house style writes intervals as \left]0;1\right[, and latexindent
+# would read the [ after \right as an optional argument closed by the next ] (the next interval, maybe many lines
+# further), indenting everything in between; bare { ... } groups use the same mechanism
+noAdditionalIndentGlobal:
+    optionalArguments: 1
+    UnNamedGroupingBracesBrackets: 1
+    namedGroupingBracesBrackets: 1
+    keyEqualsValuesBracesBrackets: 1
 
 # BibTeX blocks are left exactly as written
 verbatimEnvironments:
