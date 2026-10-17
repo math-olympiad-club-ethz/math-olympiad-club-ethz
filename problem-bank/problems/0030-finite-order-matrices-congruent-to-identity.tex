@@ -13,256 +13,429 @@
 % references:     Earliest known appearance (to the best of our knowledge): H. Minkowski, Ueber den arithmetischen Begriff der Aequivalenz und über die endlichen Gruppen linearer ganzzahliger Substitutionen, J. reine angew. Math. 100 (1887), 449-458, §1 (modulus 4) - https://gdz.sub.uni-goettingen.de/download/pdf/PPN243919689_0100/LOG_0041.pdf; H. Minkowski, Zur Theorie der positiven quadratischen Formen, J. reine angew. Math. 101 (1887), 196-202, §1 (every odd prime modulus; together the two papers cover every m >= 3) - https://gdz.sub.uni-goettingen.de/download/pdf/PPN243919689_0101/LOG_0010.pdf; both reprinted in Minkowski, Gesammelte Abhandlungen, Bd. I (Teubner 1911), pp. 203-218, where Hilbert's memorial address states the theorem for any modulus >= 3 - https://archive.org/details/gesammelteabhand00minkuoft; J.-P. Serre, Bounds for the orders of the finite subgroups of G(k), §1.2 'Minkowski's lemma', Lemma 1 - https://arxiv.org/pdf/1011.0346; later: Bernoulli Competition (EPFL), 3 June 2024, Problem 4 (checked in the club's copy of the official solutions (Bernoulli 2023-2026 solutions PDF, not online); without the m = 2 part; paper not published online) - https://bernoulli.epfl.ch/youth-at-bernoulli/bernoulli-competition/
 % history:        ai
 \begin{problem}
-Let \( n, m \in \mathbb{N}_{>0} \) be positive integers, with \( m \geq 3 \), and let \( A \in \mathbb{Z}^{n \times n} \). Suppose \( A \) has finite order (\( \exists k \in \mathbb{N}_{>0},\, A^k = I_n \)) and satisfies
-\[
-A \equiv I_n \pmod{m} \footnote{For an integer \( u \in \mathbb{Z} \), \( \equiv \pmod{u} \) is the relation on the set of integer matrices \( \bigcup_{r,l \in \mathbb{N}^{*}} \mathbb{Z}^{r \times l} \), where \( C \equiv D \pmod{u} \Leftrightarrow \exists r,l\in\mathbb{N}^{*}\,,  C,D\in\mathbb{Z}^{r \times l}  \,,\forall \left(i,j\right) \in r \times l,\, u \mid \left(C - D\right)\left(i,j\right) \). It is an equivalence relation.}.
-\]
-Prove that \( A = I_n \), and find counterexamples when \( m = 2 \).
+    Let \( n, m \in \mathbb{N}_{>0} \) be positive integers, with \( m \geq 3 \), and let
+    \( A \in \mathbb{Z}^{n \times n} \). Suppose \( A \) has finite order (\( \exists k \in
+    \mathbb{N}_{>0},\, A^k = I_n \)) and satisfies
+    \[
+        A \equiv I_n \pmod{m} \footnote{For an integer \( u \in \mathbb{Z} \), \( \equiv \pmod{u} \)
+        is the relation on the set of integer matrices \( \bigcup_{r,l \in \mathbb{N}^{*}}
+        \mathbb{Z}^{r \times l} \), where \( C \equiv D \pmod{u} \Leftrightarrow \exists
+        r,l\in\mathbb{N}^{*}\,, C,D\in\mathbb{Z}^{r \times l} \,,\forall \left(i,j\right) \in r
+        \times l,\, u \mid \left(C - D\right)\left(i,j\right) \). It is an equivalence relation.}.
+    \]
+    Prove that \( A = I_n \), and find counterexamples when \( m = 2 \).
 \end{problem}
 \begin{solution}
-\textit{Solution 1. of $A=I_n$}
-\\\\
-Since \( A \equiv I_n \pmod{m} \), there exists \( B \in \mathbb{Z}^{n \times n} \) such that \( A = I_n + mB \). Then we have the following equality of characteristic polynomials:
-\[
-P_{\text{char},A}\left(X\right) = {\det}_{\mathbb{Q}\left(X\right)}\left(XI_n - A\right) = {\det}_{\mathbb{Q}\left(X\right)}\left(\left(X - 1\right)I_n - mB\right) = P_{\text{char},mB}\left(X - 1\right).
-\]
-Therefore, \( \alpha \in \mathbb{C} \) is an eigenvalue of \( A \) if and only if \( \alpha - 1 \) is an eigenvalue of \( mB \); that is (since \( m \neq 0 \)), if and only if \( \frac{\alpha - 1}{m} \) is an eigenvalue of \( B \).
-\\\\
-Since \( \exists k \in \mathbb{N}_{>0}\) with \(A^k = I_n \), any eigenvalue \( \alpha \in \mathbb{C} \) of \( A \) satisfies \( \alpha^k = 1 \); thus, they are \( k \)-th roots of unity and lie on the unit circle \( \mathbb{S}^{1} \), i.e., \( \left|\alpha\right|_{\mathbb{C}} = 1 \). Any eigenvalue \( \beta \in \mathbb{C} \) of \( B \) then satisfies (here \( m \geq 3 \) is crucial):
-\[
-\left|\beta\right|_{\mathbb{C}} = \left| \frac{\alpha - 1}{m} \right|_{\mathbb{C}} \leq \frac{\left|\alpha\right|_{\mathbb{C}} + 1}{m} = \frac{2}{m} < 1.
-\]
-Now we prove that \( 0 \) is the only eigenvalue of \( B \): \(\sigma\left(B\right)=\left\{0\right\}\).
-\\\\
-From this point, there are multiple ways to proceed; we present two approaches here.
-\\\\
-\textit{Using Vieta’s formula.}
-\\\\
-Since \( \mathbb{Z} \) is a unique factorisation domain (UFD), so is \( \mathbb{Z}\left[X\right] \), and we can factor the characteristic polynomial of \( B \) (which is of degree \( n \geq 1 \)), \( P_{\text{char},B}\left(X\right) := \det_{\mathbb{Q}\left(X\right)}\left(XI_n - B\right) \in \mathbb{Z}\left[X\right] \), as a product of \( l \in \mathbb{N}^{*} \) unique irreducible polynomials (up to invertible elements, which here are \(\pm 1\)). Since \( P_{\text{char},B}\left(X\right) \) is monic, the irreducible polynomials must have leading coefficients in \( \mathbb{Z}^{\times} = \left\{\pm 1\right\} \). Therefore, they must have degree at least one (without this information they could have been irreducible elements of \( \mathbb{Z} \subset \mathbb{Z}\left[X\right] \)—namely, the primes up to sign). Hence, we may assume them to be monic (by multiplying, \textit{ubi opus est}, by \( -1 \)). That is,
-\[
-\exists \left\{P_i\left(X\right) \mid \forall i \in l,\, P_i\left(X\right) \text{ is irreducible and monic} \right\} \subset \mathbb{Z}_{\text{irr}}\left[X\right] \setminus \mathbb{Z}
-\]
-such that
-\[
-P_{\text{char},B}\left(X\right) = \prod_{i \in l} P_i\left(X\right).
-\]
-Now, let \( \beta \) be an eigenvalue of \( B \), i.e., \( \beta \in \mathrm{Root}_{P_{\text{char},B}\left(X\right)}\left(\mathbb{C}\right) \). Hence, there exists \( j \in l \) such that \( \beta \in \mathrm{Root}_{P_j\left(X\right)}\left(\mathbb{C}\right) \). For a certain \( s_j \in \mathbb{N}_{>0} \) and distinct complex numbers \( \left\{\,_{j}\beta_i \mid i \in s_j \right\} \subset \mathbb{C} \), we have
-\[
-\mathrm{Root}_{P_j\left(X\right)}\left(\mathbb{C}\right) = \left\{\,_{j}\beta_i \mid i \in s_j \right\}.
-\]
-As we have seen above,
-\[
-\mathrm{Root}_{P_{\text{char},B}\left(X\right)}\left(\mathbb{C}\right) \subset \mathbb{D},
-\]
-so \( \left\{\,_{j}\beta_i \mid i \in s_j \right\} \subset \mathbb{D} \).
-However, since these are the roots of \( P_j\left(X\right) \), we must have, by Vieta’s formula, that their product equals (up to a sign) the constant term of \( P_j\left(X\right) \):
-\[
-\prod_{i\in s_j} \,_{j}\beta_i \in\left\{\pm P_j\left(0\right)\right\}.
-\]
-Then
-\[
-\left|P_j\left(0\right)\right|_{\mathbb{C}} = \left| \prod_{i\in s_j} \,_{j}\beta_i \right|_{\mathbb{C}} = \prod_{i\in s_j} \left| \,_{j}\beta_i \right|_{\mathbb{C}} < 1.
-\]
-Since \( P_{j}\left(X\right) \in \mathbb{Z}\left[X\right] \), we must have \( P_j\left(0\right) \in \mathbb{Z} \), and because \( \left|P_j\left(0\right)\right|_{\mathbb{C}} < 1 \) we must have \( P_j\left(0\right) = 0 \). Therefore, \( 0 \) is a root of \( P_j \), and thus \( X \) divides \( P_j\left(X\right) \) in \( \mathbb{Z}\left[X\right] \). Since \( P_j\left(X\right) \) has degree at least \( 1 \) and is irreducible in \( \mathbb{Z}\left[X\right] \), this cannot happen unless \( P_j\left(X\right) \) has degree \( 1 \). So \( P_j\left(X\right) = kX \) for a certain \( k \in \mathbb{Z} \setminus \left\{0\right\} \). Since \( P_j\left(X\right) \) is monic, \( k = 1 \), and we conclude \( P_j\left(X\right) = X \). Hence \( \beta = 0 \), since it is a root of \( P_j\left(X\right) \) by choice of \( j \). As \(\beta\in\sigma\left(B\right)\) was arbitrary we conclude \(\sigma\left(B\right)=\left\{0\right\}\) (because \(\sigma\left(B\right)\neq\varnothing\)).
-\\\\
-\textit{Using the following equivalence.}
-\begin{lemma}
-One has \(\sigma\left(B\right) = \left\{0\right\} \Leftrightarrow \exists t \in \mathbb{N}, \forall k \in \left\llbracket 1, n \right\rrbracket, \text{tr}\left(B^{t+k}\right) = 0\).
-\end{lemma}
-This equivalence, along with several others, is proven in a generic form in Appendix [\appendixref{nilpotency-by-traces}].
-\\\\
-It thus suffices to show that \(\exists M \in\mathbb{N}\,,\forall N\in\mathbb{N}_{\geq M}\,, \text{tr}\left(B^N\right)=0\).
-\\\\
-As shown earlier, all eigenvalues of \( B \) lie inside the unit disc: \( \mathrm{Root}_{P_{\text{char},B}\left(X\right)}\left(\mathbb{C}\right) \subset \mathbb{D} \). Let \( \boldsymbol{\beta} \in \mathbb{D}^n \) be any vector (the order in this vector doesn't matter) of exactly all the eigenvalues of \( B \), counted with their respective algebraic multiplicities, so that \( \sigma\left(B\right) = \mathrm{Root}_{P_{\text{char},B}\left(X\right)}\left(\mathbb{C}\right) = \left\{ \beta_i \mid i \in n \right\} \). By the Spectral Mapping Theorem [\appendixref{spectral-mapping-theorem}], one has that \(\forall k\in\mathbb{N}\):
-\[
-\text{tr}\left(B^k\right)=\sum_{i\in n}\beta_i^k.
-\]
-Let \( \gamma \in \sigma\left(B\right) \) be an eigenvalue of \( B \). Since \( \left|\gamma\right|_{\mathbb{C}} < 1 \), we have \( \gamma^N \underset{\mathbb{N}\ni N \to +\infty}{\overset{\left|\cdot\right|_{\mathbb{C}}}{\longrightarrow}} 0 \). Therefore:
-\[
-\text{tr}\left(B^N\right) \underset{\mathbb{N}\ni N \to +\infty}{\overset{\left|\cdot\right|_{\mathbb{C}}}{\longrightarrow}} 0,
-\]
-as it is a finite sum comprising a total of \( n \) summands tending to zero. However, as \( B \in \mathbb{Z}^{n \times n} \), we have \(\forall k \in \mathbb{N}, \, B^k \in \mathbb{Z}^{n \times n}\), so for all \( k \in \mathbb{N} \), \( \text{tr}\left(B^k\right) \in \mathbb{Z} \). Hence (standard), there exists \( M\in\mathbb{N} \) such that for all \( N \in \mathbb{N}_{\geq M} \), \( \text{tr}\left(B^N\right) = 0 \), as desired.
-\\\\
-This concludes the two different approaches to show that \( \sigma\left( B \right) = \left\{ 0 \right\} \). We can now quickly finish the problem. All the eigenvalues of \( B \) are \( 0 \); this is clearly equivalent to \( P_{\text{char},B}\left( X \right) = X^n \). According to the Cayley-Hamilton theorem, \( B^n = \mathbf{0}_{n\times n} \), so \( B \) is nilpotent and thus \( mB \) is nilpotent. Now, use the following
-\begin{lemma}
-Let \(\mathbb{F}\) be a field of characteristic \(\operatorname{char}(\mathbb{F}) = 0\), \( l \in \mathbb{N}_{>0} \), and \( N \in \mathbb{F}^{l \times l} \) be a nilpotent matrix. If \( I_{l} + N \) has finite order, then \( N = \mathbf{0}_{l \times l} \).
-\end{lemma}
-The proof can be found in a slightly generalised framework in Appendix [\appendixref{unipotent-finite-order}].
-\\\\
-Apply this result to the field $\mathbb{Q}$ with \( n \geq 1 \); since \( mB \in \mathbb{Q}^{n \times n} \) is nilpotent and \( A = I_n + mB \) has finite order, we conclude that \( mB = \mathbf{0}_{n \times n} \). Hence, \( A = I_n \), and this concludes the proof.
-\\\\
-\textit{Solution 2. of $A=I_n$}
-\\\\
-Assume for contradiction that \( A \neq I_n \). Since \( m \geq 3 \), \( m \) must be divisible by some prime power greater than 2, that is, there exists \( p \in \mathbb{P} \) a prime number and \( c \geq 1 \) such that \( p^c \mid m \) and \( p^c > 2 \) (if \( p = 2 \), then \( c \geq 2 \) necessarily). In particular, from \( A \equiv I_n \pmod{m} \), we must have \( A \equiv I_n \pmod{p^c} \).
-\\\\
-Since \( A \neq I_n \), there is \( \left( i,j \right) \in n \times n \) such that \( \left( A - I_n \right)\left( i,j \right) \neq 0 \), and so 
-\[
-c \leq v_p\left( \left( A - I_n \right)\left( i,j \right) \right) \neq +\infty,
-\]
-where \( v_p \colon \mathbb{Q} \rightarrow \mathbb{Z} \cup \left\{ +\infty \right\} \) denotes the \( p \)-adic valuation. We can thus let 
-\[
-c' := \min\left\{ v_p\left( \left( A - I_n \right)\left( i,j \right) \right) \,\middle\vert\, \left( i,j \right) \in n \times n \right\} \geq c.
-\]
-Then \( c' \in \mathbb{N}_{\geq c} \) is (by construction) the largest integer such that \( A \equiv I_n \pmod{p^{c'}} \). Consequently, we define 
-\[
-B := \frac{1}{p^{c'}} \left( A - I_n \right) \in \mathbb{Q}^{n\times n},
-\]
-for which (by definition of \( c' \)), \( B \in \mathbb{Z}^{n \times n} \) and \( B \not\equiv \mathbf{0}_{n \times n} \pmod{p} \).
-\\
-Since \( A \) has finite order, there exists \( k \in \mathbb{N}^{*} \) with \( A^k = I_n \); furthermore, \( k \geq 2 \) because \( A \neq I_n \). We want to expand:
-\[
-I_n = A^k = \left( I_n + p^{c'} B \right)^k.
-\]
-This can be done (happily) by the binomial theorem since \( I_n \) and \( p^{c'} B \) commute, and we obtain:
-\[
-I_n = \sum_{i=0}^{k} \binom{k}{i} p^{i c'} B^i.
-\]
-This implies:
-\[
-\sum_{i=1}^{k} \binom{k}{i} p^{i c'} B^i = \mathbf{0}_{n \times n},
-\]
-or equivalently (since \( k \geq 2 \)), we obtain the equation:
-\[
-\sum_{i=2}^{k} \binom{k}{i} p^{i c'} B^i = -k p^{c'} B.
-\]
-We shall show that this leads to a contradiction. Let \( c'' := v_p\left( k \right) \geq 0 \). We prove:
-\begin{equation}
--k p^{c'} B \not\equiv \mathbf{0}_{n \times n} \pmod{p^{c' + c'' + 1}},
-\label{1}
-\end{equation}
-whilst
-\begin{equation}
-\sum_{i=2}^{k} \binom{k}{i} p^{i c'} B^i \equiv \mathbf{0}_{n \times n} \pmod{p^{c' + c'' + 1}},
-\label{2}
-\end{equation}
-which is impossible by the derived equation above.
-\\
-For (\hyperref[1]{1}): because \( v_p\left( k p^{c'} \right) = c' + c'' \) and \( B \not\equiv \mathbf{0}_{n \times n} \pmod{p} \), we have \( -k p^{c'} B \not\equiv \mathbf{0}_{n \times n} \pmod{p^{c' + c'' + 1}} \) (but obviously \( k p^{c'} B \equiv \mathbf{0}_{n \times n} \pmod{p^{c' + c''}} \)).
-\\
-For (\hyperref[2]{2}): let \( 2 \leq i \leq k \), note that \( i! \binom{k}{i} = \frac{k!}{\left( k-i \right)!} \) is divisible by \( k \), hence by \( p^{c''} \), whilst the largest power of \( p \) dividing \( i! \) is classically bounded above by the famous \href{https://en.wikipedia.org/wiki/Legendre%27s_formula}{Legendre's formula}:
-\[
-v_p\left( i! \right) =\footnote{A quick proof of this formula for \( p \in \mathbb{P} \) and \( i \geq 1 \) proceeds as follows: define \( M := \max\left\{ v_{p}\left( t \right) \,\middle\vert\, 1 \leq t \leq i \right\} \), then:
-\(v_p\left( i! \right) = \sum_{t=1}^{i} v_p\left( t \right) = \sum_{t=1}^{i} \left( \sum_{\substack{j=1 \\ p^j \mid_{\mathbb{Z}} t}}^{M} 1 \right) = \sum_{\substack{\left( t,j \right) \in \left\llbracket 1, i \right\rrbracket \times \left\llbracket 1, M \right\rrbracket \\ p^{j} \mid_{\mathbb{Z}} t}} 1 = \sum_{j=1}^{M} \left( \sum_{\substack{t=1 \\ p^j \mid_{\mathbb{Z}} t}}^{i} 1 \right) = \sum_{j=1}^{M} \left\lvert \left\{ t \in \left\llbracket 1, i \right\rrbracket \,\middle\vert\, p^j \mid_{\mathbb{Z}} t \right\} \right\rvert = \sum_{j=1}^{M} \left\lvert \left\{ p^j s \leq i \,\middle\vert\, s \in \mathbb{N}_{>0} \right\} \right\rvert = \sum_{j=1}^{M} \left\lvert \left\{ s \in \mathbb{N}_{>0} \,\middle\vert\, p^j s \leq i \right\} \right\rvert = \sum_{j=1}^{M} \left\lfloor \frac{i}{p^j} \right\rfloor = \sum_{j=1}^{+\infty} \left\lfloor \frac{i}{p^j} \right\rfloor.
-\) Here, we use the total multiplicativity of \( v_p \) for the first equality; the interchange of sums is justified by their finiteness. The final equality follows from the definition of \( M \), since if \( j \in \mathbb{N} \) is such that \( j > M \), then \( j > v_p\left( i \right) \), hence \( \frac{i}{p^{j}} < 1 \), and thus \( \left\lfloor \frac{i}{p^{j}} \right\rfloor = 0 \). The remaining equalities follow from elementary counting.} \sum_{j=1}^{+\infty} \left\lfloor \frac{i}{p^j} \right\rfloor < \sum_{j=1}^{+\infty} \frac{i}{p^j} = \frac{i}{p - 1}.
-\]
-We claim that \( v_p\left( i! \right) \leq \left\lfloor \frac{i-1}{p-1} \right\rfloor \). Assume for the sake of contradiction that \( \left\lfloor \frac{i-1}{p-1} \right\rfloor < v_p\left( i! \right) \). Since both are integers, \( \left\lfloor \frac{i-1}{p-1} \right\rfloor + 1 \leq v_p\left( i! \right) \). As \( v_p\left( i! \right) < \frac{i}{p-1} \) and \( i \geq 2 \Rightarrow \left\lfloor \frac{i-1}{p-1} \right\rfloor + 1 \geq 1 \), we obtain:
-\[
-\left\lfloor \frac{i-1}{p-1} \right\rfloor + 1 < \frac{i}{p-1} \Rightarrow \left( p-1 \right)\left( \left\lfloor \frac{i-1}{p-1} \right\rfloor + 1 \right) < i.
-\]
-Again, since \( i, \left( p-1 \right)\left( \left\lfloor \frac{i-1}{p-1} \right\rfloor + 1 \right) \) are integers, we have:
-\[
-\left( p-1 \right)\left( \left\lfloor \frac{i-1}{p-1} \right\rfloor + 1 \right) + 1 \leq i.
-\]
-However, by definition of the floor function:
-\[
-\frac{i-1}{p-1} < \left\lfloor \frac{i-1}{p-1} \right\rfloor + 1 \Rightarrow i < \left( p-1 \right)\left( \left\lfloor \frac{i-1}{p-1} \right\rfloor + 1 \right) + 1.
-\]
-Combining:
-\[
-i < \left( p-1 \right)\left( \left\lfloor \frac{i-1}{p-1} \right\rfloor + 1 \right) + 1 \leq i,
-\]
-that is, \( i < i \), a contradiction. Thus, \( v_p\left( i! \right) \leq \left\lfloor \frac{i-1}{p-1} \right\rfloor \). So:
-\[
-v_p\left( \binom{k}{i} p^{i c'} \right) = v_p\left( \frac{i! \binom{k}{i}}{i!} p^{i c'} \right) = v_p\left( p^{i c'} \right) + v_p\left( i! \binom{k}{i} \right) - v_p\left( i! \right) \geq i c' + c'' - \left\lfloor \frac{i-1}{p-1} \right\rfloor.
-\]
-If \( p = 2 \), then \( c' \geq c \geq 2 \) and \( \frac{i-1}{p-1} = i - 1 \), so:
-\[
-i c' + c'' - \left\lfloor \frac{i-1}{p-1} \right\rfloor = i\left( c' - 1 \right) + c'' + 1
-\]
-\[\geq 2\left( c' - 1 \right) + c'' + 1 = c' + c'' + \left( c' - 2 \right) + 1 \geq c' + c'' + 1.
-\]
-If \( p \geq 3 \), then \( \frac{i-1}{p-1} \leq \frac{i-1}{2} \), so that \( \left\lfloor \frac{i-1}{p-1} \right\rfloor \leq \left\lfloor \frac{i-1}{2} \right\rfloor \), and thus:
-\[
-i c' + c'' - \left\lfloor \frac{i-1}{p-1} \right\rfloor \geq i c' + c'' - \left\lfloor \frac{i-1}{2} \right\rfloor
-\]
-\[= c' + c'' + \left( i - 1 \right)c' - \left\lfloor \frac{i-1}{2} \right\rfloor \geq c' + c'' + \left( i - 1 \right) - \left\lfloor \frac{i-1}{2} \right\rfloor
-\]
-\[= c' + c'' + \left\lceil \frac{i-1}{2} \right\rceil \geq c' + c'' + 1,
-\]
-where we used the fact that for an integer \( r \in \mathbb{Z} \), we have \( r - \left\lfloor \frac{r}{2} \right\rfloor = \left\lceil \frac{r}{2} \right\rceil \) (for this equality, break \( r \) into two cases based on its parity: \( 2t \) or \( 2t + 1 \)) and that \( i - 1 > 0 \).
-\\
-In all cases for $p$:
-\[
-v_p\left( \binom{k}{i} p^{i c'} \right) \geq c' + c'' + 1,
-\]
-and so \( p^{c' + c'' + 1} \) divides \( \binom{k}{i} p^{i c'} \). As $2\leq i\leq k$ was arbitrary, we get that:
-\[
-\sum_{i=2}^{k} \binom{k}{i} p^{i c'} B^i \equiv \mathbf{0}_{n \times n} \pmod{p^{c' + c'' + 1}}.
-\]
-This shows our desired contradiction. Thus, our initial assumption must be false and \( A = I_n \). This concludes the proof.
-\\\\
-A counterexample for general $n\geq 1$ is easy to find, for example, $-I_n$. If we want to find one that is not a diagonal matrix, we split the cases between even and odd dimensions. When $n=2k>0$, we place \( k \) copies of a \( 2 \times 2 \) counterexample block (which satisfies the condition) along the diagonal; when $n=2k+1>0$, we place \( k \) copies of the same \( 2 \times 2 \) block and a final $\pm 1$ on the diagonal:
-\[
-\begin{pmatrix}
-1 & 2 & 0 & \cdots & 0 & 0 \\
-0 & -1 & 0 & \cdots & 0 & 0 \\
-0 & 0 & 1 & 2 & \cdots & 0 \\
-0 & 0 & 0 & -1 & \cdots & 0 \\
-\vdots & \vdots & \vdots & \vdots & \ddots & \vdots \\
-0 & 0 & 0 & 0 & \cdots & \begin{matrix} 1 & 2 \\ 0 & -1 \end{matrix}
-\end{pmatrix} \in \mathbb{Z}^{2k \times 2k},
-\]
-\[
-\begin{pmatrix}
-1 & 2 & 0 & \cdots & 0 & 0 & 0 \\
-0 & -1 & 0 & \cdots & 0 & 0 & 0 \\
-0 & 0 & 1 & 2 & \cdots & 0 & 0 \\
-0 & 0 & 0 & -1 & \cdots & 0 & 0 \\
-\vdots & \vdots & \vdots & \vdots & \ddots & \vdots & \vdots \\
-0 & 0 & 0 & 0 & \cdots & \begin{matrix} 1 & 2 \\ 0 & -1 \end{matrix} & 0 \\
-0 & 0 & 0 & 0 & \cdots & 0 & \pm 1
-\end{pmatrix} \in \mathbb{Z}^{\left( 2k+1 \right) \times \left( 2k+1 \right)}.
-\]
-% ---- Solutions by Spas and Ana (GitHub main, merged 2026-10-02), appended as they are; to combine with the solutions above (TODO.md) ----
-\textit{Setup (used in Solutions 1--3).}
-\\\\
-Write \( A = I_n + mB \) with \( B \in \mathbb{Z}^{n \times n} \), and let \( A^k = I_n \). If \( Bx = \beta x \) with \( x \neq 0 \), then \( Ax = (1 + m\beta)x \), so \( \alpha := 1 + m\beta \) is an eigenvalue of \( A \). Since \( A^k = I_n \), we have \( \alpha^k = 1 \), so \( |\alpha| = 1 \). Hence every eigenvalue \( \beta \) of \( B \) satisfies (here \( m \geq 3 \) is crucial)
-\[
-|\beta| = \frac{|\alpha - 1|}{m} \leq \frac{|\alpha| + 1}{m} = \frac{2}{m} < 1.
-\]
-\textit{Solution 1 (Vieta and diagonalisability).}
-\\\\
-The characteristic polynomial \( \chi_B \) is monic with integer coefficients. Write \( \chi_B = X^s q \) with \( q \in \mathbb{Z}[X] \) monic and \( q(0) \neq 0 \). Suppose \( \deg q \geq 1 \). The roots of \( q \) are eigenvalues of \( B \), so they all have modulus \( < 1 \), and by Vieta
-\[
-|q(0)| = \prod_{q(\rho) = 0} |\rho| < 1.
-\]
-But \( q(0) \) is a nonzero integer, a contradiction. Hence \( q = 1 \), i.e.\ \( 0 \) is the only eigenvalue of \( B \).
+    \textit{Solution 1. of \( A=I_n \)}
+    \\\\
+    Since \( A \equiv I_n \pmod{m} \), there exists \( B \in \mathbb{Z}^{n \times n} \) such that
+    \( A = I_n + mB \). Then we have the following equality of characteristic polynomials:
+    \[
+        P_{\text{char},A}\left(X\right) = {\det}_{\mathbb{Q}\left(X\right)}\left(XI_n - A\right) =
+        {\det}_{\mathbb{Q}\left(X\right)}\left(\left(X - 1\right)I_n - mB\right) =
+        P_{\text{char},mB}\left(X - 1\right).
+    \]
+    Therefore, \( \alpha \in \mathbb{C} \) is an eigenvalue of \( A \) if and only if \( \alpha -
+    1 \) is an eigenvalue of \( mB \); that is (since \( m \neq 0 \)), if and only if
+    \( \frac{\alpha - 1}{m} \) is an eigenvalue of \( B \).
+    \\\\
+    Since \( \exists k \in \mathbb{N}_{>0}\) with \(A^k = I_n \), any eigenvalue \( \alpha \in
+    \mathbb{C} \) of \( A \) satisfies \( \alpha^k = 1 \); thus, they are \( k \)-th roots of unity
+    and lie on the unit circle \( \mathbb{S}^{1} \), i.e., \( \left|\alpha\right|_{\mathbb{C}} =
+    1 \). Any eigenvalue \( \beta \in \mathbb{C} \) of \( B \) then satisfies (here \( m \geq 3 \)
+    is crucial):
+    \[
+        \left|\beta\right|_{\mathbb{C}} = \left| \frac{\alpha - 1}{m} \right|_{\mathbb{C}} \leq
+        \frac{\left|\alpha\right|_{\mathbb{C}} + 1}{m} = \frac{2}{m} < 1.
+    \]
+    Now we prove that \( 0 \) is the only eigenvalue of \( B \):
+    \(\sigma\left(B\right)=\left\{0\right\}\).
+    \\\\
+    From this point, there are multiple ways to proceed; we present two approaches here.
+    \\\\
+    \textit{Using Vieta’s formula.}
+    \\\\
+    Since \( \mathbb{Z} \) is a unique factorisation domain (UFD), so is
+    \( \mathbb{Z}\left[X\right] \), and we can factor the characteristic polynomial of \( B \)
+    (which is of degree \( n \geq 1 \)), \( P_{\text{char},B}\left(X\right) :=
+    \det_{\mathbb{Q}\left(X\right)}\left(XI_n - B\right) \in \mathbb{Z}\left[X\right] \), as a
+    product of \( l \in \mathbb{N}^{*} \) unique irreducible polynomials (up to invertible elements,
+    which here are \(\pm 1\)). Since \( P_{\text{char},B}\left(X\right) \) is monic, the irreducible
+    polynomials must have leading coefficients in \( \mathbb{Z}^{\times} = \left\{\pm 1\right\} \).
+    Therefore, they must have degree at least one (without this information they could have been
+    irreducible elements of \( \mathbb{Z} \subset \mathbb{Z}\left[X\right] \)—namely, the primes up
+    to sign). Hence, we may assume them to be monic (by multiplying, \textit{ubi opus est}, by
+    \( -1 \)). That is,
+    \[
+        \exists \left\{P_i\left(X\right) \mid \forall i \in l,\, P_i\left(X\right)
+        \text{ is irreducible and monic} \right\} \subset \mathbb{Z}_{\text{irr}}\left[X\right]
+        \setminus \mathbb{Z}
+    \]
+    such that
+    \[
+        P_{\text{char},B}\left(X\right) = \prod_{i \in l} P_i\left(X\right).
+    \]
+    Now, let \( \beta \) be an eigenvalue of \( B \), i.e., \( \beta \in
+    \mathrm{Root}_{P_{\text{char},B}\left(X\right)}\left(\mathbb{C}\right) \). Hence, there exists
+    \( j \in l \) such that \( \beta \in
+    \mathrm{Root}_{P_j\left(X\right)}\left(\mathbb{C}\right) \). For a certain \( s_j \in
+    \mathbb{N}_{>0} \) and distinct complex numbers \( \left\{\,_{j}\beta_i \mid i \in s_j \right\}
+    \subset \mathbb{C} \), we have
+    \[
+        \mathrm{Root}_{P_j\left(X\right)}\left(\mathbb{C}\right) = \left\{\,_{j}\beta_i \mid i \in
+        s_j \right\}.
+    \]
+    As we have seen above,
+    \[
+        \mathrm{Root}_{P_{\text{char},B}\left(X\right)}\left(\mathbb{C}\right) \subset \mathbb{D},
+    \]
+    so \( \left\{\,_{j}\beta_i \mid i \in s_j \right\} \subset \mathbb{D} \). However, since these
+    are the roots of \( P_j\left(X\right) \), we must have, by Vieta’s formula, that their product
+    equals (up to a sign) the constant term of \( P_j\left(X\right) \):
+    \[
+        \prod_{i\in s_j} \,_{j}\beta_i \in\left\{\pm P_j\left(0\right)\right\}.
+    \]
+    Then
+    \[
+        \left|P_j\left(0\right)\right|_{\mathbb{C}} = \left| \prod_{i\in s_j} \,_{j}\beta_i
+        \right|_{\mathbb{C}} = \prod_{i\in s_j} \left| \,_{j}\beta_i \right|_{\mathbb{C}} < 1.
+    \]
+    Since \( P_{j}\left(X\right) \in \mathbb{Z}\left[X\right] \), we must have \( P_j\left(0\right)
+    \in \mathbb{Z} \), and because \( \left|P_j\left(0\right)\right|_{\mathbb{C}} < 1 \) we must
+    have \( P_j\left(0\right) = 0 \). Therefore, \( 0 \) is a root of \( P_j \), and thus \( X \)
+    divides \( P_j\left(X\right) \) in \( \mathbb{Z}\left[X\right] \). Since \( P_j\left(X\right) \)
+    has degree at least \( 1 \) and is irreducible in \( \mathbb{Z}\left[X\right] \), this cannot
+    happen unless \( P_j\left(X\right) \) has degree \( 1 \). So \( P_j\left(X\right) = kX \) for a
+    certain \( k \in \mathbb{Z} \setminus \left\{0\right\} \). Since \( P_j\left(X\right) \) is
+    monic, \( k = 1 \), and we conclude \( P_j\left(X\right) = X \). Hence \( \beta = 0 \), since it
+    is a root of \( P_j\left(X\right) \) by choice of \( j \). As \(\beta\in\sigma\left(B\right)\)
+    was arbitrary we conclude \(\sigma\left(B\right)=\left\{0\right\}\) (because
+    \(\sigma\left(B\right)\neq\varnothing\)).
+    \\\\
+    \textit{Using the following equivalence.}
+    \begin{lemma}
+        One has \(\sigma\left(B\right) = \left\{0\right\} \Leftrightarrow \exists t \in \mathbb{N},
+        \forall k \in \left\llbracket 1, n \right\rrbracket, \text{tr}\left(B^{t+k}\right) = 0\).
+    \end{lemma}
+    This equivalence, along with several others, is proven in a generic form in
+    Appendix [\appendixref{nilpotency-by-traces}].
+    \\\\
+    It thus suffices to show that \(\exists M \in\mathbb{N}\,,\forall N\in\mathbb{N}_{\geq M}\,,
+    \text{tr}\left(B^N\right)=0\).
+    \\\\
+    As shown earlier, all eigenvalues of \( B \) lie inside the unit disc:
+    \( \mathrm{Root}_{P_{\text{char},B}\left(X\right)}\left(\mathbb{C}\right) \subset \mathbb{D} \).
+    Let \( \boldsymbol{\beta} \in \mathbb{D}^n \) be any vector (the order in this vector doesn't
+    matter) of exactly all the eigenvalues of \( B \), counted with their respective algebraic
+    multiplicities, so that \( \sigma\left(B\right) =
+    \mathrm{Root}_{P_{\text{char},B}\left(X\right)}\left(\mathbb{C}\right) = \left\{ \beta_i \mid i
+    \in n \right\} \). By the Spectral Mapping Theorem [\appendixref{spectral-mapping-theorem}], one
+    has that \(\forall k\in\mathbb{N}\):
+    \[
+        \text{tr}\left(B^k\right)=\sum_{i\in n}\beta_i^k.
+    \]
+    Let \( \gamma \in \sigma\left(B\right) \) be an eigenvalue of \( B \). Since
+    \( \left|\gamma\right|_{\mathbb{C}} < 1 \), we have \( \gamma^N
+    \underset{\mathbb{N}\ni N \to +\infty}{\overset{\left|\cdot\right|_{\mathbb{C}}}{\longrightarrow}}
+    0 \). Therefore:
+    \[
+        \text{tr}\left(B^N\right)
+        \underset{\mathbb{N}\ni N \to +\infty}{\overset{\left|\cdot\right|_{\mathbb{C}}}{\longrightarrow}}
+        0,
+    \]
+    as it is a finite sum comprising a total of \( n \) summands tending to zero. However, as
+    \( B \in \mathbb{Z}^{n \times n} \), we have \(\forall k \in \mathbb{N}, \, B^k \in
+    \mathbb{Z}^{n \times n}\), so for all \( k \in \mathbb{N} \), \( \text{tr}\left(B^k\right) \in
+    \mathbb{Z} \). Hence (standard), there exists \( M\in\mathbb{N} \) such that for all
+    \( N \in \mathbb{N}_{\geq M} \), \( \text{tr}\left(B^N\right) = 0 \), as desired.
+    \\\\
+    This concludes the two different approaches to show that \( \sigma\left( B \right) = \left\{ 0
+    \right\} \). We can now quickly finish the problem. All the eigenvalues of \( B \) are \( 0 \);
+    this is clearly equivalent to \( P_{\text{char},B}\left( X \right) = X^n \). According to the
+    Cayley-Hamilton theorem, \( B^n = \mathbf{0}_{n\times n} \), so \( B \) is nilpotent and thus
+    \( mB \) is nilpotent. Now, use the following
+    \begin{lemma}
+        Let \(\mathbb{F}\) be a field of characteristic \(\operatorname{char}(\mathbb{F}) = 0\),
+        \( l \in \mathbb{N}_{>0} \), and \( N \in \mathbb{F}^{l \times l} \) be a nilpotent matrix.
+        If \( I_{l} + N \) has finite order, then \( N = \mathbf{0}_{l \times l} \).
+    \end{lemma}
+    The proof can be found in a slightly generalised framework in
+    Appendix [\appendixref{unipotent-finite-order}].
+    \\\\
+    Apply this result to the field \( \mathbb{Q} \) with \( n \geq 1 \); since \( mB \in
+    \mathbb{Q}^{n \times n} \) is nilpotent and \( A = I_n + mB \) has finite order, we conclude
+    that \( mB = \mathbf{0}_{n \times n} \). Hence, \( A = I_n \), and this concludes the proof.
+    \\\\
+    \textit{Solution 2. of \( A=I_n \)}
+    \\\\
+    Assume for contradiction that \( A \neq I_n \). Since \( m \geq 3 \), \( m \) must be divisible
+    by some prime power greater than 2, that is, there exists \( p \in \mathbb{P} \) a prime number
+    and \( c \geq 1 \) such that \( p^c \mid m \) and \( p^c > 2 \) (if \( p = 2 \), then
+    \( c \geq 2 \) necessarily). In particular, from \( A \equiv I_n \pmod{m} \), we must have
+    \( A \equiv I_n \pmod{p^c} \).
+    \\\\
+    Since \( A \neq I_n \), there is \( \left( i,j \right) \in n \times n \) such that \( \left( A -
+    I_n \right)\left( i,j \right) \neq 0 \), and so
+    \[
+        c \leq v_p\left( \left( A - I_n \right)\left( i,j \right) \right) \neq +\infty,
+    \]
+    where \( v_p \colon \mathbb{Q} \rightarrow \mathbb{Z} \cup \left\{ +\infty \right\} \) denotes
+    the \( p \)-adic valuation. We can thus let
+    \[
+        c' := \min\left\{ v_p\left( \left( A - I_n \right)\left( i,j \right) \right)
+        \,\middle\vert\, \left( i,j \right) \in n \times n \right\} \geq c.
+    \]
+    Then \( c' \in \mathbb{N}_{\geq c} \) is (by construction) the largest integer such that
+    \( A \equiv I_n \pmod{p^{c'}} \). Consequently, we define
+    \[
+        B := \frac{1}{p^{c'}} \left( A - I_n \right) \in \mathbb{Q}^{n\times n},
+    \]
+    for which (by definition of \( c' \)), \( B \in \mathbb{Z}^{n \times n} \) and \( B \not\equiv
+    \mathbf{0}_{n \times n} \pmod{p} \). \\
+    Since \( A \) has finite order, there exists \( k \in \mathbb{N}^{*} \) with \( A^k = I_n \);
+    furthermore, \( k \geq 2 \) because \( A \neq I_n \). We want to expand:
+    \[
+        I_n = A^k = \left( I_n + p^{c'} B \right)^k.
+    \]
+    This can be done (happily) by the binomial theorem since \( I_n \) and \( p^{c'} B \) commute,
+    and we obtain:
+    \[
+        I_n = \sum_{i=0}^{k} \binom{k}{i} p^{i c'} B^i.
+    \]
+    This implies:
+    \[
+        \sum_{i=1}^{k} \binom{k}{i} p^{i c'} B^i = \mathbf{0}_{n \times n},
+    \]
+    or equivalently (since \( k \geq 2 \)), we obtain the equation:
+    \[
+        \sum_{i=2}^{k} \binom{k}{i} p^{i c'} B^i = -k p^{c'} B.
+    \]
+    We shall show that this leads to a contradiction. Let \( c'' := v_p\left( k \right) \geq 0 \).
+    We prove:
+    \begin{equation}
+        -k p^{c'} B \not\equiv \mathbf{0}_{n \times n} \pmod{p^{c' + c'' + 1}}, \label{1}
+    \end{equation}
+    whilst
+    \begin{equation}
+        \sum_{i=2}^{k} \binom{k}{i} p^{i c'} B^i \equiv \mathbf{0}_{n \times n}
+        \pmod{p^{c' + c'' + 1}}, \label{2}
+    \end{equation}
+    which is impossible by the derived equation above. \\
+    For (\hyperref[1]{1}): because \( v_p\left( k p^{c'} \right) = c' + c'' \) and \( B \not\equiv
+    \mathbf{0}_{n \times n} \pmod{p} \), we have \( -k p^{c'} B \not\equiv \mathbf{0}_{n \times n}
+    \pmod{p^{c' + c'' + 1}} \) (but obviously \( k p^{c'} B \equiv \mathbf{0}_{n \times n}
+    \pmod{p^{c' + c''}} \)). \\
+    For (\hyperref[2]{2}): let \( 2 \leq i \leq k \), note that \( i! \binom{k}{i} =
+    \frac{k!}{\left( k-i \right)!} \) is divisible by \( k \), hence by \( p^{c''} \), whilst the
+    largest power of \( p \) dividing \( i! \) is classically bounded above by the famous
+    \href{https://en.wikipedia.org/wiki/Legendre%27s_formula}{Legendre's formula}:
+    \[
+        v_p\left( i! \right) =\footnote{A quick proof of this formula for \( p \in \mathbb{P} \) and
+        \( i \geq 1 \) proceeds as follows: define \( M := \max\left\{ v_{p}\left( t \right)
+        \,\middle\vert\, 1 \leq t \leq i \right\} \), then: \(v_p\left( i! \right) = \sum_{t=1}^{i}
+        v_p\left( t \right) = \sum_{t=1}^{i} \left(
+        \sum_{\substack{j=1 \\ p^j \mid_{\mathbb{Z}} t}}^{M} 1 \right) =
+        \sum_{\substack{\left( t,j \right) \in \left\llbracket 1, i \right\rrbracket \times \left\llbracket 1, M \right\rrbracket \\ p^{j} \mid_{\mathbb{Z}} t}}
+        1 = \sum_{j=1}^{M} \left( \sum_{\substack{t=1 \\ p^j \mid_{\mathbb{Z}} t}}^{i} 1 \right) =
+        \sum_{j=1}^{M} \left\lvert \left\{ t \in \left\llbracket 1, i \right\rrbracket
+        \,\middle\vert\, p^j \mid_{\mathbb{Z}} t \right\} \right\rvert = \sum_{j=1}^{M} \left\lvert
+        \left\{ p^j s \leq i \,\middle\vert\, s \in \mathbb{N}_{>0} \right\} \right\rvert =
+        \sum_{j=1}^{M} \left\lvert \left\{ s \in \mathbb{N}_{>0} \,\middle\vert\, p^j s \leq i
+        \right\} \right\rvert = \sum_{j=1}^{M} \left\lfloor \frac{i}{p^j} \right\rfloor =
+        \sum_{j=1}^{+\infty} \left\lfloor \frac{i}{p^j} \right\rfloor. \) Here, we use the total
+        multiplicativity of \( v_p \) for the first equality; the interchange of sums is justified
+        by their finiteness. The final equality follows from the definition of \( M \), since if
+        \( j \in \mathbb{N} \) is such that \( j > M \), then \( j > v_p\left( i \right) \), hence
+        \( \frac{i}{p^{j}} < 1 \), and thus \( \left\lfloor \frac{i}{p^{j}} \right\rfloor = 0 \).
+        The remaining equalities follow from elementary counting.} \sum_{j=1}^{+\infty} \left\lfloor
+        \frac{i}{p^j} \right\rfloor < \sum_{j=1}^{+\infty} \frac{i}{p^j} = \frac{i}{p - 1}.
+    \]
+    We claim that \( v_p\left( i! \right) \leq \left\lfloor \frac{i-1}{p-1} \right\rfloor \). Assume
+    for the sake of contradiction that \( \left\lfloor \frac{i-1}{p-1} \right\rfloor < v_p\left( i!
+    \right) \). Since both are integers, \( \left\lfloor \frac{i-1}{p-1} \right\rfloor + 1 \leq
+    v_p\left( i! \right) \). As \( v_p\left( i! \right) < \frac{i}{p-1} \) and \( i \geq 2
+    \Rightarrow \left\lfloor \frac{i-1}{p-1} \right\rfloor + 1 \geq 1 \), we obtain:
+    \[
+        \left\lfloor \frac{i-1}{p-1} \right\rfloor + 1 < \frac{i}{p-1} \Rightarrow \left( p-1
+        \right)\left( \left\lfloor \frac{i-1}{p-1} \right\rfloor + 1 \right) < i.
+    \]
+    Again, since \( i, \left( p-1 \right)\left( \left\lfloor \frac{i-1}{p-1} \right\rfloor + 1
+    \right) \) are integers, we have:
+    \[
+        \left( p-1 \right)\left( \left\lfloor \frac{i-1}{p-1} \right\rfloor + 1 \right) + 1 \leq i.
+    \]
+    However, by definition of the floor function:
+    \[
+        \frac{i-1}{p-1} < \left\lfloor \frac{i-1}{p-1} \right\rfloor + 1 \Rightarrow i < \left( p-1
+        \right)\left( \left\lfloor \frac{i-1}{p-1} \right\rfloor + 1 \right) + 1.
+    \]
+    Combining:
+    \[
+        i < \left( p-1 \right)\left( \left\lfloor \frac{i-1}{p-1} \right\rfloor + 1 \right) + 1 \leq
+        i,
+    \]
+    that is, \( i < i \), a contradiction. Thus, \( v_p\left( i! \right) \leq \left\lfloor
+    \frac{i-1}{p-1} \right\rfloor \). So:
+    \[
+        v_p\left( \binom{k}{i} p^{i c'} \right) = v_p\left( \frac{i! \binom{k}{i}}{i!} p^{i c'}
+        \right) = v_p\left( p^{i c'} \right) + v_p\left( i! \binom{k}{i} \right) - v_p\left( i!
+        \right) \geq i c' + c'' - \left\lfloor \frac{i-1}{p-1} \right\rfloor.
+    \]
+    If \( p = 2 \), then \( c' \geq c \geq 2 \) and \( \frac{i-1}{p-1} = i - 1 \), so:
+    \[
+        i c' + c'' - \left\lfloor \frac{i-1}{p-1} \right\rfloor = i\left( c' - 1 \right) + c'' + 1
+    \]
+    \[\geq 2\left( c' - 1 \right) + c'' + 1 = c' + c'' + \left( c' - 2 \right) + 1 \geq c' + c'' +
+        1.
+    \]
+    If \( p \geq 3 \), then \( \frac{i-1}{p-1} \leq \frac{i-1}{2} \), so that \( \left\lfloor
+    \frac{i-1}{p-1} \right\rfloor \leq \left\lfloor \frac{i-1}{2} \right\rfloor \), and thus:
+    \[
+        i c' + c'' - \left\lfloor \frac{i-1}{p-1} \right\rfloor \geq i c' + c'' - \left\lfloor
+        \frac{i-1}{2} \right\rfloor
+    \]
+    \[= c' + c'' + \left( i - 1 \right)c' - \left\lfloor \frac{i-1}{2} \right\rfloor \geq c' + c'' +
+        \left( i - 1 \right) - \left\lfloor \frac{i-1}{2} \right\rfloor
+    \]
+    \[= c' + c'' + \left\lceil \frac{i-1}{2} \right\rceil \geq c' + c'' + 1,
+    \]
+    where we used the fact that for an integer \( r \in \mathbb{Z} \), we have \( r - \left\lfloor
+    \frac{r}{2} \right\rfloor = \left\lceil \frac{r}{2} \right\rceil \) (for this equality, break
+    \( r \) into two cases based on its parity: \( 2t \) or \( 2t + 1 \)) and that \( i - 1 >
+    0 \). \\
+    In all cases for \( p \):
+    \[
+        v_p\left( \binom{k}{i} p^{i c'} \right) \geq c' + c'' + 1,
+    \]
+    and so \( p^{c' + c'' + 1} \) divides \( \binom{k}{i} p^{i c'} \). As \( 2\leq i\leq k \) was
+    arbitrary, we get that:
+    \[
+        \sum_{i=2}^{k} \binom{k}{i} p^{i c'} B^i \equiv \mathbf{0}_{n \times n}
+        \pmod{p^{c' + c'' + 1}}.
+    \]
+    This shows our desired contradiction. Thus, our initial assumption must be false and
+    \( A = I_n \). This concludes the proof.
+    \\\\
+    A counterexample for general \( n\geq 1 \) is easy to find, for example, \( -I_n \). If we want
+    to find one that is not a diagonal matrix, we split the cases between even and odd dimensions.
+    When \( n=2k>0 \), we place \( k \) copies of a \( 2 \times 2 \) counterexample block (which
+    satisfies the condition) along the diagonal; when \( n=2k+1>0 \), we place \( k \) copies of the
+    same \( 2 \times 2 \) block and a final \( \pm 1 \) on the diagonal:
+    \[
+        \begin{pmatrix}
+            1      & 2      & 0      & \cdots & 0      & 0                                           \\
+            0      & -1     & 0      & \cdots & 0      & 0                                           \\
+            0      & 0      & 1      & 2      & \cdots & 0                                           \\
+            0      & 0      & 0      & -1     & \cdots & 0                                           \\
+            \vdots & \vdots & \vdots & \vdots & \ddots & \vdots                                      \\
+            0      & 0      & 0      & 0      & \cdots & \begin{matrix} 1 & 2 \\ 0 & -1 \end{matrix}
+        \end{pmatrix} \in \mathbb{Z}^{2k \times 2k},
+    \]
+    \[
+        \begin{pmatrix}
+            1      & 2      & 0      & \cdots & 0      & 0                                           & 0      \\
+            0      & -1     & 0      & \cdots & 0      & 0                                           & 0      \\
+            0      & 0      & 1      & 2      & \cdots & 0                                           & 0      \\
+            0      & 0      & 0      & -1     & \cdots & 0                                           & 0      \\
+            \vdots & \vdots & \vdots & \vdots & \ddots & \vdots                                      & \vdots \\
+            0      & 0      & 0      & 0      & \cdots & \begin{matrix} 1 & 2 \\ 0 & -1 \end{matrix} & 0      \\
+            0      & 0      & 0      & 0      & \cdots & 0                                           & \pm 1
+        \end{pmatrix} \in \mathbb{Z}^{\left( 2k+1 \right) \times \left( 2k+1 \right)}.
+    \]
+    % ---- Solutions by Spas and Ana (GitHub main, merged 2026-10-02), appended as they are; to combine with the solutions above (TODO.md) ----
+    % -- things here are great below and can greatly simplify some part of th eproof above. We need tough to make them according to my writing style (for exmaple the X^s here we should put s = v_X(P_cHar) the adic valuation of the prime X right ? somehting like these everywhere put this I will do myself alone)
+    \textit{Setup (used in Solutions 1--3).}
+    \\\\
+    Write \( A = I_n + mB \) with \( B \in \mathbb{Z}^{n \times n} \), and let \( A^k = I_n \). If
+    \( Bx = \beta x \) with \( x \neq 0 \), then \( Ax = (1 + m\beta)x \), so \( \alpha := 1 +
+    m\beta \) is an eigenvalue of \( A \). Since \( A^k = I_n \), we have \( \alpha^k = 1 \), so
+    \( |\alpha| = 1 \). Hence every eigenvalue \( \beta \) of \( B \) satisfies (here \( m \geq 3 \)
+    is crucial)
+    \[
+        |\beta| = \frac{|\alpha - 1|}{m} \leq \frac{|\alpha| + 1}{m} = \frac{2}{m} < 1.
+    \]
+    \textit{Solution 1 (Vieta and diagonalisability).}
+    \\\\
+    The characteristic polynomial \( \chi_B \) is monic with integer coefficients. Write
+    \( \chi_B = X^s q \) with \( q \in \mathbb{Z}[X] \) monic and \( q(0) \neq 0 \). Suppose
+    \( \deg q \geq 1 \). The roots of \( q \) are eigenvalues of \( B \), so they all have modulus
+    \( < 1 \), and by Vieta
+    \[
+        |q(0)| = \prod_{q(\rho) = 0} |\rho| < 1.
+    \]
+    But \( q(0) \) is a nonzero integer, a contradiction. Hence \( q = 1 \), i.e.\ \( 0 \) is the
+    only eigenvalue of \( B \).
 
-Therefore every eigenvalue of \( A = I_n + mB \) equals \( 1 \). Since \( A^k = I_n \), the minimal polynomial of \( A \) divides \( X^k - 1 \), which has distinct roots, so \( A \) is diagonalisable over \( \mathbb{C} \). A diagonalisable matrix whose only eigenvalue is \( 1 \) is \( I_n \). \qed
-\\\\
-\textit{Solution 2 (Vieta and Cayley--Hamilton).}
-\\\\
-As in Solution 1, \( \chi_B = X^n \), so \( B^n = \mathbf{0} \) by Cayley--Hamilton. Put \( N := mB \), so \( N^n = \mathbf{0} \). From \( (I_n + N)^k = I_n \) and the binomial theorem,
-\[
-\mathbf{0} = \sum_{j=1}^{k} \binom{k}{j} N^j = N\,(kI_n + E), \qquad E := \sum_{j=2}^{k} \binom{k}{j} N^{j-1}.
-\]
-Now \( E = N \cdot (\text{polynomial in } N) \) is nilpotent and commutes with \( kI_n \). Since \( k \neq 0 \) in \( \mathbb{Q} \), the matrix \( kI_n + E = k\,(I_n + k^{-1}E) \) is invertible, with \( (I_n + F)^{-1} = \sum_{i \geq 0} (-F)^i \) for nilpotent \( F \). Hence \( N = \mathbf{0} \), i.e.\ \( A = I_n \). \qed
-\\\\
-\textit{Solution 3 (traces).}
-\\\\
-Instead of Vieta, we show that \( 0 \) is the only eigenvalue of \( B \) using traces. Let \( \beta_1, \dots, \beta_n \) be the eigenvalues of \( B \) with multiplicity. Then \( \operatorname{tr}(B^N) = \sum_i \beta_i^N \to 0 \) as \( N \to \infty \), because \( |\beta_i| < 1 \). Since \( \operatorname{tr}(B^N) \in \mathbb{Z} \), there is \( M \geq 1 \) with \( \operatorname{tr}(B^N) = 0 \) for all \( N \geq M \).
+    Therefore every eigenvalue of \( A = I_n + mB \) equals \( 1 \). Since \( A^k = I_n \), the
+    minimal polynomial of \( A \) divides \( X^k - 1 \), which has distinct roots, so \( A \) is
+    diagonalisable over \( \mathbb{C} \). A diagonalisable matrix whose only eigenvalue is \( 1 \)
+    is \( I_n \). \qed
+    \\\\
+    \textit{Solution 2 (Vieta and Cayley--Hamilton).}
+    \\\\
+    As in Solution 1, \( \chi_B = X^n \), so \( B^n = \mathbf{0} \) by Cayley--Hamilton. Put
+    \( N := mB \), so \( N^n = \mathbf{0} \). From \( (I_n + N)^k = I_n \) and the binomial theorem,
+    \[
+        \mathbf{0} = \sum_{j=1}^{k} \binom{k}{j} N^j = N\,(kI_n + E), \qquad E := \sum_{j=2}^{k}
+        \binom{k}{j} N^{j-1}.
+    \]
+    Now \( E = N \cdot (\text{polynomial in } N) \) is nilpotent and commutes with \( kI_n \). Since
+    \( k \neq 0 \) in \( \mathbb{Q} \), the matrix \( kI_n + E = k\,(I_n + k^{-1}E) \) is
+    invertible, with \( (I_n + F)^{-1} = \sum_{i \geq 0} (-F)^i \) for nilpotent \( F \). Hence
+    \( N = \mathbf{0} \), i.e.\ \( A = I_n \). \qed
+    \\\\
+    \textit{Solution 3 (traces).}
+    \\\\
+    Instead of Vieta, we show that \( 0 \) is the only eigenvalue of \( B \) using traces. Let
+    \( \beta_1, \dots, \beta_n \) be the eigenvalues of \( B \) with multiplicity. Then
+    \( \operatorname{tr}(B^N) = \sum_i \beta_i^N \to 0 \) as \( N \to \infty \), because
+    \( |\beta_i| < 1 \). Since \( \operatorname{tr}(B^N) \in \mathbb{Z} \), there is \( M \geq 1 \)
+    with \( \operatorname{tr}(B^N) = 0 \) for all \( N \geq M \).
 
-Suppose \( B \) has distinct nonzero eigenvalues \( \gamma_1, \dots, \gamma_r \) (\( r \geq 1 \)) with multiplicities \( \mu_1, \dots, \mu_r \geq 1 \). Then for \( l = 0, \dots, r-1 \),
-\[
-\sum_{j=1}^{r} \gamma_j^{\,l} \cdot \mu_j \gamma_j^{M} = 0.
-\]
-The matrix \( (\gamma_j^{\,l})_{0 \leq l < r,\ 1 \leq j \leq r} \) is a Vandermonde matrix with distinct nodes, hence invertible. So \( \mu_j \gamma_j^M = 0 \) for all \( j \), which is impossible since \( \mu_j \neq 0 \) and \( \gamma_j \neq 0 \). Hence \( 0 \) is the only eigenvalue of \( B \). Now finish with the last paragraph of Solution 1, or with the argument of Solution 2. \qed
-\\\\
-\textit{Solution 4 (\( p \)-adic).}
-\\\\
-Assume \( A \neq I_n \). If \( m \) has an odd prime divisor \( p \), put \( c = 1 \). Otherwise \( m \) is a power of \( 2 \) with \( m \geq 4 \); put \( p = 2 \), \( c = 2 \). In both cases \( p^c \mid m \), so \( A \equiv I_n \pmod{p^c} \), and \( c \geq 2 \) if \( p = 2 \).
+    Suppose \( B \) has distinct nonzero eigenvalues \( \gamma_1, \dots, \gamma_r \) (\( r \geq
+    1 \)) with multiplicities \( \mu_1, \dots, \mu_r \geq 1 \). Then for \( l = 0, \dots, r-1 \),
+    \[
+        \sum_{j=1}^{r} \gamma_j^{\,l} \cdot \mu_j \gamma_j^{M} = 0.
+    \]
+    The matrix \( (\gamma_j^{\,l})_{0 \leq l < r,\ 1 \leq j \leq r} \) is a Vandermonde matrix with
+    distinct nodes, hence invertible. So \( \mu_j \gamma_j^M = 0 \) for all \( j \), which is
+    impossible since \( \mu_j \neq 0 \) and \( \gamma_j \neq 0 \). Hence \( 0 \) is the only
+    eigenvalue of \( B \). Now finish with the last paragraph of Solution 1, or with the argument of
+    Solution 2. \qed
+    \\\\
+    \textit{Solution 4 (\( p \)-adic).}
+    \\\\
+    Assume \( A \neq I_n \). If \( m \) has an odd prime divisor \( p \), put \( c = 1 \). Otherwise
+    \( m \) is a power of \( 2 \) with \( m \geq 4 \); put \( p = 2 \), \( c = 2 \). In both cases
+    \( p^c \mid m \), so \( A \equiv I_n \pmod{p^c} \), and \( c \geq 2 \) if \( p = 2 \).
 
-Let \( c' \) be the minimum of \( v_p \) over the entries of \( A - I_n \). It is finite since \( A \neq I_n \), and \( c' \geq c \). Put \( B := p^{-c'}(A - I_n) \in \mathbb{Z}^{n \times n} \), which has an entry not divisible by \( p \). Since \( A \neq I_n \), we have \( k \geq 2 \). Let \( s := v_p(k) \). The binomial theorem gives
-\begin{equation*}
-\mathbf{0} = (I_n + p^{c'}B)^k - I_n = k p^{c'} B + \sum_{i=2}^{k} \binom{k}{i} p^{ic'} B^i. \tag{$*$}
-\end{equation*}
+    Let \( c' \) be the minimum of \( v_p \) over the entries of \( A - I_n \). It is finite since
+    \( A \neq I_n \), and \( c' \geq c \). Put \( B := p^{-c'}(A - I_n) \in
+    \mathbb{Z}^{n \times n} \), which has an entry not divisible by \( p \). Since \( A \neq I_n \),
+    we have \( k \geq 2 \). Let \( s := v_p(k) \). The binomial theorem gives
+    \begin{equation*}
+        \mathbf{0} = (I_n + p^{c'}B)^k - I_n = k p^{c'} B + \sum_{i=2}^{k} \binom{k}{i} p^{ic'} B^i.
+        \tag{\( * \)}
+    \end{equation*}
 
-\emph{Claim: for \( 2 \leq i \leq k \), \( p^{c'+s+1} \) divides \( \binom{k}{i} p^{ic'} \).}
-From \( i\binom{k}{i} = k\binom{k-1}{i-1} \) we get \( v_p\binom{k}{i} \geq s - v \), where \( v := v_p(i) \). Hence \( v_p\!\left(\binom{k}{i}p^{ic'}\right) \geq c' + s + \big((i-1)c' - v\big) \), and it suffices to show \( (i-1)c' \geq v + 1 \). If \( v = 0 \), this holds since \( i \geq 2 \). If \( v \geq 1 \), then \( i \geq p^v \), so \( (i-1)c' \geq (p^v - 1)c' \). For \( p \geq 3 \) use \( c' \geq 1 \) and \( 3^v \geq v + 2 \). For \( p = 2 \) use \( c' \geq 2 \) and \( 2(2^v - 1) \geq v + 1 \). In both cases the bound holds.
+    \emph{Claim: for \( 2 \leq i \leq k \), \( p^{c'+s+1} \) divides \( \binom{k}{i} p^{ic'} \).}
+    From \( i\binom{k}{i} = k\binom{k-1}{i-1} \) we get \( v_p\binom{k}{i} \geq s - v \), where
+    \( v := v_p(i) \). Hence \( v_p\!\left(\binom{k}{i}p^{ic'}\right) \geq c' + s + \big((i-1)c' -
+    v\big) \), and it suffices to show \( (i-1)c' \geq v + 1 \). If \( v = 0 \), this holds since
+    \( i \geq 2 \). If \( v \geq 1 \), then \( i \geq p^v \), so \( (i-1)c' \geq (p^v - 1)c' \). For
+    \( p \geq 3 \) use \( c' \geq 1 \) and \( 3^v \geq v + 2 \). For \( p = 2 \) use \( c' \geq 2 \)
+    and \( 2(2^v - 1) \geq v + 1 \). In both cases the bound holds.
 
-By the claim, every entry of the sum in \( (*) \) is divisible by \( p^{c'+s+1} \), hence so is every entry of \( k p^{c'} B \). But for an entry \( b \) of \( B \) with \( p \nmid b \), we have \( v_p(k p^{c'} b) = c' + s \), a contradiction. Hence \( A = I_n \). \qed
-\\\\
-\textit{Counterexamples for \( m = 2 \).}
-\\\\
-For every \( n \geq 1 \), \( -I_n \equiv I_n \pmod 2 \) has order \( 2 \) but is not \( I_n \). A non-diagonal example: \( J = \begin{pmatrix} 1 & 2 \\ 0 & -1 \end{pmatrix} \) satisfies \( J \equiv I_2 \pmod 2 \) and \( J^2 = I_2 \). For \( n = 2l \) take the block matrix \( \operatorname{diag}(J, \dots, J) \) with \( l \) blocks, and for \( n = 2l + 1 \) with \( l \geq 1 \) take \( \operatorname{diag}(J, \dots, J, \pm 1) \). Each of these is \( \equiv I_n \pmod 2 \), has order \( 2 \), and is not \( I_n \). (For \( n = 1 \) use \( (-1) \).)
+    By the claim, every entry of the sum in \( (*) \) is divisible by \( p^{c'+s+1} \), hence so is
+    every entry of \( k p^{c'} B \). But for an entry \( b \) of \( B \) with \( p \nmid b \), we
+    have \( v_p(k p^{c'} b) = c' + s \), a contradiction. Hence \( A = I_n \). \qed
+    \\\\
+    \textit{Counterexamples for \( m = 2 \).}
+    \\\\
+    For every \( n \geq 1 \), \( -I_n \equiv I_n \pmod 2 \) has order \( 2 \) but is not \( I_n \).
+    A non-diagonal example: \( J = \begin{pmatrix} 1 & 2 \\ 0 & -1 \end{pmatrix} \) satisfies
+    \( J \equiv I_2 \pmod 2 \) and \( J^2 = I_2 \). For \( n = 2l \) take the block matrix
+    \( \operatorname{diag}(J, \dots, J) \) with \( l \) blocks, and for \( n = 2l + 1 \) with
+    \( l \geq 1 \) take \( \operatorname{diag}(J, \dots, J, \pm 1) \). Each of these is \( \equiv
+    I_n \pmod 2 \), has order \( 2 \), and is not \( I_n \). (For \( n = 1 \) use \( (-1) \).)
 \end{solution}
