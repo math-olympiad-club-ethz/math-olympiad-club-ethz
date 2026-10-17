@@ -15,15 +15,15 @@
 \begin{problem}
     We consider a game where two indistinguishable envelopes are presented to a player:
     \begin{itemize}
-        \item One envelope contains an amount $\alpha \in \mathbb{R}_{>0}$.
-        \item The other envelope contains $2\alpha$.
+        \item One envelope contains an amount \( \alpha \in \mathbb{R}_{>0} \).
+        \item The other envelope contains \( 2\alpha \).
     \end{itemize}
 
     The game proceeds as follows:
     \begin{enumerate}
         \item The player randomly selects one envelope (with equal probability).
-        \item The player observes the content $x$ of the selected envelope (without knowing
-            $\alpha$).
+        \item The player observes the content \( x \) of the selected envelope (without knowing
+            \( \alpha \)).
         \item The player must decide whether to:
             \begin{itemize}
                 \item Keep the current envelope, or
@@ -36,68 +36,76 @@
 \end{problem}
 \begin{solution}
     As outlined in the problem, we consider a probability space
-    $\left(\Omega,\mathcal{F},\mathbb{P}\right)$, where $\Omega$ consists of two possible
-    configurations of envelopes:
-    $\Omega = \left\{\left(\alpha, 2\alpha\right), \left(2\alpha, \alpha\right)\right\}$. Since
-    $\Omega$ has only two elements, the only choice for the sigma-algebra (other than the trivial
-    one) is its power set, $\mathcal{F} = \mathscr{P}\left(\Omega\right)$. The player selects an
-    envelope at random with equal probability, implying that the probability measure $\mathbb{P}$
-    follows Laplace's model. Thus, for any $A \in \mathcal{F}$:
+    \( \left(\Omega,\mathcal{F},\mathbb{P}\right) \), where \( \Omega \) consists of two possible
+    configurations of envelopes: \( \Omega = \left\{\left(\alpha, 2\alpha\right), \left(2\alpha,
+    \alpha\right)\right\} \). Since \( \Omega \) has only two elements, the only choice for the
+    sigma-algebra (other than the trivial one) is its power set, \( \mathcal{F} =
+    \mathscr{P}\left(\Omega\right) \). The player selects an envelope at random with equal
+    probability, implying that the probability measure \( \mathbb{P} \) follows Laplace's model.
+    Thus, for any \( A \in \mathcal{F} \):
     \[
         \mathbb{P}\left(A\right) := \frac{\left|A\right|}{\left|\Omega\right|} =
         \frac{\left|A\right|}{2}.
     \]
     In this framework, the "naive" strategies—always keeping the selected envelope or always
     switching—can be analyzed by computing the expected value of the first coordinate projection
-    $\pi_1:\Omega\rightarrow\mathbb{R}$ (or equivalently, the second coordinate $\pi_2$). These
-    functions are obviously measurable and positive, and we compute:
-    $$\mathbb{E}\left(\pi_i\right)=\alpha\mathbb{P}_{\pi_i}\left(\left\{\alpha\right\}\right)+2\alpha\mathbb{P}_{\pi_i}\left(\left\{2\alpha\right\}\right)=\alpha\frac{1}{2}+2\alpha\frac{1}{2}=\frac{3}{2}\alpha.$$
+    \( \pi_1:\Omega\rightarrow\mathbb{R} \) (or equivalently, the second coordinate \( \pi_2 \)).
+    These functions are obviously measurable and positive, and we compute:
+    \[
+        \mathbb{E}\left(\pi_i\right)=\alpha\mathbb{P}_{\pi_i}\left(\left\{\alpha\right\}\right)+2\alpha\mathbb{P}_{\pi_i}\left(\left\{2\alpha\right\}\right)=\alpha\frac{1}{2}+2\alpha\frac{1}{2}=\frac{3}{2}\alpha.
+    \]
     However, since we assume access to randomness, we can improve upon these deterministic
     strategies by incorporating some randomization. The key observation is that while the player
-    does not know $\alpha$, i.e., they know only "partially" $\Omega$ (having access to $\Omega$
-    only through $\pi_1$; opening one of the envelopes only gives them a value $x$ and the other one
-    may be $2x$ or $\frac{x}{2}$). They still know that one value is strictly greater than the
-    other, i.e., $\alpha < 2\alpha$. \\
-    To exploit this without knowing $\Omega$, the player, after having selected one envelope and
+    does not know \( \alpha \), i.e., they know only "partially" \( \Omega \) (having access to
+    \( \Omega \) only through \( \pi_1 \); opening one of the envelopes only gives them a value
+    \( x \) and the other one may be \( 2x \) or \( \frac{x}{2} \)). They still know that one value
+    is strictly greater than the other, i.e., \( \alpha < 2\alpha \). \\
+    To exploit this without knowing \( \Omega \), the player, after having selected one envelope and
     having seen its content, introduces some randomization. Say, they will
     generate\footnote{Practically, this could involve sampling from a physical source (e.g., thermal
     noise) or a deterministic
     \href{https://en.wikipedia.org/wiki/Pseudorandom_number_generator}{pseudorandom number generator}
     (PRNG) seeded by an unpredictable value (e.g., system clock nanoseconds); see
     \href{https://en.wikipedia.org/wiki/Hardware_random_number_generator}{Hardware random number generator}
-    for more information.} a number between $\left[0,1\right]$ and \textit{make a decision} with
+    for more information.} a number between \( \left[0,1\right] \) and \textit{make a decision} with
     this number. Formally, we introduce an auxiliary probability space
-    $\left(\Sigma,\mathcal{A},\mu\right)$ and let $U:\Sigma\rightarrow\left[0,1\right]$ be a uniform
-    random variable, i.e., $U \sim \text{Unif}\left(\left[0,1\right]\right)$\footnote{We can
-    construct $\left(\Sigma,\mathcal{A},\mu\right)$ as
-    $\left(\left[0,1\right],\mathcal{B}\left(\left[0,1\right]\right),\lambda|_{\mathcal{B}\left(\left[0,1\right]\right)}\right)$,
-    where $\mathcal{B}\left(\left[0,1\right]\right)$ is the Borel sigma-algebra and $\lambda$ is the
-    Lebesgue measure on $\mathbb{R}$. $U$ can then be defined as the identity function, i.e.,
-    $U(x) = x$ for $x \in \left[0,1\right]$ and it is obviously a random variable with the uniform
-    law on $[0,1]$.}, that is, for any $a,b \in\left[0,1\right]$ with $a\leq b$ and any non-empty
-    interval $I\subset \left[0,1\right]$ with $\inf I=a$ and $\sup I=b$ then $\mu_{U}(I)= b-a$.
-    Adjoining this new probability space to the preceding one, we obtain a product space (which is a
+    \( \left(\Sigma,\mathcal{A},\mu\right) \) and let \( U:\Sigma\rightarrow\left[0,1\right] \) be a
+    uniform random variable, i.e., \( U \sim \text{Unif}\left(\left[0,1\right]\right) \)\footnote{We
+    can construct \( \left(\Sigma,\mathcal{A},\mu\right) \) as
+    \( \left(\left[0,1\right],\mathcal{B}\left(\left[0,1\right]\right),\lambda|_{\mathcal{B}\left(\left[0,1\right]\right)}\right) \),
+    where \( \mathcal{B}\left(\left[0,1\right]\right) \) is the Borel sigma-algebra and
+    \( \lambda \) is the Lebesgue measure on \( \mathbb{R} \). \( U \) can then be defined as the
+    identity function, i.e., \( U(x) = x \) for \( x \in \left[0,1\right] \) and it is obviously a
+    random variable with the uniform law on \( [0,1] \).}, that is, for any \( a,b
+    \in\left[0,1\right] \) with \( a\leq b \) and any non-empty interval \( I\subset
+    \left[0,1\right] \) with \( \inf I=a \) and \( \sup I=b \) then \( \mu_{U}(I)= b-a \). Adjoining
+    this new probability space to the preceding one, we obtain a product space (which is a
     probability space):
-    $$\left(\Omega\times\Sigma,\mathcal{F}\otimes\mathcal{A},\mathbb{P}\otimes\mu\right).$$ Choosing
-    a $\left(w,\xi\right)\in \Omega\times\Sigma$, and looking at $\pi_1\left(w\right)$, we must now
-    make a decision about switching or not with a deterministic choice involving the pair
-    $\left(\pi_1\left(w\right),U\left(\xi\right)\right)$. That is, we have a measurable function
-    $f:\mathbb{R}_{>0}\times\left[0,1\right]\rightarrow\left\{0,1\right\}$ that takes
-    $\left(\pi_1\left(w\right),U\left(\xi\right)\right)$ and if
-    $f\left(\left(\pi_{1}\left(w\right),U\left(\xi\right)\right)\right)=1$, we keep, i.e., we take
-    $\pi_1\left(w\right)$, and if
-    $f\left(\left(\pi_{1}\left(w\right),U\left(\xi\right)\right)\right)=0$, we switch, i.e., we take
-    $\pi_2\left(w\right)$. Formally, the gain with respect to this choice of $f$ is
-    $G_f:\Omega\times\Sigma\rightarrow\mathbb{R}$ where:
-    $$G_f\left(\left(w,\xi\right)\right)=\pi_1\left(w\right)\cdot\mathbbm{1}_{\left\{1\right\}}\left(f\left(\left(\pi_{1}\left(w\right),U\left(\xi\right)\right)\right)\right)+\pi_2\left(w\right)\cdot\mathbbm{1}_{\left\{0\right\}}\left(f\left(\left(\pi_{1}\left(w\right),U\left(\xi\right)\right)\right)\right),$$
-    which is measurable as long as $f$ is measurable. Then, with probability $\frac{1}{2}$, the
-    first envelope has amount $\alpha$, and we decide to keep it with a probability
-    $\mu_{f\left(\alpha, U\right)}\left(\left\{1\right\}\right)$ and we switch with probability
-    $\mu_{f\left(\alpha, U\right)}\left(\left\{0\right\}\right)$. With probability $\frac{1}{2}$,
-    the first envelope has amount $2\alpha$, and we decide to keep it with probability
-    $\mu_{f\left(2\alpha, U\right)}\left(\left\{1\right\}\right)$ and we switch with probability
-    $\mu_{f\left(2\alpha, U\right)}\left(\left\{0\right\}\right)$. The expected gain in this new
-    probability space is given by:
+    \[
+        \left(\Omega\times\Sigma,\mathcal{F}\otimes\mathcal{A},\mathbb{P}\otimes\mu\right).
+    \]
+    Choosing a \( \left(w,\xi\right)\in \Omega\times\Sigma \), and looking at
+    \( \pi_1\left(w\right) \), we must now make a decision about switching or not with a
+    deterministic choice involving the pair
+    \( \left(\pi_1\left(w\right),U\left(\xi\right)\right) \). That is, we have a measurable function
+    \( f:\mathbb{R}_{>0}\times\left[0,1\right]\rightarrow\left\{0,1\right\} \) that takes
+    \( \left(\pi_1\left(w\right),U\left(\xi\right)\right) \) and if
+    \( f\left(\left(\pi_{1}\left(w\right),U\left(\xi\right)\right)\right)=1 \), we keep, i.e., we
+    take \( \pi_1\left(w\right) \), and if
+    \( f\left(\left(\pi_{1}\left(w\right),U\left(\xi\right)\right)\right)=0 \), we switch, i.e., we
+    take \( \pi_2\left(w\right) \). Formally, the gain with respect to this choice of \( f \) is
+    \( G_f:\Omega\times\Sigma\rightarrow\mathbb{R} \) where:
+    \[
+        G_f\left(\left(w,\xi\right)\right)=\pi_1\left(w\right)\cdot\mathbbm{1}_{\left\{1\right\}}\left(f\left(\left(\pi_{1}\left(w\right),U\left(\xi\right)\right)\right)\right)+\pi_2\left(w\right)\cdot\mathbbm{1}_{\left\{0\right\}}\left(f\left(\left(\pi_{1}\left(w\right),U\left(\xi\right)\right)\right)\right),
+    \]
+    which is measurable as long as \( f \) is measurable. Then, with probability \( \frac{1}{2} \),
+    the first envelope has amount \( \alpha \), and we decide to keep it with a probability
+    \( \mu_{f\left(\alpha, U\right)}\left(\left\{1\right\}\right) \) and we switch with probability
+    \( \mu_{f\left(\alpha, U\right)}\left(\left\{0\right\}\right) \). With probability
+    \( \frac{1}{2} \), the first envelope has amount \( 2\alpha \), and we decide to keep it with
+    probability \( \mu_{f\left(2\alpha, U\right)}\left(\left\{1\right\}\right) \) and we switch with
+    probability \( \mu_{f\left(2\alpha, U\right)}\left(\left\{0\right\}\right) \). The expected gain
+    in this new probability space is given by:
     \[
         \mathbb{E}\left(G_f\right) =
     \]
@@ -140,13 +148,13 @@
     \]
     which means we keep the first envelope if the generated number \( U\left(\xi\right) \) satisfies
     \(0\leq U\left(\xi\right) \leq g\left(\pi_1\left(w\right)\right) \), and we switch otherwise.
-    For example, if $g=\text{cte}_0$ then we always switch, while if $g=\text{cte}_1$ then we always
-    keep.
+    For example, if \( g=\text{cte}_0 \) then we always switch, while if \( g=\text{cte}_1 \) then
+    we always keep.
     \\\\
     For this specific choice of \( f_g \), the probabilities of keeping and switching the envelope
     are as follows: with probability \(\frac{1}{2}\) the first envelope has amount \(\alpha\), and
-    we keep it if the randomly generated number in $\left[0,1\right]$ is below
-    $g\left(\alpha\right)$ that is we keep it with probability:
+    we keep it if the randomly generated number in \( \left[0,1\right] \) is below
+    \( g\left(\alpha\right) \) that is we keep it with probability:
     \[
         \mu_{f_g\left(\alpha, U\right)}\left(\left\{1\right\}\right)=\mu\left(\left\{\xi\in\Sigma\,|\,
         U\left(\xi\right)\in\left[0,g\left(\alpha\right)\right]\right\}\right)=g\left(\alpha\right)
@@ -156,8 +164,8 @@
         \mu_{f_g\left(\alpha, U\right)}\left(\left\{0\right\}\right)=\mu\left(\left\{\xi\in\Sigma\,|\,
         U\left(\xi\right)\in\;]g\left(\alpha\right),1]\right\}\right)=1-g\left(\alpha\right).
     \]
-    Similarly, with probability \(\frac{1}{2}\) the first envelope has amount $2\alpha$, and we keep
-    it with probability:
+    Similarly, with probability \(\frac{1}{2}\) the first envelope has amount \( 2\alpha \), and we
+    keep it with probability:
     \[
         \mu_{f_g\left(2\alpha, U\right)}\left(\left\{1\right\}\right)=\mu\left(\left\{\xi\in\Sigma\,|\,
         U\left(\xi\right)\in\left[0,g\left(2\alpha\right)\right]\right\}\right)=g\left(2\alpha\right)
@@ -183,7 +191,7 @@
         = \frac{3}{2} \alpha + \frac{\alpha}{2} \left( g\left(2\alpha\right) - g\left(\alpha\right)
         \right).
     \]
-    To ensure $\mathbb{E}\left(G_{f_g}\right) > \frac{3}{2} \alpha$, it suffices to choose a
+    To ensure \( \mathbb{E}\left(G_{f_g}\right) > \frac{3}{2} \alpha \), it suffices to choose a
     measurable function \( g \) satisfying \( g\left(2\alpha\right) > g\left(\alpha\right) \). Since
     the player does not know the exact value of \( \alpha \) but knows that \( \alpha < 2\alpha \),
     they can select any strictly increasing (and hence measurable) function \( g: \mathbb{R}_{>0}
@@ -196,7 +204,7 @@
     \[
         \frac{\alpha}{2} \left( g\left(2\alpha\right) - g\left(\alpha\right) \right).
     \]
-    For the above examples of $g$, this improvement is given by:
+    For the above examples of \( g \), this improvement is given by:
     \[
         \frac{\alpha}{2} \left(\frac{1}{1+\alpha}- \frac{1}{1+2\alpha}\right), \quad
         \frac{\alpha}{2} \left( e^{-\alpha} - e^{-2\alpha} \right)\text{ respectively}.
@@ -207,32 +215,36 @@
     \]
     that maximizes \(\inf\left\{g\left(2x\right) - g\left(x\right)\,|\,
     x\in\mathbb{R}_{>0}\right\}\) however:
-    $$\sup\left\{\inf\left\{g'\left(2x\right) - g'\left(x\right)\,|\, x\in\mathbb{R}_{>0}\right\}\,|\, g'\in\mathcal{G}\right\}=0$$
-    because if we assume for contradiction that there exists \(c>0\) and $g'\in \mathcal{G}$ such
-    that
+    \[
+        \sup\left\{\inf\left\{g'\left(2x\right) - g'\left(x\right)\,|\,
+        x\in\mathbb{R}_{>0}\right\}\,|\, g'\in\mathcal{G}\right\}=0
+    \]
+    because if we assume for contradiction that there exists \(c>0\) and \( g'\in \mathcal{G} \)
+    such that
     \[
         g'(2x)-g'(x)\ge c \quad \text{for all } x>0.
     \]
-    Then by simply iterating this inequality we obtain by induction on $\mathbb{N}$:
+    Then by simply iterating this inequality we obtain by induction on \( \mathbb{N} \):
     \[
         g'(2^n x)-g'(x) \ge nc \quad \text{for all } n\in\mathbb{N}.
     \]
-    Since \(g'\) is bounded above by \(1\) and bounded below by $0$, this implies $nc< 1$ for every
-    \(n\), which is impossible since $c$ is not an
-    \href{https://en.wikipedia.org/wiki/Archimedean_property}{infinitesimal element} w.r.t. $1$.
-    However if we had more information on $\alpha$ (say some lower or/and upper bound) we may tune
-    hyperparameter $t,c\in\mathbb{R}_{>0}$ by doing first order optimization on for examples: \\
+    Since \(g'\) is bounded above by \(1\) and bounded below by \( 0 \), this implies \( nc< 1 \)
+    for every \(n\), which is impossible since \( c \) is not an
+    \href{https://en.wikipedia.org/wiki/Archimedean_property}{infinitesimal element} w.r.t. \( 1 \).
+    However if we had more information on \( \alpha \) (say some lower or/and upper bound) we may
+    tune hyperparameter \( t,c\in\mathbb{R}_{>0} \) by doing first order optimization on for
+    examples: \\
     \textit{Power-Law Functions}:
     \[
         g(x) = \frac{x^t}{x^t + c}.
     \]
-    For a given $t$, larger \( c \) makes it easier to switch for less and less big \( x\)
-    emphasizing to keep on only the very big $x$, smaller \(c\) makes it harder to switch for bigger
-    and bigger $x$ emphasizing to keep most of the $x$. A fast transition occurs to the constant $1$
-    when $c\to 0$. For a given $c$, larger $t$ makes it harder to switch for less and less big $x$
-    emphasizing to keep most of the $x$, smaller $t$ makes it easier to switch for less and less big
-    $x$ emphasizing to keep only the very big $x$. A fast transitions to the constant
-    $\frac{1}{1+c}$ occurs when $t\to 0$. \\
+    For a given \( t \), larger \( c \) makes it easier to switch for less and less big \( x\)
+    emphasizing to keep on only the very big \( x \), smaller \(c\) makes it harder to switch for
+    bigger and bigger \( x \) emphasizing to keep most of the \( x \). A fast transition occurs to
+    the constant \( 1 \) when \( c\to 0 \). For a given \( c \), larger \( t \) makes it harder to
+    switch for less and less big \( x \) emphasizing to keep most of the \( x \), smaller \( t \)
+    makes it easier to switch for less and less big \( x \) emphasizing to keep only the very big
+    \( x \). A fast transitions to the constant \( \frac{1}{1+c} \) occurs when \( t\to 0 \). \\
     \textit{Logarithmic Functions}:
     \[
         g(x) = \frac{\ln(1 + x^t)}{\ln(1 + x^t) + c}.
@@ -243,30 +255,30 @@
         g(x) = 1 - e^{-t x}.
     \]
     Larger \( t \) makes it very difficult to switch for all \( x \) emphasizing to change only on
-    the very small $x$, smaller \(t\) makes it easier to switch emphasizing to keep only on the very
-    big $x$.
+    the very small \( x \), smaller \(t\) makes it easier to switch emphasizing to keep only on the
+    very big \( x \).
     \\\\
     \begin{remark}
-        We can generalize the contents of the envelopes to be $\alpha$ and $k\alpha$ for any real
-        number $k > 1$ and the previous analysis applies \textit{mutatis mutandis}, where:
+        We can generalize the contents of the envelopes to be \( \alpha \) and \( k\alpha \) for any
+        real number \( k > 1 \) and the previous analysis applies \textit{mutatis mutandis}, where:
         \begin{itemize}
-            \item The naive strategy yields an expected gain of $\frac{k+1}{2}\alpha$.
-            \item The improved strategy, using any increasing function
-                $g \colon \mathbb{R}_{>0} \to [0,1]$, gives an expected gain of:
+            \item The naive strategy yields an expected gain of \( \frac{k+1}{2}\alpha \).
+            \item The improved strategy, using any increasing function \( g \colon \mathbb{R}_{>0}
+                \to [0,1] \), gives an expected gain of:
                 \[
                     \frac{k+1}{2}\alpha + \frac{k-1}{2}\alpha\bigl(g(k\alpha) - g(\alpha)\bigr).
                 \]
         \end{itemize}
-        This setting is equivalent to considering $\alpha$ and $k\alpha$ where $0 < k \neq 1$ since
-        we can simply swap the roles of the envelopes:
+        This setting is equivalent to considering \( \alpha \) and \( k\alpha \) where \( 0 < k \neq
+        1 \) since we can simply swap the roles of the envelopes:
         \begin{itemize}
-            \item If $k > 1$, the situation remains unchanged.
-            \item If $0 < k < 1$, we reparameterize by setting $\alpha \leftarrow k\alpha$ and
-                $k \leftarrow \frac{1}{k}$, reducing to the previous case.
+            \item If \( k > 1 \), the situation remains unchanged.
+            \item If \( 0 < k < 1 \), we reparameterize by setting \( \alpha \leftarrow k\alpha \)
+                and \( k \leftarrow \frac{1}{k} \), reducing to the previous case.
         \end{itemize}
         In general, this framework is equivalent to considering any two distinct positive amounts
-        $\alpha$ and $\beta$ with $\alpha < \beta$, since we can express $\beta = k\alpha$ where
-        $k = \frac{\beta}{\alpha} > 1$.
+        \( \alpha \) and \( \beta \) with \( \alpha < \beta \), since we can express \( \beta =
+        k\alpha \) where \( k = \frac{\beta}{\alpha} > 1 \).
     \end{remark}
     Here you can find a code to simulate:
 

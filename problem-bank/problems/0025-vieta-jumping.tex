@@ -16,9 +16,9 @@
     \subsection{Problem 6 (IMO 1988)} Let \( a \) and \( b \) be positive integers such that
     \( ab + 1 \) divides \( a^{2} + b^{2} \). Show that
     \[ \frac{a^{2} + b^{2}}{ab + 1} \]
-    is the square of an integer. \subsection{Problem (Kevin Buzzard \& Edward Crane)} Let $a$ and
-    $b$ be positive integers. Show that if $4ab - 1$ divides $\left(4a^{2} - 1\right)^{2}$, then
-    $a = b$.
+    is the square of an integer. \subsection{Problem (Kevin Buzzard \& Edward Crane)} Let \( a \)
+    and \( b \) be positive integers. Show that if \( 4ab - 1 \) divides \( \left(4a^{2} -
+    1\right)^{2} \), then \( a = b \).
 \end{problem}
 \begin{solution}
     Define
@@ -61,7 +61,7 @@
     \[
         X^2 - k b' X + b'^2 - k = X(X - a'),
     \]
-    and will imply that \( k = b'^2 \), which will conclude $k\in\square_{\mathbb{N}}$.
+    and will imply that \( k = b'^2 \), which will conclude \( k\in\square_{\mathbb{N}} \).
     \\\\
     By Vieta's formulas for the coefficient of degree 1 and the constant coefficient, we obtain
     respectively:
@@ -95,26 +95,26 @@
     \( S_k \neq \varnothing \) was arbitrary, we are done.
 
 
-    \subsection{Problem (Kevin Buzzard \& Edward Crane)} Let $a$ and $b$ be positive integers. Show
-    that if $4ab - 1$ divides $\left(4a^{2} - 1\right)^{2}$, then $a = b$.
+    \subsection{Problem (Kevin Buzzard \& Edward Crane)} Let \( a \) and \( b \) be positive
+    integers. Show that if \( 4ab - 1 \) divides \( \left(4a^{2} - 1\right)^{2} \), then
+    \( a = b \).
 
     \subsection*{Solution:}
 
-    Standard manipulations\footnote{Let $m = 4ab - 1$. Since \(\gcd(b,m)=1\), \(b\) is invertible
-    modulo \(m\). Note that
+    Standard manipulations\footnote{Let \( m = 4ab - 1 \). Since \(\gcd(b,m)=1\), \(b\) is
+    invertible modulo \(m\). Note that
     \[
         4a^2b \;=\;a\,(4ab)\;\equiv\;a\pmod{m} \quad\Longrightarrow\quad 4a^2 \equiv a\,b^{-1}
         \pmod{m}.
     \]
-    Hence $b\,(4a^2 - 1)\equiv b\,(ab^{-1}-1)\equiv a - b \pmod{m}
-    \quad\Longrightarrow\quad
-    b^2\,(4a^2 - 1)^2 \equiv (a-b)^2 \pmod{m}$. By hypothesis \(m\mid (4a^2-1)^2\), so \(m\mid
-    b^2(4a^2-1)^2\). Therefore, $4ab-1 \mid (a-b)^2$, as claimed.} of
-    $4ab - 1 \mid \left(4a^{2} - 1\right)^{2}$ show that this implies $4ab - 1 \mid (a - b)^{2}$. \\
+    Hence \( b\,(4a^2 - 1)\equiv b\,(ab^{-1}-1)\equiv a - b \pmod{m} \quad\Longrightarrow\quad
+    b^2\,(4a^2 - 1)^2 \equiv (a-b)^2 \pmod{m} \). By hypothesis \(m\mid (4a^2-1)^2\), so
+    \(m\mid b^2(4a^2-1)^2\). Therefore, \( 4ab-1 \mid (a-b)^2 \), as claimed.} of \( 4ab - 1 \mid
+    \left(4a^{2} - 1\right)^{2} \) show that this implies \( 4ab - 1 \mid (a - b)^{2} \). \\
     \\
-    So it suffices to show the statement that if $4ab - 1 \mid_{\mathbb{Z}} (a - b)^2$ then $a = b$.
-    Assume for the sake of contradiction that there exist positive integers $a$ and $b$ with
-    $a \neq b$ such that $4ab - 1 \mid (a - b)^{2}$. Define:
+    So it suffices to show the statement that if \( 4ab - 1 \mid_{\mathbb{Z}} (a - b)^2 \) then
+    \( a = b \). Assume for the sake of contradiction that there exist positive integers \( a \) and
+    \( b \) with \( a \neq b \) such that \( 4ab - 1 \mid (a - b)^{2} \). Define:
     \[
         k = \frac{(a - b)^{2}}{4ab - 1} > 0.
     \]
@@ -123,18 +123,18 @@
         S_k := \left\{ (a', b') \in \mathbb{N}^{*} \times \mathbb{N}^{*} \mid (a' - b')^{2} =
         k(4a'b' - 1) \right\}.
     \]
-    Notice that $S_k$ cannot contain a pair on the diagonal of $\mathbb{N}^{*}$ as
-    $4a'b' - 1 \geq 3$ and $k > 0$ and, in addition,
-    $(a', b') \in S_k \Leftrightarrow (b', a') \in S_k$.
+    Notice that \( S_k \) cannot contain a pair on the diagonal of \( \mathbb{N}^{*} \) as
+    \( 4a'b' - 1 \geq 3 \) and \( k > 0 \) and, in addition, \( (a', b') \in S_k \Leftrightarrow
+    (b', a') \in S_k \).
     \\\\
-    Since $S_k \neq \varnothing$, there exists a pair $(A, B) \in S_k$ that minimizes $A + B$. As
-    said above, we necessarily have $A \neq B$ and by the symmetry above we can without loss of
-    generality assume $A > B$. Consider the quadratic polynomial arising from the condition of
-    $(A, B)\in S_k$:
+    Since \( S_k \neq \varnothing \), there exists a pair \( (A, B) \in S_k \) that minimizes
+    \( A + B \). As said above, we necessarily have \( A \neq B \) and by the symmetry above we can
+    without loss of generality assume \( A > B \). Consider the quadratic polynomial arising from
+    the condition of \( (A, B)\in S_k \):
     \[
         X^{2} - (2B + 4kB)X + B^{2} + k = 0.
     \]
-    This polynomial has roots $x_1 := A > 0$ by construction. By Vieta's formulas for the
+    This polynomial has roots \( x_1 := A > 0 \) by construction. By Vieta's formulas for the
     coefficient of degree 1 and the constant coefficient, we obtain respectively that:
     \[
         x_2 := 2B + 4kB - A \in \mathbb{Z}
@@ -143,24 +143,24 @@
     \[
         x_2 = \frac{B^{2} + k}{A} > 0.
     \]
-    Since $x_2$ is a positive integer, we have $(x_2, B) \in S_k$. By the minimality of $A + B$:
-    $A + B \leq x_2 + B$ from which it follows $x_2 \geq A$, i.e.,
+    Since \( x_2 \) is a positive integer, we have \( (x_2, B) \in S_k \). By the minimality of
+    \( A + B \): \( A + B \leq x_2 + B \) from which it follows \( x_2 \geq A \), i.e.,
     \[
         \frac{B^{2} + k}{A} \geq A.
     \]
-    Thus, we obtain (as $A>0$)
+    Thus, we obtain (as \( A>0 \))
     \[
         k \geq A^{2} - B^{2} = (A - B)(A + B)>0.
     \]
-    From $k\geq (A - B)(A + B)>0$ and $4AB-1\geq 3$ we get in order:
+    From \( k\geq (A - B)(A + B)>0 \) and \( 4AB-1\geq 3 \) we get in order:
     \[
         (A - B)^{2} = k(4AB - 1)\geq \left(A^{2} - B^{2}\right)3.
     \]
-    Since $A-B>0$ we can divide the inequality on both sides without changing the inequality
+    Since \( A-B>0 \) we can divide the inequality on both sides without changing the inequality
     direction to obtain:
     \[
         A + B \geq A - B \geq 3(A + B),
     \]
-    Again dividing by $A+B>0$ the inequality is preserved and we obtain $1 \geq 3$. This is a
-    contradiction. Thus, our assumption must be false, and the statement is proven.
+    Again dividing by \( A+B>0 \) the inequality is preserved and we obtain \( 1 \geq 3 \). This is
+    a contradiction. Thus, our assumption must be false, and the statement is proven.
 \end{solution}

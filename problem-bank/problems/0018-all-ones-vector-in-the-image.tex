@@ -13,33 +13,36 @@
 % references:     Earliest known appearance (to the best of our knowledge): K. Sutner, On σ-automata, Complex Systems 2 (1988) 1-28: 'the all-ones configuration 1 always has a predecessor' under σ+ on finite graphs (= (A(G)+I)x = 1 solvable over F2) - https://content.wolfram.com/sites/13/2018/02/02-1-1.pdf; K. Sutner, Additive automata on graphs, Complex Systems 2 (1988) 649-661, same remark citing the Intelligencer paper - https://content.wolfram.com/sites/13/2018/02/02-6-3.pdf; K. Sutner, Linear cellular automata and the garden-of-eden, Math. Intelligencer 11(2), March 1989, 49-53, doi 10.1007/BF03023823 - https://api.crossref.org/works/10.1007/BF03023823; attribution 'Sutner's theorem' (every graph has an odd dominating set): A. Batal, arXiv 2011.10270 - https://arxiv.org/pdf/2011.10270 and arXiv 2605.11056 - https://arxiv.org/pdf/2605.11056; general form (diagonal of any symmetric F2 matrix is in its range, citing Caro 1996 and Sutner 1988): I. Minevich, Symmetric matrices over F2 and the Lights Out problem, 2012 - https://arxiv.org/pdf/1206.2973; MathSE 1748169 (2016), same general statement - https://math.stackexchange.com/questions/1748169/the-diagonal-of-a-symmetric-matrix-a-in-m-n-mathbbz-2; club legacy label: Bernoulli Competition (EPFL) 2023, Problem 3 (checked in the club's copy of the official solutions (Bernoulli 2023-2026 solutions PDF, not online)) - https://memento.epfl.ch/event/bernoulli-competition-2023
 % history:        human
 \begin{problem}
-    Let $n\geq 1$ and \( A \) be a $n\times n$ symmetric matrix over \( \mathbb{F}_2 =
+    Let \( n\geq 1 \) and \( A \) be a \( n\times n \) symmetric matrix over \( \mathbb{F}_2 =
     \mathbb{Z}/2\mathbb{Z} \) with \( 1_{\mathbb{F}_2} \)’s on the main diagonal. Show that the
-    vector composed uniquely of $1_{\mathbb{F}_2}$'s is in the image of \( A \).
+    vector composed uniquely of \( 1_{\mathbb{F}_2} \)'s is in the image of \( A \).
 \end{problem}
 \begin{solution}
-    Define the standard binary product on the finite dimensional $\mathbb{F}_{2}$-vector space
+    Define the standard binary product on the finite dimensional \( \mathbb{F}_{2} \)-vector space
     \( \mathbb{F}_2^n \), i.e.,
     \[
         \langle v, w \rangle_{\mathbb{F}_2^n} = \sum_{i=0}^{n-1} v_i w_i.
     \]
-    It is easy to see that $\langle \cdot, \cdot \rangle_{\mathbb{F}_2^n}$ is
-    $\mathbb{F}_{2}$-bilinear, symmetric and non-degenerate that is:
-    $$\forall v\in \mathbb{F}_2^n\left(\left(\forall w\in \mathbb{F}_2^n\langle v,w\rangle_{\mathbb{F}_2^n}=0_{\mathbb{F}_2}\right) \rightarrow v=0_{\mathbb{F}_2^n}\right)$$
+    It is easy to see that \( \langle \cdot, \cdot \rangle_{\mathbb{F}_2^n} \) is
+    \( \mathbb{F}_{2} \)-bilinear, symmetric and non-degenerate that is:
+    \[
+        \forall v\in \mathbb{F}_2^n\left(\left(\forall w\in \mathbb{F}_2^n\langle
+        v,w\rangle_{\mathbb{F}_2^n}=0_{\mathbb{F}_2}\right) \rightarrow v=0_{\mathbb{F}_2^n}\right)
+    \]
     Since \( \langle \cdot, \cdot \rangle_{\mathbb{F}_2^n}\) is symmetric and non-degenerate, we
-    have for any $\mathbb{F}_2-$subspace \( W \subset \mathbb{F}_2^n \),
+    have for any \( \mathbb{F}_2- \)subspace \( W \subset \mathbb{F}_2^n \),
     \[
         \left(W^{\perp}\right)^{\perp} = W.
     \]
     where \( Z^\perp = \{ v \in \mathbb{F}_2^n \mid \langle v, z \rangle_{\mathbb{F}_2^n} =
-    0_{\mathbb{F}_2} \ \forall z \in Z \} \) for any $\mathbb{F}_{2}-$subspace \( Z \subset
+    0_{\mathbb{F}_2} \ \forall z \in Z \} \) for any \( \mathbb{F}_{2}- \)subspace \( Z \subset
     \mathbb{F}_2^n \). For a proof of this classical fact, see the
     Appendix [\appendixref{double-orthogonal-complement}].
     \\\\
     With this being introduced, lets take an \( n \times n \)-matrix \( A \) with
-    $\operatorname{diag}(A)=1_{\mathbb{F}_2^n}$. Now write \( A = (a_{ij})_{1 \leq i, j \leq n} \)
-    with \( a_{ii} = 1_{\mathbb{F}_2} \) and \( a_{ij} = a_{ji} \). Then we have for any
-    \( v \in \mathbb{F}_2^n \),
+    \( \operatorname{diag}(A)=1_{\mathbb{F}_2^n} \). Now write \( A =
+    (a_{ij})_{1 \leq i, j \leq n} \) with \( a_{ii} = 1_{\mathbb{F}_2} \) and \( a_{ij} = a_{ji} \).
+    Then we have for any \( v \in \mathbb{F}_2^n \),
     \[
         \langle v, Av \rangle_{\mathbb{F}_2^n} = \sum_{0 \leq i, j \leq n-1} v_i v_j a_{ij} =
         \sum_{i=0}^{n-1} v_i^2 + 2 \sum_{0\leq i < j\leq n-1} v_i v_j a_{ij} = \sum_{i=0}^{n-1} v_i
@@ -51,8 +54,8 @@
         \langle z, 1_{\mathbb{F}_2^n} \rangle_{\mathbb{F}_2^n} = \langle z, Az
         \rangle_{\mathbb{F}_2^n} = 0_{\mathbb{F}_2},
     \]
-    since \( Az \in \operatorname{Im}(A) \) and $z\in \operatorname{Im}(A)^{\perp}$. As
-    $z\in \operatorname{Im}(A)^{\perp}$ was arbitrary, we must have
+    since \( Az \in \operatorname{Im}(A) \) and \( z\in \operatorname{Im}(A)^{\perp} \). As
+    \( z\in \operatorname{Im}(A)^{\perp} \) was arbitrary, we must have
     \[
         1_{\mathbb{F}_2^n}\in \left(\operatorname{Im}(A)^{\perp}\right)^{\perp} =
         \operatorname{Im}(A).

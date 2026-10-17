@@ -129,8 +129,8 @@
         p\left(\left( m - 2 \right)\left( n - 2 \right) - 8\right)= 2\left( m + 2 \right)\left( n +
         2 \right).
     \]
-    Since \( 2\left( m + 2 \right)\left( n + 2 \right) \geq 8 \), we have
-    $p,\left( m - 2 \right)\left( n - 2 \right) - 8 >0$.
+    Since \( 2\left( m + 2 \right)\left( n + 2 \right) \geq 8 \), we have \( p,\left( m - 2
+    \right)\left( n - 2 \right) - 8 >0 \).
 
     \subsection{BMO (2005)} The integer \( N \) is positive. There are exactly \( 2005 \) ordered
     pairs \( (x,y) \) of positive integers satisfying:
@@ -158,13 +158,14 @@
     \end{align*}
     Since \(10 \equiv 1 \pmod{3}\), we have \(10^n \equiv 1 \pmod{3}\), so \(10^n + 2 \equiv 0
     \pmod{3}\). Hence \(\frac{10^n + 2}{3}\) is an integer. Therefore, \(A + 2B + 4\) is a perfect
-    square. \subsection{AIME (2000)} The system of equations (for $x, y, z \in \mathbb{R}_{>0}$)
+    square. \subsection{AIME (2000)} The system of equations (for \( x, y, z \in \mathbb{R}_{>0} \))
     \begin{align*}
         \log_{10}\left(2000xy\right) - \log_{10}\left(x\right)\log_{10}\left(y\right) &= 4, \\
         \log_{10}\left(2yz\right) - \log_{10}\left(y\right)\log_{10}\left(z\right) &= 1, \\
         \log_{10}\left(zx\right) - \log_{10}\left(z\right)\log_{10}\left(x\right) &= 0,
     \end{align*}
-    has two solutions $(x_{1}, y_{1}, z_{1})$ and $(x_{2}, y_{2}, z_{2})$. Find $y_{1} + y_{2}$.
+    has two solutions \( (x_{1}, y_{1}, z_{1}) \) and \( (x_{2}, y_{2}, z_{2}) \). Find \( y_{1} +
+    y_{2} \).
 
     \subsection*{Solution:} Let
     \[
@@ -177,13 +178,13 @@
         \log_{10}\left(2yz\right) = \log_{10}\left(2\right) + b + c, \quad \log_{10}\left(zx\right)
         = c + a.
     \]
-    Let $d := \log_{10}\left(2\right)\in ]0,1[$. Then the system becomes
+    Let \( d := \log_{10}\left(2\right)\in ]0,1[ \). Then the system becomes
     \begin{align*}
         ab - a - b + 1 - d &= 0, \\
         bc - b - c + 1 - d &= 0, \\
         ac - a - c &= 0.
     \end{align*}
-    Each equation is of the form $XY - X - Y + K = 0$ and, using SFFT, is equivalent to
+    Each equation is of the form \( XY - X - Y + K = 0 \) and, using SFFT, is equivalent to
     \[
         \left(X - 1\right)\left(Y - 1\right) = 1 - K.
     \]
@@ -193,12 +194,13 @@
         \left(b - 1\right)\left(c - 1\right) &= d, \\
         \left(a - 1\right)\left(c - 1\right) &= 1.
     \end{align*}
-    From the third equation, $\left(a - 1\right) \neq 0$, so \(c - 1 = \frac{1}{a - 1}\). Substitute
-    this into the second equation: \(\left(b - 1\right)\frac{1}{a - 1} = d \quad \Leftrightarrow
-    \quad b - 1 = d\left(a - 1\right)\). Substitute $b - 1 = d\left(a - 1\right)$ into the first
-    equation: \( \left(a - 1\right)\left(d\left(a - 1\right)\right) = d \quad \Leftrightarrow \quad
-    \left(a - 1\right)^{2} = 1 \quad \Leftrightarrow \quad a \in \left\{0, 2\right\}\). We obtain
-    two solutions: $a_{1} = 2$ and $a_{2} = 0$. Correspondingly,
+    From the third equation, \( \left(a - 1\right) \neq 0 \), so \(c - 1 = \frac{1}{a - 1}\).
+    Substitute this into the second equation: \(\left(b - 1\right)\frac{1}{a - 1} = d \quad
+    \Leftrightarrow \quad b - 1 = d\left(a - 1\right)\). Substitute \( b - 1 = d\left(a -
+    1\right) \) into the first equation: \( \left(a - 1\right)\left(d\left(a - 1\right)\right) = d
+    \quad \Leftrightarrow \quad \left(a - 1\right)^{2} = 1 \quad \Leftrightarrow \quad a \in
+    \left\{0, 2\right\}\). We obtain two solutions: \( a_{1} = 2 \) and \( a_{2} = 0 \).
+    Correspondingly,
     \[
         b_{i} - 1 = d\left(a_{i} - 1\right) = \pm d \quad \Leftrightarrow \quad b_{1} = 1 + d, \quad
         b_{2} = 1 - d.

@@ -16,15 +16,16 @@
     Define
     \[
         A := \left\{(x,y)\in\mathbb{R}_{\geq 0}\times\mathbb{R}_{\geq 0} \,:\, x^y =
-        y^x\right\}\footnote{Recall that the exponentiation $a^b:=\exp(b \cdot \log(a))$ where
-        $a > 0$ and $b \in \mathbb{R}$ can be extended to $a = 0$ and $b \geq 0$ by:
+        y^x\right\}\footnote{Recall that the exponentiation \( a^b:=\exp(b \cdot \log(a)) \) where
+        \( a > 0 \) and \( b \in \mathbb{R} \) can be extended to \( a = 0 \) and \( b \geq 0 \) by:
         \[
             0^b = \begin{cases}
                 0 & (b > 0), \\
                 1 & (b = 0).
             \end{cases}
         \]
-        and extended in the obvious way for $a \in \mathbb{R}^{\times}$ with $b \in \mathbb{Z}$.}
+        and extended in the obvious way for \( a \in \mathbb{R}^{\times} \) with \( b \in
+        \mathbb{Z} \).}
     \]
     and find:
     \[
@@ -91,7 +92,7 @@
         S := \left\{ \left(t^{\frac{1}{t - 1}},\ t^{\frac{t}{t - 1}} \right) \,\middle|\, t \in
         \mathbb{R}_{>0} \setminus \{1\} \right\} \subset \mathbb{R}_{> 0} \times \mathbb{R}_{> 0}.
     \]
-    The map $f$ defined over \( \mathbb{R}_{>0} \setminus \{1\} \) by
+    The map \( f \) defined over \( \mathbb{R}_{>0} \setminus \{1\} \) by
     \[
         t \mapsto \left(t^{\frac{1}{t - 1}},\ t^{\frac{t}{t - 1}} \right)
     \]
@@ -131,11 +132,11 @@
         \left(t^{\frac{t}{t-1}}\right)^{\left(t^{\frac{1}{t-1}}\right)} =
         \left(t^{\frac{1}{t-1}}\right)^{\left(t^{\frac{t}{t-1}}\right)},
     \]
-    and if $t^{\frac{1}{t-1}}=t^{\frac{t}{t-1}} $ then since $t > 0$ we have $t^{\frac{1}{t-1}}>0$
-    so that we can divide by $t^{\frac{1}{t-1}}$ and obtain that $t=1$ a contradiction to
-    $t\in\mathbb{R}_{>0}\setminus\{1\}$. All of this shows the nice decomposition of $A$ into two
-    symmetric (with respect to swapping the variable) set. Namely the identity line and a symmetric
-    (with respect to the line) curve:
+    and if \( t^{\frac{1}{t-1}}=t^{\frac{t}{t-1}} \) then since \( t > 0 \) we have
+    \( t^{\frac{1}{t-1}}>0 \) so that we can divide by \( t^{\frac{1}{t-1}} \) and obtain that
+    \( t=1 \) a contradiction to \( t\in\mathbb{R}_{>0}\setminus\{1\} \). All of this shows the nice
+    decomposition of \( A \) into two symmetric (with respect to swapping the variable) set. Namely
+    the identity line and a symmetric (with respect to the line) curve:
     \[
         A=\Delta(\mathbb{R}_{\geq 0}) \sqcup S.
     \]
@@ -186,8 +187,8 @@
         2^{2k} = 2^{2^k} \Rightarrow 2k = 2^k.
     \]
     We want to restrict the possible values of \( k\geq 2 \) for this equality. Consider the
-    function $g$ defined for all \( x \in \mathbb{R} \), by \( g(x) := 2^x - 2x \). Its derivative
-    is
+    function \( g \) defined for all \( x \in \mathbb{R} \), by \( g(x) := 2^x - 2x \). Its
+    derivative is
     \[
         g'\left( x \right) = \log(2) \cdot 2^x - 2.
     \]
@@ -244,12 +245,12 @@
     Let \( \left( n, m \right) \in S \cap \left( \mathbb{Q} \times \mathbb{Q} \right) \), and
     suppose that \( \left(n, m\right) \notin \mathbb{Z} \times \mathbb{Z} \), otherwise we already
     know that \( \left(n, m\right) \in \left\{ (2, 4), (4, 2) \right\} \). The goal is to show that
-    \( \exists s \in \mathbb{Z}_{>0} \) and $\tau\in\{0,1\}$ with \( m = \left(1 + \frac{1}{s}
+    \( \exists s \in \mathbb{Z}_{>0} \) and \( \tau\in\{0,1\} \) with \( m = \left(1 + \frac{1}{s}
     \right)^{1+s-\tau} \) and \( n = \left(1 + \frac{1}{s} \right)^{s+\tau} \). Since the set is
     symmetric with respect to swapping the variables, we may again assume that \( n < m \) so that
-    in fact $\tau$ needs to be $0$.
+    in fact \( \tau \) needs to be \( 0 \).
     \\\\
-    Notice that $n>1$ since if \( n \leq 1 \), then
+    Notice that \( n>1 \) since if \( n \leq 1 \), then
     \[
         n^m \overset{\text{hyp}}{=} m^n \overset{m > n}{>} n^n
         \overset{\substack{1 \geq n \\ m > n}}{\geq} n^m,
@@ -492,7 +493,7 @@
     \( \frac{m^{n}}{n^{n}} \in \mathbb{Q} \), thus \( \frac{m^{n}}{n^{n}} \in
     \mathcal{O}_{\mathbb{Q}}(\mathbb{Z}) = \mathbb{Z} \) (because \( \mathbb{Z} \) is a UFD, hence
     normal). Since \( \gcd(m,n) = 1 \) and \( m,n\in\mathbb{Z}_{>0}\), we have \( \gcd(m^n,n^n) =
-    1 \) this implies \( n^{n} = 1 \), hence \( n = 1 \) and $m>n=1$. Thus \( t = m \in
+    1 \) this implies \( n^{n} = 1 \), hence \( n = 1 \) and \( m>n=1 \). Thus \( t = m \in
     \mathbb{Z}_{>1} \), and we get:
     \[
         x = m^{\frac{1}{m-1}}, \quad y = m^{\frac{m}{m-1}}.

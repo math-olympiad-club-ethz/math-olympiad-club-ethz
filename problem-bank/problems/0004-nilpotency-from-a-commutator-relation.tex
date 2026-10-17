@@ -28,8 +28,8 @@
 \end{problem}
 \begin{solution}
     \begin{enumerate}
-        \item[(a)] We prove the result by induction on $k$. The base case $k = 1$ is given by the
-            assumption. Assume that the formula holds for some $k \geq 1$, i.e.,
+        \item[(a)] We prove the result by induction on \( k \). The base case \( k = 1 \) is given
+            by the assumption. Assume that the formula holds for some \( k \geq 1 \), i.e.,
             \[
                 F^k \circ G - G \circ F^k = \alpha k F^k.
             \]
@@ -46,17 +46,19 @@
             \end{align*}
             This completes the induction step, proving the result.
 
-        \item[(b)] Consider the linear operator $L$ defined on the space of $n \times n$ matrices by
+        \item[(b)] Consider the linear operator \( L \) defined on the space of \( n \times n \)
+            matrices by
             \[
                 L(F) = F \circ G - G \circ F.
             \]
-            By the given assumption, we have $L(F) = \alpha F$. Also using part (a), we obtain
+            By the given assumption, we have \( L(F) = \alpha F \). Also using part (a), we obtain
             \[
                 L(F^k) = \alpha k F^k.
             \]
-            The operator $L$ acts on an $n^2$-dimensional space and can have at most $n^2$ distinct
-            eigenvalues. However, if $F^k \neq 0$ for all $k$, then $L$ has infinitely many
-            eigenvalues $\alpha k$, which contradicts the fact that the space is finite-dimensional.
-            Hence, there must exist some $k \geq 1$ such that $F^k = 0$.
+            The operator \( L \) acts on an \( n^2 \)-dimensional space and can have at most
+            \( n^2 \) distinct eigenvalues. However, if \( F^k \neq 0 \) for all \( k \), then
+            \( L \) has infinitely many eigenvalues \( \alpha k \), which contradicts the fact that
+            the space is finite-dimensional. Hence, there must exist some \( k \geq 1 \) such that
+            \( F^k = 0 \).
     \end{enumerate}
 \end{solution}
