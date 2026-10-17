@@ -16,6 +16,7 @@ preamble.tex                    ← shared preamble (author/CI mode with TikZ + 
 references.bib                  ← shared bibliography for \cite
 work-in-progress/               ← problems still in construction (the magic problems); git-ignored, local only
 writing-style.md                ← how statements and solutions are written here (from the fully solved problems)
+checklist.md                    ← the mechanical checks before a file is done (layout, delimiters, compilation, spelling)
 known-errors.md                 ← mistakes found in statements/solutions, still to fix (temporary)
 history-review.md               ← what the AI history pass changed, with sources; still to review (temporary)
 inspiration/                    ← personal reference material, git-ignored
