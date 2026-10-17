@@ -6,7 +6,15 @@ Open work across the repository. Tick items off (`- [x]`) or delete them when do
 
 - [ ] Review the 87 problems and set `review: human` on each one you accept (67 done in the last commit, 2026-10-06).
       Until then a problem shows on the site only as "proposed", behind its switch.
-- [ ] **History check**: check the problems with `history: ai` and set `history: human` (27 on 2026-10-17: 0013, 0030–0031, 0052, 0056, 0062, 0081–0101).
+- [ ] **Back to `review: none` on 2026-10-17** (checklist pass; they show as proposed until fixed and reviewed again):
+      - Antoine's 10 under review: 0003, 0011, 0023, 0030, 0032, 0033, 0040, 0054, 0061, 0072.
+      - Unfinished or left-over text: 0012 ("for the same reason as the previous problem", there is none in the
+        bank), 0031 (the AIME 1998 part stops before the answer, the BMO 2005 part has no solution), 0038 and 0039
+        ("This solution needs to be written more formally"), 0050 (a sentence ends in "and then ."), 0063 and 0064
+        ("to finish" in red), 0069 (the three limits and the final value are missing). The shared result
+        `gelfond-schneider-theorem` has no proof yet ("Proof not yet written"); shared results have no review field.
+      - The fixes listed below under "LaTeX fixes": 0045, 0049, 0056, 0057.
+- [ ] **History check**: check the problems with `history: ai` and set `history: human` (28 on 2026-10-17: 0013, 0030–0031, 0052, 0056, 0062, 0081–0102).
 - [ ] 0081–0087 (VJIMC 2002–2014, added 2026-09-29/30): statement **and** solution written by AI at Antoine's request
       (see the `% AI-WRITTEN` comment in each file); review them like the others before `review: human`. Review
       `problem-bank/appendix/cauchy-group-theorem.tex` (also AI-written) with 0085 and 0087: it is published with the first of
@@ -50,6 +58,19 @@ Details, sources and the full change table: [`problem-bank/history-review.md`](p
 - [ ] Missing solutions: 0052, 0060–0062, 0065–0068, 0071–0080.
 - [ ] Partial solutions: 0019, 0031, 0034, 0038–0040, 0049, 0063, 0064, 0069.
 - [ ] 0003 solution 2 seems not to follow the writing style: to be done by an agent and then put to be reviewed by human (the solution 2 only)
+- [ ] **0056**: the solution is in French: translate it into English, keeping its parts (a) and (b). At its end, a
+      French note to self ("Penser à peut-être faire une version du prophet inequality problem", and 3 links) is not
+      solution text: move it out of the file. (Checklist pass, 2026-10-17.)
+- [ ] **0049** (published): a note to Spas is left in a lemma environment ("Spas ? it would be nice if you could make
+      a lemma where such a g exists ..."): remove it. The file also writes intervals both ways (`(a, b)`,
+      `[0, +\infty)` and the French `]0;1[`) and still has a `\textit{Remark:}` label. (Checklist pass, 2026-10-17.)
+- [ ] **0045**: a closing parenthesis is missing in the associativity formula (`\cdot((a,\cdot((b,c)))` should end
+      with four); the conditions are a hand-made list ("-$...$" lines with `$$` displays); grammar slips ("i.e"
+      without its dot, "each element have"). (Checklist pass, 2026-10-17.)
+- [ ] **0057**: one parenthesis too many in `=(((n+2)^{\alpha}-(n+1)^{\alpha})-...`; typos "Cotninuing",
+      "succesor", "balading n to infinity" (letting n tend to infinity); in the informal discussion, a sentence stops
+      in the middle ("if 1<α<2 then 1^α=1 and") and there are many grammar slips.
+      (Checklist pass, 2026-10-17.)
 
 ## Problem bank — tags (minor, ideas 2026-10-06)
 
