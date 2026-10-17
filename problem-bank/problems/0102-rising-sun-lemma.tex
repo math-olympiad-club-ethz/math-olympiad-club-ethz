@@ -1,0 +1,72 @@
+% title:          Rising sun lemma
+% area:           limits-continuity
+% methods:        contradiction, compactness, extremal-principle
+% difficulty:     medium
+% difficulty-ai:  medium
+% status:
+% review:         human
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         paper
+% origin-date:    1932
+% origin-number:
+% also-in:        imc
+% references:     Earliest known appearance (to the best of our knowledge): F. Riesz, Sur un theoreme de maximum de MM. Hardy et Littlewood, Journal of the London Mathematical Society, vol. 7 (1932), no. 1, pp. 10-13 - https://en.wikipedia.org/wiki/Rising_sun_lemma; also IMC 2011, Day 1, Problem 1 - https://www.imc-math.org.uk/imc2011/imc2011-day1-solutions.pdf
+% history:        ai
+\begin{problem}
+    Let \( f \in C^0\left(\mathbb{R},\mathbb{R}\right) \). Call \( x \in \mathbb{R} \) a shadow
+    point if there exists \( y \in \left]x;+\infty\right[ \) with \( f\left(y\right) >
+    f\left(x\right) \). Let \( a, b \in \mathbb{R} \) with \( a < b \), and suppose that
+    \begin{itemize}
+        \item every \( x \in \left]a;b\right[ \) is a shadow point, and
+        \item \( a \) and \( b \) are not shadow points.
+    \end{itemize}
+    Show that
+    \begin{enumerate}
+        \item[(a)] \( f\left(x\right) \leq f\left(b\right) \) for all \( x \in \left]a;b\right[ \);
+        \item[(b)] \( f\left(a\right) = f\left(b\right) \).
+    \end{enumerate}
+\end{problem}
+\begin{solution}
+    (a) Suppose by contradiction that there exists \( x_0 \in \left]a;b\right[ \) with
+    \[
+        f\left(x_0\right) > f\left(b\right).
+    \]
+    The idea is that, as \( f \) is continuous on the compact interval \( \left[x_0;b\right] \), it
+    attains its maximum on this interval at a point other than \( b \), which is therefore a shadow
+    point; a point where \( f \) is bigger than this maximum can only lie further than \( b \), so
+    that \( b \) is a shadow point, which is a contradiction. At this point, we could say that we
+    have proved (a), but, as an exercise, we write what we just said more formally.
+    \\\\
+    As \( \left[x_0;b\right] \neq \emptyset \) is compact and \( f \) is continuous, \( M := \max
+    f\left[\left[x_0;b\right]\right] \) exists, and there exists \( x_1 \in \left[x_0;b\right] \)
+    with \( f\left(x_1\right) = M \). Since \( f\left(x_1\right) = M \geq f\left(x_0\right) >
+    f\left(b\right) \), we have \( x_1 \neq b \), so that \( x_1 \in \left[x_0;b\right[ \subset
+    \left]a;b\right[ \), and \( x_1 \) is a shadow point. Hence, there exists \( y_1 \in
+    \left]x_1;+\infty\right[ \) with \( f\left(y_1\right) > f\left(x_1\right) = M \). Such a
+    \( y_1 \) does not lie in \( \left[x_0;b\right] \), where \( f \) is at most \( M \); as
+    \( y_1 > x_1 \geq x_0 \), this means that \( y_1 \in \left]b;+\infty\right[ \). Since
+    \( f\left(y_1\right) > M > f\left(b\right) \), \( b \) is then a shadow point, which is a
+    contradiction. Hence, \( f\left(x\right) \leq f\left(b\right) \) for all \( x \in
+    \left]a;b\right[ \).
+    \\\\
+    (b) Since \( b \in \left]a;+\infty\right[ \) and \( a \) is not a shadow point, we have
+    \( f\left(b\right) \leq f\left(a\right) \). Suppose by contradiction that \( f\left(b\right) <
+    f\left(a\right) \). The idea is that, as \( f \) is continuous at \( a \), \( f \) still takes
+    values bigger than \( f\left(b\right) \) at the points of \( \left]a;b\right[ \) close enough to
+    \( a \), which contradicts (a). Again, as an exercise, we write what we just said formally.
+    \\\\
+    Since \( f \) is continuous at \( a \) and \( \frac{f\left(a\right)-f\left(b\right)}{2} > 0 \),
+    there exists \( \delta > 0 \) such that, for all \( x \in \left]a-\delta;a+\delta\right[ \), we
+    have \( \left|f\left(x\right)-f\left(a\right)\right| <
+    \frac{f\left(a\right)-f\left(b\right)}{2} \), so that
+    \[
+        f\left(x\right) > f\left(a\right)-\frac{f\left(a\right)-f\left(b\right)}{2} =
+        \frac{f\left(a\right)+f\left(b\right)}{2} > f\left(b\right),
+    \]
+    where the last inequality holds since \( f\left(a\right) > f\left(b\right) \). Now, the interval
+    \( \left]a;\min\left\{a+\delta, b\right\}\right[ \) is non-empty, as \( \delta > 0 \) and
+    \( b > a \); let \( x \) be one of its points. Then \( x \in \left]a-\delta;a+\delta\right[ \),
+    so that \( f\left(x\right) > f\left(b\right) \), and \( x \in \left]a;b\right[ \), so that
+    \( f\left(x\right) \leq f\left(b\right) \) by (a), which is a contradiction. Therefore,
+    \( f\left(a\right) = f\left(b\right) \).
+\end{solution}
