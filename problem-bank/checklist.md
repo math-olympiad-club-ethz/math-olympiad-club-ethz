@@ -17,7 +17,8 @@ written; this list covers the mechanical checks, the ones a tool or a careful re
 4. **Delimiters**: every pair of brackets in mathematics sized with `\left ... \right`, even around one symbol. The
    seminar's `leftright.py FILE --write` does it; reversed intervals are sized by hand: `\left]0;1\right[`.
 5. **Math mode**: no mathematics outside `\( \)` or `\[ \]`, not even a single letter (`\( S \)`, not `S`); inline
-   formulas with a space inside the delimiters (`\( \mathbb{R} \)`, not `\(\mathbb{R}\)`).
+   formulas with a space inside the delimiters (`\( \mathbb{R} \)`, not `\(\mathbb{R}\)`); never `$` or `$$` (the
+   validator rejects them; a dollar sign is `\$`).
 6. **Intervals**: French brackets, written the same way throughout the file (`\left]a;b\right[`).
 7. **Labels**: `\textit{Solution k.}` is never indented. After an environment (a remark, a lemma), write
    `\noindent\textit{Solution k.}`; no `\\\\` line right after a display or an environment (it does not compile).
