@@ -163,6 +163,14 @@ const STRUCTURE = /\\(begin|end)\s*\{\s*(problem|solution|bibentries)\s*\}/;
 const APPENDIX_CMD = /\\appendix(?![A-Za-z@])/;
 const APPENDIX_ITEM = /\\(begin|end)\s*\{\s*appendixitem\s*\}/;
 const BIB_COMMANDS = /\\(bibliography|addbibresource|bibliographystyle)\s*[[{]/;
+/* Mathematics is written \( … \) and \[ … \], never $ … $ or $$ … $$ (bank/problems.py::dollar_at): an unescaped $
+   outside comments and verbatim text (\$ is a dollar sign). */
+const DOLLAR = /(^|[^\\])(?:\\\\)*\$/;                // (no lookbehind: Safari before 16.4 cannot parse it)
+const VERBATIM = /\\begin\{(lstlisting|verbatim|minted|comment|bibentries)\}[\s\S]*?\\end\{\1\}|\\verb\*?([^A-Za-z\s*])[\s\S]*?\2/g;
+const dollarAt = text => {
+  const m = DOLLAR.exec(maskComments(text).replace(VERBATIM, s => s.replace(/[^\n]/g, ' ')));
+  return m ? m.index + m[0].length - 1 : -1;
+};
 const lineOf = (text, i) => text.slice(0, i).split('\n').length;
 
 /* The rules of bank/problems.py that apply to every text box (statement, solution and the Bibliography box: its fields
@@ -262,6 +270,8 @@ export function validateDraft(draft, cat, bibKeys = null, appendix = null) {
     if (m) err(field, `${where(m.index)}: remove \\${m[1]}; citations are resolved automatically (put the entries in the Bibliography box).`);
     m = /\\tikz(?![A-Za-z@])/.exec(text);
     if (m) err(field, `${where(m.index)}: inline \\tikz is not supported; draw inside \\begin{tikzpicture} … \\end{tikzpicture}.`);
+    const dollar = dollarAt(text);
+    if (dollar >= 0) err(field, `${where(dollar)}: write mathematics as \\( … \\) and \\[ … \\], not $ … $ or $$ … $$.`);
     for (const message of texErrors(text, where)) err(field, message);
     for (const message of appendixErrors(text, where, field === 'solution', results, labels)) err(field, message);
   }

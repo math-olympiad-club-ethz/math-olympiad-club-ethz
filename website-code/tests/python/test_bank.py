@@ -374,7 +374,7 @@ class BlockStructure(unittest.TestCase):
                 self.assertEqual(errs[0][0], line, body)
 
     def test_text_outside_the_blocks_is_rejected_with_its_line(self):
-        p = probe("\\newcommand{\\myset}{\\mathbb{R}}\n\\begin{problem}\nLet $f\\colon\\myset\\to\\myset$.\n\\end{problem}\n"
+        p = probe("\\newcommand{\\myset}{\\mathbb{R}}\n\\begin{problem}\nLet \\( f\\colon\\myset\\to\\myset \\).\n\\end{problem}\n"
                   "Hint between the blocks.\n\\begin{solution}\nT.\n\\end{solution}\n")
         lines = sorted(l for l, m in p["errors"] if "outside the problem, solution and bibentries blocks" in m)
         self.assertEqual(lines, [3, 7])                                    # file lines (two header lines first)
@@ -435,13 +435,15 @@ class UnsafeTeX(unittest.TestCase):
                 r"\eqref{appendix:field-norm:A.2.3}", r"\appendixref", r"\bankappendixitem{x}", r"\appendixitem x",
                 r"\setcounter{bankappendixitem}{5}", r"\addtocounter{ bankappendixitem }{1}", r"\label{appendix:x}",
                 # a reference to a label that is not set in the file prints ??
-                r"See \ref{nowhere}."]
+                r"See \ref{nowhere}.",
+                # mathematics in \( \) and \[ \] only (Antoine, 2026-10-17)
+                r"Let $x$ be real.", r"$$x = 1$$", r"A line\\$x$"]
     ACCEPTED = [r"\newcommand{\R}{\mathbb{R}}", r"\renewcommand{\phi}{\varphi}", r"\DeclareRobustCommand{\x}{y}",
-                r"$a \times b \leq \left( c \right) \deg f \det A$", r"\begin{align*} x \end{align*}", r"\begin{enumerate}[label=(\alph*)]\item x\end{enumerate}",
+                r"\( a \times b \leq \left( c \right) \deg f \det A \)", r"\begin{align*} x \end{align*}", r"\begin{enumerate}[label=(\alph*)]\item x\end{enumerate}",
                 r"\setcounter{enumi}{2}", r"\definecolor{c}{rgb}{1,0,0}", r"\href{https://en.wikipedia.org/wiki/Legendre%27s_formula}{L}",
                 r"\cite*{solomon1967Hurwitz}", r"\parencite[p.~3]{solomon1967Hurwitz}", r"\nocite{solomon1967Hurwitz}",
                 r"\label{a} \ref{a} \hyperref[a]{x}", r"\EndIf \EndWhile", r"\footnote{x}", r"\@.",
-                r"% \appendix and \appendixref{x} in a comment"]
+                r"% \appendix and \appendixref{x} in a comment", r"It costs 5\$, the sign \( \$ \). % $x$ in a comment"]
 
     def test_rejected(self):
         for snippet in self.REJECTED:

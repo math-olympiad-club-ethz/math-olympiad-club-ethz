@@ -222,6 +222,20 @@ UNSAFE_TEX = [
     (r"\\(?:[Bb]ank[A-Za-z]*|refitem|appendixitem)(?![A-Za-z@])|\{[ \t\n]*(?:problemreferences|bankappendixitem)[ \t\n]*\}",
      "it belongs to the website's PDF layout (headings, reference lists, the appendix)"),
 ]
+# Mathematics is written \( ... \) and \[ ... \], never $ ... $ or $$ ... $$ (Antoine, 2026-10-17): an unescaped $ (\$ is a
+# dollar sign; \\$ is a line break, then a $) outside comments, verbatim text and BibTeX.  Same rule in bank-propose.js.
+DOLLAR_RE = re.compile(r"(?<!\\)(?:\\\\)*\$")
+_VERBATIM_RE = re.compile(r"\\begin\{(lstlisting|verbatim|minted|comment|bibentries)\}.*?\\end\{\1\}|\\verb\*?([^A-Za-z\s*]).*?\2", re.S)
+DOLLAR_MESSAGE = "write mathematics as \\( ... \\) and \\[ ... \\], not $ ... $ or $$ ... $$"
+
+
+def dollar_at(masked):
+    """Offset of the first math $ in `masked` (comments already masked), or None."""
+    plain = _VERBATIM_RE.sub(lambda m: re.sub(r"[^\n]", " ", m.group(0)), masked)
+    m = DOLLAR_RE.search(plain)
+    return None if m is None else m.end() - 1
+
+
 # The citation commands the website resolves (bank/bib.py::CITE_RE); \nocite is harmless.
 SUPPORTED_CITES = {"cite", "citep", "citet", "parencite", "textcite", "autocite", "Cite", "Parencite", "Textcite",
                    "Autocite", "supercite", "footcite", "nocite"}
@@ -394,6 +408,9 @@ def validate(p, tags, bib_keys=None, appendix=None):
     if mm:
         e.append((at(mm.start()), "inline \\tikz is not supported: draw inside \\begin{tikzpicture}...\\end{tikzpicture} "
                                             "(the website turns tikzpicture and tikzcd environments into images)"))
+    pos = dollar_at(masked)
+    if pos is not None:
+        e.append((at(pos), DOLLAR_MESSAGE))
     own = [k for k, _ in p["bib_entries"]]
     if p["bibtex"].strip() and not own:
         e.append((_body_line(p, p["body"].find("\\begin{bibentries}")), "the bibentries block contains no BibTeX entry (expected @article{key, author = {...}, ...})"))

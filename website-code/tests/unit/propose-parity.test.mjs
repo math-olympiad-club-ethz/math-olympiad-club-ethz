@@ -139,7 +139,7 @@ test('files made by the page pass the Python validator with the same fields; inv
   if (!existsSync(TAGS)) { t.skip('site/static/bank/tags.json not built'); return; }
   const cat = S.buildCatalogue(JSON.parse(readFileSync(TAGS, 'utf8')));
   const bibKeys = T.parseBibEntries(readFileSync(BIB, 'utf8')).map(([k]) => k);
-  const base = { ...P.emptyDraft(), statement: 'Prove that $1+1=2$.', area: ['primes'] };
+  const base = { ...P.emptyDraft(), statement: 'Prove that \\( 1+1=2 \\).', area: ['primes'] };
   const good = [
     base,
     { ...base, title: 'Sum of two cubes', statement: 'Show \\cite{solomon1967Hurwitz} and \\cite{own}:\n\\begin{tikzpicture}\n\\draw (0,0) -- (1,1);\n\\end{tikzpicture}\n50\\% done.',
@@ -153,6 +153,7 @@ test('files made by the page pass the Python validator with the same fields; inv
       bibtex: '@misc{own, title = {Own}}' },
     { ...base, statement: 'Show (\\ref{eq}).\\begin{equation}\\label{eq} x \\end{equation}', solution: 'By \\eqref{eq} and \\cref{l}. \\label{l}' },
     { ...base, newArea: ['Graph colourings: proper ones'], newMethods: ['Zig-zag pairing', 'A % sign'] },   // a comment line for the board
+    { ...base, statement: 'It costs 5\\$, the sign \\( \\$ \\). % $x$ in a comment' },   // \$ is a dollar sign
   ];
   const bad = [
     { ...base, title: 'A & B' }, { ...base, title: 'one two three four five six seven' }, { ...base, originDate: '1989-13' },
@@ -173,6 +174,8 @@ test('files made by the page pass the Python validator with the same fields; inv
     { ...base, statement: 'See \\cite{b1}.', bibtex: '@misc{b1, title = {A \\def\\z{} title}}' }, { ...base, bibtex: '@misc{b1, note = {\\citeyear{x}}}' },
     { ...base, statement: 'By Lemma \\ref{lem}.', solution: '\\begin{lemma}\\label{lem} x \\end{lemma}' },
     { ...base, originDate: '0000' }, { ...base, area: ['primes', 'primes'] },
+    // mathematics in \( \) and \[ \] only (Antoine, 2026-10-17)
+    { ...base, statement: 'Let $x$ be real.' }, { ...base, solution: '$$x = 1$$' }, { ...base, statement: 'A line\\\\$x$' },
   ];
   const all = [...good, ...bad];
   const py = python({ files: all.map(d => [P.fileName(d), P.problemFile(d)]) }).files;
@@ -211,7 +214,7 @@ test('shared results: drafts citing them pass or fail on both sides', (t) => {
   const cat = S.buildCatalogue(JSON.parse(readFileSync(TAGS, 'utf8')));
   const bibKeys = T.parseBibEntries(readFileSync(BIB, 'utf8')).map(([k]) => k);
   const results = [{ name: 'cauchy-group-theorem', labels: [] }, { name: 'field-norm', labels: ['appendix:field-norm:A.2.3'] }];
-  const base = { ...P.emptyDraft(), statement: 'Prove that $1+1=2$.', area: ['primes'] };
+  const base = { ...P.emptyDraft(), statement: 'Prove that \\( 1+1=2 \\).', area: ['primes'] };
   const good = [
     { ...base, solution: 'By Cauchy (Appendix~\\appendixref{cauchy-group-theorem}), \\appendixref{field-norm} and \\eqref{appendix:field-norm:A.2.3}.' },
     { ...base, solution: 'By \\appendixref {field-norm}. % \\appendixref{nowhere}' },

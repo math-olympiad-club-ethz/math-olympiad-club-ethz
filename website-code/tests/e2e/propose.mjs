@@ -80,7 +80,7 @@ try {
   console.log('3. fill the form: title, statement with a drawing and citations, solution, tags, history, bibliography');
   await page.fill('#pp-title', 'Sum of two cubes');
   check((await page.textContent('#pp-filename')) === 'new-sum-of-two-cubes.tex', 'the file name follows the title');
-  await page.fill('#pp-statement', 'Show that $n^3+m^3$ is special \\cite{solomon1967Hurwitz}, see also \\cite{own2020}.\n\\begin{tikzpicture}\n\\draw (0,0) -- (1,1);\n\\end{tikzpicture}\nThat is all.');
+  await page.fill('#pp-statement', 'Show that \\( n^3+m^3 \\) is special \\cite{solomon1967Hurwitz}, see also \\cite{own2020}.\n\\begin{tikzpicture}\n\\draw (0,0) -- (1,1);\n\\end{tikzpicture}\nThat is all.');
   await page.fill('#pp-solution', 'By induction.\nAnd that is the end.');
   await page.fill('#pp-bibtex', '@article{own2020,\n  author = {Doe, Jane},\n  title = {An Own Reference},\n  journal = {J. Test},\n  year = {2020},\n}');
   check(/own2020/.test(await page.textContent('#pp-bib-keys')), 'the bibliography box lists its keys');

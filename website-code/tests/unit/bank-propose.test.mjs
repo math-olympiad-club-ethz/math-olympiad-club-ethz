@@ -228,8 +228,9 @@ test('checks: TeX that would reach beyond the problem (other problems of a PDF, 
   assert.match(msgs({ bibtex: '@misc{k, note = {\\def\\a{}}}' }), /^bibtex: Bibliography, line 1: \\def cannot be used/m);
   assert.match(msgs({ statement: 'By \\ref{lem}.', solution: '\\label{lem}' }), /^statement: Statement, line 1: "lem" is labelled in the solution/m);
   assert.match(msgs({ area: ['primes', 'primes'] }), /^area: primes is chosen twice/m);
+  assert.match(msgs({ statement: 'Hence\n$x$.' }), /^statement: Statement, line 2: write mathematics as \\\( … \\\) and \\\[ … \\\]/m);
   // fine: \newcommand, \times, \left, spaced \begin {align*}, \cite*, a reference inside a comment, a label in the statement
-  assert.equal(msgs({ statement: '\\newcommand{\\x}{1} $a \\times \\left( b \\right)$ \\begin {align*} x \\end{align*} \\cite*{k} % \\ref{lem}',
+  assert.equal(msgs({ statement: '\\newcommand{\\x}{1} \\( a \\times \\left( b \\right) \\) \\begin {align*} x \\end{align*} \\cite*{k} % \\ref{lem}',
     solution: '\\label{lem} \\ref{lem}', bibtex: '@misc{k, title={K}}' }), '');
   assert.equal(msgs({ statement: '\\label{s} \\ref{s}', solution: '\\label{s}' }), '');
   assert.match(msgs({ statement: '% \\label{s}\n\\ref{s}', solution: '\\label{s}' }), /line 2: "s" is labelled in the solution/, 'a commented-out label does not count');

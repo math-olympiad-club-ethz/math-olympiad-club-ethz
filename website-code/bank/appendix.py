@@ -288,6 +288,9 @@ def validate_item(it, bib_keys=None, cat=None):
     mm = re.search(r"\\tikz(?![A-Za-z@])", text)
     if mm:
         e.append((at(mm.start()), "inline \\tikz is not supported: draw inside \\begin{tikzpicture}...\\end{tikzpicture}"))
+    pos = P.dollar_at(masked)
+    if pos is not None:
+        e.append((at(pos), P.DOLLAR_MESSAGE))
     own = [k for k, _ in it["bib_entries"]]
     bib_line = at(text.find("\\begin{bibentries}")) if "\\begin{bibentries}" in text else 1
     if it["bibtex"].strip() and not own:
