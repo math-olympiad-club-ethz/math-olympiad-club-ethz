@@ -42,7 +42,8 @@ name=$(basename "$f" .tex)
 echo "bank-preview: $f"
 cd "$WS/problem-bank" || exit 1
 # -bibtex-: no biber run (it fails on some Macs); a \cite then shows its key in the preview.
-TEXINPUTS="$WS/problem-bank:" BIBINPUTS="$WS/problem-bank:" latexmk -norc -pdf -bibtex- -f -interaction=nonstopmode \
+# shared results: problem-bank/appendix/ first, then the seminar's appendix/ (results not in the bank yet)
+TEXINPUTS="$WS/problem-bank:$WS/problem-bank/seminar_antoine_problems_solutions:" BIBINPUTS="$WS/problem-bank:" latexmk -norc -pdf -bibtex- -f -interaction=nonstopmode \
     -synctex=1 -file-line-error "-usepretex=\\def\\bankfile{$dir/$name}" "-jobname=$name" "-outdir=$dir" \
     "$WS/problem-bank/problems/_preview.tex"
 status=$?
