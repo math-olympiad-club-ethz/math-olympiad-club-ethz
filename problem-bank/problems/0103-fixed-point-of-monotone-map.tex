@@ -1,0 +1,52 @@
+% title:          Fixed point of monotone map
+% area:           limits-continuity, topology
+% methods:        induction, monotonicity, compactness, fixed-points
+% difficulty:     easy
+% difficulty-ai:  easy
+% status:
+% review:         human
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         imc
+% origin-date:    2007-08-06
+% origin-number:  Day 2, Problem 3
+% also-in:
+% references:     Earliest known appearance (to the best of our knowledge): IMC 2007, Day 2, Problem 3 - https://www.imc-math.org.uk/imc2007/day2_solutions.pdf
+% history:        ai
+\begin{problem}
+    Let \( C \in \mathcal{P}\left(\mathbb{R}\right) \setminus \left\{\emptyset\right\} \) be compact
+    and let \( f \colon C \longrightarrow C \) be a increasing continuous function (that is,
+    \( \mathcal{T}^{\mathbb{R}}_C \)-\( \mathcal{T}^{\mathbb{R}}_C \) continuous, where
+    \( \mathcal{T}^{\mathbb{R}}_C \) is the topology induced on \( C \) by the usual topology of
+    \( \mathbb{R} \)). Show that there exists a point \( p \in C \) such that \( f\left(p\right) =
+    p \).
+\end{problem}
+\begin{solution}
+    First, since \( C \) is compact and non-empty, \( \max C \) is well defined, and we define the
+    sequence
+    \[
+        x \colon \mathbb{N} \longrightarrow C, \quad n \longmapsto f^{\circ n}\left(\max C\right).
+    \]
+    We prove by induction that \( x_{n+1} \leq x_n \) for all \( n \in \mathbb{N} \), i.e., that
+    \( x \) is decreasing. For the base case \( n = 0 \), \( x_1 = f\left(\max C\right) \in C \), so
+    that \( x_1 \leq \max C = x_0 \). Now, for the induction step, let \( n \in \mathbb{N} \) with
+    \( x_{n+1} \leq x_n \). Then, since \( f \) is increasing and by the induction hypothesis,
+    \[
+        x_{n+2} = f\left(x_{n+1}\right) \leq f\left(x_n\right) = x_{n+1}.
+    \]
+    Since \( C \) is compact, it is bounded below, so that \( x \), which takes its values in
+    \( C \), is bounded below too. As \( x \) is decreasing and bounded below, it is standard that
+    it converges in \( \left(\mathbb{R},\left|\cdot\right|_{\mathbb{R}}\right) \) to \( \inf
+    \operatorname{ran}\left(x\right) \), which belongs to \( C \) since \( x \in C^{\mathbb{N}} \)
+    and \( C \) is closed. Now, by continuity of \( f \),
+    \[
+        f\left(\inf \operatorname{ran}\left(x\right)\right) = \lim_{n \to +\infty} f\left(x_n\right)
+        = \lim_{n \to +\infty} x_{n+1} = \inf \operatorname{ran}\left(x\right),
+    \]
+    where the first equality holds since \( f \) is continuous at \( \inf
+    \operatorname{ran}\left(x\right) \in C \) and \( x_n \to \inf
+    \operatorname{ran}\left(x\right) \) with \( x_n \in C \) for all \( n \in \mathbb{N} \), and the
+    second one since \( f\left(x_n\right) = x_{n+1} \) for all \( n \in \mathbb{N} \) and
+    \( \left\langle x_{n+1} \,\middle|\, n \in \mathbb{N} \right\rangle \) converges to the limit of
+    \( x \). Hence, \( p := \inf \operatorname{ran}\left(x\right) \in C \) satisfies
+    \( f\left(p\right) = p \), as required.
+\end{solution}

@@ -1,0 +1,63 @@
+% title:          Inequality on rationals extends to reals
+% area:           limits-continuity
+% methods:        construction
+% difficulty:     easy
+% difficulty-ai:  easy
+% status:
+% review:         human
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         imc
+% origin-date:    2009-07
+% origin-number:  Day 1, Problem 1
+% also-in:
+% references:     Earliest known appearance (to the best of our knowledge): IMC 2009, Day 1, Problem 1 - https://www.imc-math.org.uk/imc2009/imc2009-day1-solutions.pdf
+% history:        ai
+\begin{problem}
+    Let \( f, g \colon \mathbb{R} \rightarrow \mathbb{R} \) be such that \( f\left(r\right) \leq
+    g\left(r\right) \) for all \( r \in \mathbb{Q} \). Does this imply that \( f \leq g \), i.e.,
+    that \( f\left(x\right) \leq g\left(x\right) \) for all \( x \in \mathbb{R} \), if
+    \begin{enumerate}
+        \item[(a)] \( f \) and \( g \) are increasing?
+        \item[(b)] \( f \) and \( g \) are continuous?
+    \end{enumerate}
+\end{problem}
+\begin{solution}
+    (a) No. Define
+    \[
+        f \colon \mathbb{R} \longrightarrow \mathbb{R}, \quad x \longmapsto
+        \begin{cases}
+            0 & \text{if } x < \sqrt{2}, \\
+            \frac{1}{2} & \text{if } x = \sqrt{2}, \\
+            1 & \text{if } x > \sqrt{2},
+        \end{cases}
+    \]
+    and
+    \[
+        g \colon \mathbb{R} \longrightarrow \mathbb{R}, \quad x \longmapsto
+        \begin{cases}
+            0 & \text{if } x < \sqrt{2}, \\
+            \frac{1}{4} & \text{if } x = \sqrt{2}, \\
+            1 & \text{if } x > \sqrt{2}.
+        \end{cases}
+    \]
+    Then \( f \) and \( g \) are clearly increasing. Moreover, let \( r \in \mathbb{Q} \). Since
+    \( \sqrt{2} \notin \mathbb{Q} \), we have \( r \neq \sqrt{2} \). If \( r < \sqrt{2} \), then
+    \( f\left(r\right) = 0 \leq 0 = g\left(r\right) \), and if \( r > \sqrt{2} \), then
+    \( f\left(r\right) = 1 \leq 1 = g\left(r\right) \). Hence, \( f\left(r\right) \leq
+    g\left(r\right) \) for all \( r \in \mathbb{Q} \), but \( f\left(\sqrt{2}\right) = \frac{1}{2} >
+    \frac{1}{4} = g\left(\sqrt{2}\right) \), so that \( f \leq g \) does not hold.
+    \\\\
+    (b) Yes. Let \( x \in \mathbb{R} \). If \( x \in \mathbb{Q} \), then \( f\left(x\right) \leq
+    g\left(x\right) \) by hypothesis. Otherwise, \( x \in \mathbb{R} \setminus \mathbb{Q} \), and,
+    since \( \mathbb{Q} \) is dense in \( \mathbb{R} \), there exists \( r \in
+    \mathbb{Q}^{\mathbb{N}} \) such that \( r_n \overset{n \to +\infty}{\longrightarrow} x \) in
+    \( \left(\mathbb{R},\left|\cdot\right|_{\mathbb{R}}\right) \), so that, by continuity of \( f \)
+    and \( g \),
+    \[
+        f\left(x\right) = \lim_{n \to +\infty} f\left(r_n\right) \leq \lim_{n \to +\infty}
+        g\left(r_n\right) = g\left(x\right),
+    \]
+    where the inequality holds by passing to the limit in the inequalities \( f\left(r_n\right) \leq
+    g\left(r_n\right) \), true for all \( n \in \mathbb{N} \) by hypothesis (both limits exist).
+    Hence, \( f \leq g \).
+\end{solution}

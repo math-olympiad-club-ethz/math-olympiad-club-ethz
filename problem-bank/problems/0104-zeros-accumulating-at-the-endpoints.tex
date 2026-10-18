@@ -1,0 +1,127 @@
+% title:          Zeros accumulating at the endpoints
+% area:           limits-continuity, derivatives
+% methods:        compactness, contradiction, squeeze
+% difficulty:     easy
+% difficulty-ai:  easy
+% status:
+% review:         human
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         imc
+% origin-date:    2016-07-27
+% origin-number:  Day 1, Problem 1
+% also-in:
+% references:     Earliest known appearance (to the best of our knowledge): IMC 2016, Day 1, Problem 1, proposed by Alexandr Bolbot (Novosibirsk State University) - https://www.imc-math.org.uk/?year=2016&section=problems&item=prob1q; restated as Exercise 1 (Problem 1 of IMC 2016) in IMC Training Tuebingen, Sheet 2, 26 May 2022 - https://www.math.uni-tuebingen.de/de/forschung/maphy/lehre/ss-2022/imc-training/files/imc-sheet2.pdf
+% history:        ai
+\begin{problem}
+    Let \( a, b \in \mathbb{R} \) with \( a < b \), and let \( f \colon \left[a;b\right]
+    \longrightarrow \mathbb{R} \) be a continuous function, differentiable on
+    \( \left]a;b\right[ \). Suppose that \( \left|\left\{ x \in \left[a;b\right] \,\middle|\,
+    f\left(x\right) = 0 \right\}\right| \geq \aleph_0 \) and
+    \[
+        \left\{ x \in \left]a;b\right[ \,\middle|\, f\left(x\right) = f'\left(x\right) = 0 \right\}
+        = \emptyset.
+    \]
+    \begin{enumerate}
+        \item[(a)] Prove that \( f\left(a\right)f\left(b\right) = 0 \).
+        \item[(b)] Give an example of such a function on \( \left[0;1\right] \).
+    \end{enumerate}
+\end{problem}
+\begin{solution}
+    (a) The idea is to show that the zeros of \( f \) in \( \left]a;b\right[ \) are isolated and
+    that they must accumulate at \( \partial\left[a;b\right] = \left\{a, b\right\} \).
+    \\\\
+    Let \( x \in f^{-1}\left[\left\{0\right\}\right] \cap \left]a;b\right[ \). Then
+    \( f'\left(x\right) \neq 0 \), so that \( \frac{\left|f'\left(x\right)\right|}{2} > 0 \), and,
+    by differentiability of \( f \) at \( x \), there exists \( \delta_x > 0 \) with
+    \( \left]x-\delta_x;x+\delta_x\right[ \subset \left]a;b\right[ \) such that, for all
+    \( x' \in \left]x-\delta_x;x+\delta_x\right[ \setminus \left\{x\right\} \),
+    \[
+        \left|\frac{f\left(x'\right)-f\left(x\right)}{x'-x}-f'\left(x\right)\right| <
+        \frac{\left|f'\left(x\right)\right|}{2},
+    \]
+    which implies that \( f\left(x'\right) \neq f\left(x\right) = 0 \): otherwise, the left-hand
+    side would be \( \left|f'\left(x\right)\right| \), and \( 0 < \left|f'\left(x\right)\right| <
+    \frac{\left|f'\left(x\right)\right|}{2} \), which is a contradiction. Thus, for all \( x \in
+    f^{-1}\left[\left\{0\right\}\right] \cap \left]a;b\right[ \), there exists \( \delta_x > 0 \)
+    such that
+    \[
+        f\left(x'\right) \neq 0 \quad \text{for all } x' \in \left]x-\delta_x;x+\delta_x\right[
+        \setminus \left\{x\right\},
+    \]
+    i.e., the zeros of \( f \) in \( \left]a;b\right[ \) are isolated points.
+    \\\\
+    Since \( \left|\left\{ x \in \left[a;b\right] \,\middle|\, f\left(x\right) = 0 \right\}\right|
+    \geq \aleph_0 \), we clearly have \( \left|\left\{ x \in \left]a;b\right[ \,\middle|\,
+    f\left(x\right) = 0 \right\}\right| \geq \aleph_0 \), so that there exists an injective sequence
+    \( y \colon \mathbb{N} \hookrightarrow \left\{ x \in \left]a;b\right[ \,\middle|\,
+    f\left(x\right) = 0 \right\} \). Now, \( y \in \left[a;b\right]^{\mathbb{N}} \), and
+    \( \left[a;b\right] \) is compact, hence sequentially compact since
+    \( \left(\mathbb{R},\left|\cdot\right|_{\mathbb{R}}\right) \) is a metric space: there exist a
+    strictly increasing \( \varphi \colon \mathbb{N} \rightarrow \mathbb{N} \) and \( \omega \in
+    \left[a;b\right] \) such that \( y_{\varphi\left(n\right)}
+    \overset{n \to +\infty}{\longrightarrow} \omega \). By continuity of \( f \),
+    \[
+        f\left(\omega\right) = \lim_{n \to +\infty} f\left(y_{\varphi\left(n\right)}\right) =
+        \lim_{n \to +\infty} 0 = 0,
+    \]
+    where the second equality holds by the choice of \( y \).
+    \\\\
+    Suppose by contradiction that \( \omega \in \left]a;b\right[ \). Then, since \( \omega \) is a
+    zero of \( f \) in \( \left]a;b\right[ \) and these zeros are isolated (seen above), there
+    exists \( \delta_\omega > 0 \) such that \( f\left(x'\right) \neq 0 \) for all \( x' \in
+    \left]\omega-\delta_\omega;\omega+\delta_\omega\right[ \setminus \left\{\omega\right\} \). As
+    \( y_{\varphi\left(n\right)} \overset{n \to +\infty}{\longrightarrow} \omega \), there exists
+    \( N \in \mathbb{N} \) such that \( y_{\varphi\left(n\right)} \in
+    \left]\omega-\delta_\omega;\omega+\delta_\omega\right[ \) for all \( n \in
+    \mathbb{N}_{\geq N} \); since \( f\left(y_{\varphi\left(n\right)}\right) = 0 \), this means that
+    \( y_{\varphi\left(n\right)} = \omega \) for all \( n \in \mathbb{N}_{\geq N} \), which is
+    impossible, as \( y \circ \varphi \) is injective (\( y \) and \( \varphi \) are injective).
+    Hence, \( \omega \in \left[a;b\right] \setminus \left]a;b\right[ = \left\{a, b\right\} \), and
+    so \( f\left(a\right)f\left(b\right) = 0 \), as desired.
+    \\\\
+    (b) Define
+    \[
+        f \colon \left[0;1\right] \longrightarrow \mathbb{R}, \quad x \longmapsto
+        \begin{cases}
+            x^2\sin\left(\frac{1}{x}\right) & \text{if } x \neq 0, \\
+            0 & \text{if } x = 0.
+        \end{cases}
+    \]
+    Then, clearly, \( f \) is differentiable on \( \left]0;1\right[ \), and, for all \( x \in
+    \left]0;1\right[ \),
+    \[
+        f'\left(x\right) =
+        2x\sin\left(\frac{1}{x}\right)+x^2\cos\left(\frac{1}{x}\right)\left(-\frac{1}{x^2}\right) =
+        2x\sin\left(\frac{1}{x}\right)-\cos\left(\frac{1}{x}\right).
+    \]
+    Moreover, \( f \) is clearly continuous on \( \left]0;1\right] \), and, since \( -x^2 \leq
+    x^2\sin\left(\frac{1}{x}\right) \leq x^2 \) for all \( x \in \left]0;1\right] \) (as
+    \( \operatorname{ran}\left(\sin\right) = \left[-1;1\right] \)) and \( x^2
+    \overset{x \to 0}{\longrightarrow} 0 \), the squeeze theorem gives
+    \[
+        \lim_{\substack{x \to 0 \\ x > 0}} f\left(x\right) = \lim_{\substack{x \to 0 \\ x > 0}}
+        x^2\sin\left(\frac{1}{x}\right) = 0 = f\left(0\right),
+    \]
+    so that \( f \) is continuous on \( \left[0;1\right] \). It remains to check the two hypotheses
+    on the zeros of \( f \). First, we compute
+    \[
+        \left\{ x \in \left[0;1\right] \,\middle|\, f\left(x\right) = 0 \right\} = \left\{0\right\}
+        \cup \left\{ x \in \left]0;1\right] \,\middle|\, \sin\left(\frac{1}{x}\right) = 0 \right\} =
+        \left\{0\right\} \cup \left\{ \frac{1}{\pi k} \,\middle|\, k \in \mathbb{N}_{\geq 1}
+        \right\},
+    \]
+    where the last equality holds since \( \sin \) vanishes exactly on \( \pi\mathbb{Z} \) and
+    \( \frac{1}{x} \in \left[1;+\infty\right[ \) for \( x \in \left]0;1\right] \), so that
+    \( \left|\left\{ x \in \left[0;1\right] \,\middle|\, f\left(x\right) = 0 \right\}\right| \geq
+    \aleph_0 \). Second, let \( y \in \left]0;1\right[ \) with \( f\left(y\right) = 0 \). Then
+    \( \sin\left(\frac{1}{y}\right) = 0 \) (as \( y \neq 0 \)), so that
+    \( \cos\left(\frac{1}{y}\right) \in \left\{1, -1\right\} \) (as \( \sin^2+\cos^2 = 1 \)), which
+    means that \( f'\left(y\right) \neq 0 \) since:
+    \[
+        f'\left(y\right) = 2y\sin\left(\frac{1}{y}\right)-\cos\left(\frac{1}{y}\right) =
+        -\cos\left(\frac{1}{y}\right).
+    \]
+    Hence, \( \left\{ x \in \left]0;1\right[ \,\middle|\, f\left(x\right) = f'\left(x\right) = 0
+    \right\} = \emptyset \). Notice that, as predicted by (a), \( f\left(0\right)f\left(1\right) = 0
+    \cdot \sin\left(1\right) = 0 \).
+\end{solution}

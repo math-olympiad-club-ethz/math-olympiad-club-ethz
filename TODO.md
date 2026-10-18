@@ -14,7 +14,7 @@ Open work across the repository. Tick items off (`- [x]`) or delete them when do
         ("to finish" in red), 0069 (the three limits and the final value are missing). The shared result
         `gelfond-schneider-theorem` has no proof yet ("Proof not yet written"); shared results have no review field.
       - The fixes listed below under "LaTeX fixes": 0045, 0049, 0056, 0057.
-- [ ] **History check**: check the problems with `history: ai` and set `history: human` (28 on 2026-10-17: 0013, 0030–0031, 0052, 0056, 0062, 0081–0102).
+- [ ] **History check**: check the problems with `history: ai` and set `history: human` (32 on 2026-10-18: 0013, 0030–0031, 0052, 0056, 0062, 0081–0106).
 - [ ] 0081–0087 (VJIMC 2002–2014, added 2026-09-29/30): statement **and** solution written by AI at Antoine's request
       (see the `% AI-WRITTEN` comment in each file); review them like the others before `review: human`. Review
       `problem-bank/appendix/cauchy-group-theorem.tex` (also AI-written) with 0085 and 0087: it is published with the first of

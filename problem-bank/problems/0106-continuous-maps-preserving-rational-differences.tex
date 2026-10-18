@@ -1,0 +1,76 @@
+% title:          Continuous maps preserving rational differences
+% area:           limits-continuity, functional-equations
+% methods:        intermediate-value-theorem, cauchy-functional-equation, contradiction
+% difficulty:     easy
+% difficulty-ai:  easy
+% status:
+% review:         human
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         imc
+% origin-date:    2008-07-27
+% origin-number:  Day 1, Problem 1
+% also-in:        course
+% references:     Earliest known appearance (to the best of our knowledge): IMC 2008, Day 1, Problem 1 - https://www.imc-math.org.uk/imc2008/day1_solutions.pdf; later: Trinity College Dublin Problem Corner, Problem Solving Set 13-16 July 2012, Problem 1 (find all continuous f: R to R such that f(x)-f(y) is rational for all real x, y with x-y rational) - https://www.maths.tcd.ie/pub/Maths/ProblemCorner/Problems-13.pdf; Close relatives: Putnam 1956 A6 (rational-distance-preserving maps, no continuity) - https://prase.cz/kalva/putnam/psoln/psol566.html
+% history:        ai
+\begin{problem}
+    Let \( f \in C^0\left(\mathbb{R},\mathbb{R}\right) \) be such that, for all \( x, y \in
+    \mathbb{R} \), \( x-y \in \mathbb{Q} \) implies \( f\left(x\right)-f\left(y\right) \in
+    \mathbb{Q} \). Find all such functions \( f \).
+\end{problem}
+\begin{solution}
+    For all \( x \in \mathbb{R} \) and \( q \in \mathbb{Q} \), we have \( \left(x+q\right)-x = q \in
+    \mathbb{Q} \), so that \( f\left(x+q\right)-f\left(x\right) \in \mathbb{Q} \). For \( q \in
+    \mathbb{Q} \), define
+    \[
+        h_q \colon \mathbb{R} \longrightarrow \mathbb{R}, \quad x \longmapsto
+        f\left(x+q\right)-f\left(x\right).
+    \]
+    Then \( h_q \) is continuous and \( \operatorname{ran}\left(h_q\right) \subset \mathbb{Q} \), so
+    that \( h_q \) is constant: if it took two values \( r_1 < r_2 \), then, by the intermediate
+    value theorem, it would take every value of \( \left[r_1;r_2\right] \), in particular an
+    irrational one, as \( \mathbb{R} \setminus \mathbb{Q} \) is dense in \( \mathbb{R} \). This
+    means that, for all \( q \in \mathbb{Q} \) and \( x \in \mathbb{R} \),
+    \[
+        f\left(x+q\right)-f\left(x\right) = h_q\left(x\right) = h_q\left(0\right) =
+        f\left(q\right)-f\left(0\right).
+    \]
+    Define
+    \[
+        h \colon \mathbb{R} \longrightarrow \mathbb{R}, \quad x \longmapsto
+        f\left(x\right)-f\left(0\right).
+    \]
+    Then, for all \( q \in \mathbb{Q} \) and \( x \in \mathbb{R} \),
+    \[
+        h\left(x+q\right)-h\left(x\right) =
+        f\left(x+q\right)-f\left(0\right)-\left(f\left(x\right)-f\left(0\right)\right)
+    \]
+    \[
+        = f\left(x+q\right)-f\left(x\right) = f\left(q\right)-f\left(0\right) = h\left(q\right),
+    \]
+    i.e., \( h\left(x+q\right) = h\left(x\right)+h\left(q\right) \). Therefore, \( h|_{\mathbb{Q}}
+    \colon \left\langle \mathbb{Q},+,0 \right\rangle \longrightarrow \left\langle \mathbb{R},+,0
+    \right\rangle \) is a group morphism, so that, as is standard, \( h\left(q\right) =
+    h\left(1\right) \cdot q \) for all \( q \in \mathbb{Q} \). Now, \( h \) and \( x \mapsto
+    h\left(1\right)x \) are clearly continuous functions from \( \mathbb{R} \) to \( \mathbb{R} \),
+    and they agree on \( \mathbb{Q} \), which is dense in \( \mathbb{R} \), so that they must be
+    equal (a standard argument, as \( \mathbb{R} \) is Hausdorff). Hence,
+    \[
+        f = x \longmapsto \left(f\left(1\right)-f\left(0\right)\right)x+f\left(0\right),
+    \]
+    and, as \( 1-0 = 1 \in \mathbb{Q} \) (so that \( f\left(1\right)-f\left(0\right) \in
+    \mathbb{Q} \)), we have \( f \in \left\{ x \mapsto ax+b \,\middle|\, a \in \mathbb{Q}, b \in
+    \mathbb{R} \right\} \).
+    \\\\
+    Conversely, for \( a \in \mathbb{Q} \) and \( b \in \mathbb{R} \), the function \( x \mapsto
+    ax+b \) is clearly continuous, and, for all \( x, y \in \mathbb{R} \) with \( x-y \in
+    \mathbb{Q} \), \( \left(ax+b\right)-\left(ay+b\right) = a\left(x-y\right) \in \mathbb{Q} \).
+    Therefore,
+    \[
+        \left\{ f \in C^0\left(\mathbb{R},\mathbb{R}\right) \,\middle|\, \forall x, y \in \mathbb{R}
+        \ \left(x-y \in \mathbb{Q} \rightarrow f\left(x\right)-f\left(y\right) \in \mathbb{Q}\right)
+        \right\}
+    \]
+    \[
+        = \left\{ x \mapsto ax+b \,\middle|\, a \in \mathbb{Q}, b \in \mathbb{R} \right\}.
+    \]
+\end{solution}
