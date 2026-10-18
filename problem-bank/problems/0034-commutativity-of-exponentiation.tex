@@ -37,46 +37,47 @@
     \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z}) \right) \).
 \end{problem}
 \begin{solution}
-    For general culture: knowing the construction of \(\mathbb{R}\) using equivalence classes of
-    rational Cauchy sequences, recall that one can unambiguously define the power \(a^b\) (for
-    \(a > 0\) and \(b \in \mathbb{R}\)) in two equivalent ways.
+    For general culture: knowing the construction of \( \mathbb{R} \) using equivalence classes of
+    rational Cauchy sequences, recall that one can unambiguously define the power \( a^b \) (for
+    \( a > 0 \) and \( b \in \mathbb{R} \)) in two equivalent ways.
     \\\\
     The first method uses the theory of power series and their convergence (which must be
-    developed); using the exponential and logarithmic functions, we define \(a^b := \exp\left( b
-    \cdot \log\left( a \right) \right)\).
+    developed); using the exponential and logarithmic functions, we define \( a^b := \exp\left( b
+    \cdot \log\left( a \right) \right) \).
     \\\\
-    The second method is a constructive, step-by-step approach: one first defines \(a^b\) where
-    \(b\) is an integer, then extends to the rationals, and finally to the real numbers.
+    The second method is a constructive, step-by-step approach: one first defines \( a^b \) where
+    \( b \) is an integer, then extends to the rationals, and finally to the real numbers.
     \\\\
-    Since \(\exp\) is a group morphism with \(\exp\left(1\right) > 0\), we can show for all
-    \(x \in \mathbb{R}\) the equality \(\exp\left( x \right) = \exp\left(1\right)^x\), where the
+    Since \( \exp \) is a group morphism with \( \exp\left(1\right) > 0 \), we can show for all
+    \( x \in \mathbb{R} \) the equality \( \exp\left( x \right) = \exp\left(1\right)^x \), where the
     left-hand side uses power series and the right-hand side uses the constructive approach. Thus,
     we can easily show that the two definitions of exponentiation yield the same result. The
-    exponentiation \(a^b\), where \(a > 0\) and \(b \in \mathbb{R}\), can be extended to \(a = 0\)
-    and \(b \geq 0\), and to \(a \in \mathbb{R}^{\times}\) with \(b \in \mathbb{Z}\), as mentioned
-    in the hyperlink (and \(0^x\) is continuous at \(x\), except at \(x = 0\)). For more
-    information, see the article on
+    exponentiation \( a^b \), where \( a > 0 \) and \( b \in \mathbb{R} \), can be extended to
+    \( a = 0 \) and \( b \geq 0 \), and to \( a \in \mathbb{R}^{\times} \) with \( b \in
+    \mathbb{Z} \), as mentioned in the hyperlink (and \( 0^x \) is continuous at \( x \), except at
+    \( x = 0 \)). For more information, see the article on
     \href{https://en.wikipedia.org/wiki/Exponentiation}{Exponentiation}, where you can find the
     proofs in Terence Tao's book \textit{Analysis I}.
     \\\\
-    Let us now solve the form of \(A\): notice that \((x,y) \in A \Leftrightarrow (y,x) \in A\).
-    Clearly, \(\Delta\left( \mathbb{R}_{\geq 0} \right) = \left\{ \left( x,x \right) \in
-    \mathbb{R}_{\geq 0} \right\} \subset A\). We now determine \(A \setminus \Delta\left(
-    \mathbb{R}_{\geq 0} \right)\).
+    Let us now solve the form of \( A \): notice that \( (x,y) \in A \Leftrightarrow (y,x) \in A \).
+    Clearly, \( \Delta\left( \mathbb{R}_{\geq 0} \right) = \left\{ \left( x,x \right) \in
+    \mathbb{R}_{\geq 0} \right\} \subset A \). We now determine \( A \setminus \Delta\left(
+    \mathbb{R}_{\geq 0} \right) \).
     \\\\
-    Let \((x,y) \in A \setminus \Delta\left( \mathbb{R}_{\geq 0} \right)\). Then there exists
-    \(t \in \mathbb{R}_{\geq 0}\) such that \(y = t x\). By hypothesis, \(t \neq 1\). If \(y = 0\),
-    then since \(0 \leq x \neq y\), we have \(x > 0\), but \(x^y = y^x\) implies in this case
-    \(1 \overset{x > 0}{=} x^0 = 0^x \overset{x > 0}{=} 0\), which is a contradiction. Thus,
-    \(y > 0\). Also, if \(t = 0\), then \(y = 0\), a contradiction. So \(t \in \mathbb{R}_{>0}
-    \setminus \{1\}\). Now, if \(x = 0\), then \(y = 0\), which is also excluded by hypothesis.
-    Therefore, \(x, y > 0\). Knowing this, from \(x^y = y^x\) we compute:
+    Let \( (x,y) \in A \setminus \Delta\left( \mathbb{R}_{\geq 0} \right) \). Then there exists
+    \( t \in \mathbb{R}_{\geq 0} \) such that \( y = t x \). By hypothesis, \( t \neq 1 \). If
+    \( y = 0 \), then since \( 0 \leq x \neq y \), we have \( x > 0 \), but \( x^y = y^x \) implies
+    in this case \( 1 \overset{x > 0}{=} x^0 = 0^x \overset{x > 0}{=} 0 \), which is a
+    contradiction. Thus, \( y > 0 \). Also, if \( t = 0 \), then \( y = 0 \), a contradiction. So
+    \( t \in \mathbb{R}_{>0} \setminus \{1\} \). Now, if \( x = 0 \), then \( y = 0 \), which is
+    also excluded by hypothesis. Therefore, \( x, y > 0 \). Knowing this, from \( x^y = y^x \) we
+    compute:
     \[
         x^{t x} = (t x)^x \Rightarrow t^x = x^{(t - 1)x} = \left(x^{t - 1}\right)^x.
     \]
-    Since \(x > 0\), the map \(a \mapsto a^x\) on \(\mathbb{R}_{\geq 0}\) is bijective. This implies
-    from the above equality that \(x^{t - 1} = t\). Since \(t \neq 1\), this implies that
-    \(x = t^{\frac{1}{t - 1}}\). Therefore:
+    Since \( x > 0 \), the map \( a \mapsto a^x \) on \( \mathbb{R}_{\geq 0} \) is bijective. This
+    implies from the above equality that \( x^{t - 1} = t \). Since \( t \neq 1 \), this implies
+    that \( x = t^{\frac{1}{t - 1}} \). Therefore:
     \[
         (x,y) = \left(t^{\frac{1}{t - 1}},\ t \cdot t^{\frac{1}{t - 1}}\right) =
         \left(t^{\frac{1}{t - 1}},\ t^{\frac{t}{t - 1}}\right).
@@ -96,15 +97,15 @@
     \[
         t \mapsto \left(t^{\frac{1}{t - 1}},\ t^{\frac{t}{t - 1}} \right)
     \]
-    is clearly injective onto \(S\) and satisfies the identity
+    is clearly injective onto \( S \) and satisfies the identity
     \[
         \left(t^{\frac{1}{t - 1}},\ t^{\frac{t}{t - 1}} \right) = \left(\left( \frac{1}{t}
         \right)^{\frac{1}{1 - t}},\ \left( \frac{1}{t} \right)^{\frac{t}{1 - t}} \right) = \left(
         \left( \frac{1}{t} \right)^{\frac{\frac{1}{t}}{\frac{1}{t} - 1}},\ \left( \frac{1}{t}
         \right)^{\frac{1}{\frac{1}{t} - 1}} \right),
     \]
-    that is, it swaps coordinates under precomposition with the involution \(\_^{-1}: t \mapsto
-    \frac{1}{t}\) of \(\mathbb{R}_{>0} \setminus \{1\}\):
+    that is, it swaps coordinates under precomposition with the involution \( \_^{-1}: t \mapsto
+    \frac{1}{t} \) of \( \mathbb{R}_{>0} \setminus \{1\} \):
     \[
         f = \mathrm{swap} \circ f\circ\_^{-1}.
     \]
@@ -140,8 +141,8 @@
     \[
         A=\Delta(\mathbb{R}_{\geq 0}) \sqcup S.
     \]
-    Now it remains to find \(A\cap\left(\mathbb{Q}\times\mathbb{Q}\right)\) and
-    \(A\cap\left(\mathbb{N}\times\mathbb{N}\right)\).
+    Now it remains to find \( A\cap\left(\mathbb{Q}\times\mathbb{Q}\right) \) and
+    \( A\cap\left(\mathbb{N}\times\mathbb{N}\right) \).
     \\\\
     Clearly:
     \[
@@ -353,7 +354,7 @@
         m = \frac{a}{b} = \left(1 + \frac{1}{s}\right)^{1 + s}, \quad n = \frac{c}{d} = \left(1 +
         \frac{1}{s}\right)^s.
     \]
-    This concludes since \(s\in\mathbb{Z}_{>0}\).
+    This concludes since \( s\in\mathbb{Z}_{>0} \).
     \\\\
     Summarising, we get:
     \[
@@ -375,10 +376,10 @@
     \begin{remark}
         One could pose the same question over \( \mathbb{C} \) or \( \mathbb{R} \), restricting to
         pairs for which the exponentiation is well-defined. In the real case, one may analyse the
-        possible quadrants for \((x,y)\), such as when the signs are compatible or when a sign
+        possible quadrants for \( (x,y) \), such as when the signs are compatible or when a sign
         change occurs. In the complex case: one must restrict to a branch of the logarithm,
-        typically the principal branch, and exclude points where \(\log\) is undefined, e.g., at
-        \(0\). Branch cuts and multivaluedness must be acknowledged: \(x^y\) is generally not
+        typically the principal branch, and exclude points where \( \log \) is undefined, e.g., at
+        \( 0 \). Branch cuts and multivaluedness must be acknowledged: \( x^y \) is generally not
         single-valued in \( \mathbb{C} \), so the equation must be interpreted either as equality of
         principal values, as set equality up to branch multiples, or as a non-empty set
         intersection. This has been partially addressed in the rational case in
@@ -492,7 +493,7 @@
     So \( \frac{m^{n}}{n^{n}} \in \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z}) \), but
     \( \frac{m^{n}}{n^{n}} \in \mathbb{Q} \), thus \( \frac{m^{n}}{n^{n}} \in
     \mathcal{O}_{\mathbb{Q}}(\mathbb{Z}) = \mathbb{Z} \) (because \( \mathbb{Z} \) is a UFD, hence
-    normal). Since \( \gcd(m,n) = 1 \) and \( m,n\in\mathbb{Z}_{>0}\), we have \( \gcd(m^n,n^n) =
+    normal). Since \( \gcd(m,n) = 1 \) and \( m,n\in\mathbb{Z}_{>0} \), we have \( \gcd(m^n,n^n) =
     1 \) this implies \( n^{n} = 1 \), hence \( n = 1 \) and \( m>n=1 \). Thus \( t = m \in
     \mathbb{Z}_{>1} \), and we get:
     \[

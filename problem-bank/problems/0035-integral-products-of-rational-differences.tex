@@ -13,8 +13,8 @@
 % references:     Earliest known appearance (to the best of our knowledge): USAMO 2009, Problem 6 (proposed by Gabriel Carroll) - https://web.archive.org/web/20250904024022/https://artofproblemsolving.com/wiki/index.php/2009_USAMO_Problems/Problem_6; Evan Chen, USAMO 2009 Solution Notes, §2.3 - https://web.evanchen.cc/exams/USAMO-2009-notes.pdf; Club source: Sudakov & Milojević (ETH problem list)
 % history:        human
 \begin{problem}
-    Let \(\left( a_n \right)_{n \in \mathbb{N}}, \left( b_n \right)_{n \in \mathbb{N}} \in
-    \mathbb{Q}^{\mathbb{N}}\) be non-constant sequences of rational numbers. Suppose that for all
+    Let \( \left( a_n \right)_{n \in \mathbb{N}}, \left( b_n \right)_{n \in \mathbb{N}} \in
+    \mathbb{Q}^{\mathbb{N}} \) be non-constant sequences of rational numbers. Suppose that for all
     \( i, j \in \mathbb{N} \),
     \[
         \left( a_i - a_j \right)\left( b_i - b_j \right) \in \mathbb{Z}.
@@ -110,8 +110,8 @@
     so \( \left( t_k \right)_{k \geq M} \in \mathbb{N}^{\mathbb{N}_{\geq M}} \) and is clearly
     decreasing. Hence, the limit exists and is equal to \( t := \inf \left\{ t_k \,\middle|\, k \geq
     M \right\} \), which must satisfy \( t \geq 1 \). Since the set \( \left\{ t_k \,\middle|\, k
-    \geq M \right\} \) is a subset of the finite set \(\left\llbracket1, t_{M}\right\rrbracket\), it
-    is finite, hence closed; thus, the infimum is attained. This implies that the sequence
+    \geq M \right\} \) is a subset of the finite set \( \left\llbracket1, t_{M}\right\rrbracket \),
+    it is finite, hence closed; thus, the infimum is attained. This implies that the sequence
     \( \left( t_k \right)_{k \geq M} \) is eventually constant, and so must be the sequence
     \( \left( \Gamma_k \right)_{k \geq M} \) (because they are decreasingly nested and finite). That
     means that there exists \( k' \geq M \) such that \( \Gamma = \Gamma_{k'}\neq\varnothing \).
@@ -168,8 +168,8 @@
     \( g_{P(X)} = \gamma_2 s \) for a certain \( s \in \mathbb{Z} \). That is, \( \gamma =
     \frac{l_{P(X)} r s}{g_{P(X)}} = d_{P(X)} r s \in d_{P(X)} \mathbb{Z} \), and since \( \gamma
     \neq 0 \), we have \( \gamma \in d_{P(X)} \mathbb{Z} \setminus \left\{ 0 \right\} \). This
-    concludes the equality. Notice that \(d_{P(X)} \mathbb{Z} \setminus \left\{ 0 \right\}\) is a
-    discrete subspace of \(\mathbb{R}\).
+    concludes the equality. Notice that \( d_{P(X)} \mathbb{Z} \setminus \left\{ 0 \right\} \) is a
+    discrete subspace of \( \mathbb{R} \).
     \\\\
     Clearly, \( \left\{ \gamma \in \mathbb{Q}^{\times} \,\middle|\, \gamma P(X) \in \mathbb{Z}[X]
     \right\} \) is in bijection with \( \left\{ \gamma \in \mathbb{Q}^{\times} \,\middle|\,
@@ -181,12 +181,12 @@
         0 \right\} \right\} = \left\{ \gamma \in \mathbb{Q}^{\times} \,\middle|\, \gamma^{-1} P(X)
         \in \mathbb{Z}[X] \right\}.
     \end{equation}
-    Notice that \(\left(d_{P(X)} \mathbb{Z} \setminus \left\{ 0 \right\}\right)^{-1} \subset
-    \left[-\left(d_{P(X)}\right)^{-1}, \left(d_{P(X)}\right)^{-1}\right]\).
+    Notice that \( \left(d_{P(X)} \mathbb{Z} \setminus \left\{ 0 \right\}\right)^{-1} \subset
+    \left[-\left(d_{P(X)}\right)^{-1}, \left(d_{P(X)}\right)^{-1}\right] \).
     \\\\
     With this in mind, we can prove the steps. Fix \( n \in \mathbb{N} \),
     \\\\
-    \(\bullet\quad \Gamma_n \neq \varnothing\).
+    \( \bullet\quad \Gamma_n \neq \varnothing \).
     \\\\
     If \( C_n(X) = 0 \), then since \( \mathbb{Q} \) is a domain, so is \( \mathbb{Q}[X] \). Hence,
     either \( A_n(X) = 0 \), in which case \( \Gamma_{A,n} = \mathbb{Q}^{\times} \) and so
@@ -260,7 +260,7 @@
     \\\\
     In total, \( \Gamma_n \neq \varnothing \).
     \\\\
-    \(\bullet\quad \Gamma_{n+1} \subset \Gamma_n\):
+    \( \bullet\quad \Gamma_{n+1} \subset \Gamma_n \):
     \\\\
     For this, let \( \gamma \in \Gamma_{n+1} \). Then \( \gamma A_{n+1}(X) \in \mathbb{Z}[X] \) and
     \( \gamma^{-1} B_{n+1}(X) \in \mathbb{Z}[X] \), and thus, trivially,
@@ -269,8 +269,8 @@
     \]
     so \( \gamma \in \Gamma_n \).
     \\\\
-    \(\bullet\) There exists a rank \( M \in \mathbb{N} \) such that for all \( k \geq M \), the set
-    \( \Gamma_k \) is finite:
+    \( \bullet \) There exists a rank \( M \in \mathbb{N} \) such that for all \( k \geq M \), the
+    set \( \Gamma_k \) is finite:
     \\\\
     Since \( \left( a'_n \right)_{n \in \mathbb{N}} \) and \( \left( b'_n
     \right)_{n \in \mathbb{N}} \) are non-constant, there must exist \( M', M'' \in \mathbb{N} \)

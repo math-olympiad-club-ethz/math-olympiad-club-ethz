@@ -19,13 +19,13 @@
     \]
 \end{problem}
 \begin{solution}
-    Note that \(x = 0\) and \(x = 1\) satisfy the equation from the statement. Are there other
+    Note that \( x = 0 \) and \( x = 1 \) satisfy the equation from the statement. Are there other
     solutions? The answer is no, but to prove it we use the amazing idea of treating the numbers 4,
-    5, 6 as variables and the presumably new solution \(x\) as a constant.
+    5, 6 as variables and the presumably new solution \( x \) as a constant.
     \\\\
-    Thus let us consider the function \(f(t) = t^{x^{2}} + (10 - t)^{x}\). The fact that \(x\)
-    satisfies the equation from the statement translates to \(f(5) = f(6)\). By Rolle's theorem
-    there exists \(c \in (5, 6)\), such that \(f'(c) = 0\). This means that
+    Thus let us consider the function \( f(t) = t^{x^{2}} + (10 - t)^{x} \). The fact that \( x \)
+    satisfies the equation from the statement translates to \( f(5) = f(6) \). By Rolle's theorem
+    there exists \( c \in (5, 6) \), such that \( f'(c) = 0 \). This means that
     \[
         x^{2}c^{x^{2} - 1} - x(10 - c)^{x - 1} = 0,
     \]
@@ -33,14 +33,14 @@
     \[
         x c^{x^{2} - 1} = (10 - c)^{x - 1}.
     \]
-    Because exponentials are positive, this implies that \(x\) is positive. \\
-    If \(x > 1\), then \( x^2-1> x-1 \) and as \( c>5 \)
+    Because exponentials are positive, this implies that \( x \) is positive. \\
+    If \( x > 1 \), then \( x^2-1> x-1 \) and as \( c>5 \)
     \[
         (10 - c)^{x - 1}=x c^{x^{2} - 1} > c^{x^{2} - 1} > c^{x - 1} > (10 - c)^{x - 1},
     \]
     which is a contradiction.
     \\\\
-    If \(0 < x < 1\), then \( x^2-1<x-1 \) and:
+    If \( 0 < x < 1 \), then \( x^2-1<x-1 \) and:
     \[
         (10-c)^{x-1}=x c^{x^{2} - 1} < x c^{x - 1}.
     \]
@@ -48,17 +48,18 @@
     \[
         x c^{x - 1} < (10 - c)^{x - 1}.
     \]
-    With the substitution \(y = x - 1\), the inequality can be rewritten as
+    With the substitution \( y = x - 1 \), the inequality can be rewritten as
     \[
         y + 1 < \left(\frac{10 - c}{c}\right)^{y}.
     \]
-    which must be proven for \(y \in ]-1;0[\).
+    which must be proven for \( y \in ]-1;0[ \).
     \\\\
     Lets make a simple analysis of the two functions defined over \( \mathbb{R} \).\\
     The exponential has base less than 1, so it is strictly decreasing, while the affine function on
-    the left is strictly increasing. The two meet at \(y = 0\) so we must have that strictly before
-    \( y=0 \) the exponential is strictly bigger than the affine. The inequality (on \( ]-1;0[ \))
-    follows. Using it we conclude again that: \((10 - c)^{x - 1}=x c^{x^{2} - 1}<(10 - c)^{x - 1}\)
-    which is a contradiction. This shows that a third solution to the equation from the statement
-    does not exist. So the only solutions to the given equation are \(x = 0\) and \(x = 1\).
+    the left is strictly increasing. The two meet at \( y = 0 \) so we must have that strictly
+    before \( y=0 \) the exponential is strictly bigger than the affine. The inequality (on
+    \( ]-1;0[ \)) follows. Using it we conclude again that: \( (10 - c)^{x - 1}=x c^{x^{2} - 1}<(10
+    - c)^{x - 1} \) which is a contradiction. This shows that a third solution to the equation from
+    the statement does not exist. So the only solutions to the given equation are \( x = 0 \) and
+    \( x = 1 \).
 \end{solution}

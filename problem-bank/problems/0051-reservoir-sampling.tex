@@ -18,8 +18,8 @@
     we have a pointer to \( x_{1} \), which leads to \( x_{2} \), and so on, until we reach the end
     of the linked list \( x_{n} \). At each step of traversing the list, we cannot go back, but we
     are informed whether or not we have reached the end. We have enough memory to store at least one
-    of any of the elements \( x_i \) (\(0 \leq i \leq n\)), but perhaps not more; in particular, we
-    cannot simply store the entire list in an array (unless, of course, \( n = 0 \)).
+    of any of the elements \( x_i \) (\( 0 \leq i \leq n \)), but perhaps not more; in particular,
+    we cannot simply store the entire list in an array (unless, of course, \( n = 0 \)).
     \\\\
     (a) How can we select uniformly at random an element in the linked list, if we are allowed to
     traverse it only once? More precisely, in the situation where the list can be traversed only
@@ -37,7 +37,7 @@
 \begin{solution}
     (a) First, it is very important that we do not know \( n \); otherwise, the solution is easy:
     select in advance an index \( i \) between \( 0 \) and \( n \) with equal probability
-    \(\frac{1}{n+1}\), traverse the list, and store the \( i \)-th element. The difficulty arises
+    \( \frac{1}{n+1} \), traverse the list, and store the \( i \)-th element. The difficulty arises
     because we do not know the exact value of \( n \) in advance. Moreover, we also know that we
     cannot store the entire list in an array (unless \( n=0 \)) and choose uniformly one element
     from it once we reach the end.

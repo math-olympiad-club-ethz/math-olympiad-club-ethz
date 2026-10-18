@@ -27,7 +27,7 @@
     \\\\
     Suppose, for the sake of contradiction, that \( P(X) \) is reducible over \( \mathbb{Z}[X] \).
     Then there exist \( Q(X), T(X) \in \mathbb{Z}[X]\setminus\left(\mathbb{Z}[X]^{\times}\cup
-    \{0\}\right)\) such that:
+    \{0\}\right) \) such that:
     \[
         P(X) = Q(X)T(X).
     \]
@@ -58,12 +58,12 @@
     \\\\
     As \( \mathbb{F}_2 \) is a field, \( \mathbb{F}_2[X] \) is a unique factorisation domain (UFD),
     since \( \deg \) is a Euclidean function, hence \( \mathbb{F}_2[X] \) is Euclidean, thus
-    principal, hence a UFD (or simply \(\mathbb{F}_2\) is a UFD hence by the UFD Extension Theorem
-    so is \(\mathbb{F}_2[X]\)).
+    principal, hence a UFD (or simply \( \mathbb{F}_2 \) is a UFD hence by the UFD Extension Theorem
+    so is \( \mathbb{F}_2[X] \)).
     \\\\
-    Therefore, by unique factorisation, and the fact that \(\overline{\pi_2}\left( Q(X) \right),
-    \overline{\pi_2}\left( T(X) \right)\) are each of degree at least \(1\) (since \(Q(X), T(X)\)
-    are monic), there exists \(0< k < 2^n\) such that:
+    Therefore, by unique factorisation, and the fact that \( \overline{\pi_2}\left( Q(X) \right),
+    \overline{\pi_2}\left( T(X) \right) \) are each of degree at least \( 1 \) (since \( Q(X),
+    T(X) \) are monic), there exists \( 0< k < 2^n \) such that:
     \[
         \overline{\pi_2}(Q(X)) = \left( X^2 + X + 1_{\mathbb{F}_2} \right)^k, \quad
         \overline{\pi_2}(T(X)) = \left( X^2 + X + 1_{\mathbb{F}_2} \right)^{(2^n) - k}.
@@ -80,8 +80,8 @@
         \right)^{(2^n) - k} + 2T'(X) \right).
     \]
     Let \( \epsilon \in \mathbb{C} \) be a root of \( X^2 + X + 1 \), i.e. \( \epsilon \in \left\{
-    \frac{-1}{2} \pm \frac{\sqrt{3}}{2}i \right\} \), then from \(\epsilon^2+\epsilon=-1\) we obtain
-    \( P(\epsilon) = (-1)^{2^n} + 1 = 2 \), so:
+    \frac{-1}{2} \pm \frac{\sqrt{3}}{2}i \right\} \), then from \( \epsilon^2+\epsilon=-1 \) we
+    obtain \( P(\epsilon) = (-1)^{2^n} + 1 = 2 \), so:
     \[
         2 = \left(\left( \epsilon^2 + \epsilon + 1 \right)^k + 2Q'(\epsilon)\right) \cdot
         \left(\left( \epsilon^2 + \epsilon + 1 \right)^{(2^n) - k} + 2T'(\epsilon)\right)
@@ -101,7 +101,7 @@
         2 = 4 r_1(\epsilon) r_2(\epsilon) = 4(a\epsilon + b)(c\epsilon + d) = 4ac\epsilon^2 + 4(ad +
         bc)\epsilon + 4bd.
     \]
-    i.e., after some algebra (using the fact that \(\epsilon^2 = -\epsilon - 1\)),
+    i.e., after some algebra (using the fact that \( \epsilon^2 = -\epsilon - 1 \)),
     \[
         \frac{1}{2} = \left( bd - ac \right) + \left( ad + bc- ac \right) \epsilon.
     \]
@@ -118,9 +118,9 @@
     \[
         \left( ad + bc - ac \right) \left( \overline{\epsilon} - \epsilon \right) = 0,
     \]
-    and because \(\overline{\epsilon} \neq \epsilon\), we must have \(\left( ad + bc - ac \right) =
-    0\), so that: \(\frac{1}{2} = \left( bd - ac \right) \in \mathbb{Z}\). This is a clear
-    contradiction. Therefore \(P(X)=\left(X^2+X\right)^{(2^n)}+1\) must be irreducible.
+    and because \( \overline{\epsilon} \neq \epsilon \), we must have \( \left( ad + bc - ac \right)
+    = 0 \), so that: \( \frac{1}{2} = \left( bd - ac \right) \in \mathbb{Z} \). This is a clear
+    contradiction. Therefore \( P(X)=\left(X^2+X\right)^{(2^n)}+1 \) must be irreducible.
     \\\\
     \textit{Solution 2.}
     \begin{lemma}{Capelli's Lemma:}
@@ -134,16 +134,16 @@
         following two conditions hold simultaneously:
         \begin{enumerate}
             \item \( P(X) \) is irreducible over \( K[X] \), and
-            \item \( g(X) - \alpha \) is irreducible over \( K(\alpha)[X] \), where \(K(\alpha) \)
-                is the smallest subfield of \(K^{\text{alg}}\) containing \(K\cup\{\alpha\}\).
+            \item \( g(X) - \alpha \) is irreducible over \( K(\alpha)[X] \), where \( K(\alpha) \)
+                is the smallest subfield of \( K^{\text{alg}} \) containing \( K\cup\{\alpha\} \).
         \end{enumerate}
     \end{lemma}
     The proof can be found in Appendix [\appendixref{capelli-lemma}].
     \\\\
-    Apply this result to the field \( \iota:\mathbb{Q}\hookrightarrow \mathbb{Q}^{\mathrm{alg}}\),
+    Apply this result to the field \( \iota:\mathbb{Q}\hookrightarrow \mathbb{Q}^{\mathrm{alg}} \),
     and the polynomials \( P(X) = X^{(2^{n})} + 1 \) and \( g(X) = X^2 + X \) in
     \( \mathbb{Q}[X] \). Assume without loss of generality that
-    \(\mathbb{Q}\subset\mathbb{Q}^{\text{alg}}\subset\mathbb{C}\) (all ring morphism involved in
+    \( \mathbb{Q}\subset\mathbb{Q}^{\text{alg}}\subset\mathbb{C} \) (all ring morphism involved in
     making the identification are injective and the algebraic closure is unique up to a ring
     isomorphism). The polynomial \( P\left( g(X) \right) = \left( X^2 + X \right)^{(2^n)} + 1 \) is
     then irreducible over \( \mathbb{Q}[X] \) if and only if \( P(X) \) is irreducible over
@@ -158,16 +158,16 @@
     \]
     Let \( \zeta := \exp\left( \frac{\pi i}{2^{n}} \right) \in \mathbb{Q}^{\text{alg}} \) be our
     choice of root in the algebraic closure of \( P(X) \) (a primitive \( 2^{n+1} \)-th root of
-    unity). To conclude that \(P\left( g(X) \right)\) is irreducible it only remains to show that
+    unity). To conclude that \( P\left( g(X) \right) \) is irreducible it only remains to show that
     \( g(X) - \zeta \in \mathbb{Q}(\zeta)[X] \) is irreducible over \( \mathbb{Q}(\zeta)[X] \).
-    Since \( g(X) - \zeta \) is of degree \( 2 \) and \(\mathbb{Q}(\zeta)\) is a field, this is
+    Since \( g(X) - \zeta \) is of degree \( 2 \) and \( \mathbb{Q}(\zeta) \) is a field, this is
     equivalent to show that it has no root in \( \mathbb{Q}(\zeta) \). The roots of \( g(X) -
-    \zeta \) lie in \(\mathbb{Q}^{\text{alg}} \) (since \(g(X) - \zeta\in
-    \mathbb{Q}^{\text{alg}}[X] \) and \(\mathbb{Q}^{\text{alg}}\) is algebraically closed), moreover
-    they are given by the quadratic formula; for any element \( \xi \in \mathbb{Q}^{\text{alg}} \)
-    such that \( \xi^2 = 1 + 4\zeta \)\footnote{Another way of seeing that such an element \(\xi\)
-    exists is that \( \xi \) would be a root of \( \left( \frac{1}{4}(X^2 - 1)
-    \right)^{\left(2^{n}\right)} + 1 \in \mathbb{Q}[X] \).}:
+    \zeta \) lie in \( \mathbb{Q}^{\text{alg}} \) (since \( g(X) - \zeta\in
+    \mathbb{Q}^{\text{alg}}[X] \) and \( \mathbb{Q}^{\text{alg}} \) is algebraically closed),
+    moreover they are given by the quadratic formula; for any element \( \xi \in
+    \mathbb{Q}^{\text{alg}} \) such that \( \xi^2 = 1 + 4\zeta \)\footnote{Another way of seeing
+    that such an element \( \xi \) exists is that \( \xi \) would be a root of \( \left(
+    \frac{1}{4}(X^2 - 1) \right)^{\left(2^{n}\right)} + 1 \in \mathbb{Q}[X] \).}:
     \[
         \frac{-1 \pm \xi}{2} \text{ is a root of } g(X)-\zeta,
     \]
@@ -187,13 +187,13 @@
     hence \( \mathbb{Q} \hookrightarrow \mathbb{Q} \left( \zeta \right) \) is a finite extension of
     \( \mathbb{Q} \), and therefore algebraic. As \( \operatorname{char} \left( \mathbb{Q} \right) =
     0 \), this extension is separable. Since \( P(X) \) splits over \( \mathbb{Q} \left( \zeta
-    \right)[X] \) (because \(\left\{\zeta^{2k+1}\mid 0\leq k\leq 2^{n}-1\right\}\) are pairwise
-    distinct roots of \(P(X)\) and \(\mathrm{deg}(P(X))=2^n\)), and clearly \( \mathbb{Q} \left(
+    \right)[X] \) (because \( \left\{\zeta^{2k+1}\mid 0\leq k\leq 2^{n}-1\right\} \) are pairwise
+    distinct roots of \( P(X) \) and \( \mathrm{deg}(P(X))=2^n \)), and clearly \( \mathbb{Q} \left(
     \zeta \right) \) is minimal in terms of degree
-    \([\mathbb{Q}(\zeta):\mathbb{Q}]=\mathrm{deg}(P(X))=2^n\) with the property of splitting
-    \(P(X)\) (because any subfield of \(\mathbb{Q}^{\text{alg}}\) splitting \(P(X)\) must contain
-    \(\mathbb{Q}\cup\{\zeta\}\)), we conclude that \( \mathbb{Q} \left( \zeta \right) \) is a
-    splitting field of \( P(X) \). Thus, \( \mathbb{Q} \hookrightarrow \mathbb{Q} \left( \zeta
+    \( [\mathbb{Q}(\zeta):\mathbb{Q}]=\mathrm{deg}(P(X))=2^n \) with the property of splitting
+    \( P(X) \) (because any subfield of \( \mathbb{Q}^{\text{alg}} \) splitting \( P(X) \) must
+    contain \( \mathbb{Q}\cup\{\zeta\} \)), we conclude that \( \mathbb{Q} \left( \zeta \right) \)
+    is a splitting field of \( P(X) \). Thus, \( \mathbb{Q} \hookrightarrow \mathbb{Q} \left( \zeta
     \right) \) is a finite field extension generated by the separable element \( \zeta \) and is a
     splitting field of \( P(X) \in \mathbb{Q}[X] \). Hence it is Galois. In particular (since we are
     in the finite case),
@@ -260,12 +260,12 @@
         \left( a - 2^{(2^{n})} \right)\left( a + 2^{(2^{n})} \right) = 1,
     \]
     which implies \( a - 2^{(2^{n})},\, a + 2^{(2^{n})} \in \mathbb{Z}^{\times} = \{ \pm 1 \} \) and
-    \(a - 2^{(2^{n})}=a + 2^{(2^{n})}\). In particular \( -2^{(2^{n})} = 2^{(2^{n})} \) i.e.
+    \( a - 2^{(2^{n})}=a + 2^{(2^{n})} \). In particular \( -2^{(2^{n})} = 2^{(2^{n})} \) i.e.
     \( 2^{(2^{n}+1)} = 0 \), a contradiction.
     \\\\
-    Therefore it is a contradiction to assume that \(\xi\in\mathbb{Q}(\zeta)\), so that
-    \(g(X)-\zeta\in\mathbb{Q}(\zeta)[X]\) is irreducible.
+    Therefore it is a contradiction to assume that \( \xi\in\mathbb{Q}(\zeta) \), so that
+    \( g(X)-\zeta\in\mathbb{Q}(\zeta)[X] \) is irreducible.
     \\\\
-    Thus \(P(g(X))=\left(X^2+X\right)^{(2^{n})}+1\) is irreducible.
+    Thus \( P(g(X))=\left(X^2+X\right)^{(2^{n})}+1 \) is irreducible.
     \\\\
 \end{solution}
