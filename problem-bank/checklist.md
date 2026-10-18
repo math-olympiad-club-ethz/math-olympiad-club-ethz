@@ -2,13 +2,14 @@
 
 What to check before a problem, a solution or a shared result is done. `writing-style.md` says how the text is
 written; this list covers the mechanical checks, the ones a tool or a careful read can settle.
+Each rule is stated once: where an item names a section of `writing-style.md`, the rule and its examples are there.
 
 ## Done by the formatter
 
 `website-code/bank/texformat.py` does these; VS Code runs it on every Cmd+S (`.vscode/settings.json`). By hand:
 `python3 website-code/bank/texformat.py FILE --write` (in the seminar folder: `python3 indent.py FILE --write`).
 
-1. **Indentation**: 4 spaces per nesting level (section 7, item 14, of `writing-style.md`).
+1. **Indentation**: 4 spaces per nesting level (`writing-style.md`, section 7, "Source layout").
 2. **Line width**: every paragraph refilled within 100 characters; lines that stay alone are listed in the guide.
 3. **Double spaces**: a single space between words inside a paragraph.
 
@@ -25,11 +26,10 @@ written; this list covers the mechanical checks, the ones a tool or a careful re
    "two solutions", and code (`random_uniform[0,1]`).
 6. **Monotonicity**: "increasing" and "strictly increasing", "decreasing" and "strictly decreasing" (never
    "non-decreasing" or "non-increasing"); where a step needs the strict version, the text says "strictly"
-   (writing-style rule 15).
+   (`writing-style.md`, rule 15 and section 8).
 7. **Intervals**: always French notation, with `;` as the separator: `\left]a;b\right[`, `\left[a;b\right[`,
-   `\llbracket 1;n \rrbracket`; never `(a, b)`, `[a, b)` or `(a, b]`. Brackets turned outward are sized by hand
-   (`leftright.py` skips them). A pair `\left(a, b\right)`, a commutator or a polynomial ring `R\left[X,Y\right]` is
-   not an interval.
+   `\llbracket 1;n \rrbracket`; never `(a, b)`, `[a, b)` or `(a, b]` (`writing-style.md`, section 6; their sizing:
+   item 4). A pair `\left(a, b\right)`, a commutator or a polynomial ring `R\left[X,Y\right]` is not an interval.
 8. **Labels and structure**: `\textit{Solution k.}` is never indented. After an environment (a remark, a lemma),
    write `\noindent\textit{Solution k.}`; no `\\\\` line right after a display or an environment.
    - Every solution is numbered from 1: `\textit{Solution 1.}`, `\textit{Solution 2.}`; never "Alternative
@@ -39,17 +39,17 @@ written; this list covers the mechanical checks, the ones a tool or a careful re
    - No `\section`, `\subsection` or other heading in a problem file: the solution of a bonus question is labelled
      `\textit{Solution of the bonus.}`, alone on its line and followed by a `\\\\` line; a file holding two
      problems states them as parts.
-   - Parts are `\item[(a)]`, `\item[(b)]` in the statement and "(a)", "(b)" in the solution, never "a)" or "1)".
+   - Parts are labelled "(a)", "(b)" (paragraphs or `\item[(a)]`), never "a)" or "1)" (`writing-style.md`,
+     section 2, "Parts").
 9. **Stray characters and doubled words**: no character typed by accident or left over (a `§` slipped into
-   `6§f'(0)`: look at every non-ASCII character; an extra parenthesis, as in `\)))`) and no word written twice
+   `6§f'(0)`: look at every non-ASCII character; an extra parenthesis, as in `\)))`, or a doubled pair, as in `\log\left(\left(x\right)\right)`) and no word written twice
    ("from which they come from"). Apostrophes and quotes are ASCII (`'`, ``` `` ``` and `''`, not `’` or
    `“ ”`); never straight double quotes (`"naive"` prints as two closing quotes: write ``` ``naive'' ```); no
-   em dash (`—`): rephrase with commas or parentheses.
+   em dash (`—`): rephrase with commas or parentheses; no LaTeX dash `--` in a compound word (`two-move`, not
+   `two--move`; `writing-style.md`, section 7, "Characters").
 10. **Punctuation and notation in formulas**: a formula is part of its sentence and is punctuated like one.
-    - A display ends with "," when the sentence goes on after it (`\]` then "and we conclude", "which gives"), with
-      "." when the sentence ends there (the next one starts "It follows that"), and with no mark when the next
-      words finish its clause (`\]` then "is positive since"). The last row of a `cases` takes that mark; its
-      other rows end with ",".
+    - Every display is punctuated as its sentence requires, and so is every row of a `cases` (`writing-style.md`,
+      section 7, "Punctuation inside displays").
     - A sentence never stops before its main clause: "while the player does not know `\( \alpha \)`, they still
       know ...", not "... `\( \alpha \)`. They still know ...".
     - No mark inside a formula that is not mathematics (`\( a,b,c \) are`, not `\( a,b,c, \) are`), no comma before
@@ -58,26 +58,26 @@ written; this list covers the mechanical checks, the ones a tool or a careful re
       after "For any ..." in a list item, a comma, not ";".
     - One notation for one thing: a list of terms is `a_1, a_2, \dots`; a pair is written as a pair
       (`\left(p_i, q_i\right) \in \mathbb{Z}^{*} \times \mathbb{N}^{*}`); a one-sided limit is marked once
-      (`x \underset{>}{\to} 0`, not also `0^+`); no doubled brackets (`\log\left(\left(\dots\right)\right)`).
-    - A formula used as a prefix takes a hyphen outside the math (`\( \mathbb{F}_2 \)-subspace`); a compound word
-      takes a hyphen, not an en dash (`two-move`, not `two--move`).
+      (`x \underset{>}{\to} 0`, not also `0^+`).
+    - A formula used as a prefix takes a hyphen outside the math: `\( \mathbb{F}_2 \)-subspace` (`writing-style.md`,
+      section 7, "Hyphen after math").
 11. **The statement asks something**: "Show that", "Find all", "Determine whether", a question. When the source has
    no question, take it from the origin (as for the IMC problems behind Continuity 2 and 9).
 
 ## Building
 
 12. **Compilation**: the file compiles without error and without a line running into the margin (overfull box):
-    the preview on save, or `cd website-code && python3 -m bank.validate --compile FILE`. A long inline formula that
-    runs into the margin goes into a display; a long display is split into two displays, the second starting
-    with its relation (`=`, `\subset`, `\cap`); a long row of a `cases` gets a continuation row; a remark in
-    `\text{...}` inside a display moves to the sentence after it. The preamble's `\emergencystretch` already
+    the preview on save, or `cd website-code && python3 -m bank.validate --compile FILE`. A long formula is fixed as
+    `writing-style.md`, section 7, "Long chains" says (an inline formula into a display, a display split in
+    two); a long row of a `cases` gets a continuation row; a remark in `\text{...}` inside a display moves to
+    the sentence after it. The preamble's `\emergencystretch` already
     lets a paragraph be set a little looser rather than overflow.
 13. **Validator**: for a file of `problems/` or `appendix/`, `cd website-code && python3 -m bank.validate` passes.
 
 ## Language and mathematics
 
 14. **Spelling**: every word of the prose (formulas left out) is a dictionary word or a name; British or American
-    spelling, the same within a file.
+    spelling, the same within a file (`writing-style.md`, section 8).
 15. **Mathematics**: every step is checked (the math check of each rewrite round): no false claim, no missing case,
     every limit and every cited theorem with its reason, the hypotheses of a theorem checked where it is used.
 16. **Links**: a niche name (a less common theorem, a named class of numbers) is linked where it is named, with
