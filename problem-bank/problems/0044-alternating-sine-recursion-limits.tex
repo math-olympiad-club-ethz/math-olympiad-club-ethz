@@ -15,8 +15,8 @@
 \begin{problem}
     Suppose \( x_0 \in \mathbb{R} \) and \( x_{n+1} = \sum_{i=0}^{n} \left(-1\right)^i
     \sin\left(x_i\right) \) for \( n \geq 1 \).\\
-    (a) What is the range for the \( x_0 \) such that \( \lim_{n \to \infty} x_n \) exists? What is
-    the value of the limit depending on \( x_0 \) in the range?\\
+    (a) What is the range of \( x_0 \) such that \( \lim_{n \to \infty} x_n \) exists? What is the
+    value of the limit depending on \( x_0 \) in the range?\\
     (b) Suppose \( x_0 = 1/4 \). Find \( \lim_{n \to \infty}
     \dfrac{\log\left(\left| \log\left(x_n\right) \right|\right)}{n} \).
 \end{problem}
@@ -26,11 +26,11 @@
     \[
         x_{n+1} = x_n + \left(-1\right)^n \sin\left(x_n\right), \quad n \geq 2.
     \]
-    Using this recurrent formula, we shall obtain the results.
+    Using this recurrence formula, we shall obtain the results.
 
     Notice that \( f\left(x\right) = x - \sin\left(x\right) \) has the same sign as \( x \), thus
     the sign of \( x_n \) will be the same as the sign of \( x_1 \). \( x_n \) and \( -x_n \) obey
-    the same recurrent law, so we could assume that \( x_1 \geq 0 \).
+    the same recurrence, so we could assume that \( x_1 \geq 0 \).
 
     Now, given that \( x_{2n-1} \leq 1 \),
     \begin{align*}
@@ -92,8 +92,8 @@
     applies to \( \dfrac{\log\left( \left| \log\left(x_{2n}\right) \right| \right)}{2n} \).\\
 
     Finally, \( y_n = \dfrac{\log\left( \left| \log\left(x_n\right) \right| \right)}{n} \), and
-    \( N_1 \) such that \( y_{2n} \) is in \( \varepsilon \)-neighbourhood of
-    \( \dfrac{\log\left(3\right)}{2} \) for \( n > N_1 \), \( y_{2n+1} \) is in
+    \( N_1 \) such that \( y_{2n} \) is in the \( \varepsilon \)-neighbourhood of
+    \( \dfrac{\log\left(3\right)}{2} \) for \( n > N_1 \), \( y_{2n+1} \) is in the
     \( \varepsilon \)-neighbourhood of \( \dfrac{\log\left(3\right)}{2} \) for \( n > N_2 \), thus
     for \( n > \max\left(2N_1, 2N_2 + 1\right) \), \( y_n \) is in the
     \( \varepsilon \)-neighbourhood of \( \dfrac{\log\left(3\right)}{2} \), as such the entire

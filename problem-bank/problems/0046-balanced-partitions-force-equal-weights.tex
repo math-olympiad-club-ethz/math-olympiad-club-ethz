@@ -58,7 +58,7 @@
     Let us show that \( \operatorname{Im}\left(M^T\right) = \left\langle \left\{ v_i \mid 0\leq i <
     2n+1 \right\} \right\rangle \) has dimension \( 2n \). Define \( v_i' := v_i + \mathbf{1} \);
     this new vector is composed of \( 0 \)s instead of \( -1 \)s, \( 1 \) instead of \( 0 \), and
-    \( 2 \)s instead of \( 1 \).
+    \( 2 \)s instead of \( 1 \)s.
     \\\\
     Consider the matrix \( \tilde{M} := M^T + \left( \mathbf{1}, \ldots, \mathbf{1} \right) \).
     Modulo \( 2 \), this matrix reduces to the identity matrix, i.e., \( \tilde{M} \equiv I
@@ -106,7 +106,7 @@
         \phi\left(\mathbf{x}, n\right) \rightarrow \phi\left(\mathbf{x} + \alpha, n\right) \wedge
         \phi\left(\alpha \cdot \mathbf{x}, n\right)
     \]
-    \( \bullet \) We first start by showing an easier version of the problem:
+    \( \bullet \) We start by showing an easier version of the problem:
     \[
         \forall \mathbf{y} \forall n \left( \operatorname{ran}\left(\mathbf{y}\right) \subset
         \mathbb{Q} \wedge \phi\left(\mathbf{y}, n\right) \right) \rightarrow |
@@ -207,16 +207,16 @@
     \( \bullet \) Having solved for rational weights, we now use this for the general case, i.e.,
     \( \operatorname{ran}\left(\textbf{x}\right) \subset \mathbb{R} \). The idea is to apply
     \( \dim_{\mathbb{Q}}\left(\langle \operatorname{ran}\left(\textbf{x}\right)
-    \rangle_{\mathbb{Q}}\right) \), the result for the rational case, to certain rational weights.
-    We will express each \( x_i \) as a unique \( \mathbb{Q} \)-linear combination of elements in a
-    certain basis of \( \operatorname{ran}\left(\textbf{x}\right) \). Conceptually, this will form a
-    matrix with rational coefficients, where the \( i \)-th row (indexed by the basis) corresponds
-    to those unique weighted rational coefficients in the expression of \( x_i \). By using the fact
-    that \( \textbf{x} \) satisfies the property, we will deduce that each column of this matrix
-    gives us a set of rational weighted coefficients which also satisfies the property. Therefore,
-    by applying the result for the rational case on each column, we deduce that each of them
-    consists of only one rational number. From this, we then easily see that each \( x_i \) must be
-    equal.
+    \rangle_{\mathbb{Q}}\right) \) times the result for the rational case, to certain rational
+    weights. We will express each \( x_i \) as a unique \( \mathbb{Q} \)-linear combination of
+    elements in a certain basis of \( \operatorname{ran}\left(\textbf{x}\right) \). Conceptually,
+    this will form a matrix with rational coefficients, where the \( i \)-th row (indexed by the
+    basis) corresponds to those unique weighted rational coefficients in the expression of
+    \( x_i \). By using the fact that \( \textbf{x} \) satisfies the property, we will deduce that
+    each column of this matrix gives us a set of rational weighted coefficients which also satisfies
+    the property. Therefore, by applying the result for the rational case on each column, we deduce
+    that each of them consists of only one rational number. From this, we then easily see that each
+    \( x_i \) must be equal.
     \\\\
     We formalize this more properly: Let us therefore fix \( n \in \mathbb{N} \) and \( \mathbf{x}:
     2 \cdot n + 1 \to \mathbb{R} \) with the property \( \phi\left(\mathbf{x}, n\right) \).

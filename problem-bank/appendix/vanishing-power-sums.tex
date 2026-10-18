@@ -43,8 +43,8 @@
         \mathbb{N}_{> 1} \) (assuming \( \operatorname{char}\left(R\right) = 0 \) or \( m + 1 <
         \operatorname{char}\left(R\right) \)).
         \\\\
-        Clearly, \( \left\{0_{m+1}\right\} \subset S_{m+1} \). To show the converse, let any
-        \( \boldsymbol{\lambda} \in S_{m+1} \), we first show that \( \exists k \in m+1 \) such that
+        Clearly, \( \left\{0_{m+1}\right\} \subset S_{m+1} \). To show the converse, let
+        \( \boldsymbol{\lambda} \in S_{m+1} \); we first show that \( \exists k \in m+1 \) such that
         \( \lambda_k = 0_{R} \). This can be proven in (at least) three ways: The first one (the
         simplest) uses a direct computation, the second (quite related to the first) uses Newton's
         identities (with a full proof of them), finally the last one uses the Vandermonde matrix
@@ -119,9 +119,9 @@
         \textit{Using Newton's identities.}
         \\\\
         In the same settings as above, for \( n \in \mathbb{N}_{>0} \) and \( k \in \mathbb{N} \),
-        the previous direct computation proof above hints that some of the \( k \)-th power sum
-        polynomials in \( n \) variables and some of the \( k \)-th elementary symmetric polynomials
-        in \( n \) variables are related. Indeed, they are related by the so-called
+        the direct computation proof above hints that some of the \( k \)-th power sum polynomials
+        in \( n \) variables and some of the \( k \)-th elementary symmetric polynomials in \( n \)
+        variables are related. Indeed, they are related by the so-called
         \href{https://en.wikipedia.org/wiki/Newton%27s_identities}{Newton's identities} (valid for \( 1\leq k \leq n \)) over \( R\left[X_0,\dots,X_{n-1}\right] = R\left[\mathbf{X}\right] \):
         \[
             k_R e_k\left(\mathbf{X}\right) = \sum_{i=1}^k \left(-1\right)_R^{i-1}
@@ -217,8 +217,8 @@
         \( \alpha^{\boldsymbol{\lambda}}\left(j\right) \neq 0_{R} \), which implies
         \( \left(\alpha^{\boldsymbol{\lambda}}\left(j\right)\right)^{t_{\boldsymbol{\lambda}}} \neq
         0_{R} \) even if \( t_{\boldsymbol{\lambda}}=0 \)). Thus,
-        \( M_{\alpha^{\boldsymbol{\lambda}}} \) is a matrix for which its associated \( R \)-linear
-        operator is not injective. As is true in any commutative ring, we must have:
+        \( M_{\alpha^{\boldsymbol{\lambda}}} \) is a matrix whose associated \( R \)-linear operator
+        is not injective. As is true in any commutative ring, we must have:
         \[
             0_{R} = \operatorname{det}_{R}\left(M_{\alpha^{\boldsymbol{\lambda}}}\right) = \left(
             \prod_{j \in r} \alpha^{\boldsymbol{\lambda}}\left(j\right) \right)
@@ -228,10 +228,9 @@
         formula), ensuring that all standard properties, such as being a monoid morphism, or being
         multilinear over the ring \( R \) hold. We used the multilinear property in the last
         equality to extract from each column \( j \) the factor
-        \( \alpha^{\boldsymbol{\lambda}}\left(j\right) \), and where
-        \( V_{\alpha^{\boldsymbol{\lambda}}} \in R^{r \times r} \) is the Vandermonde matrix of
-        \( \alpha^{\boldsymbol{\lambda}} \), with entries
-        \( V_{\alpha^{\boldsymbol{\lambda}}}\left(i,j\right) =
+        \( \alpha^{\boldsymbol{\lambda}}\left(j\right) \); here \( V_{\alpha^{\boldsymbol{\lambda}}}
+        \in R^{r \times r} \) is the Vandermonde matrix of \( \alpha^{\boldsymbol{\lambda}} \), with
+        entries \( V_{\alpha^{\boldsymbol{\lambda}}}\left(i,j\right) =
         \left(\alpha^{\boldsymbol{\lambda}}\left(i\right)\right)^j \).
         \\\\
         By the lemma in Appendix [\appendixref{vandermonde-determinant}]:
@@ -254,7 +253,7 @@
         Hence, there exists \( k \in m+1 \) such that \( \lambda_k = 0_{R} \).
         \\\\
         So all of these three proofs showed that \( \exists k \in m+1,\, \lambda_k = 0_{R} \). Now
-        define then \( \boldsymbol{\lambda}' \colon m \to R \) by:
+        define \( \boldsymbol{\lambda}' \colon m \to R \) by:
         \[
             i \mapsto \begin{cases}
                 \lambda_i & \text{if } i < k \\
@@ -263,8 +262,8 @@
         \]
         From \( \lambda_k = 0_{R} \) and \( \boldsymbol{\lambda}\in S_{m+1} \), it must be true that
         \( \boldsymbol{\lambda}' \in S_m = \left\{0_m\right\} \) (use the same \( t \) and the fact
-        that \( m \leq m+1 \)). So that in total (clear), \( \boldsymbol{\lambda} = 0_{m+1} \) and
-        hence \( S_{m+1} \subset \left\{0_{m+1}\right\} \).
+        that \( m \leq m+1 \)). So, in total (clear), \( \boldsymbol{\lambda} = 0_{m+1} \) and hence
+        \( S_{m+1} \subset \left\{0_{m+1}\right\} \).
         \\\\
         This concludes the converse and finishes the induction step.
     \end{proof}

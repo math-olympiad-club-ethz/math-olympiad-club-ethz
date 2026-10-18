@@ -53,10 +53,11 @@
         \forall v\in K^n\left(\left(\forall w\in K^n \langle v,w\rangle_{K^n}=0_K\right) \rightarrow
         v=0_{K^n}\right)
     \]
-    (Just plug the canonical basis for \( w \) that is for each \( i\in n \) take \( w=e_i \) and
-    use the fact that \( v_i\cdot 1_{K}=v_i \) to conclude \( v_i=0_K \), and thus \( v=0_{K^n} \)).
+    (Just plug in the canonical basis for \( w \), that is, for each \( i\in n \) take \( w=e_i \)
+    and use the fact that \( v_i\cdot 1_{K}=v_i \) to conclude \( v_i=0_K \), and thus
+    \( v=0_{K^n} \)).
     \begin{theorem}[Double Orthogonal Complement]
-        In this setting, if \( \dim\left(E\right) \) is finite, \( B \) is non-degenerate, then
+        In this setting, if \( \dim\left(E\right) \) is finite and \( B \) is non-degenerate, then
         \begin{enumerate}
             \item For any \( K \)-subspace \( Q \subseteq E \);
                 \( \dim\left(E\right)=\dim\left(Q^{\perp}\right) + \dim\left(Q\right) \).
@@ -111,7 +112,8 @@
         \]
         which gives our desired equality.
         \\\\
-        \textit{2.} Let \( Q \subseteq \left(Q^{\perp}\right)^{\perp} \): Let \( q \in Q \), then,
+        \textit{2.} We show \( Q \subseteq \left(Q^{\perp}\right)^{\perp} \): let \( q \in Q \);
+        then,
         \[
             \forall v \in Q^\perp, \, 0=B\left(q, v\right) = B\left(v,q\right) \implies q \in
             \left(Q^{\perp}\right)^{\perp}.

@@ -67,8 +67,8 @@
     \href{https://en.wikipedia.org/wiki/Pseudorandom_number_generator}{pseudorandom number generator}
     (PRNG) seeded by an unpredictable value (e.g., system clock nanoseconds); see
     \href{https://en.wikipedia.org/wiki/Hardware_random_number_generator}{Hardware random number generator}
-    for more information.} a number between \( \left[0;1\right] \) and \textit{make a decision} with
-    this number. Formally, we introduce an auxiliary probability space
+    for more information.} a number in \( \left[0;1\right] \) and \textit{make a decision} with this
+    number. Formally, we introduce an auxiliary probability space
     \( \left(\Sigma,\mathcal{A},\mu\right) \) and let \( U:\Sigma\rightarrow\left[0;1\right] \) be a
     uniform random variable, i.e., \( U \sim \text{Unif}\left(\left[0;1\right]\right) \)\footnote{We
     can construct \( \left(\Sigma,\mathcal{A},\mu\right) \) as
@@ -78,7 +78,7 @@
     identity function, i.e., \( U\left(x\right) = x \) for \( x \in \left[0;1\right] \) and it is
     obviously a random variable with the uniform law on \( \left[0;1\right] \).}, that is, for any
     \( a,b \in\left[0;1\right] \) with \( a\leq b \) and any non-empty interval \( I\subset
-    \left[0;1\right] \) with \( \inf I=a \) and \( \sup I=b \) then \( \mu_{U}\left(I\right)=
+    \left[0;1\right] \) with \( \inf I=a \) and \( \sup I=b \), we have \( \mu_{U}\left(I\right)=
     b-a \). Adjoining this new probability space to the preceding one, we obtain a product space
     (which is a probability space):
     \[
@@ -220,7 +220,7 @@
         \sup\left\{\inf\left\{g'\left(2x\right) - g'\left(x\right)\,|\,
         x\in\mathbb{R}_{>0}\right\}\,|\, g'\in\mathcal{G}\right\}=0
     \]
-    because if we assume for contradiction that there exists \( c>0 \) and \( g'\in \mathcal{G} \)
+    because if we assume for contradiction that there exist \( c>0 \) and \( g'\in \mathcal{G} \)
     such that
     \[
         g'\left(2x\right)-g'\left(x\right)\ge c \quad \text{for all } x>0.
@@ -233,19 +233,19 @@
     \( nc< 1 \) for every \( n \), which is impossible since \( c \) is not an
     \href{https://en.wikipedia.org/wiki/Archimedean_property}{infinitesimal element} w.r.t. \( 1 \).
     However if we had more information on \( \alpha \) (say some lower or/and upper bound) we may
-    tune hyperparameter \( t,c\in\mathbb{R}_{>0} \) by doing first order optimization on for
-    examples: \\
+    tune the hyperparameters \( t,c\in\mathbb{R}_{>0} \) by doing first-order optimization on, for
+    example: \\
     \textit{Power-Law Functions}:
     \[
         g\left(x\right) = \frac{x^t}{x^t + c}.
     \]
     For a given \( t \), larger \( c \) makes it easier to switch for less and less big \( x \)
-    emphasizing to keep on only the very big \( x \), smaller \( c \) makes it harder to switch for
+    emphasizing to keep only the very big \( x \), smaller \( c \) makes it harder to switch for
     bigger and bigger \( x \) emphasizing to keep most of the \( x \). A fast transition occurs to
     the constant \( 1 \) when \( c\to 0 \). For a given \( c \), larger \( t \) makes it harder to
     switch for less and less big \( x \) emphasizing to keep most of the \( x \), smaller \( t \)
     makes it easier to switch for less and less big \( x \) emphasizing to keep only the very big
-    \( x \). A fast transitions to the constant \( \frac{1}{1+c} \) occurs when \( t\to 0 \). \\
+    \( x \). A fast transition to the constant \( \frac{1}{1+c} \) occurs when \( t\to 0 \). \\
     \textit{Logarithmic Functions}:
     \[
         g\left(x\right) = \frac{\ln\left(1 + x^t\right)}{\ln\left(1 + x^t\right) + c}.
@@ -282,10 +282,7 @@
         \( \alpha \) and \( \beta \) with \( \alpha < \beta \), since we can express \( \beta =
         k\alpha \) where \( k = \frac{\beta}{\alpha} > 1 \).
     \end{remark}
-    Here you can find a code to simulate:
-
-
-    \section{Implementation}
+    Here is some code to simulate the game:
     \begin{lstlisting}[style=mypython, caption={Decision Functions and Simulation Code}]
 import numpy as np
 import math
