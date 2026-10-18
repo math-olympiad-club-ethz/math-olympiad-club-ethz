@@ -71,6 +71,34 @@ Details, sources and the full change table: [`problem-bank/history-review.md`](p
       "succesor", "balading n to infinity" (letting n tend to infinity); in the informal discussion, a sentence stops
       in the middle ("if 1<α<2 then 1^α=1 and") and there are many grammar slips.
       (Checklist pass, 2026-10-17.)
+- [ ] **Left from the checklist pass on the reviewed problems** (2026-10-17 to 2026-10-19, steps 1-9 done): what
+      touches the mathematics or the author's wording.
+      - Math typos: 0009, line 45: "To have \(3^n + n > 6\)" covers a = 2 and a = 3, so \(a^n\)?; 0035, line 44: the
+        right side of the ⇔ repeats the primed left side (drop its primes?), and lines 206-208: \(\Gamma_{A,n}\) for the
+        \(\Gamma_{A_n,+}\) defined above?; 0037, line 199: \(f^{m+1}(\dots) = f(f^{-m}(\dots))\), so \(f^{m}\)?; 0055,
+        line 69: \(100 \cdot \ln(99) + \gamma\) lacks its brackets, \(100 \cdot (\ln(99) + \gamma)\).
+      - Wording: 0010 "the second derivative is positive" (nonnegative, as in the statement?); 0020 "we may tune";
+        0024 "the corresponding logarithmic matrix satisfies" (matrices satisfy?); 0034 "in the hyperlink" and "For
+        now, ... has been active"; 0035 "then, as we saw"; 0037 a clause without a verb (line 130); 0041 a run-on
+        sentence (line 55); 0044 a sentence without its verbs, where N₂ is never introduced (lines 91-93);
+        `capelli-lemma` "because then they are" and `field-norm` "multiplicities of each root" (agreement).
+      - 0044 still labels a theorem and its proof `\textit{Theorem:}` and `\textit{Proof:}`.
+      - 0014: a footnote ending on a display runs 4 pt into the margin (splitting the display changed nothing).
+      - Uniformity: statements label their parts as "(a)" paragraphs (0002, 0004, 0044, 0048, 0051, 0084) or as
+        `\item[(a)]` (0025, 0101, 0102, 0104, 0105). Keep both, or choose one?
+      - The problems with `review: none`: their entries of the checklist report wait for their review
+        (`problem-bank/seminar_antoine_problems_solutions/bank-checklist-report.md`, local).
+
+## Seminar rewrites (local, `problem-bank/seminar_antoine_problems_solutions/`)
+
+- [ ] Mean value theorem: Problems 1-4 are rewritten and approved (in the seminar's `problems/`, waiting for the
+      bank); Problems 5-10 are left. Then the other sheets: differential inequalities, integral inequalities, matrix
+      algebra, determinant and trace, eigenvalues, rank, polynomials, permutations, mock competition, Series 7, 14
+      and 19, and the group theory bonus.
+- [ ] Guide proposals waiting for Antoine's answer: "Checking an example" (announce the hypotheses being checked,
+      "First, ... Second, ...", and tie the example back to the claim; Continuity 7); the sin² + cos² shortcut as an
+      example under "Look for the shortest argument" (Continuity 7); "Shorten the detours, not the author's chain"
+      (Continuity 9); the formatter adding the spaces inside `\( \)` on every Cmd+S.
 
 ## Problem bank — tags (minor, ideas 2026-10-06)
 
