@@ -38,27 +38,28 @@
     \( b \in ]0,1[ \cap \mathbb{Q} \) such that \( f\left(0\right), f\left(1\right) \leq
     f\left(b\right) \). Take \( a = 0 \) and \( c = 1 \), then \( a < b < c \) and
     \( f\left(a\right), f\left(c\right) \leq f\left(b\right) \), as desired.
-    \\\\
-    \textit{Remark:}
-    Notice that we did not use all the properties of \( \left\langle\mathbb{Q},<\right\rangle \); in
-    particular, we did not use any property of its elements, nor the fact that its order \( < \) has
-    neither a first nor a last element. In fact, one easily adapts the above proof to any partial
-    strict \href{https://en.wikipedia.org/wiki/Dense_order}{dense order} \( \left\langle
-    S,<_S\right\rangle \) with at least two \( <_S \)-comparable elements: any \( f : S \to
-    \mathbb{Z} \) has the property that \( \exists a,b,c \in S \) such that \( a <_S b <_S c \) with
-    \( f\left(a\right), f\left(c\right) \leq f\left(b\right) \). Again, we may assume, for the sake
-    of contradiction, that \( \forall a,b,c \in S \) with \( a <_S b <_S c \), \( f\left(a\right) =
-    f\left(b\right) = f\left(c\right) \) does not hold. Take two \( <_S \)-comparable elements
-    \( a,c \in S \) with \( a <_S c \). By the axiom of countable choice, one easily obtains a
-    countable \( <_S \)-chain \( \mathbf{x} : \mathbb{N} \hookrightarrow S \) such that for all
-    \( i \in \mathbb{N}_{>0} \),
-    \[
-        a <_S \mathbf{x}\left(i+1\right) <_S \mathbf{x}\left(i\right) <_S \mathbf{x}\left(0\right)
-        <_S c.
-    \]
-    Hence, for the same reason as before, \( f|_{\operatorname{ran}\left(\mathbf{x}\right)} \) is
-    unbounded. In particular, there exists \( i \in \mathbb{N} \) such that \( f\left(a\right),
-    f\left(c\right) \leq f\left(\mathbf{x}\left(i\right)\right) \). Then define \( b :=
-    \mathbf{x}\left(i\right) \in S \). We have \( a <_S b <_S c \), and \( f\left(a\right),
-    f\left(c\right) \leq f\left(b\right) \), as desired.
+    \begin{remark}
+        Notice that we did not use all the properties of
+        \( \left\langle\mathbb{Q},<\right\rangle \); in particular, we did not use any property of
+        its elements, nor the fact that its order \( < \) has neither a first nor a last element. In
+        fact, one easily adapts the above proof to any partial strict
+        \href{https://en.wikipedia.org/wiki/Dense_order}{dense order} \( \left\langle
+        S,<_S\right\rangle \) with at least two \( <_S \)-comparable elements: any \( f : S \to
+        \mathbb{Z} \) has the property that \( \exists a,b,c \in S \) such that \( a <_S b <_S c \)
+        with \( f\left(a\right), f\left(c\right) \leq f\left(b\right) \). Again, we may assume, for
+        the sake of contradiction, that \( \forall a,b,c \in S \) with \( a <_S b <_S c \),
+        \( f\left(a\right) = f\left(b\right) = f\left(c\right) \) does not hold. Take two
+        \( <_S \)-comparable elements \( a,c \in S \) with \( a <_S c \). By the axiom of countable
+        choice, one easily obtains a countable \( <_S \)-chain \( \mathbf{x} : \mathbb{N}
+        \hookrightarrow S \) such that for all \( i \in \mathbb{N}_{>0} \),
+        \[
+            a <_S \mathbf{x}\left(i+1\right) <_S \mathbf{x}\left(i\right) <_S
+            \mathbf{x}\left(0\right) <_S c.
+        \]
+        Hence, for the same reason as before, \( f|_{\operatorname{ran}\left(\mathbf{x}\right)} \)
+        is unbounded. In particular, there exists \( i \in \mathbb{N} \) such that
+        \( f\left(a\right), f\left(c\right) \leq f\left(\mathbf{x}\left(i\right)\right) \). Then
+        define \( b := \mathbf{x}\left(i\right) \in S \). We have \( a <_S b <_S c \), and
+        \( f\left(a\right), f\left(c\right) \leq f\left(b\right) \), as desired.
+    \end{remark}
 \end{solution}

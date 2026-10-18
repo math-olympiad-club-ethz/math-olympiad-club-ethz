@@ -44,29 +44,31 @@ written; this list covers the mechanical checks, the ones a tool or a careful re
     spelling, the same within a file.
 14. **Mathematics**: every step is checked (the math check of each rewrite round): no false claim, no missing case,
     every limit and every cited theorem with its reason, the hypotheses of a theorem checked where it is used.
-15. **Citations**: every `\appendixref{<name>}` points to an existing result (`problem-bank/appendix/`, or the
+15. **Links**: a niche name (a less common theorem, a named class of numbers) is linked where it is named, with
+    `\href{...}{name}` (writing-style.md, "A niche name gets its link").
+16. **Citations**: every `\appendixref{<name>}` points to an existing result (`problem-bank/appendix/`, or the
     seminar's `appendix/` while a rewrite is in progress) whose statement is exactly what the solution uses.
 
 ## The header
 
-16. **Title**: it names the mathematics, as the bank's titles do, with no meta words; plain text (it is printed in
+17. **Title**: it names the mathematics, as the bank's titles do, with no meta words; plain text (it is printed in
     the PDF headings).
-17. **Origin**: checked against the official paper, never only against a comment: the seminar repository's comments
+18. **Origin**: checked against the official paper, never only against a comment: the seminar repository's comments
     swapped IMC 2008 and IMC 2009 (Continuity 8 and 9). The earliest known source wins. `references` starts with
     "Earliest known appearance (to the best of our knowledge):".
-18. **Review fields**: `difficulty` and `review: human` are set by Antoine (or a board member), never by a tool;
+19. **Review fields**: `difficulty` and `review: human` are set by Antoine (or a board member), never by a tool;
     `history: ai` stays until a person has checked the history fields.
 
 ## When it enters the bank
 
-19. **Duplicates**: compare it with the bank's problems first; a duplicate is merged or replaces the bank's version
+20. **Duplicates**: compare it with the bank's problems first; a duplicate is merged or replaces the bank's version
     (as Telescoping 3 and 7 did with 0007 and 0026).
-20. **Number and file**: `cd website-code && python3 -m bank.number --apply --no-git` turns `new-<title>.tex` into
+21. **Number and file**: `cd website-code && python3 -m bank.number --apply --no-git` turns `new-<title>.tex` into
     `NNNN-<title>.tex` (plain rename, no git command; without `--no-git` it runs `git mv`); the first comment line
     (rewritten by AI, scan pages) goes, and the header keeps its
     `% --- history: all optional, leave EMPTY if unknown ---` line.
-21. **Shared results**: a result of the seminar's `appendix/` that the problem cites moves to `problem-bank/appendix/`
+22. **Shared results**: a result of the seminar's `appendix/` that the problem cites moves to `problem-bank/appendix/`
     under the same name; after Antoine's review, only its first comment line stays
     (`% Shared result, cited from solutions with \appendixref{<name>}.`).
-22. **Full check, then commits**: `cd website-code && python3 build.py --preview && npm test` passes (only now, not
+23. **Full check, then commits**: `cd website-code && python3 build.py --preview && npm test` passes (only now, not
     during the rewrite rounds); then a commit series, made after Antoine's OK, never pushed by a tool.
