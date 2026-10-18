@@ -15,7 +15,7 @@ from bank import appendix as A  # noqa: E402
 from bank import paths  # noqa: E402
 from bank import problems as P  # noqa: E402
 from bank import number  # noqa: E402
-from bank.data import build_index, proposed_origin, visible_problems  # noqa: E402
+from bank.data import MASKED_SOLUTION, build_index, mask_solutions, proposed_origin, visible_problems  # noqa: E402
 from bank.stitch import bank_sources, build_bodies, figure_context, find_figures, make_main, namespace_labels, parse_ids, resolve_citations, parse_bib, split_body  # noqa: E402
 from bank.validate import proof_sources  # noqa: E402
 from bank.tags import load_tags  # noqa: E402
@@ -114,6 +114,21 @@ class Visibility(unittest.TestCase):
         self.assertEqual([(r["id"], r["proposed"]) for r in pub["problems"]], [(1, False), (2, True)])
         self.assertEqual(proposed_origin("Putnam 1989, A3"), "Putnam 1989, A3; proposed, not reviewed yet")
         self.assertEqual(proposed_origin(""), "Proposed, not reviewed yet")
+
+    def test_proposed_solutions_are_masked_on_the_public_site(self):
+        good = parse("0001-good-problem.tex")                                       # review: human, with a solution
+        masked = dict(parse("0001-good-problem.tex"), review="none")
+        pub = build_index([masked], TAGS)["problems"][0]
+        self.assertEqual((pub["proposed"], pub["solutionMasked"], pub["hasSolution"], pub["solved"], pub["partial"]),
+                         (True, True, False, False, False))
+        pre = build_index([masked], TAGS, preview=True)["problems"][0]                # the preview shows everything
+        self.assertEqual((pre["solutionMasked"], pre["hasSolution"]), (False, True))
+        self.assertFalse(build_index([good], TAGS)["problems"][0]["solutionMasked"])
+        source = [{"id": "0001", "solution": "S", "cites": ["alpha"]}, {"id": "0002", "solution": "T", "cites": ["beta"]},
+                  {"id": "0003", "solution": None, "cites": []}]
+        mask_solutions(source, {"0002", "0003"})
+        self.assertEqual([(x["solution"], x["cites"]) for x in source],
+                         [("S", ["alpha"]), (MASKED_SOLUTION, []), (None, [])])
 
     def test_new_files_are_never_public(self):
         new = parse("new-a-proposed-problem.tex", CONTRIB)
@@ -864,6 +879,10 @@ class PublicBuildCheck(unittest.TestCase):
             write("static/busytex/busytex.wasm.gz", "12345")
             write("static/busytex/manifest.json", {"version": "e1", "files": {"busytex.wasm.gz": {"bytes": 5}}})
             self.assertEqual(check(site, [good, other]), [])
+            write("static/bank/bodies.json", {"build": "b1", "problems": {"0001": {"figures": {"fig0001-1.pdf": {}}},
+                                                                       "0002": {"figures": {}, "origin": "Proposed, not reviewed yet",
+                                                                                "solution": "A proof."}}})
+            self.assertIn("the solutions of proposed problems must not be published: ['0002']", "\n".join(check(site, [good, other])))
             index = build_index([good, other], TAGS)
             index["problems"][1]["proposed"] = False                                    # an unreviewed problem shown as reviewed
             write("static/bank/index.json", index)

@@ -5,9 +5,9 @@ build.
 
 Exit 1 with one line per problem if the site holds more (or less) than the rule "every problem with a final number,
 the ones without review: human marked proposed" allows (bank/data.py): index.json, bodies.json and figures/ must hold
-exactly those problems and the shared results their solutions cite (bank/appendix.py), the proposed ones marked as
-such in the index and in their PDF origin line, the pages must embed the public index, and the engine bundle must be
-complete.
+exactly those problems and the shared results that the solutions of the reviewed ones cite (bank/appendix.py), the
+proposed ones marked as such in the index and in their PDF origin line and without their solution (bank/data.py::
+mask_solutions), the pages must embed the public index, and the engine bundle must be complete.
 """
 import argparse
 import json
@@ -19,7 +19,7 @@ sys.path.insert(0, ROOT)
 from bank import appendix as A  # noqa: E402
 from bank import paths  # noqa: E402
 from bank import problems as P  # noqa: E402
-from bank.data import PROPOSED_NOTE, is_proposed, visible_problems  # noqa: E402
+from bank.data import MASKED_SOLUTION, PROPOSED_NOTE, is_proposed, visible_problems  # noqa: E402
 from bank.validate import problem_cites  # noqa: E402
 
 
@@ -54,6 +54,9 @@ def check(site_dir, problems, items=()):
         if unmarked or marked:
             errors.append(f"static/bank/index.json: proposed must be true exactly for the problems without review: human "
                           f"(not marked: {unmarked}; marked but reviewed: {marked})")
+        shown = [r.get("id") for r in index.get("problems", []) if r.get("id") in proposed_ids and r.get("hasSolution")]
+        if shown:
+            errors.append(f"static/bank/index.json: proposed problems listed with a solution (masked on the public site): {shown}")
     bodies = load("bodies.json")
     html = ""
     try:
@@ -75,7 +78,10 @@ def check(site_dir, problems, items=()):
         if wrong:
             errors.append(f"static/bank/bodies.json: the PDF origin line must end with '{PROPOSED_NOTE}' exactly for the "
                           f"proposed problems: wrong in {wrong}")
-        published = [p for p in visible_problems(problems, preview=False)]
+        leaked = sorted(k for k, b in bodies.items() if int(k) in proposed_ids and b.get("solution") not in (None, MASKED_SOLUTION))
+        if leaked:
+            errors.append(f"static/bank/bodies.json: the solutions of proposed problems must not be published: {leaked}")
+        published = [p for p in visible_problems(problems, preview=False) if not is_proposed(p)]   # masked solutions cite nothing
         cites_of = {it["name"]: it["cites"] for it in items if it["name"]}
         want_results = sorted(A.closure([n for p in published for n in problem_cites(p)], cites_of))
         if sorted(appendix) != want_results:

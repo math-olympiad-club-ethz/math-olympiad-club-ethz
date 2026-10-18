@@ -2,9 +2,10 @@
 
 Visibility rule: every problem with a final number is published.  The ones without `review: human` are proposed
 (is_proposed): their index row says so, the origin line of their PDF heading ends with PROPOSED_NOTE, and the Problems
-page lists them only behind its "Show proposed problems" switch.  In preview mode (build.py --preview) every problem is
-included and carries its review status so the maintainer can review in the real UI (nothing is marked proposed there);
-new-*.tex files appear under their provisional number.
+page lists them only behind its "Show proposed problems" switch.  Their solutions are masked (mask_solutions): the site
+shows their statements only, the solution stays in the .tex file until a board member reviews it.  In preview mode
+(build.py --preview) every problem is included with its solution and carries its review status so the maintainer can
+review in the real UI (nothing is marked proposed there); new-*.tex files appear under their provisional number.
 """
 import re
 
@@ -12,6 +13,8 @@ from .problems import origin_label
 
 
 PROPOSED_NOTE = "proposed, not reviewed yet"
+# What a solutions PDF prints instead of the solution of a proposed problem (defined in problem-bank/preamble.tex).
+MASKED_SOLUTION = r"\bankunderreview"
 
 
 def is_proposed(p):
@@ -22,6 +25,18 @@ def is_proposed(p):
 def proposed_origin(origin):
     """The origin line of a proposed problem's PDF heading: its origin, then PROPOSED_NOTE."""
     return f"{origin}; {PROPOSED_NOTE}" if origin else PROPOSED_NOTE[0].upper() + PROPOSED_NOTE[1:]
+
+
+def mask_solutions(source, proposed_ids):
+    """The public site shows a proposed problem's statement, not its solution: in the stitch sources `source`
+    (stitch.bank_sources) of the IDs `proposed_ids` ("0042"), the solution becomes MASKED_SOLUTION and the problem
+    cites no shared result (a result that only a masked solution cites is not published either).  The .tex files are
+    not touched.  Returns `source`."""
+    for s in source:
+        if s["id"] in proposed_ids and s.get("solution") is not None:
+            s["solution"] = MASKED_SOLUTION
+            s["cites"] = []
+    return source
 
 
 def visible_problems(problems, preview=False):
@@ -61,7 +76,12 @@ def index_entry(p, tags):
 
 
 def build_index(problems, tags, preview=False):
-    rows = [dict(index_entry(p, tags), proposed=not preview and is_proposed(p)) for p in visible_problems(problems, preview)]
+    rows = []
+    for p in visible_problems(problems, preview):
+        row = dict(index_entry(p, tags), proposed=not preview and is_proposed(p), solutionMasked=False)
+        if row["proposed"] and row["hasSolution"]:            # the site has no solution to show: see mask_solutions
+            row.update(hasSolution=False, partial=False, solved=False, solutionMasked=True)
+        rows.append(row)
     rows.sort(key=lambda r: r["id"])
     return {"preview": bool(preview), "count": len(rows), "problems": rows}
 

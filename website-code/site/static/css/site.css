@@ -517,6 +517,7 @@ input[type="checkbox"]:hover { border-color: var(--accent-text); }
   color: var(--accent-text); background: var(--bg); border: 1px solid var(--accent-text);
 }
 .bank-marker-partial { border-style: dashed; }
+.bank-marker-masked { border-style: dotted; }
 .bank-review { padding: 1px 6px; font-size: var(--fs-xs); line-height: var(--lh-xs); color: var(--ink-dim); border: 1px dashed var(--chip-line); }
 .bank-review-human { border-style: solid; color: var(--ok); }
 .bank-review-new { color: var(--ok); border-color: var(--ok); }

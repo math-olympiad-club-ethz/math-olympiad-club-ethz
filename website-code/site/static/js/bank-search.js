@@ -5,7 +5,8 @@
      tags.json   {area:[{slug,name,description,aliases,parent,children,depth}], methods:[{…,group}],
                   difficulty:[…], origin:[{…,kind}]}
      index.json  {preview, count, problems:[{id,title,file,area:[],methods:[],difficulty,difficultySource,
-                  origin,alsoIn:[],originDate,originYear,originLabel,hasSolution,partial,solved,review,provisional,proposed}]}
+                  origin,alsoIn:[],originDate,originYear,originLabel,hasSolution,partial,solved,review,provisional,proposed,solutionMasked}]}
+                 (solutionMasked: a proposed problem whose solution the public site does not show yet, bank/data.py)
 */
 
 export const TAG_TYPES = ['area', 'methods', 'difficulty', 'origin'];

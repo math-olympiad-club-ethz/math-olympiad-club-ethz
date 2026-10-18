@@ -46,7 +46,7 @@ from bank import appendix as A  # noqa: E402
 from bank import paths  # noqa: E402
 from bank import stitch  # noqa: E402
 from bank.number import assign_provisional_ids, read_last_id  # noqa: E402
-from bank.data import build_index, build_tag_catalogue, is_proposed, proposed_origin, visible_problems  # noqa: E402
+from bank.data import build_index, build_tag_catalogue, is_proposed, mask_solutions, proposed_origin, visible_problems  # noqa: E402
 from bank.tags import TagError, load_tags  # noqa: E402
 from bank.validate import PROOF_CACHE, check_bank, compile_failures  # noqa: E402
 
@@ -113,6 +113,7 @@ def write_site_data(probs, items, tags, preview):
         for s in source:
             if s["id"] in proposed:
                 s["origin"] = proposed_origin(s["origin"])
+        mask_solutions(source, proposed)  # their statements only: the solutions stay in the .tex files
     # the shared results these problems cite, and the ones those cite (bank/appendix.py): only those are published
     cites_of = {it["name"]: it["cites"] for it in items if it["name"]}
     wanted = A.closure([n for s in source for n in s["cites"]], cites_of)

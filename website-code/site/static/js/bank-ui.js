@@ -412,7 +412,8 @@ function buildRow(p) {
   }
   tags.append(difficultyChip(p));
   for (const m of p.methods) tags.append(tagBadge('methods', m, { clickable: true }));      // visible only with "Show methods" (CSS)
-  const marker = !p.hasSolution ? el('span', { class: 'bank-marker bank-marker-unsolved', title: 'No solution in the bank yet', text: 'no solution' })
+  const marker = p.solutionMasked ? el('span', { class: 'bank-marker bank-marker-masked', title: 'The solution is published once it has been reviewed', text: 'solution under review' })
+    : !p.hasSolution ? el('span', { class: 'bank-marker bank-marker-unsolved', title: 'No solution in the bank yet', text: 'no solution' })
     : p.partial ? el('span', { class: 'bank-marker bank-marker-partial', title: 'The solution is unfinished', text: 'partial solution' }) : null;
   const review = data.index.preview ? el('span', { class: `bank-review bank-review-${p.review}`, text: `review: ${p.review}` })
     : p.proposed ? el('span', { class: 'bank-review bank-review-proposed', title: 'Not reviewed by the board yet: it may contain mistakes', text: 'proposed' }) : null;
