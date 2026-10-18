@@ -1,0 +1,52 @@
+% title:          Order-n derivative equals the function
+% area:           derivatives
+% methods:        mean-value-theorem
+% difficulty:     easy
+% difficulty-ai:  medium
+% status:
+% review:         human
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         imc
+% origin-date:    1994-07-30
+% origin-number:  Day 2, Problem 3
+% also-in:
+% references:     Earliest known appearance (to the best of our knowledge): IMC 1994, Plovdiv, Bulgaria, Second day, July 30, 1994, Problem 3 (the seminar shifts n by one) - https://www.imc-math.org.uk/imc1994/prob_sol.pdf
+% history:        ai
+\begin{problem}
+    Let \( n \in \mathbb{N}_{>0} \) and \( f \in D^n\left(\mathbb{R},\mathbb{R}\right) \)
+    (\( n \)-times differentiable). Suppose that there exist \( a, b \in \mathbb{R} \) with
+    \( a < b \) such that \( \sum_{i=0}^{n-1} f^{\left(i\right)}\left(a\right) \neq 0 \) and
+    \[
+        \frac{\sum_{i=0}^{n-1} f^{\left(i\right)}\left(b\right)}{\sum_{i=0}^{n-1} f^{\left(i\right)}\left(a\right)}
+        \in \mathbb{R}_{>0}, \quad
+        \log\left(\frac{\sum_{i=0}^{n-1} f^{\left(i\right)}\left(b\right)}{\sum_{i=0}^{n-1} f^{\left(i\right)}\left(a\right)}\right)
+        = b-a.
+    \]
+    Show that there exists \( c \in \left]a;b\right[ \) with \( f^{\left(n\right)}\left(c\right) =
+    f\left(c\right) \).
+\end{problem}
+\begin{solution}
+    Define \( g := \sum_{i=0}^{n-1} f^{\left(i\right)} \in D^1\left(\mathbb{R},\mathbb{R}\right) \)
+    (each \( f^{\left(i\right)} \) with \( i \leq n-1 \) is differentiable, as \( f \in
+    D^n\left(\mathbb{R},\mathbb{R}\right) \)). Then \( g\left(a\right) \neq 0 \) and
+    \( \frac{g\left(b\right)}{g\left(a\right)} \in \mathbb{R}_{>0} \), and, by hypothesis,
+    \( \frac{g\left(b\right)}{g\left(a\right)} = \exp\left(b-a\right) =
+    \frac{\exp\left(b\right)}{\exp\left(a\right)} \), i.e., \( \exp\left(-b\right)g\left(b\right) =
+    \exp\left(-a\right)g\left(a\right) \).
+    \\\\
+    Now, apply the mean value theorem to \( h := \exp\left(-\_\right) \cdot g \in
+    D^1\left(\mathbb{R},\mathbb{R}\right) \) on \( \left[a;b\right] \): there exists \( c \in
+    \left]a;b\right[ \) with
+    \[
+        h'\left(c\right) = \frac{h\left(b\right)-h\left(a\right)}{b-a} =
+        \frac{\exp\left(-b\right)g\left(b\right)-\exp\left(-a\right)g\left(a\right)}{b-a} = 0,
+    \]
+    i.e., \( \exp\left(-c\right)\left(g'\left(c\right)-g\left(c\right)\right) = 0 \), so that, as
+    \( \exp\left(-c\right) \neq 0 \), \( g'\left(c\right) = g\left(c\right) \), i.e.,
+    \[
+        \sum_{i=1}^{n} f^{\left(i\right)}\left(c\right) = \sum_{i=0}^{n-1}
+        f^{\left(i\right)}\left(c\right),
+    \]
+    which gives \( f^{\left(n\right)}\left(c\right) = f\left(c\right) \) after cancelling the terms
+    \( f^{\left(i\right)}\left(c\right) \) with \( 1 \leq i \leq n-1 \) on both sides.
+\end{solution}

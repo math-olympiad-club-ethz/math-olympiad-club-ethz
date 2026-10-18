@@ -1,0 +1,63 @@
+% title:          Unique fixed points under derivative restriction
+% area:           derivatives, limits-continuity
+% methods:        mean-value-theorem, intermediate-value-theorem, contradiction
+% difficulty:     easy
+% difficulty-ai:  easy
+% status:
+% review:         human
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         jarnik
+% origin-date:    2012-03-30
+% origin-number:  Category I, Problem 1
+% also-in:
+% references:     Earliest known appearance (to the best of our knowledge): VJIMC 2012 (22nd), Ostrava, 30 March 2012, Category I, Problem 1 - https://vjimc.osu.cz/storage/uploads/j22problems1.pdf; official solution - https://vjimc.osu.cz/storage/uploads/j22solutions1.pdf
+% history:        ai
+\begin{problem}
+    Let \( f \colon \left[0;1\right] \longrightarrow \left[0;1\right] \) be continuous,
+    differentiable on \( \left]0;1\right[ \), with \( \left|f'\left(x\right)\right| \neq 1 \) for
+    all \( x \in \left]0;1\right[ \). Show that there exists a unique \( \alpha \in
+    \left[0;1\right] \) such that \( f\left(\alpha\right) = \alpha \), and a unique \( \beta \in
+    \left[0;1\right] \) such that \( f\left(\beta\right) = 1-\beta \).
+\end{problem}
+\begin{solution}
+    We show that there exists a unique \( \alpha \in \left[0;1\right] \) such that
+    \( f\left(\alpha\right) = \alpha \). Define \( g := f-\mathrm{Id}_{\left[0;1\right]} \), which
+    is continuous on \( \left[0;1\right] \) and differentiable on \( \left]0;1\right[ \). Notice
+    that \( g\left(0\right) = f\left(0\right) \geq 0 \) and \( g\left(1\right) = f\left(1\right)-1
+    \leq 0 \). Thus, by the intermediate value theorem, there exists \( \alpha \in
+    \left[0;1\right] \) with \( g\left(\alpha\right) = 0 \), i.e., \( f\left(\alpha\right) =
+    \alpha \), which shows existence. Now, let \( \alpha' \in \left[0;1\right] \) with
+    \( f\left(\alpha'\right) = \alpha' \), so that \( g\left(\alpha'\right) = 0 \), and suppose by
+    contradiction that \( \alpha \neq \alpha' \). As \( g \) is continuous on the interval
+    \( \left[\alpha;\alpha'\right] \cup \left[\alpha';\alpha\right] \subset \left[0;1\right] \) and
+    differentiable inside it, the mean value theorem gives \( c \in \left]\alpha;\alpha'\right[ \cup
+    \left]\alpha';\alpha\right[ \subset \left]0;1\right[ \) with
+    \[
+        f'\left(c\right)-1 = g'\left(c\right) =
+        \frac{g\left(\alpha\right)-g\left(\alpha'\right)}{\alpha-\alpha'} =
+        \frac{0-0}{\alpha-\alpha'} = 0,
+    \]
+    i.e., \( \left|f'\left(c\right)\right| = 1 \), which contradicts the assumption on \( f \).
+    Hence, \( \alpha = \alpha' \), which shows uniqueness.
+    \\\\
+    We now show that there exists a unique \( \beta \in \left[0;1\right] \) such that
+    \( f\left(\beta\right) = 1-\beta \). Define \( h :=
+    f-\left(\underline{1}-\mathrm{Id}_{\left[0;1\right]}\right) \), which is continuous on
+    \( \left[0;1\right] \) and differentiable on \( \left]0;1\right[ \). Notice that
+    \( h\left(0\right) = f\left(0\right)-1 \leq 0 \) and \( h\left(1\right) = f\left(1\right) \geq
+    0 \). Thus, by the intermediate value theorem, there exists \( \beta \in \left[0;1\right] \)
+    with \( h\left(\beta\right) = 0 \), i.e., \( f\left(\beta\right) = 1-\beta \), which shows
+    existence. Now, let \( \beta' \in \left[0;1\right] \) with \( f\left(\beta'\right) =
+    1-\beta' \), so that \( h\left(\beta'\right) = 0 \), and suppose by contradiction that
+    \( \beta \neq \beta' \). As \( h \) is continuous on the interval \( \left[\beta;\beta'\right]
+    \cup \left[\beta';\beta\right] \subset \left[0;1\right] \) and differentiable inside it, the
+    mean value theorem gives \( c \in \left]\beta;\beta'\right[ \cup \left]\beta';\beta\right[
+    \subset \left]0;1\right[ \) with
+    \[
+        f'\left(c\right)+1 = h'\left(c\right) =
+        \frac{h\left(\beta\right)-h\left(\beta'\right)}{\beta-\beta'} = \frac{0-0}{\beta-\beta'} =
+        0,
+    \]
+    i.e., \( \left|f'\left(c\right)\right| = 1 \), which contradicts the assumption on \( f \).
+    Hence, \( \beta = \beta' \), which shows uniqueness.
+\end{solution}

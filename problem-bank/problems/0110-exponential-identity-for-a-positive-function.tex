@@ -1,0 +1,44 @@
+% title:          Exponential identity for a positive function
+% area:           derivatives
+% methods:        mean-value-theorem
+% difficulty:     easy
+% difficulty-ai:  easy
+% status:
+% review:         human
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         jarnik
+% origin-date:    2016-04-08
+% origin-number:  Category I, Problem 1
+% also-in:
+% references:     Earliest known appearance (to the best of our knowledge): VJIMC 2016, Category I, Problem 1 - https://vjimc.osu.cz/storage/uploads/j26problems1.pdf
+% history:        ai
+\begin{problem}
+    Let \( f \colon \mathbb{R} \longrightarrow \left]0;+\infty\right[ \) be differentiable. Show
+    that there exists \( c \in \left]0;1\right[ \) such that
+    \[
+        \exp\left(f'\left(c\right)\right) f\left(0\right)^{f\left(c\right)} =
+        f\left(1\right)^{f\left(c\right)}.
+    \]
+\end{problem}
+\begin{solution}
+    Notice that \( \log \circ f \colon \mathbb{R} \longrightarrow \mathbb{R} \) is well defined and
+    differentiable, as a composition of differentiable functions (\( f \) takes its values in
+    \( \left]0;+\infty\right[ \)). We apply the mean value theorem to \( \log \circ
+    f|_{\left[0;1\right]} \), which is continuous on \( \left[0;1\right] \) and differentiable on
+    \( \left]0;1\right[ \): there exists \( c \in \left]0;1\right[ \) with
+    \[
+        \left(\log \circ f\right)'\left(c\right) =
+        \frac{\left(\log \circ f\right)\left(1\right)-\left(\log \circ f\right)\left(0\right)}{1-0},
+    \]
+    i.e., \( \frac{f'\left(c\right)}{f\left(c\right)} =
+    \log\left(\frac{f\left(1\right)}{f\left(0\right)}\right) \). Exponentiating both sides gives
+    \( \exp\left(\frac{f'\left(c\right)}{f\left(c\right)}\right) =
+    \frac{f\left(1\right)}{f\left(0\right)} \), so that, raising both sides to the power
+    \( f\left(c\right) > 0 \),
+    \[
+        \exp\left(f'\left(c\right)\right) =
+        \left(\frac{f\left(1\right)}{f\left(0\right)}\right)^{f\left(c\right)}, \quad \text{i.e.}
+        \quad \exp\left(f'\left(c\right)\right) f\left(0\right)^{f\left(c\right)} =
+        f\left(1\right)^{f\left(c\right)}.
+    \]
+\end{solution}

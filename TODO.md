@@ -14,7 +14,7 @@ Open work across the repository. Tick items off (`- [x]`) or delete them when do
         ("to finish" in red), 0069 (the three limits and the final value are missing). The shared result
         `gelfond-schneider-theorem` has no proof yet ("Proof not yet written"); shared results have no review field.
       - The fixes listed below under "LaTeX fixes": 0045, 0049, 0056, 0057.
-- [ ] **History check**: check the problems with `history: ai` and set `history: human` (32 on 2026-10-18: 0013, 0030–0031, 0052, 0056, 0062, 0081–0106).
+- [ ] **History check**: check the problems with `history: ai` and set `history: human` (36 on 2026-10-19: 0013, 0030–0031, 0052, 0056, 0062, 0081–0110).
 - [ ] 0081–0087 (VJIMC 2002–2014, added 2026-09-29/30): statement **and** solution written by AI at Antoine's request
       (see the `% AI-WRITTEN` comment in each file); review them like the others before `review: human`. Review
       `problem-bank/appendix/cauchy-group-theorem.tex` (also AI-written) with 0085 and 0087: it is published with the first of
@@ -91,10 +91,9 @@ Details, sources and the full change table: [`problem-bank/history-review.md`](p
 
 ## Seminar rewrites (local, `problem-bank/seminar_antoine_problems_solutions/`)
 
-- [ ] Mean value theorem: Problems 1-4 are rewritten and approved (in the seminar's `problems/`, waiting for the
-      bank); Problems 5-10 are left. Then the other sheets: differential inequalities, integral inequalities, matrix
-      algebra, determinant and trace, eigenvalues, rank, polynomials, permutations, mock competition, Series 7, 14
-      and 19, and the group theory bonus.
+- [ ] Mean value theorem: Problems 1-4 entered the bank on 2026-10-19 as 0107-0110; Problems 5-10 are left. Then the
+      other sheets: differential inequalities, integral inequalities, matrix algebra, determinant and trace,
+      eigenvalues, rank, polynomials, permutations, mock competition, Series 7, 14 and 19, and the group theory bonus.
 - [ ] Guide proposals waiting for Antoine's answer: "Checking an example" (announce the hypotheses being checked,
       "First, ... Second, ...", and tie the example back to the claim; Continuity 7); the sin² + cos² shortcut as an
       example under "Look for the shortest argument" (Continuity 7); "Shorten the detours, not the author's chain"

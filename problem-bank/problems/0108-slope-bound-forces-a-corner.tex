@@ -1,0 +1,78 @@
+% title:          Slope bound forces a corner
+% area:           derivatives, analytic-inequalities
+% methods:        mean-value-theorem, contradiction
+% difficulty:     medium
+% difficulty-ai:  easy
+% status:
+% review:         human
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         jarnik
+% origin-date:    2022-04-02
+% origin-number:  Category II, Problem 1
+% also-in:
+% references:     Earliest known appearance (to the best of our knowledge): VJIMC 2022 (30th), Ostrava, 2 April 2022, Category II, Problem 1 - https://vjimc.osu.cz/storage/uploads/j30problems2.pdf; official solution - https://vjimc.osu.cz/storage/uploads/j30solutions2.pdf
+% history:        ai
+\begin{problem}
+    Define
+    \[
+        S := \left\{ f \in D^1\left(\mathbb{R},\mathbb{R}\right) \,\middle|\, f\left(0\right) =
+        f\left(1\right) = 1 \wedge \forall x \in \left[0;1\right]
+        \ \left|f'\left(x\right)\right|_{\mathbb{R}} \leq 2 \wedge \left|\int_0^1 f\left(x\right)
+        \,\mathrm{d}x\right|_{\mathbb{R}} \leq \frac{1}{2} \right\}.
+    \]
+    Determine whether \( S \) is empty.
+\end{problem}
+\begin{solution}
+    Let \( f \in S \) and \( x \in \left]0;1\right] \). By the mean value theorem applied to
+    \( f|_{\left[0;x\right]} \) (\( f \) is differentiable), there exists \( c \in
+    \left]0;x\right[ \) with
+    \[
+        f'\left(c\right) = \frac{f\left(x\right)-f\left(0\right)}{x-0} =
+        \frac{f\left(x\right)-1}{x},
+    \]
+    i.e., \( f\left(x\right)-1 = f'\left(c\right)x \geq -2x \), since \( x > 0 \) and
+    \( f'\left(c\right) \geq -2 \) (as \( \left|f'\left(c\right)\right|_{\mathbb{R}} \leq 2 \),
+    because \( 0 < c < x \leq 1 \)), i.e., \( f\left(x\right) \geq 1-2x \). The bound is also true
+    for \( x = 0 \), as \( f\left(0\right) = 1 \geq 1-2 \cdot 0 \). Hence, \( f\left(x\right) \geq
+    1-2x \) for all \( x \in \left[0;1\right] \).
+    \\\\
+    Now, let \( x \in \left[0;1\right[ \). By the mean value theorem applied to
+    \( f|_{\left[x;1\right]} \), there exists \( c \in \left]x;1\right[ \) with
+    \[
+        f'\left(c\right) = \frac{f\left(1\right)-f\left(x\right)}{1-x} =
+        \frac{1-f\left(x\right)}{1-x},
+    \]
+    i.e., \( 1-f\left(x\right) = f'\left(c\right)\left(1-x\right) \leq 2\left(1-x\right) = 2-2x \),
+    since \( 1-x > 0 \) and \( f'\left(c\right) \leq 2 \) (as
+    \( \left|f'\left(c\right)\right|_{\mathbb{R}} \leq 2 \), because \( 0 \leq x < c < 1 \)), i.e.,
+    \( 2x-1 \leq f\left(x\right) \). The bound is also true for \( x = 1 \), as \( f\left(1\right) =
+    1 \geq 2 \cdot 1-1 \). Hence, \( f\left(x\right) \geq 2x-1 \) for all \( x \in
+    \left[0;1\right] \).
+    \\\\
+    In total, for all \( x \in \left[0;1\right] \),
+    \[
+        f\left(x\right) \geq \max\left\{1-2x, 2x-1\right\} = \left|2x-1\right|_{\mathbb{R}}.
+    \]
+    By monotonicity of the integral (both functions are continuous, hence integrable), we get
+    \[
+        \int_0^1 f\left(x\right) \,\mathrm{d}x \geq \int_0^1 \left|2x-1\right|_{\mathbb{R}}
+        \,\mathrm{d}x = \int_0^{\frac{1}{2}} \left(1-2x\right) \,\mathrm{d}x+\int_{\frac{1}{2}}^1
+        \left(2x-1\right) \,\mathrm{d}x = \frac{1}{4}+\frac{1}{4} = \frac{1}{2},
+    \]
+    and thus \( \frac{1}{2} \leq \int_0^1 f\left(x\right) \,\mathrm{d}x \leq \left|\int_0^1
+    f\left(x\right) \,\mathrm{d}x\right|_{\mathbb{R}} \leq \frac{1}{2} \), so that \( \int_0^1
+    f\left(x\right) \,\mathrm{d}x = \frac{1}{2} \), and hence
+    \[
+        \int_0^1 \left(f\left(x\right)-\left|2x-1\right|_{\mathbb{R}}\right) \,\mathrm{d}x =
+        \frac{1}{2}-\frac{1}{2}=0.
+    \]
+    As \( f-\left|2\,\mathrm{Id}-\underline{1}\right|_{\mathbb{R}} \in
+    C^0\left(\mathbb{R},\mathbb{R}\right) \) and \( f\left(x\right)-\left|2x-1\right|_{\mathbb{R}}
+    \geq 0 \) for all \( x \in \left[0;1\right] \), we must have (standard) \( f\left(x\right) =
+    \left|2x-1\right|_{\mathbb{R}} \) for all \( x \in \left[0;1\right] \). But \( f \in
+    D^1\left(\mathbb{R},\mathbb{R}\right) \), so that \( f|_{\left]0;1\right[} =
+    \left|2\,\mathrm{Id}-\underline{1}\right|_{\mathbb{R}}|_{\left]0;1\right[} \) is differentiable,
+    in particular at \( \frac{1}{2} \in \left]0;1\right[ \), whereas
+    \( \left|2\,\mathrm{Id}-\underline{1}\right|_{\mathbb{R}} \) is not differentiable at
+    \( \frac{1}{2} \), which is a contradiction. Thus, \( S = \emptyset \).
+\end{solution}
