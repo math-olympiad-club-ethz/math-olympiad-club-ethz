@@ -79,15 +79,14 @@
                 \State \Return \texttt{store}
             \end{algorithmic}
         \end{algorithm}}
-    \\\\
-    \textit{Termination:} The algorithm terminates because it iterates through a finite linked list.
-    The variable \texttt{current} starts at the head of the list, \( x_0 \), and moves to the next
-    element in each iteration of the \texttt{while} loop. Since the list contains a finite number
-    \( n+1 \) of elements and each \texttt{current.next} eventually becomes \texttt{NULL}, the
-    \texttt{while} loop executes exactly \( n \) times. After reaching the last element, the loop
-    condition \texttt{current.next} \( \neq \) \texttt{NULL} fails, causing the loop to exit and the
-    algorithm to return the stored element. Therefore, the algorithm always terminates after a
-    finite number of steps.
+    \noindent\textit{Termination:} The algorithm terminates because it iterates through a finite
+    linked list. The variable \texttt{current} starts at the head of the list, \( x_0 \), and moves
+    to the next element in each iteration of the \texttt{while} loop. Since the list contains a
+    finite number \( n+1 \) of elements and each \texttt{current.next} eventually becomes
+    \texttt{NULL}, the \texttt{while} loop executes exactly \( n \) times. After reaching the last
+    element, the loop condition \texttt{current.next} \( \neq \) \texttt{NULL} fails, causing the
+    loop to exit and the algorithm to return the stored element. Therefore, the algorithm always
+    terminates after a finite number of steps.
     \\\\
     \textit{Correctness:}
     By induction on \( n \), it is easy to see that each element \( x_i \) (for \( 0 \leq i \leq
