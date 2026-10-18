@@ -130,7 +130,8 @@ def _compile(main, files, extra_key, keep_log, cache_dir):
             f.write(main)
         try:
             r = subprocess.run(PDFLATEX + ["-file-line-error", "main.tex"],
-                               cwd=d, env=tex_env(), capture_output=True, text=True, timeout=COMPILE_TIMEOUT)
+                               cwd=d, env=tex_env(), capture_output=True, text=True, errors="replace",
+                               timeout=COMPILE_TIMEOUT)  # TeX prints 8-bit characters of a box as raw bytes
             out = r.stdout
             code = r.returncode
         except subprocess.TimeoutExpired:

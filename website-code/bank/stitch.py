@@ -239,7 +239,7 @@ def _local_pdflatex(doc, workdir, jobname):
     with open(os.path.join(workdir, jobname + ".tex"), "w", encoding="utf-8") as f:
         f.write(doc)
     try:
-        r = subprocess.run(PDFLATEX + [jobname + ".tex"], cwd=workdir, env=tex_env(), capture_output=True, text=True,
+        r = subprocess.run(PDFLATEX + [jobname + ".tex"], cwd=workdir, env=tex_env(), capture_output=True, text=True, errors="replace",
                            timeout=COMPILE_TIMEOUT)
     except subprocess.TimeoutExpired:
         raise RuntimeError(f"figure compile timed out after {COMPILE_TIMEOUT} s") from None

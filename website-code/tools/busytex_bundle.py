@@ -184,7 +184,7 @@ def harvest_pk(docs, staging, log):
             for n, p in files.items():
                 shutil.copy(p, os.path.join(d, n))
             for _ in range(2):
-                r = subprocess.run(stitch.PDFLATEX + ["main.tex"], cwd=d, env=env, capture_output=True, text=True, timeout=600)
+                r = subprocess.run(stitch.PDFLATEX + ["main.tex"], cwd=d, env=env, capture_output=True, text=True, errors="replace", timeout=600)
             log(f"  local pdflatex {name}: exit {r.returncode}")
             if r.returncode != 0:
                 bad = [l for l in r.stdout.split("\n") if l.startswith("!") or l.startswith("l.")]
