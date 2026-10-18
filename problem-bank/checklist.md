@@ -43,7 +43,8 @@ written; this list covers the mechanical checks, the ones a tool or a careful re
 9. **Stray characters and doubled words**: no character typed by accident or left over (a `§` slipped into
    `6§f'(0)`: look at every non-ASCII character; an extra parenthesis, as in `\)))`) and no word written twice
    ("from which they come from"). Apostrophes and quotes are ASCII (`'`, ``` `` ``` and `''`, not `’` or
-   `“ ”`); no em dash (`—`): rephrase with commas or parentheses.
+   `“ ”`); never straight double quotes (`"naive"` prints as two closing quotes: write ``` ``naive'' ```); no
+   em dash (`—`): rephrase with commas or parentheses.
 10. **The statement asks something**: "Show that", "Find all", "Determine whether", a question. When the source has
    no question, take it from the origin (as for the IMC problems behind Continuity 2 and 9).
 
