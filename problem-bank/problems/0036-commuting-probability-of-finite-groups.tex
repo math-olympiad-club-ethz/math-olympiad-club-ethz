@@ -21,17 +21,18 @@
 \begin{solution}
     Take the probability space:
     \[
-        \left(\Omega,\mathcal{F},\mathbb{P}\right) := \left(G\times G,\mathscr{P}(G\times
-            G),\frac{|\cdot|}{|G|^2}\right).
+        \left(\Omega,\mathcal{F},\mathbb{P}\right) := \left(G\times G,\mathscr{P}\left(G\times
+            G\right),\frac{|\cdot|}{|G|^2}\right).
     \]
     Define the event \( C = \left\{ \left(x,y\right)\in\Omega \mid x\cdot y = y\cdot x \right\} \in
-    \mathcal{F} \). We need to show \( \mathbb{P}(C)\leq \frac{5}{8} \). To study the commutativity
-    of an element, one (left) group action is particularly useful—namely, the conjugation action:
+    \mathcal{F} \). We need to show \( \mathbb{P}\left(C\right)\leq \frac{5}{8} \). To study the
+    commutativity of an element, one (left) group action is particularly useful—namely, the
+    conjugation action:
     \[
-        \phi : G \longrightarrow \mathrm{Aut}_{\mathrm{Ens}}(G),
+        \phi : G \longrightarrow \mathrm{Aut}_{\mathrm{Ens}}\left(G\right),
     \]
-    where \( \phi(a) : G \longrightarrow G \) is defined by \( \phi(a)(g) = a \cdot g \cdot
-    a^{-1} \).
+    where \( \phi\left(a\right) : G \longrightarrow G \) is defined by
+    \( \phi\left(a\right)\left(g\right) = a \cdot g \cdot a^{-1} \).
     \\\\
     Under this group action \( \phi \), we can rewrite:
     \begin{align*}
@@ -41,67 +42,77 @@
     \end{align*}
     Therefore:
     \[
-        C = \bigsqcup_{x\in G} \left\{ x \right\} \times \mathrm{Stab}_{\phi}(x).
+        C = \bigsqcup_{x\in G} \left\{ x \right\} \times \mathrm{Stab}_{\phi}\left(x\right).
     \]
-    To compute \( \mathbb{P}(C) \), we need to compute \( |C| \), which is equal to the sum of the
-    cardinalities of the stabilisers under the conjugation action \( \phi \). But we can do better:
+    To compute \( \mathbb{P}\left(C\right) \), we need to compute \( |C| \), which is equal to the
+    sum of the cardinalities of the stabilisers under the conjugation action \( \phi \). But we can
+    do better:
     \\\\
     Fix \( \tilde{x}\in G \). Then either \( \tilde{x} \) commutes with all elements—i.e.,
-    \( \tilde{x}\in Z(G) \Leftrightarrow \mathrm{Stab}_{\phi}(\tilde{x}) = G \)—or it does not—i.e.,
-    \( \tilde{x}\in G \setminus Z(G) \Leftrightarrow \mathrm{Stab}_{\phi}(\tilde{x}) \subsetneq
-    G \). Thus, we can further decompose \( C \) as:
+    \( \tilde{x}\in Z\left(G\right) \Leftrightarrow \mathrm{Stab}_{\phi}\left(\tilde{x}\right) =
+    G \)—or it does not—i.e., \( \tilde{x}\in G \setminus Z\left(G\right) \Leftrightarrow
+    \mathrm{Stab}_{\phi}\left(\tilde{x}\right) \subsetneq G \). Thus, we can further decompose
+    \( C \) as:
     \[
-        C = \left( \bigsqcup_{x\in Z(G)} \left\{ x \right\} \times G \right) \sqcup \left(
-        \bigsqcup_{x\in G \setminus Z(G)} \left\{ x \right\} \times \mathrm{Stab}_{\phi}(x) \right)
+        C = \left( \bigsqcup_{x\in Z\left(G\right)} \left\{ x \right\} \times G \right) \sqcup
+        \left( \bigsqcup_{x\in G \setminus Z\left(G\right)} \left\{ x \right\} \times
+        \mathrm{Stab}_{\phi}\left(x\right) \right)
     \]
     \[
-        = \left(Z(G)\times G\right) \sqcup \left( \bigsqcup_{x\in G \setminus Z(G)} \left\{ x
-        \right\} \times \mathrm{Stab}_{\phi}(x) \right).
+        = \left(Z\left(G\right)\times G\right) \sqcup \left(
+        \bigsqcup_{x\in G \setminus Z\left(G\right)} \left\{ x \right\} \times
+        \mathrm{Stab}_{\phi}\left(x\right) \right).
     \]
     Let us compute \( |C| \):
     \begin{equation}
-        \label{1.1} \tag{*} |C| = |Z(G)\times G| + \sum_{x\in G \setminus Z(G)} |\left\{ x \right\}
-        \times \mathrm{Stab}_{\phi}(x)| = |Z(G)|\cdot |G| + \sum_{x\in G \setminus Z(G)}
-        |\mathrm{Stab}_{\phi}(x)|.
+        \label{1.1} \tag{*} |C| = |Z\left(G\right)\times G| +
+        \sum_{x\in G \setminus Z\left(G\right)} |\left\{ x \right\} \times
+        \mathrm{Stab}_{\phi}\left(x\right)| = |Z\left(G\right)|\cdot |G| +
+        \sum_{x\in G \setminus Z\left(G\right)} |\mathrm{Stab}_{\phi}\left(x\right)|.
     \end{equation}
     This equation is valid for any finite group \( G \). Now, since for every group action the
-    stabiliser is a subgroup of the group, by Lagrange's theorem \( |\mathrm{Stab}_{\phi}(x)| \mid
-    |G| \). Moreover, the orbit–stabiliser theorem gives:
+    stabiliser is a subgroup of the group, by Lagrange's theorem
+    \( |\mathrm{Stab}_{\phi}\left(x\right)| \mid |G| \). Moreover, the orbit–stabiliser theorem
+    gives:
     \[
-        |G| = \left|\mathrm{Orb}_{\phi}(x)\right| \cdot \left|\mathrm{Stab}_{\phi}(x)\right|
-        \Rightarrow \left|\mathrm{Stab}_{\phi}(x)\right| =
-        \frac{|G|}{\left|\mathrm{Orb}_{\phi}(x)\right|}.
+        |G| = \left|\mathrm{Orb}_{\phi}\left(x\right)\right| \cdot
+        \left|\mathrm{Stab}_{\phi}\left(x\right)\right| \Rightarrow
+        \left|\mathrm{Stab}_{\phi}\left(x\right)\right| =
+        \frac{|G|}{\left|\mathrm{Orb}_{\phi}\left(x\right)\right|}.
     \]
-    For \( x\notin Z(G) \), we have (by the finiteness of \( G \)) that
-    \( \left|\mathrm{Stab}_{\phi}(x)\right| < |G| \), so:
+    For \( x\notin Z\left(G\right) \), we have (by the finiteness of \( G \)) that
+    \( \left|\mathrm{Stab}_{\phi}\left(x\right)\right| < |G| \), so:
     \begin{equation}
-        \label{1.2} \tag{1} \left|\mathrm{Stab}_{\phi}(x)\right| =
-        \frac{|G|}{\left|\mathrm{Orb}_{\phi}(x)\right|} \leq\frac{|G|}{2}.
+        \label{1.2} \tag{1} \left|\mathrm{Stab}_{\phi}\left(x\right)\right| =
+        \frac{|G|}{\left|\mathrm{Orb}_{\phi}\left(x\right)\right|} \leq\frac{|G|}{2}.
     \end{equation}
     This equation is valid for any finite non-commutative group.
     \\\\
     Therefore:
     \[
-        |C| \leq |Z(G)|\cdot |G| + \sum_{x\in G \setminus Z(G)} \frac{|G|}{2} = |G|\cdot\left(
-        |Z(G)| + \frac{|G| - |Z(G)|}{2} \right) = |G|\cdot \frac{|G| + |Z(G)|}{2}.
+        |C| \leq |Z\left(G\right)|\cdot |G| + \sum_{x\in G \setminus Z\left(G\right)} \frac{|G|}{2}
+        = |G|\cdot\left( |Z\left(G\right)| + \frac{|G| - |Z\left(G\right)|}{2} \right) = |G|\cdot
+        \frac{|G| + |Z\left(G\right)|}{2}.
     \]
-    Since \( G \) is non-commutative, \( Z(G)\subsetneq G \). Take \( \hat{x} \in G \setminus
-    Z(G) \). Then since \( \hat{x} \in \mathrm{Stab}_{\phi}(\hat{x}) \) and \( \hat{x} \notin
-    Z(G) \), we must have:
+    Since \( G \) is non-commutative, \( Z\left(G\right)\subsetneq G \). Take \( \hat{x} \in G
+    \setminus Z\left(G\right) \). Then since \( \hat{x} \in
+    \mathrm{Stab}_{\phi}\left(\hat{x}\right) \) and \( \hat{x} \notin Z\left(G\right) \), we must
+    have:
     \[
-        Z(G)\subsetneq \mathrm{Stab}_{\phi}(\hat{x}) \subsetneq G.
+        Z\left(G\right)\subsetneq \mathrm{Stab}_{\phi}\left(\hat{x}\right) \subsetneq G.
     \]
     Because everything is finite, we have by Lagrange's theorem (all of them are strict subgroups):
     \begin{equation}
-        \label{1.3} \tag{2} |Z(G)| \leq \frac{|\mathrm{Stab}_{\phi}(\hat{x})|}{2} \leq
-        \frac{\frac{|G|}{2}}{2} = \frac{|G|}{4}.
+        \label{1.3} \tag{2} |Z\left(G\right)| \leq
+        \frac{|\mathrm{Stab}_{\phi}\left(\hat{x}\right)|}{2} \leq \frac{\frac{|G|}{2}}{2} =
+        \frac{|G|}{4}.
     \end{equation}
     This equation is also valid for any finite non-commutative group.
     \\\\
     We conclude:
     \[
         |C| \leq |G|\cdot\frac{|G| + \frac{|G|}{4}}{2} = |G|^2 \cdot \frac{5}{8} \Rightarrow
-        \mathbb{P}(C) \leq \frac{5}{8},
+        \mathbb{P}\left(C\right) \leq \frac{5}{8},
     \]
     as desired.
     \\\\
@@ -165,7 +176,7 @@
     Thus, among the \( 64 \) possible ordered pairs in \( Q_8 \times Q_8 \), exactly \( 40 \)
     commute, giving:
     \[
-        \mathbb{P}(C) = \frac{40}{64} = \frac{5}{8}.
+        \mathbb{P}\left(C\right) = \frac{40}{64} = \frac{5}{8}.
     \]
     Hence, the bound is attained.
 \end{solution}

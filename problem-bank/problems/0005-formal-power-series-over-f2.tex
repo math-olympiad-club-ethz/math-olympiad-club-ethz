@@ -15,7 +15,8 @@
 \begin{problem}
     Let
     \[
-        \alpha(X) = 1 + a_1 X + a_2 X^2 + \cdots \in \mathbb{F}_2[[X]]
+        \alpha\left(X\right) = 1 + a_1 X + a_2 X^2 + \cdots \in
+        \mathbb{F}_2\left[\left[X\right]\right]
     \]
     be a formal power series with coefficients in the field of two elements. Define the coefficients
     \( a_n \) as follows:
@@ -34,22 +35,23 @@
     Prove that the power series satisfies the equation:
 
     \[
-        \alpha(X)^3 + X \alpha(X) + 1 = 0.
+        \alpha\left(X\right)^3 + X \alpha\left(X\right) + 1 = 0.
     \]
 \end{problem}
 \begin{solution}
     We begin by analyzing the properties of the coefficients \( a_n \). Since the field has
-    characteristic 2, we have \( \alpha(X)^2 = 1 + \sum a_n X^{2n} \). This is because squaring a
-    power series in characteristic 2 eliminates the cross terms, and \( a_n^2 = a_n \) (as
-    \( a_n \in \{0, 1\} \)).
+    characteristic 2, we have \( \alpha\left(X\right)^2 = 1 + \sum a_n X^{2n} \). This is because
+    squaring a power series in characteristic 2 eliminates the cross terms, and \( a_n^2 = a_n \)
+    (as \( a_n \in \left\{0, 1\right\} \)).
     \\\\
-    Next, consider \( \alpha(X)^3 \). Multiplying the given equation \( \alpha(X)^3 + X \alpha(X) +
-    1 = 0 \) by \( \alpha(X) \), we obtain:
+    Next, consider \( \alpha\left(X\right)^3 \). Multiplying the given equation
+    \( \alpha\left(X\right)^3 + X \alpha\left(X\right) + 1 = 0 \) by \( \alpha\left(X\right) \), we
+    obtain:
     \[
-        \alpha(X)^4 + X \alpha(X)^2 + \alpha(X) = 0.
+        \alpha\left(X\right)^4 + X \alpha\left(X\right)^2 + \alpha\left(X\right) = 0.
     \]
-    We now analyze \( \alpha(X)^4 + X \alpha(X)^2 + \alpha(X) \) by examining the coefficients of
-    \( X^{4n} \), \( X^{4n+2} \), and \( X^{2n+1} \).
+    We now analyze \( \alpha\left(X\right)^4 + X \alpha\left(X\right)^2 + \alpha\left(X\right) \) by
+    examining the coefficients of \( X^{4n} \), \( X^{4n+2} \), and \( X^{2n+1} \).
     \begin{itemize}
         \item \textit{Coefficient of \( X^{4n} \):} The coefficient is \( a_n + a_{4n} \). Since the
             binary expansion of \( 4n \) is the binary expansion of \( n \) with two zeros appended
@@ -63,14 +65,15 @@
             binary expansion of \( 2n+1 \) is the binary expansion of \( n \) with an extra 1
             appended at the end. Thus, \( a_{2n+1} = a_n \), and \( a_{2n+1} + a_n = 0 \).
     \end{itemize}
-    Since all coefficients of \( \alpha(X)^4 + X \alpha(X)^2 + \alpha(X) \) are zero, we have:
+    Since all coefficients of \( \alpha\left(X\right)^4 + X \alpha\left(X\right)^2 +
+    \alpha\left(X\right) \) are zero, we have:
     \[
-        \alpha(X)^4 + X \alpha(X)^2 + \alpha(X) = 0.
+        \alpha\left(X\right)^4 + X \alpha\left(X\right)^2 + \alpha\left(X\right) = 0.
     \]
-    Since \( \alpha(X) \neq 0 \) and \( \mathbb{F}_{2}[[X]] \) is a domain as \( \mathbb{F}_{2} \)
-    is a domain, we must obtain:
+    Since \( \alpha\left(X\right) \neq 0 \) and \( \mathbb{F}_{2}\left[\left[X\right]\right] \) is a
+    domain as \( \mathbb{F}_{2} \) is a domain, we must obtain:
     \[
-        \alpha(X)^3 + X \alpha(X) + 1 = 0,
+        \alpha\left(X\right)^3 + X \alpha\left(X\right) + 1 = 0,
     \]
     as required.
 \end{solution}

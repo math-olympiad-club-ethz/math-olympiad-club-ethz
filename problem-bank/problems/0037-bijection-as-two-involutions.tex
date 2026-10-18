@@ -102,34 +102,36 @@
     trivially satisfy \eqref{2.2}. So \( \hat{h}, \hat{k} \) are functional relations and, by the
     above, they are involutions of \( A_s \) with \( \hat{h} \circ \hat{k} = f|_{A_s} \).
     \\\\
-    Now, let us formalise our argument. Consider the subgroup \( f^{\mathbb{Z}} := \langle \{f\}
-    \rangle \leq \operatorname{Aut}_{\mathrm{Ens}}(S) \). It acts on the left of \( S \) via the
-    group action
+    Now, let us formalise our argument. Consider the subgroup \( f^{\mathbb{Z}} := \langle
+    \left\{f\right\} \rangle \leq \operatorname{Aut}_{\mathrm{Ens}}\left(S\right) \). It acts on the
+    left of \( S \) via the group action
     \[
-        \operatorname{eval} : f^{\mathbb{Z}} \longrightarrow \operatorname{Aut}_{\mathrm{Ens}}(S),
+        \operatorname{eval} : f^{\mathbb{Z}} \longrightarrow
+        \operatorname{Aut}_{\mathrm{Ens}}\left(S\right),
     \]
-    where, for each \( g \in f^{\mathbb{Z}} \), we define \( \operatorname{eval}(g) : S \rightarrow
-    S \) by \( \operatorname{eval}(g)(s) := g(s) \).
+    where, for each \( g \in f^{\mathbb{Z}} \), we define \( \operatorname{eval}\left(g\right) : S
+    \rightarrow S \) by \( \operatorname{eval}\left(g\right)\left(s\right) := g\left(s\right) \).
     \\\\
     For an arbitrary point \( s \in S \), its orbit is given by
-    \( \operatorname{Orb}_{\operatorname{eval}}(s) \), and it cannot be empty. Consider the set of
-    all such orbits. Then, by the axiom of choice\footnote{If we are in the finite case, we may
-    construct a choice function by induction.}, there exists a function
+    \( \operatorname{Orb}_{\operatorname{eval}}\left(s\right) \), and it cannot be empty. Consider
+    the set of all such orbits. Then, by the axiom of choice\footnote{If we are in the finite case,
+    we may construct a choice function by induction.}, there exists a function
     \[
-        \chi : \left\{ \operatorname{Orb}_{\operatorname{eval}}(s) \mid s \in S \right\}
-        \longrightarrow \bigcup_{s \in S} \operatorname{Orb}_{\operatorname{eval}}(s)
+        \chi : \left\{ \operatorname{Orb}_{\operatorname{eval}}\left(s\right) \mid s \in S \right\}
+        \longrightarrow \bigcup_{s \in S} \operatorname{Orb}_{\operatorname{eval}}\left(s\right)
     \]
     such that, for every \( s \in S \), we have \( \chi\left(
-    \operatorname{Orb}_{\operatorname{eval}}(s) \right) \in
-    \operatorname{Orb}_{\operatorname{eval}}(s) \). Since the set of orbits of a group action on a
-    set \( S \) partitions \( S \), this yields the disjoint decomposition:
+    \operatorname{Orb}_{\operatorname{eval}}\left(s\right) \right) \in
+    \operatorname{Orb}_{\operatorname{eval}}\left(s\right) \). Since the set of orbits of a group
+    action on a set \( S \) partitions \( S \), this yields the disjoint decomposition:
     \[
-        S = \bigsqcup_{t \in \mathrm{ran}(\chi)} \operatorname{Orb}_{\operatorname{eval}}(t).
+        S = \bigsqcup_{t \in \mathrm{ran}\left(\chi\right)}
+        \operatorname{Orb}_{\operatorname{eval}}\left(t\right).
     \]
     Inspired by our previous construction, we now need to define the involutions on each disjoint
-    orbit; \( \forall t \in \mathrm{ran}(\chi) \),
-    \( \operatorname{Orb}_{\operatorname{eval}}(t) \). This is captured, by defining the following
-    relations:
+    orbit; \( \forall t \in \mathrm{ran}\left(\chi\right) \),
+    \( \operatorname{Orb}_{\operatorname{eval}}\left(t\right) \). This is captured, by defining the
+    following relations:
     \[
         \hat{h} := \left\{ \left( s, f^{-m+1}\left( \chi\left(
             \operatorname{Orb}_{\operatorname{eval}}\left( s \right) \right) \right) \right)
@@ -147,42 +149,46 @@
     Then \( \hat{h}, \hat{k} \) are relations on \( S \), since for any \( s \in S \), the condition
     \[
         \exists m \in \mathbb{Z} \text{ such that } f^{m}\left( \chi\left(
-        \operatorname{Orb}_{\operatorname{eval}}(s) \right) \right) = s
+            \operatorname{Orb}_{\operatorname{eval}}\left(s\right) \right) \right) = s
     \]
     is always met, because we always have
     \[
-        s \in \operatorname{Orb}_{\operatorname{eval}}(s) =
+        s \in \operatorname{Orb}_{\operatorname{eval}}\left(s\right) =
         \operatorname{Orb}_{\operatorname{eval}}\left( \chi\left(
-        \operatorname{Orb}_{\operatorname{eval}}(s) \right) \right),
+            \operatorname{Orb}_{\operatorname{eval}}\left(s\right) \right) \right),
     \]
     in other words, there exists \( m \in \mathbb{Z} \) such that \( s = f^{m}\left( \chi\left(
-    \operatorname{Orb}_{\operatorname{eval}}(s) \right) \right) \).
+        \operatorname{Orb}_{\operatorname{eval}}\left(s\right) \right) \right) \).
     \\\\
     Moreover, \( \hat{h},\hat{k} \) are functional relations: for any \( s \in S \) and \( m, m' \in
     \mathbb{Z} \) such that
     \[
-        f^{m}\left( \chi\left( \operatorname{Orb}_{\operatorname{eval}}(s) \right) \right) =
-        f^{m'}\left( \chi\left( \operatorname{Orb}_{\operatorname{eval}}(s) \right) \right),
+        f^{m}\left( \chi\left( \operatorname{Orb}_{\operatorname{eval}}\left(s\right) \right)
+        \right) = f^{m'}\left( \chi\left( \operatorname{Orb}_{\operatorname{eval}}\left(s\right)
+            \right) \right),
     \]
     we obtain
     \[
-        f^{m - m'}\left( \chi\left( \operatorname{Orb}_{\operatorname{eval}}(s) \right) \right) =
-        \chi\left( \operatorname{Orb}_{\operatorname{eval}}(s) \right),
+        f^{m - m'}\left( \chi\left( \operatorname{Orb}_{\operatorname{eval}}\left(s\right) \right)
+        \right) = \chi\left( \operatorname{Orb}_{\operatorname{eval}}\left(s\right) \right),
     \]
     which implies by composing with \( f^{-m} \) that:
     \[
-        f^{-m}\left( \chi\left( \operatorname{Orb}_{\operatorname{eval}}(s) \right) \right) =
-        f^{-m'}\left( \chi\left( \operatorname{Orb}_{\operatorname{eval}}(s) \right) \right),
+        f^{-m}\left( \chi\left( \operatorname{Orb}_{\operatorname{eval}}\left(s\right) \right)
+        \right) = f^{-m'}\left( \chi\left( \operatorname{Orb}_{\operatorname{eval}}\left(s\right)
+            \right) \right),
     \]
     and by composing with \( f \) once:
     \[
-        f^{-m + 1}\left( \chi\left( \operatorname{Orb}_{\operatorname{eval}}(s) \right) \right) =
-        f^{-m' + 1}\left( \chi\left( \operatorname{Orb}_{\operatorname{eval}}(s) \right) \right).
+        f^{-m + 1}\left( \chi\left( \operatorname{Orb}_{\operatorname{eval}}\left(s\right) \right)
+        \right) = f^{-m' + 1}\left( \chi\left(
+            \operatorname{Orb}_{\operatorname{eval}}\left(s\right) \right) \right).
     \]
     Hence \( \hat{h} \) and \( \hat{k} \) are indeed well-defined functions. Furthermore, they are
     involutions and satisfy \( \hat{h} \circ \hat{k} = f \): for any \( s \in S \), there exists
-    \( m \in \mathbb{Z} \) with \( f^{m}\left( \operatorname{Orb}_{\operatorname{eval}}(s) \right) =
-    s \), so that, by the well-definedness of \( \hat{h} \) and \( \hat{k} \), we get
+    \( m \in \mathbb{Z} \) with \( f^{m}\left(
+    \operatorname{Orb}_{\operatorname{eval}}\left(s\right) \right) = s \), so that, by the
+    well-definedness of \( \hat{h} \) and \( \hat{k} \), we get
     \begin{align*}
         \hat{h} \circ \hat{h}(s) &= \hat{h}\left( f^{-m+1}\left( \operatorname{Orb}_{\operatorname{eval}}(s) \right) \right) = f^{-(-m+1)+1}\left( \operatorname{Orb}_{\operatorname{eval}}(s) \right) = f^{m}\left( \operatorname{Orb}_{\operatorname{eval}}(s) \right) = s,
         \\

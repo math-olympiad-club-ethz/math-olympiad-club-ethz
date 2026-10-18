@@ -22,17 +22,18 @@
     \textit{Solution 1.}
     \\\\
     Since \( I_n - AB \) is a square matrix, it suffices to show that its kernel is trivial. So let
-    \( x \in \mathbb{R}^n \) with \( (I_n - AB)x = 0 \), i.e.\ \( x = ABx \). Put \( y = Bx \). Then
+    \( x \in \mathbb{R}^n \) with \( \left(I_n - AB\right)x = 0 \), i.e.\ \( x = ABx \). Put
+    \( y = Bx \). Then
     \[
-        (I_n - BA)y = Bx - BABx = B(x - ABx) = 0.
+        \left(I_n - BA\right)y = Bx - BABx = B\left(x - ABx\right) = 0.
     \]
     As \( I_n - BA \) is invertible, \( y = 0 \). Hence \( x = ABx = Ay = 0 \). Therefore
     \( I_n - AB \) is injective, and by rank--nullity it is invertible.
     \\\\
     \textit{Solution 2 (general rings).}
     \\\\
-    Let \( (R, +_R, \cdot_R, 0_R, 1_R) \) be any (possibly non-commutative) unital ring, let
-    \( \textcolor{red}{a}, \textcolor{blue}{b} \in R \), we show that:
+    Let \( \left(R, +_R, \cdot_R, 0_R, 1_R\right) \) be any (possibly non-commutative) unital ring,
+    let \( \textcolor{red}{a}, \textcolor{blue}{b} \in R \), we show that:
     \[
         1_R - \textcolor{blue}{b}\textcolor{red}{a} \in R^{\times} \leftrightarrow 1_R -
         \textcolor{red}{a}\textcolor{blue}{b} \in R^{\times}.

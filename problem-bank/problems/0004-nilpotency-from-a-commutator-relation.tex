@@ -13,8 +13,8 @@
 % references:     Earliest known appearance (to the best of our knowledge): IMC 1994 (1st IMC, Plovdiv), Day 1, Problem 4, official problems & solutions - https://www.imc-math.org.uk/imc1994/prob_sol.pdf; Kalva archive, 1st IMC 1994, A4 - https://prase.cz/kalva/imc/imc94.html; reused as Problem 9.12 (1994) in M. A. Daas, 'A Brief IMC Training' (Emory Putnam notes) - http://www.cs.emory.edu/~mic/putnam/general/IMC.pdf; alpha=1 case as a standard exercise, MathSE 811160 (2014) - https://math.stackexchange.com/questions/811160/ab-ba-a-implies-a-is-singular-and-a-is-nilpotent; underlying theorem: Jacobson's lemma ([A,[A,B]]=0 implies [A,B] nilpotent), N. Jacobson, Ann. of Math. 36 (1935), 875-881, as stated in J. Bracic, 'On the Jacobson's lemma' - https://jankobracic.wordpress.com/wp-content/uploads/2011/02/on-the-jacobsons-lemma.pdf
 % history:        human
 \begin{problem}
-    Let \( \alpha \in \mathbb{R} \setminus \{0\} \) and suppose that \( F \) and \( G \) are linear
-    maps (operators) from \( \mathbb{R}^n \) into \( \mathbb{R}^n \) satisfying
+    Let \( \alpha \in \mathbb{R} \setminus \left\{0\right\} \) and suppose that \( F \) and \( G \)
+    are linear maps (operators) from \( \mathbb{R}^n \) into \( \mathbb{R}^n \) satisfying
     \[
         F \circ G - G \circ F = \alpha F.
     \]
@@ -49,11 +49,12 @@
         \item[(b)] Consider the linear operator \( L \) defined on the space of \( n \times n \)
             matrices by
             \[
-                L(F) = F \circ G - G \circ F.
+                L\left(F\right) = F \circ G - G \circ F.
             \]
-            By the given assumption, we have \( L(F) = \alpha F \). Also using part (a), we obtain
+            By the given assumption, we have \( L\left(F\right) = \alpha F \). Also using part (a),
+            we obtain
             \[
-                L(F^k) = \alpha k F^k.
+                L\left(F^k\right) = \alpha k F^k.
             \]
             The operator \( L \) acts on an \( n^2 \)-dimensional space and can have at most
             \( n^2 \) distinct eigenvalues. However, if \( F^k \neq 0 \) for all \( k \), then

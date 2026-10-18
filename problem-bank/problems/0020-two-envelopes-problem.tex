@@ -75,12 +75,12 @@
     \( \left(\left[0,1\right],\mathcal{B}\left(\left[0,1\right]\right),\lambda|_{\mathcal{B}\left(\left[0,1\right]\right)}\right) \),
     where \( \mathcal{B}\left(\left[0,1\right]\right) \) is the Borel sigma-algebra and
     \( \lambda \) is the Lebesgue measure on \( \mathbb{R} \). \( U \) can then be defined as the
-    identity function, i.e., \( U(x) = x \) for \( x \in \left[0,1\right] \) and it is obviously a
-    random variable with the uniform law on \( [0,1] \).}, that is, for any \( a,b
-    \in\left[0,1\right] \) with \( a\leq b \) and any non-empty interval \( I\subset
-    \left[0,1\right] \) with \( \inf I=a \) and \( \sup I=b \) then \( \mu_{U}(I)= b-a \). Adjoining
-    this new probability space to the preceding one, we obtain a product space (which is a
-    probability space):
+    identity function, i.e., \( U\left(x\right) = x \) for \( x \in \left[0,1\right] \) and it is
+    obviously a random variable with the uniform law on \( \left[0,1\right] \).}, that is, for any
+    \( a,b \in\left[0,1\right] \) with \( a\leq b \) and any non-empty interval \( I\subset
+    \left[0,1\right] \) with \( \inf I=a \) and \( \sup I=b \) then \( \mu_{U}\left(I\right)=
+    b-a \). Adjoining this new probability space to the preceding one, we obtain a product space
+    (which is a probability space):
     \[
         \left(\Omega\times\Sigma,\mathcal{F}\otimes\mathcal{A},\mathbb{P}\otimes\mu\right).
     \]
@@ -211,7 +211,8 @@
     \]
     Ideally, one would aim to find an increasing function
     \[
-        g\in\mathcal{G}:= \{g'\mid g':\mathbb{R}_{>0}\to[0,1]\text{ increasing}\}
+        g\in\mathcal{G}:= \left\{g'\mid
+        g':\mathbb{R}_{>0}\to\left[0,1\right]\text{ increasing}\right\}
     \]
     that maximizes \( \inf\left\{g\left(2x\right) - g\left(x\right)\,|\,
     x\in\mathbb{R}_{>0}\right\} \) however:
@@ -222,11 +223,11 @@
     because if we assume for contradiction that there exists \( c>0 \) and \( g'\in \mathcal{G} \)
     such that
     \[
-        g'(2x)-g'(x)\ge c \quad \text{for all } x>0.
+        g'\left(2x\right)-g'\left(x\right)\ge c \quad \text{for all } x>0.
     \]
     Then by simply iterating this inequality we obtain by induction on \( \mathbb{N} \):
     \[
-        g'(2^n x)-g'(x) \ge nc \quad \text{for all } n\in\mathbb{N}.
+        g'\left(2^n x\right)-g'\left(x\right) \ge nc \quad \text{for all } n\in\mathbb{N}.
     \]
     Since \( g' \) is bounded above by \( 1 \) and bounded below by \( 0 \), this implies
     \( nc< 1 \) for every \( n \), which is impossible since \( c \) is not an
@@ -236,7 +237,7 @@
     examples: \\
     \textit{Power-Law Functions}:
     \[
-        g(x) = \frac{x^t}{x^t + c}.
+        g\left(x\right) = \frac{x^t}{x^t + c}.
     \]
     For a given \( t \), larger \( c \) makes it easier to switch for less and less big \( x \)
     emphasizing to keep on only the very big \( x \), smaller \( c \) makes it harder to switch for
@@ -247,12 +248,12 @@
     \( x \). A fast transitions to the constant \( \frac{1}{1+c} \) occurs when \( t\to 0 \). \\
     \textit{Logarithmic Functions}:
     \[
-        g(x) = \frac{\ln(1 + x^t)}{\ln(1 + x^t) + c}.
+        g\left(x\right) = \frac{\ln\left(1 + x^t\right)}{\ln\left(1 + x^t\right) + c}.
     \]
     This is exactly the same as above but things are more evenly spread out and smoother. \\
     \textit{Exponential Functions}:
     \[
-        g(x) = 1 - e^{-t x}.
+        g\left(x\right) = 1 - e^{-t x}.
     \]
     Larger \( t \) makes it very difficult to switch for all \( x \) emphasizing to change only on
     the very small \( x \), smaller \( t \) makes it easier to switch emphasizing to keep only on
@@ -264,9 +265,10 @@
         \begin{itemize}
             \item The naive strategy yields an expected gain of \( \frac{k+1}{2}\alpha \).
             \item The improved strategy, using any increasing function \( g \colon \mathbb{R}_{>0}
-                \to [0,1] \), gives an expected gain of:
+                \to \left[0,1\right] \), gives an expected gain of:
                 \[
-                    \frac{k+1}{2}\alpha + \frac{k-1}{2}\alpha\bigl(g(k\alpha) - g(\alpha)\bigr).
+                    \frac{k+1}{2}\alpha + \frac{k-1}{2}\alpha\bigl(g\left(k\alpha\right) -
+                    g\left(\alpha\right)\bigr).
                 \]
         \end{itemize}
         This setting is equivalent to considering \( \alpha \) and \( k\alpha \) where \( 0 < k \neq

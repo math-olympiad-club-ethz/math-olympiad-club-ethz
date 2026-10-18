@@ -20,9 +20,9 @@
 \begin{solution}
     \begin{enumerate}
         \item \textit{Understanding \( \langle n \rangle \):} For integer \( k \), \( \langle n
-            \rangle = k \) when \( (k - 0.5)^2 < n \leq (k + 0.5)^2 \). This interval contains
-            \( 2k \) integers. Specifically, for \( k \geq 1 \), \( \langle n \rangle = k \) for
-            \( n = k^2 - k + 1, \ldots, k^2 + k \).
+            \rangle = k \) when \( \left(k - 0.5\right)^2 < n \leq \left(k + 0.5\right)^2 \). This
+            interval contains \( 2k \) integers. Specifically, for \( k \geq 1 \), \( \langle n
+            \rangle = k \) for \( n = k^2 - k + 1, \ldots, k^2 + k \).
 
         \item \textit{Decomposing the Sum:} Group terms by \( \langle n \rangle = k \):
             \[
@@ -36,8 +36,8 @@
             \]
             Multiply by \( 2^k + 2^{-k} \):
             \[
-                \frac{(2^k + 2^{-k})(1 - 2^{-2k})}{2^{k^2 - k}} = \frac{2^k - 2^{-k}}{2^{k^2 - k}} -
-                \frac{2^k - 2^{-k}}{2^{k^2 + k}}
+                \frac{\left(2^k + 2^{-k}\right)\left(1 - 2^{-2k}\right)}{2^{k^2 - k}} =
+                \frac{2^k - 2^{-k}}{2^{k^2 - k}} - \frac{2^k - 2^{-k}}{2^{k^2 + k}}
             \]
 
         \item \textit{Telescoping Sums:} Split into two reindexed sums:

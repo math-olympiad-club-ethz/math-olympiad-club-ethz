@@ -49,14 +49,16 @@
     \\\\
     Let us consider the sequence of polynomials
     \[
-        \left( A_n(X) := \sum_{i=0}^{n} a_i' X^{i} \right)_{n\in\mathbb{N}}, \quad \left( B_n(X) :=
-        \sum_{j=0}^{n} b_j' X^{j} \right)_{n\in\mathbb{N}} \in \mathbb{Q}[X]^{\mathbb{N}}.
+        \left( A_n\left(X\right) := \sum_{i=0}^{n} a_i' X^{i} \right)_{n\in\mathbb{N}}, \quad \left(
+        B_n\left(X\right) := \sum_{j=0}^{n} b_j' X^{j} \right)_{n\in\mathbb{N}} \in
+        \mathbb{Q}\left[X\right]^{\mathbb{N}}.
     \]
     and define for each \( n\in\mathbb{N} \)
     \[
-        \Gamma_{A_n,+} := \left\{ \gamma \in \mathbb{Q}^{\times} \,\middle|\, \gamma A_n(X) \in
-        \mathbb{Z}[X] \right\}, \quad \Gamma_{B_n,-} := \left\{ \gamma \in \mathbb{Q}^{\times}
-        \,\middle|\, \gamma^{-1} B_n(X) \in \mathbb{Z}[X] \right\},
+        \Gamma_{A_n,+} := \left\{ \gamma \in \mathbb{Q}^{\times} \,\middle|\, \gamma
+        A_n\left(X\right) \in \mathbb{Z}\left[X\right] \right\}, \quad \Gamma_{B_n,-} := \left\{
+        \gamma \in \mathbb{Q}^{\times} \,\middle|\, \gamma^{-1} B_n\left(X\right) \in
+        \mathbb{Z}\left[X\right] \right\},
     \]
     \[
         \Gamma_n := \Gamma_{A_n,+} \cap \Gamma_{B_n,-}.
@@ -125,86 +127,95 @@
         a_i'b_j' + a_j'b_i' = a_i'b_i' + a_j'b_j' - \left( a_i' - a_j' \right)\left( b_i' - b_j'
         \right).
     \]
-    For all \( n \in \mathbb{N} \), the polynomial \( C_n(X) := A_n(X) B_n(X) \in \mathbb{Q}[X] \)
-    is in fact in \( \mathbb{Z}[X] \), since for all \( k \leq n \), the \( k \)-th coefficient is:
+    For all \( n \in \mathbb{N} \), the polynomial \( C_n\left(X\right) := A_n\left(X\right)
+    B_n\left(X\right) \in \mathbb{Q}\left[X\right] \) is in fact in \( \mathbb{Z}\left[X\right] \),
+    since for all \( k \leq n \), the \( k \)-th coefficient is:
     \[
-        c_k\left( C_n(X) \right) = \sum_{j=0}^{k} a_j' b_{k-j}' = \left(
+        c_k\left( C_n\left(X\right) \right) = \sum_{j=0}^{k} a_j' b_{k-j}' = \left(
         \sum_{j=0}^{\left\lfloor \frac{k}{2} \right\rfloor - 1} \left( a_j' b_{k-j}' + a_{k-j}' b_j'
-        \right) \right) + \mathbbm{1}_{2\mathbb{N}}(k) \cdot
+        \right) \right) + \mathbbm{1}_{2\mathbb{N}}\left(k\right) \cdot
         a_{\left\lfloor \frac{k}{2} \right\rfloor}' b_{\left\lfloor \frac{k}{2} \right\rfloor}',
     \]
     and is therefore an integer because it is a sum of all the elements in \( \left\{ a_i' b_{k-i}'
     + a_{k-i}' b_i' \,\middle|\, i \leq \left\lfloor \frac{k}{2} \right\rfloor \right\} \subset
     \mathbb{Z} \), and possibly (when \( k \) is even) one term
     \( a_{\left\lfloor \frac{k}{2} \right\rfloor}' b_{\left\lfloor \frac{k}{2} \right\rfloor}' \in
-    \mathbb{Z} \). Hence, the polynomial \( C_n(X) \) has integer coefficients.
+    \mathbb{Z} \). Hence, the polynomial \( C_n\left(X\right) \) has integer coefficients.
     \\\\
-    Let \( N \in \mathbb{N} \) and a rational polynomial \( P(X) = \sum_{k=0}^{N} \frac{p_k}{q_k}
-    X^{k} \in \mathbb{Q}[X] \). Suppose that for all \( k \leq N \), the elements \( p_k \in
-    \mathbb{Z},\, q_k \in \mathbb{Z} \setminus \left\{ 0 \right\} \) are such that \( \gcd(p_k, q_k)
-    = 1 \). Define \( l_{P(X)} := \operatorname{lcm}\left( \left( q_k \right)_{k \leq N} \right) \in
-    \mathbb{N} \setminus \left\{ 0 \right\} \) and \( g_{P(X)} := \gcd\left( \left( p_k
-        \right)_{k \leq N} \right) \in \mathbb{N} \). Notice that, in this way (by forcing positivity),
-    we obtain two well-defined functions \( g_{\_}, l_{\_} : \mathbb{Q}[X] \rightarrow
-    \mathbb{N} \). Now, suppose at least one of the coefficients of the polynomial is non-zero
-    (i.e.\ \( P(X)\neq 0 \)), say for a certain \( k' \leq N \), \( p_{k'} \neq 0 \), then
-    \( g_{P(X)} \neq 0 \), so we can define \( d_{P(X)} := \frac{l_{P(X)}}{g_{P(X)}} \in
-    \mathbb{Q}_{>0} \). We claim:
+    Let \( N \in \mathbb{N} \) and a rational polynomial \( P\left(X\right) = \sum_{k=0}^{N}
+    \frac{p_k}{q_k} X^{k} \in \mathbb{Q}\left[X\right] \). Suppose that for all \( k \leq N \), the
+    elements \( p_k \in \mathbb{Z},\, q_k \in \mathbb{Z} \setminus \left\{ 0 \right\} \) are such
+    that \( \gcd\left(p_k, q_k\right) = 1 \). Define \( l_{P\left(X\right)} :=
+    \operatorname{lcm}\left( \left( q_k \right)_{k \leq N} \right) \in \mathbb{N} \setminus \left\{
+    0 \right\} \) and \( g_{P\left(X\right)} := \gcd\left( \left( p_k \right)_{k \leq N} \right) \in
+    \mathbb{N} \). Notice that, in this way (by forcing positivity), we obtain two well-defined
+    functions \( g_{\_}, l_{\_} : \mathbb{Q}\left[X\right] \rightarrow \mathbb{N} \). Now, suppose
+    at least one of the coefficients of the polynomial is non-zero (i.e.\ \( P\left(X\right)\neq
+    0 \)), say for a certain \( k' \leq N \), \( p_{k'} \neq 0 \), then \( g_{P\left(X\right)} \neq
+    0 \), so we can define \( d_{P\left(X\right)} := \frac{l_{P\left(X\right)}}{g_{P\left(X\right)}}
+    \in \mathbb{Q}_{>0} \). We claim:
     \begin{equation}
-        \tag{1} \label{5.1} d_{P(X)} \mathbb{Z} \setminus \left\{ 0 \right\} = \left\{ \gamma \in
-        \mathbb{Q}^{\times} \,\middle|\, \gamma P(X) \in \mathbb{Z}[X] \right\}.
+        \tag{1} \label{5.1} d_{P\left(X\right)} \mathbb{Z} \setminus \left\{ 0 \right\} = \left\{
+        \gamma \in \mathbb{Q}^{\times} \,\middle|\, \gamma P\left(X\right) \in
+        \mathbb{Z}\left[X\right] \right\}.
     \end{equation}
     Indeed, the inclusion \( \subset \) is evident because \( \forall k \leq N,\, q_k \mid
-    l_{P(X)} \) and \( g_{P(X)} \mid p_k \). Now, for the reverse inclusion \( \supset \): if we let
-    \( \gamma \in \mathbb{Q}^{\times} \) with \( \gamma P(X) \in \mathbb{Z}[X] \), write
-    \( \gamma = \frac{\gamma_1}{\gamma_2} \) with \( \gamma_1, \gamma_2 \in \mathbb{Z} \) and
-    \( \gcd(\gamma_1, \gamma_2) = 1 \). One has for all \( k \leq N \), \( \gamma \frac{p_k}{q_k} =
-    \frac{\gamma_1 p_k}{\gamma_2 q_k} \in \mathbb{Z} \), thus \( \exists t_k \in \mathbb{Z} \) with
-    \( \gamma_1 p_k = t_k \gamma_2 q_k \), which implies \( \gamma_2 \mid \gamma_1 p_k \) and
-    \( q_k \mid \gamma_1 p_k \). Since \( \gcd(\gamma_1, \gamma_2) = 1 = \gcd(p_k, q_k) \), we have
-    \( \gamma_2 \mid p_k \) and \( q_k \mid \gamma_1 \). Since \( k \leq N \) is arbitrary, we get,
-    by definition of the lcm and gcd, that \( \gamma_2 \mid g_{P(X)} \) and \( l_{P(X)} \mid
-    \gamma_1 \). Hence \( \gamma_1 = l_{P(X)} r \) for a certain \( r \in \mathbb{Z} \) and
-    \( g_{P(X)} = \gamma_2 s \) for a certain \( s \in \mathbb{Z} \). That is, \( \gamma =
-    \frac{l_{P(X)} r s}{g_{P(X)}} = d_{P(X)} r s \in d_{P(X)} \mathbb{Z} \), and since \( \gamma
-    \neq 0 \), we have \( \gamma \in d_{P(X)} \mathbb{Z} \setminus \left\{ 0 \right\} \). This
-    concludes the equality. Notice that \( d_{P(X)} \mathbb{Z} \setminus \left\{ 0 \right\} \) is a
-    discrete subspace of \( \mathbb{R} \).
+    l_{P\left(X\right)} \) and \( g_{P\left(X\right)} \mid p_k \). Now, for the reverse inclusion
+    \( \supset \): if we let \( \gamma \in \mathbb{Q}^{\times} \) with \( \gamma P\left(X\right) \in
+    \mathbb{Z}\left[X\right] \), write \( \gamma = \frac{\gamma_1}{\gamma_2} \) with \( \gamma_1,
+    \gamma_2 \in \mathbb{Z} \) and \( \gcd\left(\gamma_1, \gamma_2\right) = 1 \). One has for all
+    \( k \leq N \), \( \gamma \frac{p_k}{q_k} = \frac{\gamma_1 p_k}{\gamma_2 q_k} \in \mathbb{Z} \),
+    thus \( \exists t_k \in \mathbb{Z} \) with \( \gamma_1 p_k = t_k \gamma_2 q_k \), which implies
+    \( \gamma_2 \mid \gamma_1 p_k \) and \( q_k \mid \gamma_1 p_k \). Since \( \gcd\left(\gamma_1,
+    \gamma_2\right) = 1 = \gcd\left(p_k, q_k\right) \), we have \( \gamma_2 \mid p_k \) and
+    \( q_k \mid \gamma_1 \). Since \( k \leq N \) is arbitrary, we get, by definition of the lcm and
+    gcd, that \( \gamma_2 \mid g_{P\left(X\right)} \) and \( l_{P\left(X\right)} \mid \gamma_1 \).
+    Hence \( \gamma_1 = l_{P\left(X\right)} r \) for a certain \( r \in \mathbb{Z} \) and
+    \( g_{P\left(X\right)} = \gamma_2 s \) for a certain \( s \in \mathbb{Z} \). That is,
+    \( \gamma = \frac{l_{P\left(X\right)} r s}{g_{P\left(X\right)}} = d_{P\left(X\right)} r s \in
+    d_{P\left(X\right)} \mathbb{Z} \), and since \( \gamma \neq 0 \), we have \( \gamma \in
+    d_{P\left(X\right)} \mathbb{Z} \setminus \left\{ 0 \right\} \). This concludes the equality.
+    Notice that \( d_{P\left(X\right)} \mathbb{Z} \setminus \left\{ 0 \right\} \) is a discrete
+    subspace of \( \mathbb{R} \).
     \\\\
-    Clearly, \( \left\{ \gamma \in \mathbb{Q}^{\times} \,\middle|\, \gamma P(X) \in \mathbb{Z}[X]
-    \right\} \) is in bijection with \( \left\{ \gamma \in \mathbb{Q}^{\times} \,\middle|\,
-    \gamma^{-1} P(X) \in \mathbb{Z}[X] \right\} \) through the map \( \gamma \mapsto \gamma^{-1} \).
-    This implies:
+    Clearly, \( \left\{ \gamma \in \mathbb{Q}^{\times} \,\middle|\, \gamma P\left(X\right) \in
+    \mathbb{Z}\left[X\right] \right\} \) is in bijection with \( \left\{ \gamma \in
+    \mathbb{Q}^{\times} \,\middle|\, \gamma^{-1} P\left(X\right) \in \mathbb{Z}\left[X\right]
+    \right\} \) through the map \( \gamma \mapsto \gamma^{-1} \). This implies:
     \begin{equation}
-        \tag{2} \label{5.2} \left(d_{P(X)} \mathbb{Z} \setminus \left\{ 0 \right\}\right)^{-1} =
-        \left\{\left(d_{P(X)}\right)^{-1}\frac{1}{n} \,\middle|\, n \in \mathbb{Z} \setminus \left\{
-        0 \right\} \right\} = \left\{ \gamma \in \mathbb{Q}^{\times} \,\middle|\, \gamma^{-1} P(X)
-        \in \mathbb{Z}[X] \right\}.
+        \tag{2} \label{5.2} \left(d_{P\left(X\right)} \mathbb{Z} \setminus \left\{ 0
+        \right\}\right)^{-1} = \left\{\left(d_{P\left(X\right)}\right)^{-1}\frac{1}{n} \,\middle|\,
+        n \in \mathbb{Z} \setminus \left\{ 0 \right\} \right\} = \left\{ \gamma \in
+        \mathbb{Q}^{\times} \,\middle|\, \gamma^{-1} P\left(X\right) \in \mathbb{Z}\left[X\right]
+        \right\}.
     \end{equation}
-    Notice that \( \left(d_{P(X)} \mathbb{Z} \setminus \left\{ 0 \right\}\right)^{-1} \subset
-    \left[-\left(d_{P(X)}\right)^{-1}, \left(d_{P(X)}\right)^{-1}\right] \).
+    Notice that \( \left(d_{P\left(X\right)} \mathbb{Z} \setminus \left\{ 0 \right\}\right)^{-1}
+    \subset \left[-\left(d_{P\left(X\right)}\right)^{-1},
+    \left(d_{P\left(X\right)}\right)^{-1}\right] \).
     \\\\
     With this in mind, we can prove the steps. Fix \( n \in \mathbb{N} \),
     \\\\
     \( \bullet\quad \Gamma_n \neq \varnothing \).
     \\\\
-    If \( C_n(X) = 0 \), then since \( \mathbb{Q} \) is a domain, so is \( \mathbb{Q}[X] \). Hence,
-    either \( A_n(X) = 0 \), in which case \( \Gamma_{A,n} = \mathbb{Q}^{\times} \) and so
-    \( \Gamma_n = \Gamma_{B,n} \), or \( B_n(X) = 0 \), in which case also \( \Gamma_{B,n} =
-    \mathbb{Q}^{\times} \) and \( \Gamma_n = \Gamma_{A,n} \). So it suffices to show that
-    \( \Gamma_{A,n}, \Gamma_{B,n} \neq \varnothing \), which follows from the fact that for
-    \( N \in \mathbb{N} \) and a rational polynomial
+    If \( C_n\left(X\right) = 0 \), then since \( \mathbb{Q} \) is a domain, so is
+    \( \mathbb{Q}\left[X\right] \). Hence, either \( A_n\left(X\right) = 0 \), in which case
+    \( \Gamma_{A,n} = \mathbb{Q}^{\times} \) and so \( \Gamma_n = \Gamma_{B,n} \), or
+    \( B_n\left(X\right) = 0 \), in which case also \( \Gamma_{B,n} = \mathbb{Q}^{\times} \) and
+    \( \Gamma_n = \Gamma_{A,n} \). So it suffices to show that \( \Gamma_{A,n}, \Gamma_{B,n} \neq
+    \varnothing \), which follows from the fact that for \( N \in \mathbb{N} \) and a rational
+    polynomial
     \[
-        P(X) = \sum_{k=0}^{N} \frac{p_k}{q_k} X^{k} \in \mathbb{Q}[X]
+        P\left(X\right) = \sum_{k=0}^{N} \frac{p_k}{q_k} X^{k} \in \mathbb{Q}\left[X\right]
     \]
-    with \( \gcd(p_k, q_k) = 1 \) for all \( k \leq N \), then, as we saw, \( l_{P(X)} \in
-    \mathbb{N} \setminus \left\{ 0 \right\} \), and it is clear that
+    with \( \gcd\left(p_k, q_k\right) = 1 \) for all \( k \leq N \), then, as we saw,
+    \( l_{P\left(X\right)} \in \mathbb{N} \setminus \left\{ 0 \right\} \), and it is clear that
     \[
-        l_{P(X)} \in \left\{ \gamma \in \mathbb{Q}^{\times} \,\middle|\, \gamma P(X) \in
-        \mathbb{Z}[X] \right\}, \quad \frac{1}{l_{P(X)}} \in \left\{ \gamma \in \mathbb{Q}^{\times}
-        \,\middle|\, \gamma^{-1} P(X) \in \mathbb{Z}[X] \right\}.
+        l_{P\left(X\right)} \in \left\{ \gamma \in \mathbb{Q}^{\times} \,\middle|\, \gamma
+        P\left(X\right) \in \mathbb{Z}\left[X\right] \right\}, \quad \frac{1}{l_{P\left(X\right)}}
+        \in \left\{ \gamma \in \mathbb{Q}^{\times} \,\middle|\, \gamma^{-1} P\left(X\right) \in
+        \mathbb{Z}\left[X\right] \right\}.
     \]
-    Hence, in the case \( C_n(X) = 0 \), we have \( \Gamma_n \neq \varnothing \).
+    Hence, in the case \( C_n\left(X\right) = 0 \), we have \( \Gamma_n \neq \varnothing \).
     \\\\
     Now suppose \( C_n\left( X \right) \neq 0 \). Then both \( A_n\left( X \right), B_n\left( X
     \right) \in \mathbb{Q}\left[ X \right] \setminus \left\{ 0 \right\} \), thus for \( d_1 :=
@@ -262,10 +273,12 @@
     \\\\
     \( \bullet\quad \Gamma_{n+1} \subset \Gamma_n \):
     \\\\
-    For this, let \( \gamma \in \Gamma_{n+1} \). Then \( \gamma A_{n+1}(X) \in \mathbb{Z}[X] \) and
-    \( \gamma^{-1} B_{n+1}(X) \in \mathbb{Z}[X] \), and thus, trivially,
+    For this, let \( \gamma \in \Gamma_{n+1} \). Then \( \gamma A_{n+1}\left(X\right) \in
+    \mathbb{Z}\left[X\right] \) and \( \gamma^{-1} B_{n+1}\left(X\right) \in
+    \mathbb{Z}\left[X\right] \), and thus, trivially,
     \[
-        \gamma A_n(X) \in \mathbb{Z}[X], \quad \gamma^{-1} B_n(X) \in \mathbb{Z}[X],
+        \gamma A_n\left(X\right) \in \mathbb{Z}\left[X\right], \quad \gamma^{-1} B_n\left(X\right)
+        \in \mathbb{Z}\left[X\right],
     \]
     so \( \gamma \in \Gamma_n \).
     \\\\
@@ -276,15 +289,18 @@
     \right)_{n \in \mathbb{N}} \) are non-constant, there must exist \( M', M'' \in \mathbb{N} \)
     such that \( a'_{M'} \neq 0 \) and \( b'_{M''} \neq 0 \). In particular, the corresponding
     polynomials from \( M := \max\left\{ M', M'' \right\} \in \mathbb{N} \) onward cannot be
-    \( 0 \), that is, for \( k \geq M \), satisfy \( A_k(X), B_k(X) \neq 0 \). In this case, we have
-    seen that \( d_{A_k(X)}, d_{B_k(X)} \in \mathbb{Q}_{>0} \), and in \eqref{5.1} that
+    \( 0 \), that is, for \( k \geq M \), satisfy \( A_k\left(X\right), B_k\left(X\right) \neq 0 \).
+    In this case, we have seen that \( d_{A_k\left(X\right)}, d_{B_k\left(X\right)} \in
+    \mathbb{Q}_{>0} \), and in \eqref{5.1} that
     \[
-        \Gamma_{A_k,+} = d_{A_k(X)} \mathbb{Z} \setminus \left\{ 0 \right\} \text{ is discrete,}
+        \Gamma_{A_k,+} = d_{A_k\left(X\right)} \mathbb{Z} \setminus \left\{ 0 \right\}
+        \text{ is discrete,}
     \]
     and in \eqref{5.2}
     \[
-        \Gamma_{B_k,-} = \left( d_{B_k(X)} \mathbb{Z} \setminus \left\{ 0 \right\} \right)^{-1}
-        \subset \left[ -\left( d_{B_k(X)} \right)^{-1}, \left( d_{B_k(X)} \right)^{-1} \right].
+        \Gamma_{B_k,-} = \left( d_{B_k\left(X\right)} \mathbb{Z} \setminus \left\{ 0 \right\}
+        \right)^{-1} \subset \left[ -\left( d_{B_k\left(X\right)} \right)^{-1}, \left(
+        d_{B_k\left(X\right)} \right)^{-1} \right].
     \]
     Notice then that \( \Gamma_k \) is finite. This is because
     \begin{align*}

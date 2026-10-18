@@ -53,18 +53,19 @@
         \[
             \operatorname{det}_R\left(V_{\boldsymbol{x}}\right) =
             \operatorname{det}_R\left(V'_{\boldsymbol{x}}\right) = \left(-1_R\right)^{0+0} \cdot
-            \operatorname{det}_R\left(\left(V'_{\boldsymbol{x}}\right)_{(0\mid0)}\right) =
-            \operatorname{det}_R\left(\left(V'_{\boldsymbol{x}}\right)_{(0\mid0)}\right),
+            \operatorname{det}_R\left(\left(V'_{\boldsymbol{x}}\right)_{\left(0\mid0\right)}\right)
+            =
+            \operatorname{det}_R\left(\left(V'_{\boldsymbol{x}}\right)_{\left(0\mid0\right)}\right),
         \]
-        where \( \left(V'_{\boldsymbol{x}}\right)_{(0\mid0)} \in R^{n \times n} \) is the submatrix
-        obtained by deleting row \( 0 \) and column \( 0 \).
+        where \( \left(V'_{\boldsymbol{x}}\right)_{\left(0\mid0\right)} \in R^{n \times n} \) is the
+        submatrix obtained by deleting row \( 0 \) and column \( 0 \).
         \\\\
         By the multilinearity of the determinant with respect to the rows, we can factor out the
         common scalar \( \left(x_{r+1} - x_0\right) \) from each row \( r \in n \) of
-        \( \left(V'_{\boldsymbol{x}}\right)_{(0\mid0)} \), to obtain:
+        \( \left(V'_{\boldsymbol{x}}\right)_{\left(0\mid0\right)} \), to obtain:
         \[
-            \operatorname{det}_R\left(\left(V'_{\boldsymbol{x}}\right)_{(0\mid0)}\right) = \left(
-            \prod_{r\in n}\left(x_{r+1} - x_0\right) \right)
+            \operatorname{det}_R\left(\left(V'_{\boldsymbol{x}}\right)_{\left(0\mid0\right)}\right)
+            = \left( \prod_{r\in n}\left(x_{r+1} - x_0\right) \right)
             \operatorname{det}_R\left(V_{\boldsymbol{x}'}\right) = \left( \prod_{0<j<n+1}
             \left(x_{j} - x_0\right) \right) \operatorname{det}_R\left(V_{\boldsymbol{x}'}\right),
         \]

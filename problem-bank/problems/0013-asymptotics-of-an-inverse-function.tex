@@ -13,43 +13,49 @@
 % references:     Earliest known appearance (to the best of our knowledge): Gazeta Matematica (Bucharest), proposed by I. Tomescu, issue/year/number not identified (credited in the book's solution); R. Gelca, T. Andreescu, Putnam and Beyond, Springer 2007, Problem 414 (Section 3.2.4, L'Hopital's rule; 2nd ed., Springer 2017, Problem 502) - https://books.google.ch/books/about/Putnam_and_Beyond.html?id=eqnUG85ZIJMC
 % history:        ai
 \begin{problem}
-    For any real number \( \lambda \geq 1 \), denote by \( f(\lambda) \) the real solution to the
-    equation
+    For any real number \( \lambda \geq 1 \), denote by \( f\left(\lambda\right) \) the real
+    solution to the equation
     \[
-        x(1 + \ln x) = \lambda.
+        x\left(1 + \ln x\right) = \lambda.
     \]
     Prove that
     \[
-        \lim_{\lambda \to \infty} \frac{f(\lambda)}{\frac{\lambda}{\ln \lambda}} = 1.
+        \lim_{\lambda \to \infty} \frac{f\left(\lambda\right)}{\frac{\lambda}{\ln \lambda}} = 1.
     \]
 \end{problem}
 \begin{solution}
-    The function \( h : [1, +\infty[ \rightarrow [1, +\infty[ \) given by \( h(t) = t(1 + \ln t) \)
-    is strictly increasing, and \( h(1) = 1 \), \( \lim_{t \to +\infty} h(t) = +\infty \). Hence
-    \( h \) is bijective, and its inverse is clearly the function \( f : [1, +\infty[
-    \rightarrow [1, +\infty[ \), \( \lambda \rightarrow f(\lambda) \) satisfying
-    \( \lambda=f(\lambda)(1+\ln(f(\lambda))) \). Since \( h \) is differentiable with
-    \( h'(t)=2+\ln(t) \) which never vanishes for \( t\in[1, +\infty[ \) so is \( f \), and
+    The function \( h : [1, +\infty[ \rightarrow [1, +\infty[ \) given by \( h\left(t\right) =
+    t\left(1 + \ln t\right) \) is strictly increasing, and \( h\left(1\right) = 1 \),
+    \( \lim_{t \to +\infty} h\left(t\right) = +\infty \). Hence \( h \) is bijective, and its
+    inverse is clearly the function \( f : [1, +\infty[ \rightarrow [1, +\infty[ \), \( \lambda
+    \rightarrow f\left(\lambda\right) \) satisfying
+    \( \lambda=f\left(\lambda\right)\left(1+\ln\left(f\left(\lambda\right)\right)\right) \). Since
+    \( h \) is differentiable with \( h'\left(t\right)=2+\ln\left(t\right) \) which never vanishes
+    for \( t\in[1, +\infty[ \) so is \( f \), and
     \[
-        f'(\lambda) = \frac{1}{h'(f(\lambda))} = \frac{1}{2 + \ln f(\lambda)}.
+        f'\left(\lambda\right) = \frac{1}{h'\left(f\left(\lambda\right)\right)} =
+        \frac{1}{2 + \ln f\left(\lambda\right)}.
     \]
-    Also, since \( h \) is strictly increasing and \( \lim_{t \to +\infty} h(t) = +\infty \),
-    \( f(\lambda) \) is strictly increasing, and its limit at + infinity is also + infinity. Using
-    the defining relation for \( f(\lambda) \), we see that for \( \lambda \geq 1 \):
+    Also, since \( h \) is strictly increasing and \( \lim_{t \to +\infty} h\left(t\right) =
+    +\infty \), \( f\left(\lambda\right) \) is strictly increasing, and its limit at + infinity is
+    also + infinity. Using the defining relation for \( f\left(\lambda\right) \), we see that for
+    \( \lambda \geq 1 \):
     \[
-        \frac{f(\lambda)}{\frac{\lambda}{\ln \lambda}} = \ln \lambda \cdot
-        \frac{f(\lambda)}{\lambda} = \frac{\ln \lambda}{1 + \ln f(\lambda)}.
+        \frac{f\left(\lambda\right)}{\frac{\lambda}{\ln \lambda}} = \ln \lambda \cdot
+        \frac{f\left(\lambda\right)}{\lambda} = \frac{\ln \lambda}{1 + \ln f\left(\lambda\right)}.
     \]
     Now we apply L'Hôpital's theorem and obtain
     \[
-        \lim_{\lambda \to +\infty} \frac{f(\lambda)}{\frac{\lambda}{\ln \lambda}} =
+        \lim_{\lambda \to +\infty} \frac{f\left(\lambda\right)}{\frac{\lambda}{\ln \lambda}} =
         \lim_{\lambda \to +\infty}
-        \frac{\frac{1}{\lambda}}{\frac{1}{f(\lambda)} \cdot \frac{1}{2 + \ln f(\lambda)}} =
-        \lim_{\lambda \to +\infty} \frac{f(\lambda)}{\lambda} (2 + \ln f(\lambda))\]
+        \frac{\frac{1}{\lambda}}{\frac{1}{f\left(\lambda\right)} \cdot \frac{1}{2 + \ln f\left(\lambda\right)}}
+        = \lim_{\lambda \to +\infty} \frac{f\left(\lambda\right)}{\lambda} \left(2 + \ln
+        f\left(\lambda\right)\right)\]
     \[
-        = \lim_{\lambda \to +\infty} \frac{2 + \ln f(\lambda)}{1 + \ln f(\lambda)} =
-        1+\lim_{\lambda \to +\infty}\frac{1}{1+\ln f(\lambda)}=1,
+        = \lim_{\lambda \to +\infty}
+        \frac{2 + \ln f\left(\lambda\right)}{1 + \ln f\left(\lambda\right)} =
+        1+\lim_{\lambda \to +\infty}\frac{1}{1+\ln f\left(\lambda\right)}=1,
     \]
     where the last equality follows from the fact \( \lim_{\lambda\to +\infty}\ln
-    f(\lambda)=+\infty \). Therefore, the required limit is equal to 1.
+    f\left(\lambda\right)=+\infty \). Therefore, the required limit is equal to 1.
 \end{solution}

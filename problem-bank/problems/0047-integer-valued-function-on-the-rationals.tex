@@ -16,24 +16,28 @@
     Show that any function \( f:\mathbb{Q}\longrightarrow\mathbb{Z} \) satisfies the following
     property:
     \[
-        \exists a,b,c\in\mathbb{Q}\text{ with } a<b<c \text{ such that } f(a), f(c)\leq f(b)
+        \exists a,b,c\in\mathbb{Q}\text{ with } a<b<c \text{ such that } f\left(a\right),
+        f\left(c\right)\leq f\left(b\right)
     \]
 \end{problem}
 \begin{solution}
-    If \( \exists a,b,c \in \mathbb{Q} \) such that \( a < b < c \) and \( f(a) = f(b) = f(c) \),
-    then we are done. Otherwise, suppose that \( \forall a,b,c \in \mathbb{Q} \) with \( a < b <
-    c \), we do not have \( f(a) = f(b) = f(c) \). We show that such \( f \) must be unbounded on
-    \( [0,1] \cap \mathbb{Q} \). Indeed, if this is not the case, then \( \exists K \in
-    \mathbb{Z}_{\geq0} \) such that \( f\left[[0,1] \cap \mathbb{Q}\right] \subset \llbracket -K, K
-    \rrbracket \). Since \( [0,1] \cap \mathbb{Q} = \bigsqcup_{j \in \llbracket -K, K \rrbracket}
-    \left(f|_{[0,1] \cap \mathbb{Q}}\right)^{-1}[\{j\}] \) is a finite union and \( [0,1] \cap
-    \mathbb{Q} \) is countably infinite, there exists \( j \in \llbracket -K, K \rrbracket \) such
-    that \( f^{-1}[\{j\}] \) is countably infinite. Pick pairwise distinct \( a,b,c \in
-    f^{-1}[\{j\}] \) and, without loss of generality, \( a < b < c \). Then \( j = f(a) = f(b) =
-    f(c) \), a contradiction to our assumptions on \( f \). Thus, \( f|_{[0,1] \cap \mathbb{Q}} \)
-    is unbounded. In particular, there exists \( b \in ]0,1[ \cap \mathbb{Q} \) such that
-    \( f(0), f(1) \leq f(b) \). Take \( a = 0 \) and \( c = 1 \), then \( a < b < c \) and
-    \( f(a), f(c) \leq f(b) \), as desired.
+    If \( \exists a,b,c \in \mathbb{Q} \) such that \( a < b < c \) and \( f\left(a\right) =
+    f\left(b\right) = f\left(c\right) \), then we are done. Otherwise, suppose that \( \forall a,b,c
+    \in \mathbb{Q} \) with \( a < b < c \), we do not have \( f\left(a\right) = f\left(b\right) =
+    f\left(c\right) \). We show that such \( f \) must be unbounded on \( \left[0,1\right] \cap
+    \mathbb{Q} \). Indeed, if this is not the case, then \( \exists K \in \mathbb{Z}_{\geq0} \) such
+    that \( f\left[\left[0,1\right] \cap \mathbb{Q}\right] \subset \llbracket -K, K \rrbracket \).
+    Since \( \left[0,1\right] \cap \mathbb{Q} = \bigsqcup_{j \in \llbracket -K, K \rrbracket}
+    \left(f|_{\left[0,1\right] \cap \mathbb{Q}}\right)^{-1}\left[\left\{j\right\}\right] \) is a
+    finite union and \( \left[0,1\right] \cap \mathbb{Q} \) is countably infinite, there exists
+    \( j \in \llbracket -K, K \rrbracket \) such that \( f^{-1}\left[\left\{j\right\}\right] \) is
+    countably infinite. Pick pairwise distinct \( a,b,c \in f^{-1}\left[\left\{j\right\}\right] \)
+    and, without loss of generality, \( a < b < c \). Then \( j = f\left(a\right) = f\left(b\right)
+    = f\left(c\right) \), a contradiction to our assumptions on \( f \). Thus,
+    \( f|_{\left[0,1\right] \cap \mathbb{Q}} \) is unbounded. In particular, there exists
+    \( b \in ]0,1[ \cap \mathbb{Q} \) such that \( f\left(0\right), f\left(1\right) \leq
+    f\left(b\right) \). Take \( a = 0 \) and \( c = 1 \), then \( a < b < c \) and
+    \( f\left(a\right), f\left(c\right) \leq f\left(b\right) \), as desired.
     \\\\
     \textit{Remark:}
     Notice that we did not use all the properties of \( \left\langle\mathbb{Q},<\right\rangle \); in
@@ -42,16 +46,19 @@
     strict \href{https://en.wikipedia.org/wiki/Dense_order}{dense order} \( \left\langle
     S,<_S\right\rangle \) with at least two \( <_S \)-comparable elements: any \( f : S \to
     \mathbb{Z} \) has the property that \( \exists a,b,c \in S \) such that \( a <_S b <_S c \) with
-    \( f(a), f(c) \leq f(b) \). Again, we may assume, for the sake of contradiction, that
-    \( \forall a,b,c \in S \) with \( a <_S b <_S c \), \( f(a) = f(b) = f(c) \) does not hold. Take
-    two \( <_S \)-comparable elements \( a,c \in S \) with \( a <_S c \). By the axiom of countable
-    choice, one easily obtains a countable \( <_S \)-chain \( \mathbf{x} : \mathbb{N}
-    \hookrightarrow S \) such that for all \( i \in \mathbb{N}_{>0} \),
+    \( f\left(a\right), f\left(c\right) \leq f\left(b\right) \). Again, we may assume, for the sake
+    of contradiction, that \( \forall a,b,c \in S \) with \( a <_S b <_S c \), \( f\left(a\right) =
+    f\left(b\right) = f\left(c\right) \) does not hold. Take two \( <_S \)-comparable elements
+    \( a,c \in S \) with \( a <_S c \). By the axiom of countable choice, one easily obtains a
+    countable \( <_S \)-chain \( \mathbf{x} : \mathbb{N} \hookrightarrow S \) such that for all
+    \( i \in \mathbb{N}_{>0} \),
     \[
-        a <_S \mathbf{x}(i+1) <_S \mathbf{x}(i) <_S \mathbf{x}(0) <_S c.
+        a <_S \mathbf{x}\left(i+1\right) <_S \mathbf{x}\left(i\right) <_S \mathbf{x}\left(0\right)
+        <_S c.
     \]
-    Hence, for the same reason as before, \( f|_{\operatorname{ran}(\mathbf{x})} \) is unbounded. In
-    particular, there exists \( i \in \mathbb{N} \) such that \( f(a), f(c) \leq
-    f(\mathbf{x}(i)) \). Then define \( b := \mathbf{x}(i) \in S \). We have \( a <_S b <_S c \),
-    and \( f(a), f(c) \leq f(b) \), as desired.
+    Hence, for the same reason as before, \( f|_{\operatorname{ran}\left(\mathbf{x}\right)} \) is
+    unbounded. In particular, there exists \( i \in \mathbb{N} \) such that \( f\left(a\right),
+    f\left(c\right) \leq f\left(\mathbf{x}\left(i\right)\right) \). Then define \( b :=
+    \mathbf{x}\left(i\right) \in S \). We have \( a <_S b <_S c \), and \( f\left(a\right),
+    f\left(c\right) \leq f\left(b\right) \), as desired.
 \end{solution}

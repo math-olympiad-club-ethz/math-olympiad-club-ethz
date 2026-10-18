@@ -27,23 +27,25 @@
     First write \( d=\frac{ac}{b} \) so we have
     \( \frac{a}{b}+\frac{b}{a}+\frac{b}{c}+\frac{c}{b}=4 \) and we want to show that
     \( \frac{a}{c}+\frac{c}{a}+\frac{b^2}{ac}+\frac{ac}{b^2} \leqslant -12 \) or equivalently
-    \( (\frac{a}{b}+\frac{b}{a})(\frac{c}{b}+\frac{b}{c}) \leqslant -12 \).
+    \( \left(\frac{a}{b}+\frac{b}{a}\right)\left(\frac{c}{b}+\frac{b}{c}\right) \leqslant -12 \).
     \\\\
     Set \( \frac{a}{b}+\frac{b}{a}=s \) and \( \frac{c}{b}+\frac{b}{c}=t \). We have \( s+t=4 \) and
     we want \( st \leqslant -12 \).
     \\\\
-    We have \( t=4-s \) and so we need \( s(4-s) \leqslant -12 \Rightarrow s^2-4s-12 \geqslant 0 \).
-    If \( s \leqslant -2 \), this holds (indeed, set \( s=-2+k \) and we have
-    \( s^2-4s-12=(k-2)^2-4(k-2)-12=k^2-8k-16=(k-4)^2 \geqslant 0 \)).
+    We have \( t=4-s \) and so we need \( s\left(4-s\right) \leqslant -12 \Rightarrow s^2-4s-12
+    \geqslant 0 \). If \( s \leqslant -2 \), this holds (indeed, set \( s=-2+k \) and we have
+    \( s^2-4s-12=\left(k-2\right)^2-4\left(k-2\right)-12=k^2-8k-16=\left(k-4\right)^2 \geqslant
+    0 \)).
     \\\\
     So assume that \( s \geqslant -2 \). Similarly, assume \( t \geqslant -2 \). We have then
-    \( \frac{a}{b}+\frac{b}{a} \geqslant -2 \Rightarrow \frac{(a+b)^2}{ab}\geqslant 0 \), so
-    \( ab>0 \) and \( bc>0 \), so \( a,b,c, \) are of the same sign, so
+    \( \frac{a}{b}+\frac{b}{a} \geqslant -2 \Rightarrow \frac{\left(a+b\right)^2}{ab}\geqslant 0 \),
+    so \( ab>0 \) and \( bc>0 \), so \( a,b,c, \) are of the same sign, so
     \( 4=\frac{a}{b}+\frac{b}{a}+\frac{b}{c}+\frac{c}{b} \geqslant 2+2=4 \), so \( a=b=c \),
     contradiction, since \( a \neq b \neq c \neq a \).
     \\\\
     So, at least one of \( s,t \) is \( \leqslant -2 \) and the stated inequality holds.
     \\\\
-    The equality happens e.g. when \( (a,b,c,d)=(2\sqrt{2}-3,3-2\sqrt{2},1,-1) \) (and this shows
-    that \( -12 \) is the maximum).
+    The equality happens e.g. when
+    \( \left(a,b,c,d\right)=\left(2\sqrt{2}-3,3-2\sqrt{2},1,-1\right) \) (and this shows that
+    \( -12 \) is the maximum).
 \end{solution}

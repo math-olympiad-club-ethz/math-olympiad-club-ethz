@@ -14,9 +14,10 @@
 % history:        human
 \begin{problem}
     Let \( n\geq 1 \) be an integer. Assume \( C \) and \( D \) are chosen at random from
-    \( \{1,\ldots,n\} \). Let \( p_n \) be the probability that \( C + D \) is a perfect square.
-    Compute \( \lim_{n \to \infty}(\sqrt{n} \cdot p_n) \). Express the result in the form
-    \( (a\sqrt{b} + c)/d \), where \( a \), \( b \), \( c \), \( d \) are integers.
+    \( \left\{1,\ldots,n\right\} \). Let \( p_n \) be the probability that \( C + D \) is a perfect
+    square. Compute \( \lim_{n \to \infty}\left(\sqrt{n} \cdot p_n\right) \). Express the result in
+    the form \( \left(a\sqrt{b} + c\right)/d \), where \( a \), \( b \), \( c \), \( d \) are
+    integers.
 \end{problem}
 \begin{solution}
     Since for each \( n\in\mathbb{N}^{*} \) the number of ways of writing \( n \) as the sum of two
@@ -25,23 +26,25 @@
     \( a \) i.e. \( n-1 \)). Hence the number of ways of writing as a sum of two positive integer
     every perfect square between 1 and 2n is:
     \[
-        S:=\left(\sum_{i=1}^{\lfloor\sqrt{n}\rfloor} (i^2-1)\right) +
-        \left(\sum_{i=\lfloor\sqrt{n}\rfloor+1}^{\lfloor\sqrt{2n}\rfloor} (n+1) -(i^2-n)\right)
+        S:=\left(\sum_{i=1}^{\lfloor\sqrt{n}\rfloor} \left(i^2-1\right)\right) +
+        \left(\sum_{i=\lfloor\sqrt{n}\rfloor+1}^{\lfloor\sqrt{2n}\rfloor} \left(n+1\right)
+        -\left(i^2-n\right)\right)
     \]
     \[
-        =\left(\frac{\lfloor\sqrt{n}\rfloor(\lfloor\sqrt{n}\rfloor+1)(2\lfloor\sqrt{n}\rfloor+1)}{6}
+        =\left(\frac{\lfloor\sqrt{n}\rfloor\left(\lfloor\sqrt{n}\rfloor+1\right)\left(2\lfloor\sqrt{n}\rfloor+1\right)}{6}
         - \lfloor\sqrt{n}\rfloor\right) +
-        \left(\sum_{i=\lfloor\sqrt{n}\rfloor+1}^{\lfloor\sqrt{2n}\rfloor} (2n+1-i^2)\right)
+        \left(\sum_{i=\lfloor\sqrt{n}\rfloor+1}^{\lfloor\sqrt{2n}\rfloor}
+        \left(2n+1-i^2\right)\right)
     \]
     \[
-        =\left(\frac{\lfloor\sqrt{n}\rfloor(\lfloor\sqrt{n}\rfloor+1)(2\lfloor\sqrt{n}\rfloor+1)-6\lfloor\sqrt{n}\rfloor + 6(2n+1)\left(\lfloor\sqrt{2n}\rfloor-\lfloor\sqrt{n}\rfloor\right)}{6}\right)-\sum_{i=\lfloor\sqrt{n}\rfloor + 1}^{\lfloor\sqrt{2n}\rfloor}i^2
+        =\left(\frac{\lfloor\sqrt{n}\rfloor\left(\lfloor\sqrt{n}\rfloor+1\right)\left(2\lfloor\sqrt{n}\rfloor+1\right)-6\lfloor\sqrt{n}\rfloor + 6\left(2n+1\right)\left(\lfloor\sqrt{2n}\rfloor-\lfloor\sqrt{n}\rfloor\right)}{6}\right)-\sum_{i=\lfloor\sqrt{n}\rfloor + 1}^{\lfloor\sqrt{2n}\rfloor}i^2
     \]
     \[
-        =\left(\frac{\lfloor\sqrt{n}\rfloor(\lfloor\sqrt{n}\rfloor+1)(2\lfloor\sqrt{n}\rfloor+1)-6\lfloor\sqrt{n}\rfloor + 6(2n+1)\left(\lfloor\sqrt{2n}\rfloor-\lfloor\sqrt{n}\rfloor\right)}{6}\right)
+        =\left(\frac{\lfloor\sqrt{n}\rfloor\left(\lfloor\sqrt{n}\rfloor+1\right)\left(2\lfloor\sqrt{n}\rfloor+1\right)-6\lfloor\sqrt{n}\rfloor + 6\left(2n+1\right)\left(\lfloor\sqrt{2n}\rfloor-\lfloor\sqrt{n}\rfloor\right)}{6}\right)
     \]
     \[
         -
-        \left(\frac{\lfloor\sqrt{2n}\rfloor(\lfloor\sqrt{2n}\rfloor+1)(2\lfloor\sqrt{2n}\rfloor+1)}{6}\right)+\left(\frac{\lfloor\sqrt{n}\rfloor(\lfloor\sqrt{n}\rfloor+1)(2\lfloor\sqrt{n}\rfloor+1)}{6}\right)
+        \left(\frac{\lfloor\sqrt{2n}\rfloor\left(\lfloor\sqrt{2n}\rfloor+1\right)\left(2\lfloor\sqrt{2n}\rfloor+1\right)}{6}\right)+\left(\frac{\lfloor\sqrt{n}\rfloor\left(\lfloor\sqrt{n}\rfloor+1\right)\left(2\lfloor\sqrt{n}\rfloor+1\right)}{6}\right)
     \]
     Then:
     \[

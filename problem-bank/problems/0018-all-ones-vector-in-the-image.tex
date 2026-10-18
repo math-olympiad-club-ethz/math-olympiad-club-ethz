@@ -34,30 +34,31 @@
     \[
         \left(W^{\perp}\right)^{\perp} = W.
     \]
-    where \( Z^\perp = \{ v \in \mathbb{F}_2^n \mid \langle v, z \rangle_{\mathbb{F}_2^n} =
-    0_{\mathbb{F}_2} \ \forall z \in Z \} \) for any \( \mathbb{F}_{2}- \)subspace \( Z \subset
-    \mathbb{F}_2^n \). For a proof of this classical fact, see the
+    where \( Z^\perp = \left\{ v \in \mathbb{F}_2^n \mid \langle v, z \rangle_{\mathbb{F}_2^n} =
+    0_{\mathbb{F}_2} \ \forall z \in Z \right\} \) for any \( \mathbb{F}_{2}- \)subspace
+    \( Z \subset \mathbb{F}_2^n \). For a proof of this classical fact, see the
     Appendix [\appendixref{double-orthogonal-complement}].
     \\\\
     With this being introduced, lets take an \( n \times n \)-matrix \( A \) with
-    \( \operatorname{diag}(A)=1_{\mathbb{F}_2^n} \). Now write \( A =
-    (a_{ij})_{1 \leq i, j \leq n} \) with \( a_{ii} = 1_{\mathbb{F}_2} \) and \( a_{ij} = a_{ji} \).
-    Then we have for any \( v \in \mathbb{F}_2^n \),
+    \( \operatorname{diag}\left(A\right)=1_{\mathbb{F}_2^n} \). Now write \( A =
+    \left(a_{ij}\right)_{1 \leq i, j \leq n} \) with \( a_{ii} = 1_{\mathbb{F}_2} \) and
+    \( a_{ij} = a_{ji} \). Then we have for any \( v \in \mathbb{F}_2^n \),
     \[
         \langle v, Av \rangle_{\mathbb{F}_2^n} = \sum_{0 \leq i, j \leq n-1} v_i v_j a_{ij} =
         \sum_{i=0}^{n-1} v_i^2 + 2 \sum_{0\leq i < j\leq n-1} v_i v_j a_{ij} = \sum_{i=0}^{n-1} v_i
         = \left\langle v, 1_{\mathbb{F}_2^n} \right\rangle_{\mathbb{F}_2^n},
     \]
     because we are working over \( \mathbb{F}_2 \). In particular for any \( z \in
-    \operatorname{Im}(A)^\perp\subset \mathbb{F}_2^n \),
+    \operatorname{Im}\left(A\right)^\perp\subset \mathbb{F}_2^n \),
     \[
         \langle z, 1_{\mathbb{F}_2^n} \rangle_{\mathbb{F}_2^n} = \langle z, Az
         \rangle_{\mathbb{F}_2^n} = 0_{\mathbb{F}_2},
     \]
-    since \( Az \in \operatorname{Im}(A) \) and \( z\in \operatorname{Im}(A)^{\perp} \). As
-    \( z\in \operatorname{Im}(A)^{\perp} \) was arbitrary, we must have
+    since \( Az \in \operatorname{Im}\left(A\right) \) and \( z\in
+    \operatorname{Im}\left(A\right)^{\perp} \). As \( z\in
+    \operatorname{Im}\left(A\right)^{\perp} \) was arbitrary, we must have
     \[
-        1_{\mathbb{F}_2^n}\in \left(\operatorname{Im}(A)^{\perp}\right)^{\perp} =
-        \operatorname{Im}(A).
+        1_{\mathbb{F}_2^n}\in \left(\operatorname{Im}\left(A\right)^{\perp}\right)^{\perp} =
+        \operatorname{Im}\left(A\right).
     \]
 \end{solution}

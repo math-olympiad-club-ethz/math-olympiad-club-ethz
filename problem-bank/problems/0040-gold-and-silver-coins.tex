@@ -46,19 +46,22 @@
         \item \textit{Add a gold coin:} The number of gold coins increases by \( 1 \) (\( g \to
             g+1 \)), and the current number of silver coins \( s \) is added to the first paper
             (\( A \to A+s \)). \( B \) and \( s \) remain unchanged. The new difference of the
-            papers is \( (A + s) - B \). Using our inductive hypothesis \( A - B = s \cdot g \), we
-            get:
+            papers is \( \left(A + s\right) - B \). Using our inductive hypothesis \( A - B = s
+            \cdot g \), we get:
             \[
-                (A + s) - B = (A - B) + s = s \cdot g + s = s(g + 1)
+                \left(A + s\right) - B = \left(A - B\right) + s = s \cdot g + s = s\left(g +
+                1\right)
             \]
             This exactly matches the new product of the coins, so the invariant is maintained.
 
         \item \textit{Remove a silver coin:} The number of silver coins decreases by \( 1 \)
             (\( s \to s-1 \)), and the current number of gold coins \( g \) is added to the second
             paper (\( B \to B+g \)). \( A \) and \( g \) remain unchanged. The new difference of the
-            papers is \( A - (B + g) \). Again, substituting \( A - B = s \cdot g \), we get:
+            papers is \( A - \left(B + g\right) \). Again, substituting \( A - B = s \cdot g \), we
+            get:
             \[
-                A - (B + g) = (A - B) - g = s \cdot g - g = g(s - 1)
+                A - \left(B + g\right) = \left(A - B\right) - g = s \cdot g - g = g\left(s -
+                1\right)
             \]
             This exactly matches the new product of the coins, so the invariant is maintained.
     \end{enumerate}

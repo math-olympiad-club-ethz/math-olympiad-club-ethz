@@ -13,8 +13,8 @@
 % references:     Earliest known appearance (to the best of our knowledge): 1st All-Russian (All-Union) Mathematical Olympiad, Moscow 1961, Problem 5 (part a on the form-8 paper, part b on the form-10 paper); book source N. B. Vasil'ev, A. A. Egorov, Zadachi vsesoyuznykh matematicheskikh olimpiad, Nauka 1988, problem 5 - https://olympiads.win.tue.nl/imo/soviet/RusMath.html; AoPS '1961 All-Soviet Union Olympiad' (Form 8 P5 = part a, Form 10 P5 = part b) - https://web.archive.org/web/20210506170132/https://artofproblemsolving.com/downloads/printable_post_collections/114577; Kalva-style compilation '1st ASU 1961, Problem 5' - https://mathematikalpha.de/wp-content/uploads/2016/01/All_Soviet_Union_Math_Competitions.pdf; also http://schoolexercisebooks.blogspot.com/2010/10/1st-all-russian-mathematical-olympiad.html. Part (b) is the modulo-2 Ducci map for n = 2^k (write a_i = (-1)^{x_i}): https://en.wikipedia.org/wiki/Ducci_sequence
 % history:        human
 \begin{problem}
-    (a) Given a 4-tuple of positive numbers \( (a,b,c,d) \), it is transformed into a new one
-    according to the rule:
+    (a) Given a 4-tuple of positive numbers \( \left(a,b,c,d\right) \), it is transformed into a new
+    one according to the rule:
     \[
         a' = ab, \quad b' = bc, \quad c' = cd, \quad d' = da.
     \]
@@ -31,8 +31,8 @@
 \end{problem}
 \begin{solution}
     \begin{enumerate}
-        \item[(a)] Let \( Q_0 = (a, b, c, d) \) be the original 4-tuple and let \( Q_n \) be the
-            4-tuple after \( n \) transformations. We consider the product of all elements:
+        \item[(a)] Let \( Q_0 = \left(a, b, c, d\right) \) be the original 4-tuple and let \( Q_n \)
+            be the 4-tuple after \( n \) transformations. We consider the product of all elements:
             \[
                 abcd.
             \]
@@ -44,17 +44,17 @@
             1 \), the product is strictly decreasing, again preventing a return. Therefore, the only
             possibility for a return is if \( abcd = 1 \).
 
-            Next, define \( M(Q) \) as the largest number in the 4-tuple \( Q \). If at least one
-            number in \( Q_1 \) is not \( 1 \), then necessarily \( M(Q_1) > 1 \). Moreover, in
-            \( Q_3 \), each element is the square of some element from \( Q_1 \) (can be shown using
-            that \( abcd=1 \)), implying:
+            Next, define \( M\left(Q\right) \) as the largest number in the 4-tuple \( Q \). If at
+            least one number in \( Q_1 \) is not \( 1 \), then necessarily \( M\left(Q_1\right) >
+            1 \). Moreover, in \( Q_3 \), each element is the square of some element from \( Q_1 \)
+            (can be shown using that \( abcd=1 \)), implying:
             \[
-                M(Q_3) = M(Q_1)^2.
+                M\left(Q_3\right) = M\left(Q_1\right)^2.
             \]
             Since squaring a number greater than 1 results in an even larger number, the sequence
-            \( M(Q_1), M(Q_3), M(Q_5), \dots \) grows indefinitely. This precludes any possibility
-            of returning to the original 4-tuple, as a return would imply cycling, contradicting the
-            unbounded growth of \( M(Q_n) \).
+            \( M\left(Q_1\right), M\left(Q_3\right), M\left(Q_5\right), \dots \) grows indefinitely.
+            This precludes any possibility of returning to the original 4-tuple, as a return would
+            imply cycling, contradicting the unbounded growth of \( M\left(Q_n\right) \).
 
         \item[(b)] After \( r \) transformations, the first element of the \( n \)-tuple can be
             written as:
@@ -72,7 +72,7 @@
             This follows from the fact that in Pascal's triangle, the binomial coefficient
             \( \binom{n}{i} \) is given by:
             \[
-                \binom{n}{i} = \frac{n!}{i!(n-i)!}.
+                \binom{n}{i} = \frac{n!}{i!\left(n-i\right)!}.
             \]
             Since \( n = 2^k \), the highest power of \( 2 \) dividing \( n \) is greater than the
             highest power of \( 2 \) dividing \( i \) or \( n-i \), ensuring that \( \binom{n}{i} \)

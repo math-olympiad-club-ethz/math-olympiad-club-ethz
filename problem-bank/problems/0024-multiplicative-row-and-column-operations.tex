@@ -42,41 +42,45 @@
     \mathbb{R}_{>0}^{2 \times 2} \) with positive entries, the following auxiliary logarithmic
     transformation matrix:
     \[
-        L(X)
+        L\left(X\right)
         = \begin{bmatrix} \log_2\left(x_{11}\right) & \log_2\left(x_{12}\right) \\ \log_2\left(x_{21}\right) & \log_2\left(x_{22}\right) \end{bmatrix}.
     \]
     By taking logarithms of the entries, which transform multiplication to addition (as it is a
-    group morphism from \( (\mathbb{R}_{>0},\cdot) \) to \( (\mathbb{R},+) \)), Ivan's operations on
-    \( L(X) \) translate to adding or subtracting a row or column of \( L(X) \) to itself. Such
-    standard row and column operations are well known to preserve the determinant. Hence, if Ivan
-    performs one operation on matrix \( X_0 \) to obtain \( X_1 \), then:
+    group morphism from \( \left(\mathbb{R}_{>0},\cdot\right) \) to
+    \( \left(\mathbb{R},+\right) \)), Ivan's operations on \( L\left(X\right) \) translate to adding
+    or subtracting a row or column of \( L\left(X\right) \) to itself. Such standard row and column
+    operations are well known to preserve the determinant. Hence, if Ivan performs one operation on
+    matrix \( X_0 \) to obtain \( X_1 \), then:
     \[
-        {\det}_{\mathbb{R}}\left(L(X_0)\right)= {\det}_{\mathbb{R}}\left(L(X_1)\right).
+        {\det}_{\mathbb{R}}\left(L\left(X_0\right)\right)=
+        {\det}_{\mathbb{R}}\left(L\left(X_1\right)\right).
     \]
     By a trivial induction, for any finite sequence of operations of length \( n \geq 0 \), applied
     recursively starting from \( X_0 \), we obtain the sequence of matrices \( X_0, \dots, X_n \)
     for which we have:
     \[
-        {\det}_{\mathbb{R}}\left(L(X_0)\right)= {\det}_{\mathbb{R}}\left(L(X_n)\right).
+        {\det}_{\mathbb{R}}\left(L\left(X_0\right)\right)=
+        {\det}_{\mathbb{R}}\left(L\left(X_n\right)\right).
     \]
     Thus, a necessary condition to reach \( B \) from \( A \) with a finite sequence of operations
     on \( A \) is that the corresponding logarithmic matrix satisfies:
     \[
-        {\det}_{\mathbb{R}}\left(L(A)\right)= {\det}_{\mathbb{R}}\left(L(B)\right).
+        {\det}_{\mathbb{R}}\left(L\left(A\right)\right)=
+        {\det}_{\mathbb{R}}\left(L\left(B\right)\right).
     \]
     However,
     \[
-        {\det}_{\mathbb{R}}\left(L(A)\right) = \log_2\left(2\right) \cdot \log_2\left(4\right) -
-        \log_2\left(2\right) \cdot \log_2\left(3\right) = \log_2\left(\frac{4}{3}\right) >
-        \log_2\left(1\right) = 0,
+        {\det}_{\mathbb{R}}\left(L\left(A\right)\right) = \log_2\left(2\right) \cdot
+        \log_2\left(4\right) - \log_2\left(2\right) \cdot \log_2\left(3\right) =
+        \log_2\left(\frac{4}{3}\right) > \log_2\left(1\right) = 0,
     \]
     and
     \[
-        {\det}_{\mathbb{R}}\left(L(B)\right) = \log_2\left(2\right) \cdot \log_2\left(3\right) -
-        \log_2\left(2\right) \cdot \log_2\left(4\right) = \log_2\left(\frac{3}{4}\right) <
-        \log_{2}\left(1\right) = 0.
+        {\det}_{\mathbb{R}}\left(L\left(B\right)\right) = \log_2\left(2\right) \cdot
+        \log_2\left(3\right) - \log_2\left(2\right) \cdot \log_2\left(4\right) =
+        \log_2\left(\frac{3}{4}\right) < \log_{2}\left(1\right) = 0.
     \]
-    That is \( {\det}_{\mathbb{R}}\left(L(B)\right) < 0 < {\det}_{\mathbb{R}}\left(L(A)\right) \)
-    and the two quantities cannot be equal. This proves that Ivan cannot transform \( A \) into
-    \( B \).
+    That is \( {\det}_{\mathbb{R}}\left(L\left(B\right)\right) < 0 <
+    {\det}_{\mathbb{R}}\left(L\left(A\right)\right) \) and the two quantities cannot be equal. This
+    proves that Ivan cannot transform \( A \) into \( B \).
 \end{solution}

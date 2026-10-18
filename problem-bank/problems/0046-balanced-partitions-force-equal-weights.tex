@@ -22,34 +22,35 @@
     Reformulated with a first-order formula of two free variables \( \mathbf{y}, n \) (obviously in
     an extension by definition of set theory for the new notation):
     \[
-        \phi(\mathbf{y}, n):\begin{cases}
+        \phi\left(\mathbf{y}, n\right):\begin{cases}
             n \in \mathbb{N} \\
             \wedge \\
             \mathbf{y}: 2 \cdot n + 1 \to \mathbb{R} \\
             \wedge \\
-            \forall j \in 2 \cdot n + 1 \, \exists \tau_j: 2 \cdot n \overset{\text{bij}}{\rightarrow} 2 \cdot n + 1 \setminus \{j\} \, \sum_{k \in n} \mathbf{y}(\tau_j(k)) = \sum_{t \in 2 \cdot n \setminus n} \mathbf{y}(\tau_j(t))
+            \forall j \in 2 \cdot n + 1 \, \exists \tau_j: 2 \cdot n \overset{\text{bij}}{\rightarrow} 2 \cdot n + 1 \setminus \left\{j\right\} \, \sum_{k \in n} \mathbf{y}\left(\tau_j\left(k\right)\right) = \sum_{t \in 2 \cdot n \setminus n} \mathbf{y}\left(\tau_j\left(t\right)\right)
         \end{cases}
     \]
     We need to show:
     \[
-        \forall \mathbf{y} \forall n \, \phi(\mathbf{y}, n) \rightarrow |
-        \operatorname{ran}(\mathbf{y}) | = 1
+        \forall \mathbf{y} \forall n \, \phi\left(\mathbf{y}, n\right) \rightarrow |
+        \operatorname{ran}\left(\mathbf{y}\right) | = 1
     \]
     \textit{Solution 1.}
     \\\\
     Define the weight vector \( \mathbf{x} \) and the matrix \( M \in \left\{-1, 0,
-    1\right\}^{(2n+1) \times (2n+1)} \) whose rows are composed of the vectors \( v_i \), each
-    consisting of \( n \) entries equal to \( 1 \), \( n \) entries equal to \( -1 \), and a single
-    \( 0 \) in position \( i \), in such a way that each row corresponds to a valid stone removal
-    permutation. Clearly, the vector \( \mathbf{1} \) lies in the kernel of \( M \), and by
-    construction, so does the vector \( \mathbf{x} \).
+    1\right\}^{\left(2n+1\right) \times \left(2n+1\right)} \) whose rows are composed of the vectors
+    \( v_i \), each consisting of \( n \) entries equal to \( 1 \), \( n \) entries equal to
+    \( -1 \), and a single \( 0 \) in position \( i \), in such a way that each row corresponds to a
+    valid stone removal permutation. Clearly, the vector \( \mathbf{1} \) lies in the kernel of
+    \( M \), and by construction, so does the vector \( \mathbf{x} \).
     \\\\
-    We claim that \( \dim_{\mathbb{R}}\left(\operatorname{Im}(M)\right) = 2n \), so that, by a
-    dimensional argument, \( \ker(M) = \mathbb{R} \mathbf{1} \), hence there exists \( \lambda \in
-    \mathbb{R} \) such that \( \lambda \mathbf{1} = \mathbf{x} \), as desired.
+    We claim that \( \dim_{\mathbb{R}}\left(\operatorname{Im}\left(M\right)\right) = 2n \), so that,
+    by a dimensional argument, \( \ker\left(M\right) = \mathbb{R} \mathbf{1} \), hence there exists
+    \( \lambda \in \mathbb{R} \) such that \( \lambda \mathbf{1} = \mathbf{x} \), as desired.
     \\\\
-    From the above observation, we know that \( \dim_{\mathbb{R}}\left(\operatorname{Im}(M)\right)
-    \leq 2n \). To prove equality, note that \( \dim_{\mathbb{R}}\left(\operatorname{Im}(M)\right) =
+    From the above observation, we know that
+    \( \dim_{\mathbb{R}}\left(\operatorname{Im}\left(M\right)\right) \leq 2n \). To prove equality,
+    note that \( \dim_{\mathbb{R}}\left(\operatorname{Im}\left(M\right)\right) =
     \dim_{\mathbb{R}}\left(\operatorname{Im}\left(M^T\right)\right) \), so it suffices to show that
     \( \dim_{\mathbb{R}}\left(\operatorname{Im}\left(M^T\right)\right) = 2n \).
     \\\\
@@ -92,155 +93,170 @@
         \dim_{\mathbb{R}}\left( \left\langle \left\{ v_i \mid i < 2n+1
         \right\}\right\rangle_{\mathbb{R}}\right) = 2n,
     \]
-    and hence \( \dim_{\mathbb{R}}\left( \operatorname{Im}(M) \right) = 2n \), as desired.
+    and hence \( \dim_{\mathbb{R}}\left( \operatorname{Im}\left(M\right) \right) = 2n \), as
+    desired.
     \\\\
     \textit{Solution 2.}
     \\\\
     Notice that for any \( \mathbf{x}: 2 \cdot n + 1 \to \mathbb{R} \) and \( n \in \mathbb{N} \),
-    the property \( \phi(\mathbf{x}, n) \) is invariant under multiplication and shift, meaning that
-    if \( \alpha \in \mathbb{R} \), then:
+    the property \( \phi\left(\mathbf{x}, n\right) \) is invariant under multiplication and shift,
+    meaning that if \( \alpha \in \mathbb{R} \), then:
     \[
-        \phi(\mathbf{x}, n) \rightarrow \phi(\mathbf{x} + \alpha, n) \wedge \phi(\alpha \cdot
-        \mathbf{x}, n)
+        \phi\left(\mathbf{x}, n\right) \rightarrow \phi\left(\mathbf{x} + \alpha, n\right) \wedge
+        \phi\left(\alpha \cdot \mathbf{x}, n\right)
     \]
     \( \bullet \) We first start by showing an easier version of the problem:
     \[
-        \forall \mathbf{y} \forall n \left( \operatorname{ran}(\mathbf{y}) \subset \mathbb{Q} \wedge
-        \phi(\mathbf{y}, n) \right) \rightarrow | \operatorname{ran}(\mathbf{y}) | = 1
+        \forall \mathbf{y} \forall n \left( \operatorname{ran}\left(\mathbf{y}\right) \subset
+        \mathbb{Q} \wedge \phi\left(\mathbf{y}, n\right) \right) \rightarrow |
+        \operatorname{ran}\left(\mathbf{y}\right) | = 1
     \]
     Let us therefore fix \( n \in \mathbb{N} \) and \( \mathbf{x}: 2 \cdot n + 1 \to \mathbb{Q} \)
-    with the property \( \phi(\mathbf{x}, n) \).
+    with the property \( \phi\left(\mathbf{x}, n\right) \).
 
     - If \( n = 0 \) then this is trivial as there is only one stone.
 
     - If \( n \geq 1 \) then we have two cases:
 
-    1. If \( \{x_i\}_{i \in 2 \cdot n + 1} = \{0\} \), then we are done.
+    1. If \( \left\{x_i\right\}_{i \in 2 \cdot n + 1} = \left\{0\right\} \), then we are done.
 
     2. If not, then there is at least one non-zero \( x_j \neq 0 \) for some \( j \in 2 \cdot n +
     1 \), i.e., say for a subset \( \varnothing \neq A \subset 2 \cdot n + 1 \) we can write
-    \( \{x_i = \frac{p_i}{q_i}\}_{i \in A} \subset \mathbb{Q} \setminus \{0\} \) with \( p_i, q_i
-    \in \mathbb{Z}^{*} \times \mathbb{N}^{*} \) and \( \gcd(p_i, q_i) = 1 \). Then the solution
-    \( \phi(\mathbf{x}, n) \) gives us an integer solution with at least one non-zero weight by
-    considering:
+    \( \left\{x_i = \frac{p_i}{q_i}\right\}_{i \in A} \subset \mathbb{Q} \setminus
+    \left\{0\right\} \) with \( p_i, q_i \in \mathbb{Z}^{*} \times \mathbb{N}^{*} \) and
+    \( \gcd\left(p_i, q_i\right) = 1 \). Then the solution \( \phi\left(\mathbf{x}, n\right) \)
+    gives us an integer solution with at least one non-zero weight by considering:
     \[
-        \phi(\mathbf{x}':= \text{lcm}(q_i)_{i \in A} \cdot \mathbf{x}, n)
+        \phi\left(\mathbf{x}':= \text{lcm}\left(q_i\right)_{i \in A} \cdot \mathbf{x}, n\right)
     \]
-    as \( 0 \neq x'_j \in \{x'_i \mid i \in A\} \subset \operatorname{ran}(\mathbf{x}') \subset
-    \mathbb{Z} \). \\
+    as \( 0 \neq x'_j \in \left\{x'_i \mid i \in A\right\} \subset
+    \operatorname{ran}\left(\mathbf{x}'\right) \subset \mathbb{Z} \). \\
     This leads to a solution with at least one zero-weighted stone by considering:
     \[
-        \phi(\mathbf{x}'' := \mathbf{x}' - \min \operatorname{ran}(\mathbf{x}'), n)
+        \phi\left(\mathbf{x}'' := \mathbf{x}' - \min \operatorname{ran}\left(\mathbf{x}'\right),
+        n\right)
     \]
-    say \( x''_t = 0 \) for some \( t \in 2 \cdot n + 1 \). This means \( \{0\} \subset
-    \operatorname{ran}(\mathbf{x}'') \). \\
-    In fact, we claim \( \{0\} = \operatorname{ran}(\mathbf{x}'') \) which will conclude:
-    \( \operatorname{ran}(\mathbf{x}) = \{\text{lcm}(q_i)_{i \in A}^{-1} \cdot \min
-    \operatorname{ran}(\mathbf{x}')\} \) and so \( \mathbf{x} \) will be a constant function.
-    Therefore, suppose towards a contradiction that
+    say \( x''_t = 0 \) for some \( t \in 2 \cdot n + 1 \). This means \( \left\{0\right\} \subset
+    \operatorname{ran}\left(\mathbf{x}''\right) \). \\
+    In fact, we claim \( \left\{0\right\} = \operatorname{ran}\left(\mathbf{x}''\right) \) which
+    will conclude: \( \operatorname{ran}\left(\mathbf{x}\right) =
+    \left\{\text{lcm}\left(q_i\right)_{i \in A}^{-1} \cdot \min
+    \operatorname{ran}\left(\mathbf{x}'\right)\right\} \) and so \( \mathbf{x} \) will be a constant
+    function. Therefore, suppose towards a contradiction that
     \[
-        \operatorname{ran}(\mathbf{x}'') \cap \mathbb{Z} \setminus \{0\} \neq \varnothing
+        \operatorname{ran}\left(\mathbf{x}''\right) \cap \mathbb{Z} \setminus \left\{0\right\} \neq
+        \varnothing
     \]
     This means that the following is well defined:
     \[
         0 \leq k := \max \left\{ k' \in \mathbb{N} \mid \forall x''_i \in
-        \operatorname{ran}(\mathbf{x}''), 2^{k'} \mid_{\mathbb{Z}} x''_i \right\} \in \mathbb{N}
+        \operatorname{ran}\left(\mathbf{x}''\right), 2^{k'} \mid_{\mathbb{Z}} x''_i \right\} \in
+        \mathbb{N}
     \]
     We have that \( \mathbf{z} := 2^{-k} \cdot \mathbf{x}'' \) is by construction still an integer
     number solution with a zero-weighted stone \( z_t = x''_t = 0 \) and an odd-weighted stone
-    \( z_r = 2^{-k} \cdot x''_r \in \operatorname{ran}(\mathbf{z}) \cap 2 \cdot \mathbb{N} + 1 \)
-    for a certain (by construction of \( k \)) \( t \neq r \in 2 \cdot n + 1 > 1 \) with
-    \( 2^{k+1} \nmid_{\mathbb{Z}} x''_r \):
+    \( z_r = 2^{-k} \cdot x''_r \in \operatorname{ran}\left(\mathbf{z}\right) \cap 2 \cdot
+    \mathbb{N} + 1 \) for a certain (by construction of \( k \)) \( t \neq r \in 2 \cdot n + 1 >
+    1 \) with \( 2^{k+1} \nmid_{\mathbb{Z}} x''_r \):
     \[
-        0 \in \operatorname{ran}(\mathbf{z}) \wedge \operatorname{ran}(\mathbf{z}) \cap 2 \cdot
-        \mathbb{N} + 1 \neq \varnothing \wedge \phi(\mathbf{z}, n)
+        0 \in \operatorname{ran}\left(\mathbf{z}\right) \wedge
+        \operatorname{ran}\left(\mathbf{z}\right) \cap 2 \cdot \mathbb{N} + 1 \neq \varnothing
+        \wedge \phi\left(\mathbf{z}, n\right)
     \]
-    From \( \phi(\mathbf{z}, n) \) we have choosing \( z_t = 0 \) and \( z_r \in 2 \cdot \mathbb{N}
-    + 1 \) respectively that \( \exists \tau_t: 2 \cdot n \overset{\text{bij}}{\rightarrow} 2 \cdot
-    n + 1 \setminus \{t\} \exists \tau_r: 2 \cdot n \overset{\text{bij}}{\rightarrow} 2 \cdot n + 1
-    \setminus \{r\} \) with:
+    From \( \phi\left(\mathbf{z}, n\right) \) we have choosing \( z_t = 0 \) and \( z_r \in 2 \cdot
+    \mathbb{N} + 1 \) respectively that \( \exists \tau_t: 2 \cdot n
+    \overset{\text{bij}}{\rightarrow} 2 \cdot n + 1 \setminus \left\{t\right\} \exists \tau_r: 2
+    \cdot n \overset{\text{bij}}{\rightarrow} 2 \cdot n + 1 \setminus \left\{r\right\} \) with:
     \[
-        \sum_{l \in n} \mathbf{z}(\tau_t(l)) = \sum_{w \in 2 \cdot n \setminus n}
-        \mathbf{z}(\tau_t(w)) =: E_1 \in \mathbb{N}
+        \sum_{l \in n} \mathbf{z}\left(\tau_t\left(l\right)\right) =
+        \sum_{w \in 2 \cdot n \setminus n} \mathbf{z}\left(\tau_t\left(w\right)\right) =: E_1 \in
+        \mathbb{N}
     \]
     and
     \[
-        \sum_{l \in n} \mathbf{z}(\tau_r(l)) = \sum_{w \in 2 \cdot n \setminus n}
-        \mathbf{z}(\tau_r(w)) =: E_2 \in \mathbb{N}
+        \sum_{l \in n} \mathbf{z}\left(\tau_r\left(l\right)\right) =
+        \sum_{w \in 2 \cdot n \setminus n} \mathbf{z}\left(\tau_r\left(w\right)\right) =: E_2 \in
+        \mathbb{N}
     \]
     In particular, the total weight of the stones must be at the same time even and odd:
     \[
-        \sum_{i \in 2 \cdot n + 1} z_i = z_t + \sum_{l \in n} \mathbf{z}(\tau_t(l)) +
-        \sum_{w \in 2 \cdot n \setminus n} \mathbf{z}(\tau_t(w)) = 0 + E_1 + E_1 = 2 \cdot E_1 \in 2
-        \cdot \mathbb{N}
+        \sum_{i \in 2 \cdot n + 1} z_i = z_t + \sum_{l \in n}
+        \mathbf{z}\left(\tau_t\left(l\right)\right) + \sum_{w \in 2 \cdot n \setminus n}
+        \mathbf{z}\left(\tau_t\left(w\right)\right) = 0 + E_1 + E_1 = 2 \cdot E_1 \in 2 \cdot
+        \mathbb{N}
     \]
     and
     \[
-        \sum_{i \in 2 \cdot n + 1} z_i = z_r + \sum_{l \in n} \mathbf{z}(\tau_r(l)) +
-        \sum_{w \in 2 \cdot n \setminus n} \mathbf{z}(\tau_r(w)) = z_r + E_2 + E_2 = z_r + 2 \cdot
-        E_2 \in 2 \cdot \mathbb{N} + 1
+        \sum_{i \in 2 \cdot n + 1} z_i = z_r + \sum_{l \in n}
+        \mathbf{z}\left(\tau_r\left(l\right)\right) + \sum_{w \in 2 \cdot n \setminus n}
+        \mathbf{z}\left(\tau_r\left(w\right)\right) = z_r + E_2 + E_2 = z_r + 2 \cdot E_2 \in 2
+        \cdot \mathbb{N} + 1
     \]
     a contradiction with:
     \[
         \left(2 \cdot \mathbb{N}\right) \cap \left(2 \cdot \mathbb{N} + 1\right) = \varnothing
     \]
-    Therefore \( \{0\}=\operatorname{ran}(\textbf{x}'') \) i.e. \( \textbf{x} \) is constant. Since
-    \( n \) and \( \textbf{x} \) were arbitrary we indeed have
+    Therefore \( \left\{0\right\}=\operatorname{ran}\left(\textbf{x}''\right) \) i.e.
+    \( \textbf{x} \) is constant. Since \( n \) and \( \textbf{x} \) were arbitrary we indeed have
     \[
-        \forall \textbf{x} \forall n \left( \operatorname{ran}(\textbf{x}) \subset \mathbb{Q} \wedge
-        \phi(\textbf{x}, n) \right) \rightarrow |\operatorname{ran}(\textbf{x})| = 1
+        \forall \textbf{x} \forall n \left( \operatorname{ran}\left(\textbf{x}\right) \subset
+        \mathbb{Q} \wedge \phi\left(\textbf{x}, n\right) \right) \rightarrow
+        |\operatorname{ran}\left(\textbf{x}\right)| = 1
     \]
     \( \bullet \) Having solved for rational weights, we now use this for the general case, i.e.,
-    \( \operatorname{ran}(\textbf{x}) \subset \mathbb{R} \). The idea is to apply
-    \( \dim_{\mathbb{Q}}(\langle \operatorname{ran}(\textbf{x}) \rangle_{\mathbb{Q}}) \), the result
-    for the rational case, to certain rational weights. We will express each \( x_i \) as a unique
-    \( \mathbb{Q} \)-linear combination of elements in a certain basis of
-    \( \operatorname{ran}(\textbf{x}) \). Conceptually, this will form a matrix with rational
-    coefficients, where the \( i \)-th row (indexed by the basis) corresponds to those unique
-    weighted rational coefficients in the expression of \( x_i \). By using the fact that
-    \( \textbf{x} \) satisfies the property, we will deduce that each column of this matrix gives us
-    a set of rational weighted coefficients which also satisfies the property. Therefore, by
-    applying the result for the rational case on each column, we deduce that each of them consists
-    of only one rational number. From this, we then easily see that each \( x_i \) must be equal.
+    \( \operatorname{ran}\left(\textbf{x}\right) \subset \mathbb{R} \). The idea is to apply
+    \( \dim_{\mathbb{Q}}\left(\langle \operatorname{ran}\left(\textbf{x}\right)
+    \rangle_{\mathbb{Q}}\right) \), the result for the rational case, to certain rational weights.
+    We will express each \( x_i \) as a unique \( \mathbb{Q} \)-linear combination of elements in a
+    certain basis of \( \operatorname{ran}\left(\textbf{x}\right) \). Conceptually, this will form a
+    matrix with rational coefficients, where the \( i \)-th row (indexed by the basis) corresponds
+    to those unique weighted rational coefficients in the expression of \( x_i \). By using the fact
+    that \( \textbf{x} \) satisfies the property, we will deduce that each column of this matrix
+    gives us a set of rational weighted coefficients which also satisfies the property. Therefore,
+    by applying the result for the rational case on each column, we deduce that each of them
+    consists of only one rational number. From this, we then easily see that each \( x_i \) must be
+    equal.
     \\\\
     We formalize this more properly: Let us therefore fix \( n \in \mathbb{N} \) and \( \mathbf{x}:
-    2 \cdot n + 1 \to \mathbb{R} \) with the property \( \phi(\mathbf{x}, n) \).
+    2 \cdot n + 1 \to \mathbb{R} \) with the property \( \phi\left(\mathbf{x}, n\right) \).
 
     - If \( n = 0 \) then this is trivial as there is only one stone.
 
     - If \( n \geq 1 \) then we have two cases:
 
-    1. If \( \{x_i\}_{i \in 2 \cdot n + 1} = \{0\} \), then we are done.
+    1. If \( \left\{x_i\right\}_{i \in 2 \cdot n + 1} = \left\{0\right\} \), then we are done.
 
     2. If not, then there is at least one non-zero \( x_j \neq 0 \) for some \( j \in 2 \cdot n +
     1 \), in this case we choose a subset \( \varnothing\subsetneq S \subset
-    \{x_i\}_{i \in 2n + 1} \) with the property:
+    \left\{x_i\right\}_{i \in 2n + 1} \) with the property:
     \[
-        \langle \{x_i\}_{i \in 2n + 1} \rangle_{\mathbb{Q}} = \bigoplus_{x_i \in S} \mathbb{Q} \cdot
-        x_i
+        \langle \left\{x_i\right\}_{i \in 2n + 1} \rangle_{\mathbb{Q}} = \bigoplus_{x_i \in S}
+        \mathbb{Q} \cdot x_i
     \]
-    (i.e., a \( \mathbb{Q} \)-basis of \( \langle \{x_i\}_{i \in 2n + 1} \rangle_{\mathbb{Q}} \)
-    within \( \{x_i\}_{i \in 2n + 1} \). To do it more formally, we simply note that the set of free
-    \( \mathbb{Q} \)-families in \( \operatorname{ran}(\textbf{x}) \) is non-empty as it contains
-    \( \{x_j\} \), and so it suffices to take one free family with maximal cardinality; such a
-    family must be a basis).
+    (i.e., a \( \mathbb{Q} \)-basis of \( \langle \left\{x_i\right\}_{i \in 2n + 1}
+    \rangle_{\mathbb{Q}} \) within \( \left\{x_i\right\}_{i \in 2n + 1} \). To do it more formally,
+    we simply note that the set of free \( \mathbb{Q} \)-families in
+    \( \operatorname{ran}\left(\textbf{x}\right) \) is non-empty as it contains
+    \( \left\{x_j\right\} \), and so it suffices to take one free family with maximal cardinality;
+    such a family must be a basis).
     \\\\
     Now, for each \( i \in 2n + 1 \), we know by construction of the \( \mathbb{Q} \)-basis that
     there exists \( \sigma_i: S \rightarrow \mathbb{Q} \) with
     \[
-        x_i = \sum_{x_j \in S} \sigma_i(x_j) \cdot x_j
+        x_i = \sum_{x_j \in S} \sigma_i\left(x_j\right) \cdot x_j
     \]
     i.e., \( x_i \) is a \( \mathbb{Q} \)-linear combination of the elements of the
     \( \mathbb{Q} \)-basis \( S \) (these represent the rows of the matrix). To get the columns of
     the matrix, we define for each \( x_j \in S \):
     \[
-        \Delta_{x_{j}}(i) := \sigma_i(x_j)
+        \Delta_{x_{j}}\left(i\right) := \sigma_i\left(x_j\right)
     \]
-    Let us show that for each \( x_h \in S \), \( \phi(\Delta_{x_{h}}, n) \). Take \( l \in 2n +
-    1 \). Since \( \phi(\textbf{x}, n) \), we have that \( \exists \tau_l : 2n
-    \overset{\text{bij}}{\rightarrow} 2n + 1 \setminus \{l\} \) with:
+    Let us show that for each \( x_h \in S \), \( \phi\left(\Delta_{x_{h}}, n\right) \). Take
+    \( l \in 2n + 1 \). Since \( \phi\left(\textbf{x}, n\right) \), we have that \( \exists \tau_l :
+    2n \overset{\text{bij}}{\rightarrow} 2n + 1 \setminus \left\{l\right\} \) with:
     \[
-        \sum_{k \in n} x_{\tau_l(k)} = \sum_{t \in 2n \setminus n} x_{\tau_l(t)}
+        \sum_{k \in n} x_{\tau_l\left(k\right)} = \sum_{t \in 2n \setminus n}
+        x_{\tau_l\left(t\right)}
     \]
     which becomes, by definition, substitution, and switching the finite sums:
     \begin{align*}
@@ -253,23 +269,25 @@
     Since \( S \) is free, we must have the uniqueness of the coefficients, for each \( x_j \in
     S \):
     \[
-        \sum_{k \in n} \Delta_{x_{j}}(\tau_{l}(k)) = \sum_{k \in 2n \setminus n}
-        \Delta_{x_{j}}(\tau_{l}(k))
+        \sum_{k \in n} \Delta_{x_{j}}\left(\tau_{l}\left(k\right)\right) =
+        \sum_{k \in 2n \setminus n} \Delta_{x_{j}}\left(\tau_{l}\left(k\right)\right)
     \]
     and since \( l \in 2n + 1 \) was arbitrary, we conclude \( \forall x_j \in S \) that
-    \( \phi(\Delta_{x_{j}}, n) \). Since for each \( x_j \in S \) we have
-    \( \operatorname{ran}(\Delta_{x_{j}}) \subset \mathbb{Q} \), we may apply \( |S| =
-    \dim_{\mathbb{Q}}(\langle \operatorname{ran}(\textbf{x}) \rangle_{\mathbb{Q}}) \) times the
-    result for rational weights to obtain that each \( \Delta_{x_{j}} \) is constant and therefore
-    we have for each \( d, e \in 2n + 1 \):
+    \( \phi\left(\Delta_{x_{j}}, n\right) \). Since for each \( x_j \in S \) we have
+    \( \operatorname{ran}\left(\Delta_{x_{j}}\right) \subset \mathbb{Q} \), we may apply
+    \( |S| = \dim_{\mathbb{Q}}\left(\langle \operatorname{ran}\left(\textbf{x}\right)
+    \rangle_{\mathbb{Q}}\right) \) times the result for rational weights to obtain that each
+    \( \Delta_{x_{j}} \) is constant and therefore we have for each \( d, e \in 2n + 1 \):
     \[
-        \sigma_d(x_j) = \Delta_{x_{j}}(d) = \Delta_{x_{j}}(e) = \sigma_e(x_j)
+        \sigma_d\left(x_j\right) = \Delta_{x_{j}}\left(d\right) = \Delta_{x_{j}}\left(e\right) =
+        \sigma_e\left(x_j\right)
     \]
     Therefore, for each \( d, e \in 2n + 1 \):
     \[
-        x_d - x_e = \sum_{x_j \in S} \sigma_{d}(x_j) \cdot x_j - \sum_{x_j \in S} \sigma_{e}(x_j)
-        \cdot x_j = \sum_{x_j \in S} (\sigma_{d}(x_j) - \sigma_{e}(x_j)) \cdot x_j = 0
+        x_d - x_e = \sum_{x_j \in S} \sigma_{d}\left(x_j\right) \cdot x_j - \sum_{x_j \in S}
+        \sigma_{e}\left(x_j\right) \cdot x_j = \sum_{x_j \in S} \left(\sigma_{d}\left(x_j\right) -
+        \sigma_{e}\left(x_j\right)\right) \cdot x_j = 0
     \]
     So for each \( d, e \in 2n + 1 \) we have \( x_e = x_d \). This concludes that
-    \( |\operatorname{ran}(\textbf{x})| = 1 \).
+    \( |\operatorname{ran}\left(\textbf{x}\right)| = 1 \).
 \end{solution}

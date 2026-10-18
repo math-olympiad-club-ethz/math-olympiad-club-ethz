@@ -15,7 +15,7 @@
 \begin{problem}
     Define
     \[
-        A := \left\{(x,y)\in\mathbb{R}_{\geq 0}\times\mathbb{R}_{\geq 0} \,:\, x^y =
+        A := \left\{\left(x,y\right)\in\mathbb{R}_{\geq 0}\times\mathbb{R}_{\geq 0} \,:\, x^y =
         y^x\right\}\footnote{Recall that the exponentiation \( a^b:=\exp(b \cdot \log(a)) \) where
         \( a > 0 \) and \( b \in \mathbb{R} \) can be extended to \( a = 0 \) and \( b \geq 0 \) by:
         \[
@@ -33,8 +33,8 @@
         A\cap\left(\mathbb{Z}\times\mathbb{Z}\right).
     \]
     \textbf{Bonus:} Find \( A \cap \left( \mathbb{Q}^{\mathrm{alg}} \times \mathbb{Q}^{\mathrm{alg}}
-    \right) \) and \( A \cap \left( \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z}) \times
-    \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z}) \right) \).
+    \right) \) and \( A \cap \left( \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}\left(\mathbb{Z}\right)
+    \times \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}\left(\mathbb{Z}\right) \right) \).
 \end{problem}
 \begin{solution}
     For general culture: knowing the construction of \( \mathbb{R} \) using equivalence classes of
@@ -59,41 +59,43 @@
     \href{https://en.wikipedia.org/wiki/Exponentiation}{Exponentiation}, where you can find the
     proofs in Terence Tao's book \textit{Analysis I}.
     \\\\
-    Let us now solve the form of \( A \): notice that \( (x,y) \in A \Leftrightarrow (y,x) \in A \).
-    Clearly, \( \Delta\left( \mathbb{R}_{\geq 0} \right) = \left\{ \left( x,x \right) \in
-    \mathbb{R}_{\geq 0} \right\} \subset A \). We now determine \( A \setminus \Delta\left(
-    \mathbb{R}_{\geq 0} \right) \).
+    Let us now solve the form of \( A \): notice that \( \left(x,y\right) \in A \Leftrightarrow
+    \left(y,x\right) \in A \). Clearly, \( \Delta\left( \mathbb{R}_{\geq 0} \right) = \left\{ \left(
+    x,x \right) \in \mathbb{R}_{\geq 0} \right\} \subset A \). We now determine \( A \setminus
+    \Delta\left( \mathbb{R}_{\geq 0} \right) \).
     \\\\
-    Let \( (x,y) \in A \setminus \Delta\left( \mathbb{R}_{\geq 0} \right) \). Then there exists
-    \( t \in \mathbb{R}_{\geq 0} \) such that \( y = t x \). By hypothesis, \( t \neq 1 \). If
-    \( y = 0 \), then since \( 0 \leq x \neq y \), we have \( x > 0 \), but \( x^y = y^x \) implies
-    in this case \( 1 \overset{x > 0}{=} x^0 = 0^x \overset{x > 0}{=} 0 \), which is a
+    Let \( \left(x,y\right) \in A \setminus \Delta\left( \mathbb{R}_{\geq 0} \right) \). Then there
+    exists \( t \in \mathbb{R}_{\geq 0} \) such that \( y = t x \). By hypothesis, \( t \neq 1 \).
+    If \( y = 0 \), then since \( 0 \leq x \neq y \), we have \( x > 0 \), but \( x^y = y^x \)
+    implies in this case \( 1 \overset{x > 0}{=} x^0 = 0^x \overset{x > 0}{=} 0 \), which is a
     contradiction. Thus, \( y > 0 \). Also, if \( t = 0 \), then \( y = 0 \), a contradiction. So
-    \( t \in \mathbb{R}_{>0} \setminus \{1\} \). Now, if \( x = 0 \), then \( y = 0 \), which is
-    also excluded by hypothesis. Therefore, \( x, y > 0 \). Knowing this, from \( x^y = y^x \) we
-    compute:
+    \( t \in \mathbb{R}_{>0} \setminus \left\{1\right\} \). Now, if \( x = 0 \), then \( y = 0 \),
+    which is also excluded by hypothesis. Therefore, \( x, y > 0 \). Knowing this, from \( x^y =
+    y^x \) we compute:
     \[
-        x^{t x} = (t x)^x \Rightarrow t^x = x^{(t - 1)x} = \left(x^{t - 1}\right)^x.
+        x^{t x} = \left(t x\right)^x \Rightarrow t^x = x^{\left(t - 1\right)x} =
+        \left(x^{t - 1}\right)^x.
     \]
     Since \( x > 0 \), the map \( a \mapsto a^x \) on \( \mathbb{R}_{\geq 0} \) is bijective. This
     implies from the above equality that \( x^{t - 1} = t \). Since \( t \neq 1 \), this implies
     that \( x = t^{\frac{1}{t - 1}} \). Therefore:
     \[
-        (x,y) = \left(t^{\frac{1}{t - 1}},\ t \cdot t^{\frac{1}{t - 1}}\right) =
+        \left(x,y\right) = \left(t^{\frac{1}{t - 1}},\ t \cdot t^{\frac{1}{t - 1}}\right) =
         \left(t^{\frac{1}{t - 1}},\ t^{\frac{t}{t - 1}}\right).
     \]
     This shows that:
     \[
         A \setminus \Delta\left(\mathbb{R}_{\geq 0}\right) \subset \left\{
         \left(t^{\frac{1}{t - 1}},\ t^{\frac{t}{t - 1}} \right) \,\middle|\, t \in \mathbb{R}_{> 0}
-        \setminus \{1\} \right\}.
+        \setminus \left\{1\right\} \right\}.
     \]
     We define in consequence the set
     \[
         S := \left\{ \left(t^{\frac{1}{t - 1}},\ t^{\frac{t}{t - 1}} \right) \,\middle|\, t \in
-        \mathbb{R}_{>0} \setminus \{1\} \right\} \subset \mathbb{R}_{> 0} \times \mathbb{R}_{> 0}.
+        \mathbb{R}_{>0} \setminus \left\{1\right\} \right\} \subset \mathbb{R}_{> 0} \times
+        \mathbb{R}_{> 0}.
     \]
-    The map \( f \) defined over \( \mathbb{R}_{>0} \setminus \{1\} \) by
+    The map \( f \) defined over \( \mathbb{R}_{>0} \setminus \left\{1\right\} \) by
     \[
         t \mapsto \left(t^{\frac{1}{t - 1}},\ t^{\frac{t}{t - 1}} \right)
     \]
@@ -105,12 +107,12 @@
         \right)^{\frac{1}{\frac{1}{t} - 1}} \right),
     \]
     that is, it swaps coordinates under precomposition with the involution \( \_^{-1}: t \mapsto
-    \frac{1}{t} \) of \( \mathbb{R}_{>0} \setminus \{1\} \):
+    \frac{1}{t} \) of \( \mathbb{R}_{>0} \setminus \left\{1\right\} \):
     \[
         f = \mathrm{swap} \circ f\circ\_^{-1}.
     \]
     For the reverse inclusion \( S \subset A \setminus \Delta\left(\mathbb{R}_{\geq 0}\right) \),
-    let \( t \in \mathbb{R}_{> 0} \setminus \{1\} \). It suffices to check that we have:
+    let \( t \in \mathbb{R}_{> 0} \setminus \left\{1\right\} \). It suffices to check that we have:
     \[
         \left(t^{\frac{1}{t-1}}\right)^{\left(t^{\frac{t}{t-1}}\right)}=\left(t^{\frac{t}{t-1}}\right)^{\left(t^{\frac{1}{t-1}}\right)}
         \text{ and } t^{\frac{1}{t-1}} \neq t^{\frac{t}{t-1}}=t\cdot t^{\frac{1}{t-1}}
@@ -135,19 +137,19 @@
     \]
     and if \( t^{\frac{1}{t-1}}=t^{\frac{t}{t-1}} \) then since \( t > 0 \) we have
     \( t^{\frac{1}{t-1}}>0 \) so that we can divide by \( t^{\frac{1}{t-1}} \) and obtain that
-    \( t=1 \) a contradiction to \( t\in\mathbb{R}_{>0}\setminus\{1\} \). All of this shows the nice
-    decomposition of \( A \) into two symmetric (with respect to swapping the variable) set. Namely
-    the identity line and a symmetric (with respect to the line) curve:
+    \( t=1 \) a contradiction to \( t\in\mathbb{R}_{>0}\setminus\left\{1\right\} \). All of this
+    shows the nice decomposition of \( A \) into two symmetric (with respect to swapping the
+    variable) set. Namely the identity line and a symmetric (with respect to the line) curve:
     \[
-        A=\Delta(\mathbb{R}_{\geq 0}) \sqcup S.
+        A=\Delta\left(\mathbb{R}_{\geq 0}\right) \sqcup S.
     \]
     Now it remains to find \( A\cap\left(\mathbb{Q}\times\mathbb{Q}\right) \) and
     \( A\cap\left(\mathbb{N}\times\mathbb{N}\right) \).
     \\\\
     Clearly:
     \[
-        \Delta(\mathbb{R}_{\geq 0})\cap\left(\mathbb{Q}\times\mathbb{Q}\right)=\Delta(\mathbb{Q}_{\geq 0})\text{ and }
-        \Delta(\mathbb{R}_{\geq 0})\cap\left(\mathbb{Z}\times\mathbb{Z}\right)=\Delta(\mathbb{Z}_{\geq 0}).
+        \Delta\left(\mathbb{R}_{\geq 0}\right)\cap\left(\mathbb{Q}\times\mathbb{Q}\right)=\Delta\left(\mathbb{Q}_{\geq 0}\right)\text{ and }
+        \Delta\left(\mathbb{R}_{\geq 0}\right)\cap\left(\mathbb{Z}\times\mathbb{Z}\right)=\Delta\left(\mathbb{Z}_{\geq 0}\right).
     \]
     We first find \( S \cap \left( \mathbb{Z} \times \mathbb{Z} \right) \) without relying on the
     more complicated set \( S \cap \left( \mathbb{Q} \times \mathbb{Q} \right) \). We can quickly
@@ -175,9 +177,9 @@
     \( f \) strictly increases on \( \left] 0,e \right[ \), strictly decreases on \( \left]
     e,+\infty \right[ \), and thus attains a maximum at \( e \) (with value \( \frac{1}{e} <
     0.5 \)). In particular, the functions \( f|_{\left] 0,e \right[} \) and
-    \( f|_{\left] e,+\infty \right[} \) are bijective. This means that for \( f(n) = f(m) \), we
-    must have (since \( n < m \) and \( n,m \neq e \)) that \( n \in \left] 0,e \right[ \) and
-    \( m \in \left] e,+\infty \right[ \).
+    \( f|_{\left] e,+\infty \right[} \) are bijective. This means that for \( f\left(n\right) =
+    f\left(m\right) \), we must have (since \( n < m \) and \( n,m \neq e \)) that \( n \in \left]
+    0,e \right[ \) and \( m \in \left] e,+\infty \right[ \).
     \\\\
     Hence, \( n \in \left\{ 1,2 \right\} \). If \( n = 1 \), then \( m^1 = 1^m \Rightarrow m = 1 \),
     which contradicts \( n \neq m \). So \( n = 2 \). Then \( m^2 = 2^m \). Since both sides are
@@ -188,21 +190,23 @@
         2^{2k} = 2^{2^k} \Rightarrow 2k = 2^k.
     \]
     We want to restrict the possible values of \( k\geq 2 \) for this equality. Consider the
-    function \( g \) defined for all \( x \in \mathbb{R} \), by \( g(x) := 2^x - 2x \). Its
-    derivative is
+    function \( g \) defined for all \( x \in \mathbb{R} \), by \( g\left(x\right) := 2^x - 2x \).
+    Its derivative is
     \[
-        g'\left( x \right) = \log(2) \cdot 2^x - 2.
+        g'\left( x \right) = \log\left(2\right) \cdot 2^x - 2.
     \]
     We ask for which \( x \in \mathbb{R} \), \( 2^x = 2x \). Since \( 2^x \) is strictly increasing,
-    we find that \( g'(x) > 0 \) if and only if
+    we find that \( g'\left(x\right) > 0 \) if and only if
     \[
-        x > \log_2\left( \frac{2}{\log(2)} \right) = 1 - \log_2\left( \log(2) \right),
+        x > \log_2\left( \frac{2}{\log\left(2\right)} \right) = 1 - \log_2\left( \log\left(2\right)
+        \right),
     \]
     and this value lies strictly between \( 1 \) and \( 2 \), since \( -1 = \log_2\left( \frac{1}{2}
-    \right) < \log_2\left( \log(2) \right) < \log_2(1) = 0 \), as \( \frac{1}{2} < \log(2) < 1 \),
-    and \( \log_2 \) is strictly increasing. Hence, by standard theorems relating monotonicity and
-    derivatives, \( g \) is at least strictly increasing on \( [2,+\infty) \). Since \( g(2) = 0 \),
-    we have \( g(x) > 0 \) for \( x > 2 \), implying that \( k = 2 \) is the only solution.
+    \right) < \log_2\left( \log\left(2\right) \right) < \log_2\left(1\right) = 0 \), as
+    \( \frac{1}{2} < \log\left(2\right) < 1 \), and \( \log_2 \) is strictly increasing. Hence, by
+    standard theorems relating monotonicity and derivatives, \( g \) is at least strictly increasing
+    on \( [2,+\infty) \). Since \( g\left(2\right) = 0 \), we have \( g\left(x\right) > 0 \) for
+    \( x > 2 \), implying that \( k = 2 \) is the only solution.
     \\\\
     Therefore, \( m = 2^2 = 4 \), and so \( \left( n,m \right) = \left( 2,4 \right) \). This
     concludes the argument.
@@ -212,18 +216,19 @@
     This is a Diophantine equation that has evoked considerable attention since the days of Euler,
     who treated it in
     \href{https://en.wikipedia.org/wiki/Introductio_in_analysin_infinitorum}{\textit{Introductio in Analysin Infinitorum}}
-    II, page 294. He noticed that if \( s \in \mathbb{Z}_{>0} \), then \( t(s) := 1 + \frac{1}{s}
-    \in \mathbb{Q}_{>0} \setminus \left\{ 1 \right\} \) was such that, through the parametrisation
-    \( f\left( t(s) \right) \in S \), we have \( f\left( t(s) \right) \in \mathbb{Q} \times
-    \mathbb{Q} \). Indeed,
+    II, page 294. He noticed that if \( s \in \mathbb{Z}_{>0} \), then \( t\left(s\right) := 1 +
+    \frac{1}{s} \in \mathbb{Q}_{>0} \setminus \left\{ 1 \right\} \) was such that, through the
+    parametrisation \( f\left( t\left(s\right) \right) \in S \), we have \( f\left( t\left(s\right)
+    \right) \in \mathbb{Q} \times \mathbb{Q} \). Indeed,
     \[
-        \frac{1}{t(s) - 1} = s \quad \text{and} \quad \frac{t(s)}{t(s) - 1} = 1 + \frac{1}{t(s) - 1}
-        = 1 + s,
+        \frac{1}{t\left(s\right) - 1} = s \quad \text{and} \quad
+        \frac{t\left(s\right)}{t\left(s\right) - 1} = 1 + \frac{1}{t\left(s\right) - 1} = 1 + s,
     \]
     thus:
     \[
-        f\left( t(s) \right) = \left( t(s)^{s}, t(s)^{1 + s} \right) = \left( \left(1 + \frac{1}{s}
-            \right)^{s}, \left(1 + \frac{1}{s} \right)^{s + 1} \right)
+        f\left( t\left(s\right) \right) = \left( t\left(s\right)^{s}, t\left(s\right)^{1 + s}
+        \right) = \left( \left(1 + \frac{1}{s} \right)^{s}, \left(1 + \frac{1}{s} \right)^{s + 1}
+        \right)
     \]
     is certainly a pair of rational numbers.
     \\\\
@@ -245,26 +250,27 @@
     given in \cite{solomon1967Hurwitz}. \\
     Let \( \left( n, m \right) \in S \cap \left( \mathbb{Q} \times \mathbb{Q} \right) \), and
     suppose that \( \left(n, m\right) \notin \mathbb{Z} \times \mathbb{Z} \), otherwise we already
-    know that \( \left(n, m\right) \in \left\{ (2, 4), (4, 2) \right\} \). The goal is to show that
-    \( \exists s \in \mathbb{Z}_{>0} \) and \( \tau\in\{0,1\} \) with \( m = \left(1 + \frac{1}{s}
-    \right)^{1+s-\tau} \) and \( n = \left(1 + \frac{1}{s} \right)^{s+\tau} \). Since the set is
-    symmetric with respect to swapping the variables, we may again assume that \( n < m \) so that
-    in fact \( \tau \) needs to be \( 0 \).
+    know that \( \left(n, m\right) \in \left\{ \left(2, 4\right), \left(4, 2\right) \right\} \). The
+    goal is to show that \( \exists s \in \mathbb{Z}_{>0} \) and \( \tau\in\left\{0,1\right\} \)
+    with \( m = \left(1 + \frac{1}{s} \right)^{1+s-\tau} \) and \( n = \left(1 + \frac{1}{s}
+    \right)^{s+\tau} \). Since the set is symmetric with respect to swapping the variables, we may
+    again assume that \( n < m \) so that in fact \( \tau \) needs to be \( 0 \).
     \\\\
     Notice that \( n>1 \) since if \( n \leq 1 \), then
     \[
         n^m \overset{\text{hyp}}{=} m^n \overset{m > n}{>} n^n
         \overset{\substack{1 \geq n \\ m > n}}{\geq} n^m,
     \]
-    a contradiction to \( (n, m) \in S \). Thus \( m > n > 1 \). Now, write \( m = \frac{a}{b} \),
-    \( n = \frac{c}{d} \) for \( a, b, c, d \in \mathbb{Z}_{>0} \) with \( \gcd(a, b) = \gcd(c, d) =
-    1 \). Then \( m > n > 1 \) implies \( a > b > 0 \), \( c > d > 0 \), and \( ad > bc \). Write
-    \( 1 < \frac{ad}{bc} = \frac{\lambda}{\mu} \) for \( \lambda, \mu \in \mathbb{Z}_{>0} \) with
-    \( \gcd(\lambda, \mu) = 1 \) and \( \lambda > \mu \). \\
+    a contradiction to \( \left(n, m\right) \in S \). Thus \( m > n > 1 \). Now, write \( m =
+    \frac{a}{b} \), \( n = \frac{c}{d} \) for \( a, b, c, d \in \mathbb{Z}_{>0} \) with
+    \( \gcd\left(a, b\right) = \gcd\left(c, d\right) = 1 \). Then \( m > n > 1 \) implies
+    \( a > b > 0 \), \( c > d > 0 \), and \( ad > bc \). Write \( 1 < \frac{ad}{bc} =
+    \frac{\lambda}{\mu} \) for \( \lambda, \mu \in \mathbb{Z}_{>0} \) with \( \gcd\left(\lambda,
+    \mu\right) = 1 \) and \( \lambda > \mu \). \\
     If \( \left( \frac{a}{b} \right)^{\frac{c}{d}} = \left( \frac{c}{d} \right)^{\frac{a}{b}} \),
     then \( \left( \frac{a}{b} \right)^{bc} = \left( \frac{c}{d} \right)^{ad} \), and so
-    \( a^{bc} d^{ad} = c^{ad} b^{bc} \). Now, because \( \gcd(a, b) = \gcd(c, d) = 1 \) and
-    \( a, b, c, d > 0 \), we have
+    \( a^{bc} d^{ad} = c^{ad} b^{bc} \). Now, because \( \gcd\left(a, b\right) = \gcd\left(c,
+    d\right) = 1 \) and \( a, b, c, d > 0 \), we have
     \begin{equation} \label{4.1}
         a^{bc} = c^{ad} \quad \text{and} \quad b^{bc} = d^{ad},
     \end{equation}
@@ -272,35 +278,40 @@
     canonical representations as products of powers of primes, and so must \( b \) and \( d \). That
     is, there exist \( k_1, k_2 \in \mathbb{N} \) with distinct prime factors \( p \colon k_1
     \hookrightarrow \mathbb{P} \), \( q \colon k_2 \hookrightarrow \mathbb{P} \) with
-    \( \operatorname{ran}(p) \cap \operatorname{ran}(q) = \varnothing \), \( \forall i \in
-    k_1,\ v_{p_i}(a), v_{p_i}(c) \geq 1 \), \( \forall j \in k_2,\ v_{q_j}(b), v_{q_j}(d) \geq 1 \),
-    and:
+    \( \operatorname{ran}\left(p\right) \cap \operatorname{ran}\left(q\right) = \varnothing \),
+    \( \forall i \in k_1,\ v_{p_i}\left(a\right), v_{p_i}\left(c\right) \geq 1 \), \( \forall j \in
+    k_2,\ v_{q_j}\left(b\right), v_{q_j}\left(d\right) \geq 1 \), and:
     \[
-        a = \prod_{i \in k_1} p_i^{v_{p_i}(a)},\quad c = \prod_{i \in k_1} p_i^{v_{p_i}(c)},\quad b
-        = \prod_{j \in k_2} q_j^{v_{q_j}(b)},\quad d = \prod_{j \in k_2} q_j^{v_{q_j}(d)}.
+        a = \prod_{i \in k_1} p_i^{v_{p_i}\left(a\right)},\quad c = \prod_{i \in k_1}
+        p_i^{v_{p_i}\left(c\right)},\quad b = \prod_{j \in k_2} q_j^{v_{q_j}\left(b\right)},\quad d
+        = \prod_{j \in k_2} q_j^{v_{q_j}\left(d\right)}.
     \]
     In the case of \( a \) and \( c \), these are certainly not empty products since \( a > b > 0 \)
     and \( c > d > 0 \), so \( a > 1,\, c > 1 \), that is, \( k_1 \geq 1 \). If \( k_2 = 0 \), then
-    \( b = 1 = d \), so \( m = a \) and \( n = c \), thus \( (m, n) \in \mathbb{N} \times
-    \mathbb{N} \), a contradiction to the choice of \( (m, n) \notin \mathbb{N} \times
+    \( b = 1 = d \), so \( m = a \) and \( n = c \), thus \( \left(m, n\right) \in \mathbb{N} \times
+    \mathbb{N} \), a contradiction to the choice of \( \left(m, n\right) \notin \mathbb{N} \times
     \mathbb{N} \). Therefore, we must also have that the case of \( b \) and \( d \) involves
     non-empty products.
     \\\\
     It follows from \eqref{4.1} and the fact that the primes are distinct that for each \( i \in
-    k_1 \) and \( j \in k_2 \), \( v_{p_i}(a)\, bc = v_{p_i}(c)\, ad \) and \( v_{q_j}(b)\, bc =
-    v_{q_j}(d)\, ad \), so that (since everything is strictly greater than \( 0 \)):
+    k_1 \) and \( j \in k_2 \), \( v_{p_i}\left(a\right)\, bc = v_{p_i}\left(c\right)\, ad \) and
+    \( v_{q_j}\left(b\right)\, bc = v_{q_j}\left(d\right)\, ad \), so that (since everything is
+    strictly greater than \( 0 \)):
     \[
-        \frac{v_{p_i}(a)}{v_{p_i}(c)} = \frac{ad}{bc} = \frac{\lambda}{\mu} \text{, and }
-        \frac{v_{q_j}(b)}{v_{q_j}(d)} = \frac{ad}{bc} = \frac{\lambda}{\mu}.
+        \frac{v_{p_i}\left(a\right)}{v_{p_i}\left(c\right)} = \frac{ad}{bc} = \frac{\lambda}{\mu}
+        \text{, and } \frac{v_{q_j}\left(b\right)}{v_{q_j}\left(d\right)} = \frac{ad}{bc} =
+        \frac{\lambda}{\mu}.
     \]
-    Furthermore, we see that \( \mu v_{p_i}(a) = \lambda v_{p_i}(c) \) and \( \mu v_{q_j}(b) =
-    \lambda v_{q_j}(d) \). Since \( \gcd(\lambda, \mu) = 1 \), we conclude that \( \lambda \mid
-    v_{p_i}(a) \), \( \lambda \mid v_{q_j}(b) \), \( \mu \mid v_{p_i}(c) \), \( \mu \mid
-    v_{q_j}(d) \). We define in consequence, for each \( i \in k_1 \) and \( j \in k_2 \), the
-    following integers:
+    Furthermore, we see that \( \mu v_{p_i}\left(a\right) = \lambda v_{p_i}\left(c\right) \) and
+    \( \mu v_{q_j}\left(b\right) = \lambda v_{q_j}\left(d\right) \). Since \( \gcd\left(\lambda,
+    \mu\right) = 1 \), we conclude that \( \lambda \mid v_{p_i}\left(a\right) \), \( \lambda \mid
+    v_{q_j}\left(b\right) \), \( \mu \mid v_{p_i}\left(c\right) \), \( \mu \mid
+    v_{q_j}\left(d\right) \). We define in consequence, for each \( i \in k_1 \) and \( j \in
+    k_2 \), the following integers:
     \[
-        \rho_i := \frac{v_{p_i}(a)}{\lambda} = \frac{v_{p_i}(c)}{\mu} \in \mathbb{Z}_{>0},\quad
-        \text{and} \quad \tilde{\rho}_j := \frac{v_{q_j}(b)}{\lambda} = \frac{v_{q_j}(d)}{\mu} \in
+        \rho_i := \frac{v_{p_i}\left(a\right)}{\lambda} = \frac{v_{p_i}\left(c\right)}{\mu} \in
+        \mathbb{Z}_{>0},\quad \text{and} \quad \tilde{\rho}_j :=
+        \frac{v_{q_j}\left(b\right)}{\lambda} = \frac{v_{q_j}\left(d\right)}{\mu} \in
         \mathbb{Z}_{>0},
     \]
     and define the corresponding products \( r := \prod_{i \in k_1} p_i^{\rho_i} \in
@@ -317,11 +328,12 @@
         s^{\lambda - \mu}.
     \]
     Since \( \lambda > \mu > 0 \), we get that \( \lambda - \mu \in \mathbb{Z}_{>0} \), and so
-    \( r^{\lambda - \mu},\, s^{\lambda - \mu} \in \mathbb{Z}_{>0} \). The fact that \( \gcd(\lambda,
-    \mu) = 1 \) implies that \( \lambda \mid r^{\lambda - \mu} \) and \( \mu \mid
-    s^{\lambda - \mu} \). Since \( \gcd(r, s) = 1 \), we have \( \gcd\left(r^{\lambda - \mu},
-    s^{\lambda - \mu}\right) = 1 \), which implies that \( r^{\lambda - \mu} \mid \lambda \) and
-    \( s^{\lambda - \mu} \mid \mu \). Since everything is positive, the only possibility is that
+    \( r^{\lambda - \mu},\, s^{\lambda - \mu} \in \mathbb{Z}_{>0} \). The fact that
+    \( \gcd\left(\lambda, \mu\right) = 1 \) implies that \( \lambda \mid r^{\lambda - \mu} \) and
+    \( \mu \mid s^{\lambda - \mu} \). Since \( \gcd\left(r, s\right) = 1 \), we have
+    \( \gcd\left(r^{\lambda - \mu}, s^{\lambda - \mu}\right) = 1 \), which implies that
+    \( r^{\lambda - \mu} \mid \lambda \) and \( s^{\lambda - \mu} \mid \mu \). Since everything is
+    positive, the only possibility is that
     \begin{equation} \label{4.2}
         \lambda = r^{\lambda - \mu}, \quad \mu = s^{\lambda - \mu} \text{ thus } \lambda - \mu =
         r^{\lambda - \mu} - s^{\lambda - \mu}.
@@ -346,8 +358,8 @@
     \]
     From \( \lambda = r = 1 + s \), we get
     \[
-        a = r^{\lambda} = (1 + s)^{1 + s}, \quad c = r^{\mu} = (1 + s)^s, \quad b = s^{\lambda} =
-        s^{1 + s}, \quad d = s^{\mu} = s^s.
+        a = r^{\lambda} = \left(1 + s\right)^{1 + s}, \quad c = r^{\mu} = \left(1 + s\right)^s,
+        \quad b = s^{\lambda} = s^{1 + s}, \quad d = s^{\mu} = s^s.
     \]
     Getting back to \( m \) and \( n \), we obtain:
     \[
@@ -358,14 +370,15 @@
     \\\\
     Summarising, we get:
     \[
-        A\cap(\mathbb{Z} \times \mathbb{Z}) = \Delta(\mathbb{Z}_{>0}) \sqcup \left\{(2,4),
-        (4,2)\right\}
+        A\cap\left(\mathbb{Z} \times \mathbb{Z}\right) = \Delta\left(\mathbb{Z}_{>0}\right) \sqcup
+        \left\{\left(2,4\right), \left(4,2\right)\right\}
     \]
     and
     \[
-        A \cap (\mathbb{Q} \times \mathbb{Q}) = \Delta(\mathbb{Q}_{\geq 0}) \sqcup \left\{ \left(
-        \left(1 + \frac{1}{s} \right)^{s + \tau}, \left(1 + \frac{1}{s} \right)^{s + 1 - \tau}
-        \right) \,\middle|\, s \in \mathbb{Z}_{>0},\, \tau \in \{0,1\} \right\}.
+        A \cap \left(\mathbb{Q} \times \mathbb{Q}\right) = \Delta\left(\mathbb{Q}_{\geq 0}\right)
+        \sqcup \left\{ \left( \left(1 + \frac{1}{s} \right)^{s + \tau}, \left(1 + \frac{1}{s}
+            \right)^{s + 1 - \tau} \right) \,\middle|\, s \in \mathbb{Z}_{>0},\, \tau \in
+        \left\{0,1\right\} \right\}.
     \]
     \begin{remark}
         Notice that as \( \mathbb{Z}_{>0}\ni s \to +\infty \), we have \( \left(1 + \frac{1}{s}
@@ -376,8 +389,8 @@
     \begin{remark}
         One could pose the same question over \( \mathbb{C} \) or \( \mathbb{R} \), restricting to
         pairs for which the exponentiation is well-defined. In the real case, one may analyse the
-        possible quadrants for \( (x,y) \), such as when the signs are compatible or when a sign
-        change occurs. In the complex case: one must restrict to a branch of the logarithm,
+        possible quadrants for \( \left(x,y\right) \), such as when the signs are compatible or when
+        a sign change occurs. In the complex case: one must restrict to a branch of the logarithm,
         typically the principal branch, and exclude points where \( \log \) is undefined, e.g., at
         \( 0 \). Branch cuts and multivaluedness must be acknowledged: \( x^y \) is generally not
         single-valued in \( \mathbb{C} \), so the equation must be interpreted either as equality of
@@ -391,76 +404,83 @@
     \end{remark}
     \textit{Bonus:}
     Find \( A \cap \left( \mathbb{Q}^{\mathrm{alg}} \times \mathbb{Q}^{\mathrm{alg}} \right) \) and
-    \( A \cap \left( \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z}) \times
-    \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z}) \right) \).
+    \( A \cap \left( \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}\left(\mathbb{Z}\right) \times
+    \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}\left(\mathbb{Z}\right) \right) \).
 
     \subsection*{Solution:} Clearly, \( \Delta\left( \mathbb{R}_{\geq 0} \right) \cap \left(
     \mathbb{Q}^{\mathrm{alg}} \times \mathbb{Q}^{\mathrm{alg}} \right) = \Delta\left(
     \mathbb{Q}^{\mathrm{alg}} \cap \mathbb{R}_{\geq 0} \right) \) and \( \Delta\left(
-    \mathbb{R}_{\geq 0} \right) \cap \left( \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z})
-    \times \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z}) \right) = \Delta\left(
-    \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z}) \cap \mathbb{R}_{\geq 0} \right) \).
+    \mathbb{R}_{\geq 0} \right) \cap \left(
+    \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}\left(\mathbb{Z}\right) \times
+    \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}\left(\mathbb{Z}\right) \right) = \Delta\left(
+    \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}\left(\mathbb{Z}\right) \cap \mathbb{R}_{\geq 0}
+    \right) \).
     \\\\
     We now compute \( S \cap \left( \mathbb{Q}^{\mathrm{alg}} \times \mathbb{Q}^{\mathrm{alg}}
-    \right) \) and \( S \cap \left( \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z}) \times
-    \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z}) \right) \) by following the solutions
-    provided in \cite{sato1972algebraic}, which make use of the parametrisation of \( S \) by
-    \( f \).
+    \right) \) and \( S \cap \left( \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}\left(\mathbb{Z}\right)
+    \times \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}\left(\mathbb{Z}\right) \right) \) by following
+    the solutions provided in \cite{sato1972algebraic}, which make use of the parametrisation of
+    \( S \) by \( f \).
     \\\\
     For the computation of \( S \cap \left( \mathbb{Q}^{\mathrm{alg}} \times
-    \mathbb{Q}^{\mathrm{alg}} \right) \), let \( t \in \mathbb{Q}_{>0} \setminus \{1\} \); then
-    certainly \( f(t) \in S \). Write \( t = \frac{t_1}{t_2} \) for \( t_1, t_2 \in
-    \mathbb{Z}_{>0} \) with \( \gcd(t_1, t_2) = 1 \). Then
+    \mathbb{Q}^{\mathrm{alg}} \right) \), let \( t \in \mathbb{Q}_{>0} \setminus
+    \left\{1\right\} \); then certainly \( f\left(t\right) \in S \). Write \( t = \frac{t_1}{t_2} \)
+    for \( t_1, t_2 \in \mathbb{Z}_{>0} \) with \( \gcd\left(t_1, t_2\right) = 1 \). Then
     \[
         \frac{1}{t - 1} = \frac{t_2}{t_1 - t_2} \in \mathbb{Q}, \quad \text{and} \quad
         \frac{t}{t - 1} = 1 + \frac{1}{t - 1} = \frac{t_1}{t_1 - t_2} \in \mathbb{Q}.
     \]
     We get that \( t^{\frac{1}{t - 1}} = t^{\frac{t_2}{t_1 - t_2}} \) and \( t^{\frac{t}{t - 1}} =
-    t^{\frac{t_1}{t_1 - t_2}} \); thus, for \( \operatorname{sign}(t_2 - t_1)(t_2 - t_1) \in
-    \mathbb{Z}_{>0} \), we get
+    t^{\frac{t_1}{t_1 - t_2}} \); thus, for \( \operatorname{sign}\left(t_2 - t_1\right)\left(t_2 -
+    t_1\right) \in \mathbb{Z}_{>0} \), we get
     \[
-        \left( t^{\frac{1}{t - 1}} \right)^{\operatorname{sign}(t_2 - t_1)(t_2 - t_1)} =
-        t^{\operatorname{sign}(t_2 - t_1)t_2} \in \mathbb{Q},
+        \left( t^{\frac{1}{t - 1}}
+        \right)^{\operatorname{sign}\left(t_2 - t_1\right)\left(t_2 - t_1\right)} =
+        t^{\operatorname{sign}\left(t_2 - t_1\right)t_2} \in \mathbb{Q},
     \]
     and
     \[
-        \left( t^{\frac{t}{t - 1}} \right)^{t_2 - t_1} = t^{\operatorname{sign}(t_2 - t_1)t_1} \in
-        \mathbb{Q}.
+        \left( t^{\frac{t}{t - 1}} \right)^{t_2 - t_1} =
+        t^{\operatorname{sign}\left(t_2 - t_1\right)t_1} \in \mathbb{Q}.
     \]
     This shows that \( t^{\frac{1}{t - 1}} \) and \( t^{\frac{t}{t - 1}} \) are respectively the
     roots of the following rational polynomials:
     \[
-        X^{\operatorname{sign}(t_2 - t_1)(t_2 - t_1)} - t^{\operatorname{sign}(t_2 - t_1)t_2} \in
-        \mathbb{Q}[X], \quad \text{and} \quad X^{\operatorname{sign}(t_2 - t_1)(t_2 - t_1)} -
-        t^{\operatorname{sign}(t_2 - t_1)t_1} \in \mathbb{Q}[X].
+        X^{\operatorname{sign}\left(t_2 - t_1\right)\left(t_2 - t_1\right)} -
+        t^{\operatorname{sign}\left(t_2 - t_1\right)t_2} \in \mathbb{Q}\left[X\right], \quad
+        \text{and} \quad X^{\operatorname{sign}\left(t_2 - t_1\right)\left(t_2 - t_1\right)} -
+        t^{\operatorname{sign}\left(t_2 - t_1\right)t_1} \in \mathbb{Q}\left[X\right].
     \]
-    This shows that \( f(t) \in \mathbb{Q}^{\mathrm{alg}} \times \mathbb{Q}^{\mathrm{alg}} \). In
-    total, we get
+    This shows that \( f\left(t\right) \in \mathbb{Q}^{\mathrm{alg}} \times
+    \mathbb{Q}^{\mathrm{alg}} \). In total, we get
     \[
-        f\left[ \mathbb{Q}_{>0} \setminus \{1\} \right] = \left\{ \left( t^{\frac{1}{t - 1}},
-        t^{\frac{t}{t - 1}} \right) \,\middle|\, t \in \mathbb{Q}_{>0} \setminus \{1\} \right\}
-        \subset S \cap \left( \mathbb{Q}^{\mathrm{alg}} \times \mathbb{Q}^{\mathrm{alg}} \right).
+        f\left[ \mathbb{Q}_{>0} \setminus \left\{1\right\} \right] = \left\{ \left(
+        t^{\frac{1}{t - 1}}, t^{\frac{t}{t - 1}} \right) \,\middle|\, t \in \mathbb{Q}_{>0}
+        \setminus \left\{1\right\} \right\} \subset S \cap \left( \mathbb{Q}^{\mathrm{alg}} \times
+        \mathbb{Q}^{\mathrm{alg}} \right).
     \]
-    We shall show that the reverse inclusion \( \supset \) holds. Let \( (x, y) \in S \cap \left(
-    \mathbb{Q}^{\mathrm{alg}} \times \mathbb{Q}^{\mathrm{alg}} \right) \); then \( x, y > 0 \) and
-    \( x, y \) are algebraic. Since the set is symmetric, we may again assume that \( x < y \).
-    Recalling our construction of the parametrisation, we know that for \( t := \frac{y}{x} \in
-    \mathbb{R}_{>0} \setminus \{1\} \), we have \( f(t) = f\left( \frac{y}{x} \right) = (x, y) \).
-    Since \( \mathbb{Q}^{\mathrm{alg}} \) is a field, \( t \in \mathbb{Q}^{\mathrm{alg}} \), and the
+    We shall show that the reverse inclusion \( \supset \) holds. Let \( \left(x, y\right) \in S
+    \cap \left( \mathbb{Q}^{\mathrm{alg}} \times \mathbb{Q}^{\mathrm{alg}} \right) \); then
+    \( x, y > 0 \) and \( x, y \) are algebraic. Since the set is symmetric, we may again assume
+    that \( x < y \). Recalling our construction of the parametrisation, we know that for
+    \( t := \frac{y}{x} \in \mathbb{R}_{>0} \setminus \left\{1\right\} \), we have
+    \( f\left(t\right) = f\left( \frac{y}{x} \right) = \left(x, y\right) \). Since
+    \( \mathbb{Q}^{\mathrm{alg}} \) is a field, \( t \in \mathbb{Q}^{\mathrm{alg}} \), and the
     following constants \( u := \frac{1}{t - 1} = \frac{y}{x - y} \neq 0 \) and \( v :=
     \frac{t}{t - 1} = \frac{x}{x - y} \neq 0,1 \) are such that \( u, v \in
     \mathbb{Q}^{\mathrm{alg}} \), and \( t^{u} = x \), \( t^{v} = y \). If \( t \) is irrational
     (i.e. \( t \in \mathbb{R} \setminus \mathbb{Q} \)), then so are \( u \) and \( v \). (If either
-    \( u \) or \( v \) were rational, then \( t = (u - 1)^{-1} + 1 \) or \( t = v^{-1} + 1 \) would
-    be rational, a contradiction.)
+    \( u \) or \( v \) were rational, then \( t = \left(u - 1\right)^{-1} + 1 \) or \( t = v^{-1} +
+    1 \) would be rational, a contradiction.)
     \\\\
     But this is impossible because, by the
     \href{https://en.wikipedia.org/wiki/Gelfond–Schneider_theorem}{Gelfond–Schneider theorem}, as
-    \( t \in \mathbb{Q}^{\mathrm{alg}} \setminus \{0,1\} \) and \( u \in \mathbb{Q}^{\mathrm{alg}}
-    \setminus \mathbb{Q} \), it follows that \( t^{u} = x \) is transcendental—a contradiction to
-    \( x \in \mathbb{Q}^{\mathrm{alg}} \). For a proof of the Gelfond–Schneider theorem see the
-    Appendix [\appendixref{gelfond-schneider-theorem}]. Thus, \( t \) must be rational and so
-    \( (x, y) = f(t) \in f\left[ \mathbb{Q}_{>0} \setminus \{1\} \right] \).
+    \( t \in \mathbb{Q}^{\mathrm{alg}} \setminus \left\{0,1\right\} \) and \( u \in
+    \mathbb{Q}^{\mathrm{alg}} \setminus \mathbb{Q} \), it follows that \( t^{u} = x \) is
+    transcendental—a contradiction to \( x \in \mathbb{Q}^{\mathrm{alg}} \). For a proof of the
+    Gelfond–Schneider theorem see the Appendix [\appendixref{gelfond-schneider-theorem}]. Thus,
+    \( t \) must be rational and so \( \left(x, y\right) = f\left(t\right) \in f\left[
+    \mathbb{Q}_{>0} \setminus \left\{1\right\} \right] \).
     \\\\
     Hence:
     \[
@@ -469,33 +489,35 @@
         \left( t^{\frac{1}{t - 1}}, t^{\frac{t}{t - 1}} \right) \,\middle|\, t \in \mathbb{Q}_{>0}
         \setminus \left\{ 1 \right\} \right\}.
     \]
-    Knowing this, since \( \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z}) \subset
+    Knowing this, since \( \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}\left(\mathbb{Z}\right) \subset
     \mathbb{Q}^{\mathrm{alg}} \), we obtain immediately:
     \[
-        S \cap \left( \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z}) \times
-        \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z}) \right) \subset \left\{ \left(
-        t^{\frac{1}{t - 1}}, t^{\frac{t}{t - 1}} \right) \,\middle|\, t \in \mathbb{Q}_{>0}
+        S \cap \left( \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}\left(\mathbb{Z}\right) \times
+        \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}\left(\mathbb{Z}\right) \right) \subset \left\{
+        \left( t^{\frac{1}{t - 1}}, t^{\frac{t}{t - 1}} \right) \,\middle|\, t \in \mathbb{Q}_{>0}
         \setminus \left\{ 1 \right\} \right\}.
     \]
-    Let \( (x,y) \in S \cap \left( \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z}) \times
-    \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z}) \right) \). Then \( x,y > 0 \) and \( x,y \)
-    are algebraic integers (i.e., each is annihilated by a monic polynomial in \( \mathbb{Z}[X] \)).
-    Since the set is symmetric, we may again assume that \( x < y \). By our inclusion, we get that
-    \( \exists t \in \mathbb{Q}_{>0} \setminus \left\{ 1 \right\} \) such that \( f(t) = (x, y) \).
-    Write \( t = \frac{m}{n} \) for \( m,n \in \mathbb{Z} \), with \( \gcd(m,n) = 1 \) and
-    \( m > n \). Since \( x \in \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z}) \), which is a
-    ring (a classical property), and \( m - n \in \mathbb{Z}_{>0} \), we get \( x^{m-n} \in
-    \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z}) \). But:
+    Let \( \left(x,y\right) \in S \cap \left(
+    \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}\left(\mathbb{Z}\right) \times
+    \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}\left(\mathbb{Z}\right) \right) \). Then \( x,y > 0 \)
+    and \( x,y \) are algebraic integers (i.e., each is annihilated by a monic polynomial in
+    \( \mathbb{Z}\left[X\right] \)). Since the set is symmetric, we may again assume that
+    \( x < y \). By our inclusion, we get that \( \exists t \in \mathbb{Q}_{>0} \setminus \left\{ 1
+    \right\} \) such that \( f\left(t\right) = \left(x, y\right) \). Write \( t = \frac{m}{n} \) for
+    \( m,n \in \mathbb{Z} \), with \( \gcd\left(m,n\right) = 1 \) and \( m > n \). Since
+    \( x \in \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}\left(\mathbb{Z}\right) \), which is a ring (a
+    classical property), and \( m - n \in \mathbb{Z}_{>0} \), we get \( x^{m-n} \in
+    \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}\left(\mathbb{Z}\right) \). But:
     \[
         x^{m-n} = \left( t^{\frac{1}{t-1}} \right)^{m-n} = t^{\frac{m-n}{t-1}} =
-        t^{\frac{n(m-n)}{m-n}} = t^{n} = \frac{m^{n}}{n^{n}}.
+        t^{\frac{n\left(m-n\right)}{m-n}} = t^{n} = \frac{m^{n}}{n^{n}}.
     \]
-    So \( \frac{m^{n}}{n^{n}} \in \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z}) \), but
-    \( \frac{m^{n}}{n^{n}} \in \mathbb{Q} \), thus \( \frac{m^{n}}{n^{n}} \in
-    \mathcal{O}_{\mathbb{Q}}(\mathbb{Z}) = \mathbb{Z} \) (because \( \mathbb{Z} \) is a UFD, hence
-    normal). Since \( \gcd(m,n) = 1 \) and \( m,n\in\mathbb{Z}_{>0} \), we have \( \gcd(m^n,n^n) =
-    1 \) this implies \( n^{n} = 1 \), hence \( n = 1 \) and \( m>n=1 \). Thus \( t = m \in
-    \mathbb{Z}_{>1} \), and we get:
+    So \( \frac{m^{n}}{n^{n}} \in \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}\left(\mathbb{Z}\right) \),
+    but \( \frac{m^{n}}{n^{n}} \in \mathbb{Q} \), thus \( \frac{m^{n}}{n^{n}} \in
+    \mathcal{O}_{\mathbb{Q}}\left(\mathbb{Z}\right) = \mathbb{Z} \) (because \( \mathbb{Z} \) is a
+    UFD, hence normal). Since \( \gcd\left(m,n\right) = 1 \) and \( m,n\in\mathbb{Z}_{>0} \), we
+    have \( \gcd\left(m^n,n^n\right) = 1 \) this implies \( n^{n} = 1 \), hence \( n = 1 \) and
+    \( m>n=1 \). Thus \( t = m \in \mathbb{Z}_{>1} \), and we get:
     \[
         x = m^{\frac{1}{m-1}}, \quad y = m^{\frac{m}{m-1}}.
     \]
@@ -504,18 +526,18 @@
         S \cap \left( \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z}) \times \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z}) \right)&\subset \left\{ \left( m^{\frac{1}{m-1}}, m^{\frac{m}{m-1}} \right) \,\middle|\, m \in \mathbb{Z}_{>1} \right\}\\&= \left\{ \left( (1+k)^{\frac{1}{k}}, (1+k)^{\frac{k+1}{k}} \right) \,\middle|\, k \in \mathbb{Z}_{>0} \right\}.
     \end{align*}
     The reverse inclusion \( \supset \) is easy to verify, since for each \( m \in \mathbb{Z}_{>1}
-    \subset \mathbb{R}_{>0} \setminus \left\{ 1 \right\} \), we have \( f(m) \in S \), and clearly
-    \( m^{\frac{1}{m-1}}, m^{\frac{m}{m-1}} \) are respectively the roots of the monic integer
-    polynomials:
+    \subset \mathbb{R}_{>0} \setminus \left\{ 1 \right\} \), we have \( f\left(m\right) \in S \),
+    and clearly \( m^{\frac{1}{m-1}}, m^{\frac{m}{m-1}} \) are respectively the roots of the monic
+    integer polynomials:
     \[
-        X^{m-1} - m, \quad X^{m-1} - m^{m} \in \mathbb{Z}[X].
+        X^{m-1} - m, \quad X^{m-1} - m^{m} \in \mathbb{Z}\left[X\right].
     \]
     Hence:
     \[
         A \cap \left( \mathbb{Q}^{\mathrm{alg}} \times \mathbb{Q}^{\mathrm{alg}} \right) =
-        \Delta\left( \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}(\mathbb{Z}) \cap \mathbb{R}_{\geq 0}
-        \right) \sqcup \left\{ \left( (1+k)^{\frac{1}{k}}, (1+k)^{\frac{k+1}{k}} \right)
-        \,\middle|\, k \in \mathbb{Z}_{>0} \right\}.
+        \Delta\left( \mathcal{O}_{\mathbb{Q}^{\mathrm{alg}}}\left(\mathbb{Z}\right) \cap
+        \mathbb{R}_{\geq 0} \right) \sqcup \left\{ \left( \left(1+k\right)^{\frac{1}{k}},
+        \left(1+k\right)^{\frac{k+1}{k}} \right) \,\middle|\, k \in \mathbb{Z}_{>0} \right\}.
     \]
     \begin{remark}
         If one asks the same question over \( \mathbb{C} \), with the known subtleties of this

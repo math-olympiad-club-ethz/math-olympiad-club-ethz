@@ -15,14 +15,14 @@
 \begin{problem}
     Does there exist a real \( 3 \times 3 \) matrix \( A \) such that
     \[
-        \operatorname{tr}(A) = 0 \quad\text{and}\quad A^2 + A^T = I_3,
+        \operatorname{tr}\left(A\right) = 0 \quad\text{and}\quad A^2 + A^T = I_3,
     \]
-    where \( \operatorname{tr}(A) \) denotes the trace of \( A \), \( A^T \) is the transpose of
-    \( A \), and \( I_3 \) is the \( 3 \times 3 \) identity matrix?
+    where \( \operatorname{tr}\left(A\right) \) denotes the trace of \( A \), \( A^T \) is the
+    transpose of \( A \), and \( I_3 \) is the \( 3 \times 3 \) identity matrix?
 \end{problem}
 \begin{solution}
-    The answer is no. Suppose that \( \operatorname{tr}(A) = 0 \) and \( A^2 + A^T = I_3 \). Taking
-    the transpose, we have
+    The answer is no. Suppose that \( \operatorname{tr}\left(A\right) = 0 \) and \( A^2 + A^T =
+    I_3 \). Taking the transpose, we have
     \[
         A = I_3 - \left(A^2\right)^T = I_3 - \left(A^T\right)^2 = I_3 - \left(I_3 - A^2\right)^2 =
         2A^2 - A^4,
@@ -31,11 +31,13 @@
     \[
         A^4 - 2A^2 + A = 0_3 .
     \]
-    The roots of the polynomial \( x^4 - 2x^2 + x = x(x-1)(x^2+x-1) \) are \( 0 \), \( 1 \),
-    \( \frac{-1\pm\sqrt5}{2} \), so these numbers are the only possible eigenvalues of \( A \); the
-    corresponding eigenvalues of \( A^2 \) can be \( 0 \), \( 1 \), \( \frac{3\mp\sqrt5}{2} \).
+    The roots of the polynomial \( x^4 - 2x^2 + x = x\left(x-1\right)\left(x^2+x-1\right) \) are
+    \( 0 \), \( 1 \), \( \frac{-1\pm\sqrt5}{2} \), so these numbers are the only possible
+    eigenvalues of \( A \); the corresponding eigenvalues of \( A^2 \) can be \( 0 \), \( 1 \),
+    \( \frac{3\mp\sqrt5}{2} \).
 
-    Since \( \operatorname{tr}(A) = 0 \), the sum of the eigenvalues of \( A \) is \( 0 \). Since
+    Since \( \operatorname{tr}\left(A\right) = 0 \), the sum of the eigenvalues of \( A \) is
+    \( 0 \). Since
     \[
         \operatorname{tr}\left(A^2\right) = \operatorname{tr}\left(I_3 - A^T\right) = 3,
     \]
