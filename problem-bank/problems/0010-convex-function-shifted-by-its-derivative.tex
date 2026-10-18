@@ -24,11 +24,11 @@
     If \( x \) is such that \( f'\left(x\right) = 0 \), then the relation holds with equality. Else
     \( f'\left(x\right)\neq 0 \) and then the following set has non empty interior:
     \[
-        \left[\,x + f'\left(x\right),\, x\,\right]\sqcup\left[\,x,\, x+ f'\left(x\right)\,\right]
+        \left[x + f'\left(x\right);x\right]\sqcup\left[x;x+ f'\left(x\right)\right]
     \]
     It is clear that one of these two intervals is non-empty and the other is empty. The mean value
     theorem applied on the non empty interval yields the existence of \( c\in \left[\,x +
-    f'\left(x\right),\, x\,\right]\sqcup\left[\,x,\, x+ f'\left(x\right)\,\right] \) such that:
+    f'\left(x\right),\, x\,\right]\sqcup\left[x;x+ f'\left(x\right)\right] \) such that:
     \[
         f'\left(c\right) =
         \frac{f\left(x + f'\left(x\right)\right) - f\left(x\right)}{\left(x + f'\left(x\right)\right) - x}
@@ -37,15 +37,13 @@
     i.e. \( f'\left(c\right)f'\left(x\right)=f\left(x + f'\left(x\right)\right) -
     f\left(x\right) \).
     \\\\
-    If \( f'\left(x\right)>0 \) then \( c\in \left[\,x,\, x+ f'\left(x\right)\,\right] \) and
-    because the second derivative is nonnegative, \( f' \) is increasing; hence \( 0<
-    f'\left(x\right) \leq f'\left(c\right) \). Therefore \( f\left(x + f'\left(x\right)\right) -
-    f\left(x\right)>0 \).
+    If \( f'\left(x\right)>0 \) then \( c\in \left[x;x+ f'\left(x\right)\right] \) and because the
+    second derivative is nonnegative, \( f' \) is increasing; hence \( 0< f'\left(x\right) \leq
+    f'\left(c\right) \). Therefore \( f\left(x + f'\left(x\right)\right) - f\left(x\right)>0 \).
     \\\\
-    If \( f'\left(x\right)<0 \) then \( c\in \left[\,x+ f'\left(x\right),\, x\,\right] \) and
-    because the second derivative is positive, \( f' \) is increasing; hence \( f'\left(c\right)
-    \leq f'\left(x\right)<0 \). Therefore \( f\left(x + f'\left(x\right)\right) -
-    f\left(x\right)>0 \).
+    If \( f'\left(x\right)<0 \) then \( c\in \left[x+ f'\left(x\right);x\right] \) and because the
+    second derivative is positive, \( f' \) is increasing; hence \( f'\left(c\right) \leq
+    f'\left(x\right)<0 \). Therefore \( f\left(x + f'\left(x\right)\right) - f\left(x\right)>0 \).
     \\\\
     In all cases:
     \[

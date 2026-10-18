@@ -13,9 +13,9 @@
 % references:     Earliest known appearance (to the best of our knowledge): IMC 1994 (1st IMC, Plovdiv), Day 1, Problem 2, official problems & solutions - https://www.imc-math.org.uk/imc1994/prob_sol.pdf; Kalva archive, 1st IMC 1994, A2 - https://prase.cz/kalva/imc/imc94.html; reused as Problem 10.28 (1994) in M. A. Daas, 'A Brief IMC Training' (Emory Putnam notes) - http://www.cs.emory.edu/~mic/putnam/general/IMC.pdf
 % history:        human
 \begin{problem}
-    Let \( f \in C^1\left( \left]a, b\right[, \mathbb{R} \right) \) with \( \lim_{x \to a^+}
+    Let \( f \in C^1\left( \left]a;b\right[, \mathbb{R} \right) \) with \( \lim_{x \to a^+}
     f\left(x\right) = +\infty \), \( \lim_{x \to b^-} f\left(x\right) = -\infty \), and
-    \( f'\left(x\right) + f^2\left(x\right) \geq -1 \) for all \( x \in \left]a, b\right[ \). Prove
+    \( f'\left(x\right) + f^2\left(x\right) \geq -1 \) for all \( x \in \left]a;b\right[ \). Prove
     that \( b - a \geq \pi \) and give an example where \( b - a = \pi \).
 \end{problem}
 \begin{solution}
@@ -24,8 +24,8 @@
         \frac{\mathrm{d}}{\mathrm{d}x} \left( \arctan\left(f\left(x\right)\right) + x \right) =
         \frac{f'\left(x\right)}{1 + f^2\left(x\right)} + 1 \geq 0
     \]
-    for all \( x \in \left]a, b\right[ \). Therefore, the function
-    \( \arctan\left(f\left(x\right)\right) + x \) is increasing on \( \left]a, b\right[ \). Taking
+    for all \( x \in \left]a;b\right[ \). Therefore, the function
+    \( \arctan\left(f\left(x\right)\right) + x \) is increasing on \( \left]a;b\right[ \). Taking
     limits as \( x \) approaches the endpoints, we get:
     \[
         \lim_{x\underset{>}{\to} a} \left( \arctan\left(f\left(x\right)\right) + x \right) =
@@ -43,7 +43,7 @@
         f\left(x\right) = \cot\left(x\right) = \frac{\cos\left(x\right)}{\sin\left(x\right)}, \quad
         a = 0, \quad b = \pi,
     \]
-    since for any \( x \in \left]0, \pi\right[ \), we have:
+    since for any \( x \in \left]0;\pi\right[ \), we have:
     \[
         f'\left(x\right) + f^2\left(x\right) = -\frac{1}{\sin^2\left(x\right)} +
         \frac{\cos^2\left(x\right)}{\sin^2\left(x\right)} =

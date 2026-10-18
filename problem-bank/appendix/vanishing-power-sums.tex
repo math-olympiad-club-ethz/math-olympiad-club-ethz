@@ -11,7 +11,7 @@
         \operatorname{char}\left(R\right) \), the set
         \[
             S_m := \left\{ \boldsymbol{\lambda} \colon m \to R \,\middle|\, \exists t \in
-            \mathbb{N}, \forall k \in \left\llbracket 1, m \right\rrbracket, \sum_{i \in m}
+            \mathbb{N}, \forall k \in \left\llbracket 1;m \right\rrbracket, \sum_{i \in m}
             \lambda_i^{t+k} = 0_{R} \right\}
         \]
         is equal to the singleton set \( \left\{0_m\right\} \), where \( 0_m \colon m \to R \) is
@@ -27,7 +27,7 @@
         a domain), meaning \( \operatorname{char}\left(R\right) \geq 2 > 1 \). We then have:
         \[
             S_1 = \left\{ \boldsymbol{\lambda} \colon 1 \to R \,\middle|\, \exists t \in \mathbb{N},
-            \forall k \in \left\llbracket 1, 1 \right\rrbracket, \sum_{i \in 1} \lambda_i^{t+k} =
+            \forall k \in \left\llbracket 1;1 \right\rrbracket, \sum_{i \in 1} \lambda_i^{t+k} =
             0_{R} \right\} \overset{\text{clear}}{=} \left\{ \boldsymbol{\lambda} \colon 1 \to R
             \,\middle|\, \exists t \in \mathbb{N}, \lambda_0^{t+1} = 0_{R} \right\}.
         \]
@@ -78,7 +78,7 @@
         \]
         By the condition \( \boldsymbol{\lambda} \in S_{m+1} \), it is clear that there exists a
         minimal \( t_{\boldsymbol{\lambda}} \in \mathbb{N} \) such that
-        \( p_{t_{\boldsymbol{\lambda}}+k} = 0_{R} \) for all \( k \in \left\llbracket 1, m+1
+        \( p_{t_{\boldsymbol{\lambda}}+k} = 0_{R} \) for all \( k \in \left\llbracket 1;m+1
         \right\rrbracket \). Consider the polynomial whose roots are the coordinates of
         \( \boldsymbol{\lambda} \):
         \[
@@ -102,7 +102,7 @@
             \cdot \prod_{i \in m+1} \lambda_i,
         \]
         where we used that \( p_{t_{\boldsymbol{\lambda}}+k} = 0_{R} \) for all \( k \in
-        \left\llbracket 1, m+1 \right\rrbracket \). By minimality of \( t_{\boldsymbol{\lambda}} \),
+        \left\llbracket 1;m+1 \right\rrbracket \). By minimality of \( t_{\boldsymbol{\lambda}} \),
         \( p_{t_{\boldsymbol{\lambda}}} \neq 0_{R} \). Indeed, if \( t_{\boldsymbol{\lambda}} =
         0 \), then \( p_{t_{\boldsymbol{\lambda}}} = \left(m+1\right)_{R} \), which is not zero by
         hypothesis on the characteristic. Else \( t_{\boldsymbol{\lambda}} \geq 1 \), then assuming
@@ -128,7 +128,7 @@
         \\\\
         By the condition \( \boldsymbol{\lambda} \in S_{m+1} \), there exists
         \( t_{\boldsymbol{\lambda}} \in \mathbb{N} \) such that \( p_{t_{\boldsymbol{\lambda}}+k} =
-        0_{R} \) for all \( k \in \left\llbracket 1, m+1 \right\rrbracket \). In our case, where the
+        0_{R} \) for all \( k \in \left\llbracket 1;m+1 \right\rrbracket \). In our case, where the
         number of variables is \( m+1 \geq 1 \), we define, for all \( k \geq 0 \), the \( k \)-th
         power sum and the \( k \)-th elementary symmetric polynomial as before but this time in the
         vector \( \boldsymbol{\lambda}^{t_{\boldsymbol{\lambda}}} \) (each coordinate of this vector
@@ -142,7 +142,7 @@
         \]
         Notice that \( \tilde{p}_k =
         p_{t_{\boldsymbol{\lambda}} + k}\left(\boldsymbol{\lambda}\right) \) and thus, for each
-        \( i \in \left\llbracket 1, m+1 \right\rrbracket \), \( \tilde{p}_i = 0_{R} \). Newton's
+        \( i \in \left\llbracket 1;m+1 \right\rrbracket \), \( \tilde{p}_i = 0_{R} \). Newton's
         identities (for \( 1\leq k = m+1\leq m+1 \)) when evaluated at
         \( \boldsymbol{\lambda}^{t_{\boldsymbol{\lambda}}} \) give:
         \[
@@ -164,9 +164,9 @@
         \\\\
         (Note that \( \boldsymbol{\lambda} \neq \varnothing \) and
         \( \operatorname{dom}\left(\boldsymbol{\lambda}\right) = m+1 \) so that \( r \in
-        \left\llbracket 1, m+1 \right\rrbracket \)). By hypothesis on \( \boldsymbol{\lambda} \),
+        \left\llbracket 1;m+1 \right\rrbracket \)). By hypothesis on \( \boldsymbol{\lambda} \),
         there exists \( t_{\boldsymbol{\lambda}} \in \mathbb{N} \) such that for all \( k \in
-        \left\llbracket 1, m+1 \right\rrbracket \):
+        \left\llbracket 1;m+1 \right\rrbracket \):
         \[
             0_{R} \overset{\text{hyp}}{=} \sum_{i \in m+1} \lambda_i^{t_{\boldsymbol{\lambda}}+k}
             \overset{\text{clear}}{=} \sum_{j \in r}

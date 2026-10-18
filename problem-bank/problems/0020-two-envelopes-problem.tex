@@ -67,18 +67,18 @@
     \href{https://en.wikipedia.org/wiki/Pseudorandom_number_generator}{pseudorandom number generator}
     (PRNG) seeded by an unpredictable value (e.g., system clock nanoseconds); see
     \href{https://en.wikipedia.org/wiki/Hardware_random_number_generator}{Hardware random number generator}
-    for more information.} a number between \( \left[0,1\right] \) and \textit{make a decision} with
+    for more information.} a number between \( \left[0;1\right] \) and \textit{make a decision} with
     this number. Formally, we introduce an auxiliary probability space
-    \( \left(\Sigma,\mathcal{A},\mu\right) \) and let \( U:\Sigma\rightarrow\left[0,1\right] \) be a
-    uniform random variable, i.e., \( U \sim \text{Unif}\left(\left[0,1\right]\right) \)\footnote{We
+    \( \left(\Sigma,\mathcal{A},\mu\right) \) and let \( U:\Sigma\rightarrow\left[0;1\right] \) be a
+    uniform random variable, i.e., \( U \sim \text{Unif}\left(\left[0;1\right]\right) \)\footnote{We
     can construct \( \left(\Sigma,\mathcal{A},\mu\right) \) as
-    \( \left(\left[0,1\right],\mathcal{B}\left(\left[0,1\right]\right),\lambda|_{\mathcal{B}\left(\left[0,1\right]\right)}\right) \),
-    where \( \mathcal{B}\left(\left[0,1\right]\right) \) is the Borel sigma-algebra and
+    \( \left(\left[0;1\right],\mathcal{B}\left(\left[0;1\right]\right),\lambda|_{\mathcal{B}\left(\left[0;1\right]\right)}\right) \),
+    where \( \mathcal{B}\left(\left[0;1\right]\right) \) is the Borel sigma-algebra and
     \( \lambda \) is the Lebesgue measure on \( \mathbb{R} \). \( U \) can then be defined as the
-    identity function, i.e., \( U\left(x\right) = x \) for \( x \in \left[0,1\right] \) and it is
-    obviously a random variable with the uniform law on \( \left[0,1\right] \).}, that is, for any
-    \( a,b \in\left[0,1\right] \) with \( a\leq b \) and any non-empty interval \( I\subset
-    \left[0,1\right] \) with \( \inf I=a \) and \( \sup I=b \) then \( \mu_{U}\left(I\right)=
+    identity function, i.e., \( U\left(x\right) = x \) for \( x \in \left[0;1\right] \) and it is
+    obviously a random variable with the uniform law on \( \left[0;1\right] \).}, that is, for any
+    \( a,b \in\left[0;1\right] \) with \( a\leq b \) and any non-empty interval \( I\subset
+    \left[0;1\right] \) with \( \inf I=a \) and \( \sup I=b \) then \( \mu_{U}\left(I\right)=
     b-a \). Adjoining this new probability space to the preceding one, we obtain a product space
     (which is a probability space):
     \[
@@ -88,7 +88,7 @@
     \( \pi_1\left(w\right) \), we must now make a decision about switching or not with a
     deterministic choice involving the pair
     \( \left(\pi_1\left(w\right),U\left(\xi\right)\right) \). That is, we have a measurable function
-    \( f:\mathbb{R}_{>0}\times\left[0,1\right]\rightarrow\left\{0,1\right\} \) that takes
+    \( f:\mathbb{R}_{>0}\times\left[0;1\right]\rightarrow\left\{0,1\right\} \) that takes
     \( \left(\pi_1\left(w\right),U\left(\xi\right)\right) \) and if
     \( f\left(\left(\pi_{1}\left(w\right),U\left(\xi\right)\right)\right)=1 \), we keep, i.e., we
     take \( \pi_1\left(w\right) \), and if
@@ -141,10 +141,10 @@
     asymmetry in the expected gain formula.
     \\\\
     To formalize this idea, we introduce a measurable function \( g: \mathbb{R}_{>0} \to
-    \left[0,1\right] \) and define a decision function \( f_g: \mathbb{R}_{>0} \times
-    \left[0,1\right] \to \left\{0,1\right\} \) by
+    \left[0;1\right] \) and define a decision function \( f_g: \mathbb{R}_{>0} \times
+    \left[0;1\right] \to \left\{0,1\right\} \) by
     \[
-        f_g\left(x, y\right) = \mathbbm{1}_{\left[0, g\left(x\right)\right]}\left(y\right),
+        f_g\left(x, y\right) = \mathbbm{1}_{\left[0;g\left(x\right)\right]}\left(y\right),
     \]
     which means we keep the first envelope if the generated number \( U\left(\xi\right) \) satisfies
     \( 0\leq U\left(\xi\right) \leq g\left(\pi_1\left(w\right)\right) \), and we switch otherwise.
@@ -153,27 +153,27 @@
     \\\\
     For this specific choice of \( f_g \), the probabilities of keeping and switching the envelope
     are as follows: with probability \( \frac{1}{2} \) the first envelope has amount \( \alpha \),
-    and we keep it if the randomly generated number in \( \left[0,1\right] \) is below
+    and we keep it if the randomly generated number in \( \left[0;1\right] \) is below
     \( g\left(\alpha\right) \) that is we keep it with probability:
     \[
         \mu_{f_g\left(\alpha, U\right)}\left(\left\{1\right\}\right)=\mu\left(\left\{\xi\in\Sigma\,|\,
-        U\left(\xi\right)\in\left[0,g\left(\alpha\right)\right]\right\}\right)=g\left(\alpha\right)
+        U\left(\xi\right)\in\left[0;g\left(\alpha\right)\right]\right\}\right)=g\left(\alpha\right)
     \]
     and we switch with probability:
     \[
         \mu_{f_g\left(\alpha, U\right)}\left(\left\{0\right\}\right)=\mu\left(\left\{\xi\in\Sigma\,|\,
-        U\left(\xi\right)\in\;]g\left(\alpha\right),1]\right\}\right)=1-g\left(\alpha\right).
+        U\left(\xi\right)\in\;\left]g\left(\alpha\right);1\right]\right\}\right)=1-g\left(\alpha\right).
     \]
     Similarly, with probability \( \frac{1}{2} \) the first envelope has amount \( 2\alpha \), and
     we keep it with probability:
     \[
         \mu_{f_g\left(2\alpha, U\right)}\left(\left\{1\right\}\right)=\mu\left(\left\{\xi\in\Sigma\,|\,
-        U\left(\xi\right)\in\left[0,g\left(2\alpha\right)\right]\right\}\right)=g\left(2\alpha\right)
+        U\left(\xi\right)\in\left[0;g\left(2\alpha\right)\right]\right\}\right)=g\left(2\alpha\right)
     \]
     and we switch with probability:
     \[
         \mu_{f_g\left(2\alpha, U\right)}\left(\left\{0\right\}\right)=\mu\left(\left\{\xi\in\Sigma\,|\,
-        U\left(\xi\right)\in\;]g\left(2\alpha\right),1]\right\}\right)=1-g\left(2\alpha\right).
+        U\left(\xi\right)\in\;\left]g\left(2\alpha\right);1\right]\right\}\right)=1-g\left(2\alpha\right).
     \]
     Thus, the expected gain under this strategy is:
     \[
@@ -195,7 +195,7 @@
     measurable function \( g \) satisfying \( g\left(2\alpha\right) > g\left(\alpha\right) \). Since
     the player does not know the exact value of \( \alpha \) but knows that \( \alpha < 2\alpha \),
     they can select any strictly increasing (and hence measurable) function \( g: \mathbb{R}_{>0}
-    \to \left[0,1\right] \). Examples of such functions include:
+    \to \left[0;1\right] \). Examples of such functions include:
     \[
         g\left(x\right) =\frac{x}{x+1}=1-\frac{1}{x+1}, \quad g\left(x\right) = 1 - e^{-x}.
     \]
@@ -212,7 +212,7 @@
     Ideally, one would aim to find an increasing function
     \[
         g\in\mathcal{G}:= \left\{g'\mid
-        g':\mathbb{R}_{>0}\to\left[0,1\right]\text{ increasing}\right\}
+        g':\mathbb{R}_{>0}\to\left[0;1\right]\text{ increasing}\right\}
     \]
     that maximizes \( \inf\left\{g\left(2x\right) - g\left(x\right)\,|\,
     x\in\mathbb{R}_{>0}\right\} \) however:
@@ -265,7 +265,7 @@
         \begin{itemize}
             \item The naive strategy yields an expected gain of \( \frac{k+1}{2}\alpha \).
             \item The improved strategy, using any increasing function \( g \colon \mathbb{R}_{>0}
-                \to \left[0,1\right] \), gives an expected gain of:
+                \to \left[0;1\right] \), gives an expected gain of:
                 \[
                     \frac{k+1}{2}\alpha + \frac{k-1}{2}\alpha\bigl(g\left(k\alpha\right) -
                     g\left(\alpha\right)\bigr).

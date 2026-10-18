@@ -15,7 +15,7 @@
                 \operatorname{Root}_{P_{\text{char}, M}\left(X\right)}\left(\mathbb{F}^{\text{alg}}\right) \),
             \item \( \forall k \in \mathbb{N}_{>0}, \operatorname{tr}\left(M^k\right) =
                 0_{\mathbb{F}} \),
-            \item \( \exists t \in \mathbb{N}, \forall k \in \llbracket 1, r \rrbracket,
+            \item \( \exists t \in \mathbb{N}, \forall k \in \llbracket 1;r \rrbracket,
                 \operatorname{tr}\left(M^{t+k}\right) = 0_{\mathbb{F}} \).
         \end{enumerate}
         One cannot reduce the set of powers for which the trace is \( 0_{\mathbb{F}} \) to an
@@ -67,7 +67,7 @@
         their respective algebraic multiplicities. By the Spectral Mapping
         Theorem [\appendixref{spectral-mapping-theorem}], for all \( k \in \mathbb{N}_{\geq 1} \),
         \( \operatorname{tr}\left(M^k\right) = \sum_{i \in r} \lambda_i^k \). Hence if there exists
-        \( t \in \mathbb{N} \) such that \( \forall k \in \llbracket 1, r \rrbracket,
+        \( t \in \mathbb{N} \) such that \( \forall k \in \llbracket 1;r \rrbracket,
         \operatorname{tr}\left(M^{t+k}\right) = 0_{\mathbb{F}} \), then by our
         lemma [\appendixref{vanishing-power-sums}], we have \( \forall i \in r, \lambda_i =
         0_{\mathbb{F}} \). Hence \( \sigma\left(M\right) = \left\{0_{\mathbb{F}}\right\} \) (since
@@ -107,8 +107,8 @@
         Although one cannot use any set of \( r \) distinct powers for which the trace is
         \( 0_{\mathbb{F}} \), one can still apply this theorem in certain other special cases. One
         example is that for any \( l \in \mathbb{N}_{>0} \) and \( t\in\mathbb{N} \), the \( r \)
-        distinct powers \( \left\{ l\cdot \left(t+k\right) \,\middle|\, k \in
-        \llbracket1,r\rrbracket \right\} \) suffice: simply apply the theorem to \( M^l \) to deduce
-        that \( M^l \) is nilpotent and hence \( M \) is nilpotent.
+        distinct powers \( \left\{ l\cdot \left(t+k\right) \,\middle|\, k \in \llbracket 1;r
+        \rrbracket \right\} \) suffice: simply apply the theorem to \( M^l \) to deduce that
+        \( M^l \) is nilpotent and hence \( M \) is nilpotent.
     \end{remark}
 \end{appendixitem}
