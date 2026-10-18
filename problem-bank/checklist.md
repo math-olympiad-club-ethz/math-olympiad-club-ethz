@@ -52,7 +52,10 @@ written; this list covers the mechanical checks, the ones a tool or a careful re
 
 11. **Compilation**: the file compiles without error and without a line running into the margin (overfull box):
     the preview on save, or `cd website-code && python3 -m bank.validate --compile FILE`. A long inline formula that
-    runs into the margin goes into a display.
+    runs into the margin goes into a display; a long display is split into two displays, the second starting
+    with its relation (`=`, `\subset`, `\cap`); a long row of a `cases` gets a continuation row; a remark in
+    `\text{...}` inside a display moves to the sentence after it. The preamble's `\emergencystretch` already
+    lets a paragraph be set a little looser rather than overflow.
 12. **Validator**: for a file of `problems/` or `appendix/`, `cd website-code && python3 -m bank.validate` passes.
 
 ## Language and mathematics

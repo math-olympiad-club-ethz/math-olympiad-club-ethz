@@ -16,6 +16,10 @@
 \usepackage[a4paper,top=2cm,bottom=2cm,left=3cm,right=3cm]{geometry}
 \usepackage{microtype}
 
+% A paragraph may be set a little looser rather than let a line run into the margin (long formulas sized with
+% \left ... \right cannot be broken inside).
+\setlength{\emergencystretch}{3em}
+
 % ===== Float spacing =====
 \setlength{\intextsep}{1.5ex}
 \setlength{\textfloatsep}{1.5ex}

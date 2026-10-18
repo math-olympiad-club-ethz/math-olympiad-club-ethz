@@ -137,11 +137,14 @@
         \right) \right) + \mathbbm{1}_{2\mathbb{N}}\left(k\right) \cdot
         a_{\left\lfloor \frac{k}{2} \right\rfloor}' b_{\left\lfloor \frac{k}{2} \right\rfloor}',
     \]
-    and is therefore an integer because it is a sum of all the elements in \( \left\{ a_i' b_{k-i}'
-    + a_{k-i}' b_i' \,\middle|\, i \leq \left\lfloor \frac{k}{2} \right\rfloor \right\} \subset
-    \mathbb{Z} \), and possibly (when \( k \) is even) one term
-    \( a_{\left\lfloor \frac{k}{2} \right\rfloor}' b_{\left\lfloor \frac{k}{2} \right\rfloor}' \in
-    \mathbb{Z} \). Hence, the polynomial \( C_n\left(X\right) \) has integer coefficients.
+    and is therefore an integer because it is a sum of all the elements in
+    \[
+        \left\{ a_i' b_{k-i}' + a_{k-i}' b_i' \,\middle|\, i \leq \left\lfloor \frac{k}{2}
+        \right\rfloor \right\} \subset \mathbb{Z},
+    \]
+    and possibly (when \( k \) is even) one term \( a_{\left\lfloor \frac{k}{2} \right\rfloor}'
+    b_{\left\lfloor \frac{k}{2} \right\rfloor}' \in \mathbb{Z} \). Hence, the polynomial
+    \( C_n\left(X\right) \) has integer coefficients.
     \\\\
     Let \( N \in \mathbb{N} \) and a rational polynomial \( P\left(X\right) = \sum_{k=0}^{N}
     \frac{p_k}{q_k} X^{k} \in \mathbb{Q}\left[X\right] \). Suppose that for all \( k \leq N \), the
@@ -263,9 +266,11 @@
     choosing (since \( d_1 \neq 0 \neq d_2 \))
     \[
         \gamma := \frac{d_2}{d_1} \in \mathbb{Q}^{\times}\text{, we obtain } \gamma A_n\left( X
-        \right) = \widetilde{A_n}\left( X \right) \in \mathbb{Z}\left[ X \right],\, \gamma^{-1}
-        B_n\left( X \right) \in \left\{ \pm d_5 \widetilde{B_n}\left( X \right) \right\} \subset
-        \mathbb{Z}\left[ X \right].
+        \right) = \widetilde{A_n}\left( X \right) \in \mathbb{Z}\left[ X \right],
+    \]
+    \[
+        \gamma^{-1} B_n\left( X \right) \in \left\{ \pm d_5 \widetilde{B_n}\left( X \right) \right\}
+        \subset \mathbb{Z}\left[ X \right].
     \]
     That is, \( \gamma \in \Gamma_n \), so in the case \( C_n\left( X \right) \neq 0 \) we have
     \( \Gamma_n \neq \varnothing \).
