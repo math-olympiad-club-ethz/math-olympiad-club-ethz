@@ -13,15 +13,17 @@
 % references:     Earliest known appearance (to the best of our knowledge): Part 1: IMO 1988 Problem 6 (Day II, 16 July 1988, Canberra), proposed by Stephan Beck (West Germany). Sources: https://www.imo-official.org/assets/documents/problems/1988/1988_eng.pdf; https://imomath.com/othercomp/I/Imo1988.pdf; AoPS wiki 'IMO Problems and Solutions, with authors' (Wayback) https://artofproblemsolving.com/wiki/index.php/IMO_Problems_and_Solutions,_with_authors; Kalva solution incl. Stan Dolan's variant https://prase.cz/kalva/imo/isoln/isoln886.html. Part 2: IMO 2007 Problem 5 (26 July 2007, Hanoi), by Kevin Buzzard & Edward Crane (UK); it is the Lemma of Shortlist 2007 N6. Sources: https://www.imo-official.org/assets/documents/problems/2007/2007_eng.pdf; https://www.imo-official.org/problems/IMO2007SL.pdf; UK report https://www.imo-register.org.uk/2007-report.html; Evan Chen https://web.evanchen.cc/exams/IMO-2007-notes.pdf. Method: Wikipedia 'Vieta jumping' https://en.wikipedia.org/wiki/Vieta_jumping (cites Engel, Problem-Solving Strategies, 1998, p. 127); Yimin Ge, 'The Method of Vieta Jumping', Mathematical Reflections 5 (2007) https://pimosbat.ir/wp-content/uploads/2026/01/The-Method-of-Vieta-Jumping.pdf
 % history:        human
 \begin{problem}
-    \subsection{Problem 6 (IMO 1988)} Let \( a \) and \( b \) be positive integers such that
-    \( ab + 1 \) divides \( a^{2} + b^{2} \). Show that
-    \[ \frac{a^{2} + b^{2}}{ab + 1} \]
-    is the square of an integer. \subsection{Problem (Kevin Buzzard \& Edward Crane)} Let \( a \)
-    and \( b \) be positive integers. Show that if \( 4ab - 1 \) divides \( \left(4a^{2} -
-    1\right)^{2} \), then \( a = b \).
+    \begin{enumerate}
+        \item[(a)] Let \( a \) and \( b \) be positive integers such that \( ab + 1 \) divides
+            \( a^{2} + b^{2} \). Show that
+            \[ \frac{a^{2} + b^{2}}{ab + 1} \]
+            is the square of an integer.
+        \item[(b)] Let \( a \) and \( b \) be positive integers. Show that if \( 4ab - 1 \) divides
+            \( \left(4a^{2} - 1\right)^{2} \), then \( a = b \).
+    \end{enumerate}
 \end{problem}
 \begin{solution}
-    Define
+    (a) Define
     \[
         S := \left\{ \left(a,b\right) \in \mathbb{N}^{*} \times \mathbb{N}^{*} \mid ab+1 \mid a^2 +
         b^2 \right\}.
@@ -95,15 +97,8 @@
     where we used \( b' \geq 1 \) and \( k > 0 \). As \( a' + 1 > 1 \), we must have \( c' + 1 >
     0 \), i.e., \( c' > -1 \), so we conclude that \( c' = 0 \) as desired. Since \( k > 0 \) with
     \( S_k \neq \varnothing \) was arbitrary, we are done.
-
-
-    \subsection{Problem (Kevin Buzzard \& Edward Crane)} Let \( a \) and \( b \) be positive
-    integers. Show that if \( 4ab - 1 \) divides \( \left(4a^{2} - 1\right)^{2} \), then
-    \( a = b \).
-
-    \subsection*{Solution:}
-
-    Standard manipulations\footnote{Let \( m = 4ab - 1 \). Since \( \gcd\left(b,m\right)=1 \),
+    \\\\
+    (b) Standard manipulations\footnote{Let \( m = 4ab - 1 \). Since \( \gcd\left(b,m\right)=1 \),
     \( b \) is invertible modulo \( m \). Note that
     \[
         4a^2b \;=\;a\,\left(4ab\right)\;\equiv\;a\pmod{m} \quad\Longrightarrow\quad 4a^2 \equiv

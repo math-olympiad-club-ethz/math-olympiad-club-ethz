@@ -112,7 +112,7 @@
         In every case, two different polynomials with non-negative integer coefficients produce the
         exact same output. Therefore, a single rational query cannot possibly distinguish them.
     \end{remark}
-    \textit{Bonus.}
+    \noindent\textit{Bonus.}
     Alternatively, switch the machine to \emph{computable mode}: rather than feeding it an integer,
     you may input a deterministic algorithm that computes a specific real number
     \( r\in\mathbb{R} \) to any requested degree of precision. In return, the machine provides you
@@ -123,9 +123,9 @@
     evaluating functions on arbitrary-precision streams is demanding, this query drains \emph{twice}
     the battery, limiting you to a single query. Can you design an algorithm that recover
     \( P\left(X\right) \) in finitely many steps ?
-
-    \subsection*{Solution}
-
+    \\\\
+    \textit{Solution of the bonus.}
+    \\\\
     Query a computable positive transcendental number, say \( r=e \). We do this by providing the
     machine with an explicit algorithm that computes \( e \) (for example, generating the sequence
     of rational partial sums \( \sum_{k=0}^{N} \frac{1}{k!} \) until the error term is sufficiently
