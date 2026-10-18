@@ -22,6 +22,7 @@ How to read the numbers. "12 in 5" means 12 occurrences in 5 of the 25 bodies (t
 12. Size every pair of delimiters in mathematics with `\left ... \right`, even around one symbol (always; Antoine, 2026-10-10).
 13. Keep the source readable: indent it by 4 spaces per nesting level and keep every line within 100 characters. `website-code/bank/texformat.py` does both, and so does Cmd+S in VS Code; run it on every file you write (always; Antoine, 2026-10-12). See section 7, item 14.
 14. Write inline mathematics as `\( ... \)`, with a space inside the delimiters, and displays as `\[ ... \]`: never `$ ... $` or `$$ ... $$` (always; Antoine, 2026-10-17). The whole bank was converted on 2026-10-17, and the validator rejects a `$` (a dollar sign is `\$`).
+15. Monotonicity has four words: "increasing" (\( x \leq y \) implies \( f\left(x\right) \leq f\left(y\right) \)), "strictly increasing" (\( x < y \) implies \( f\left(x\right) < f\left(y\right) \)), "decreasing" and "strictly decreasing", for functions and sequences alike; never "non-decreasing", "non-increasing", "weakly" or "monotonically" (always; Antoine, 2026-10-18). A step that needs the strict version says "strictly": "\( \left(n+1\right)^{\alpha}-n^{\alpha} \) is positive since \( x \mapsto x^{\alpha} \) is strictly increasing" (0057). The bank and the seminar rewrites were changed on 2026-10-18.
 
 ## 1. Tone and voice
 
@@ -291,9 +292,9 @@ Absolute values and cardinalities use bars: `|G|` inline, `\left| G \right|` in 
 |---|---|---|---|
 | "we have", "we obtain" | 30 in 16; 13 in 8 | "we get" (3), "we find" (1), "yields" (1) | `Plugging in $y=0$, we have $f(x)^2 = \frac{c^2}{2} + c$.` (0006) |
 | "It is easy to see that", "it is clear that", "clearly", "trivially", "well known" | 3; 2; 6 in 5; 1; 1 | "obviously" (0) | `It is easy to see that $\langle \cdot, \cdot \rangle_{\mathbb{F}_2^n}$ is $\mathbb{F}_{2}$-bilinear` (0018) |
-| "strictly" (increasing, decreasing, positive) | 12 in 5 | n/a | "is strictly positive as long as" (0029) |
+| "increasing", "strictly increasing", "decreasing", "strictly decreasing" (rule 15) | 12 in 5 for "strictly" | "non-decreasing", "non-increasing" (0 since 2026-10-18) | "is strictly positive as long as" (0029) |
 | "bigger", "smaller" | 2; 1 | "greater" (1), "larger" (0) | `is certainly bigger than $0$` (0016) |
-| "non-degenerate", "non-commutative", "non-decreasing", "non-empty" | 7; 6; 1; 1 | "non empty" (2, both in 0010) | "is non-decreasing on" (0028) |
+| "non-degenerate", "non-commutative", "non-empty" | 7; 6; 1 | "non empty" (2, both in 0010) | "non-degenerate" (app) |
 | "Else" to open the remaining case | 3 | "Otherwise" (1, 0047) | `Else we have $f(x) = \pm 2$ for all $x$.` (0006) |
 | "the given ..." to point back to a hypothesis | 6 in 5 | n/a | `By the given assumption, we have $L(F) = \alpha F$.` (0004) |
 | "the equation from the statement", "the problem’s statement" | 3 (0017); 1 (0016) | "the claim" (0) | `The fact that \(x\) satisfies the equation from the statement translates to \(f(5) = f(6)\).` (0017) |
