@@ -20,14 +20,14 @@
     \]
     The second 4-tuple is transformed into the third according to the same rule, and so on.
     \\\\
-    Prove that if at least one initial number does not equal 1, then you can never obtain the
+    Prove that if at least one initial number does not equal \( 1 \), then you can never obtain the
     initial 4-tuple again.
     \\\\
     (b) Given a \( 2^k \)-tuple of numbers (where \( k \) is a nonnegative integer), each equal
-    either to 1 or to -1, the tuple is transformed according to the same rule as in part (a): each
-    number is multiplied by the next one, and the last is multiplied by the first.
+    either to \( 1 \) or to \( -1 \), the tuple is transformed according to the same rule as in part
+    (a): each number is multiplied by the next one, and the last is multiplied by the first.
     \\\\
-    Prove that you will always eventually obtain a tuple consisting entirely of 1s.
+    Prove that you will always eventually obtain a tuple consisting entirely of \( 1 \)s.
 \end{problem}
 \begin{solution}
     \begin{enumerate}
@@ -51,10 +51,11 @@
             \[
                 M\left(Q_3\right) = M\left(Q_1\right)^2.
             \]
-            Since squaring a number greater than 1 results in an even larger number, the sequence
-            \( M\left(Q_1\right), M\left(Q_3\right), M\left(Q_5\right), \dots \) grows indefinitely.
-            This precludes any possibility of returning to the original 4-tuple, as a return would
-            imply cycling, contradicting the unbounded growth of \( M\left(Q_n\right) \).
+            Since squaring a number greater than \( 1 \) results in an even larger number, the
+            sequence \( M\left(Q_1\right), M\left(Q_3\right), M\left(Q_5\right), \dots \) grows
+            indefinitely. This precludes any possibility of returning to the original 4-tuple, as a
+            return would imply cycling, contradicting the unbounded growth of
+            \( M\left(Q_n\right) \).
 
         \item[(b)] After \( r \) transformations, the first element of the \( n \)-tuple can be
             written as:

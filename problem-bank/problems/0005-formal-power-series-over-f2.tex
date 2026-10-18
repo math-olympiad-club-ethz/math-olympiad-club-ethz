@@ -40,9 +40,9 @@
 \end{problem}
 \begin{solution}
     We begin by analyzing the properties of the coefficients \( a_n \). Since the field has
-    characteristic 2, we have \( \alpha\left(X\right)^2 = 1 + \sum a_n X^{2n} \). This is because
-    squaring a power series in characteristic 2 eliminates the cross terms, and \( a_n^2 = a_n \)
-    (as \( a_n \in \left\{0, 1\right\} \)).
+    characteristic \( 2 \), we have \( \alpha\left(X\right)^2 = 1 + \sum a_n X^{2n} \). This is
+    because squaring a power series in characteristic \( 2 \) eliminates the cross terms, and
+    \( a_n^2 = a_n \) (as \( a_n \in \left\{0, 1\right\} \)).
     \\\\
     Next, consider \( \alpha\left(X\right)^3 \). Multiplying the given equation
     \( \alpha\left(X\right)^3 + X \alpha\left(X\right) + 1 = 0 \) by \( \alpha\left(X\right) \), we
@@ -55,14 +55,14 @@
     \begin{itemize}
         \item \textit{Coefficient of \( X^{4n} \):} The coefficient is \( a_n + a_{4n} \). Since the
             binary expansion of \( 4n \) is the binary expansion of \( n \) with two zeros appended
-            at the end, \( a_{4n} = a_n \). Thus, \( a_n + a_{4n} = 0 \) in characteristic 2. For
-            \( n = 0 \), the coefficient is \( 1 + 1 = 0 \).
+            at the end, \( a_{4n} = a_n \). Thus, \( a_n + a_{4n} = 0 \) in characteristic \( 2 \).
+            For \( n = 0 \), the coefficient is \( 1 + 1 = 0 \).
 
         \item \textit{Coefficient of \( X^{4n+2} \):} The coefficient is \( a_{4n+2} \). The binary
             expansion of \( 4n+2 \) ends with \( \dots 10 \), so \( a_{4n+2} = 0 \).
 
         \item \textit{Coefficient of \( X^{2n+1} \):} The coefficient is \( a_{2n+1} + a_n \). The
-            binary expansion of \( 2n+1 \) is the binary expansion of \( n \) with an extra 1
+            binary expansion of \( 2n+1 \) is the binary expansion of \( n \) with an extra \( 1 \)
             appended at the end. Thus, \( a_{2n+1} = a_n \), and \( a_{2n+1} + a_n = 0 \).
     \end{itemize}
     Since all coefficients of \( \alpha\left(X\right)^4 + X \alpha\left(X\right)^2 +
