@@ -1,0 +1,50 @@
+% title:          Cauchy mean value with arctangent
+% area:           derivatives
+% methods:        mean-value-theorem
+% difficulty:     easy
+% difficulty-ai:  easy
+% status:
+% review:         human
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         jarnik
+% origin-date:    2015-03-27
+% origin-number:  Category I, Problem 1
+% also-in:
+% references:     Earliest known appearance (to the best of our knowledge): VJIMC 2015, Category I, Problem 1 - https://vjimc.osu.cz/storage/uploads/j25problems1.pdf
+% history:        ai
+\begin{problem}
+    Let \( f \colon \mathbb{R} \longrightarrow \mathbb{R} \) be differentiable. Show that there
+    exists \( c \in \left]0;1\right[ \) such that
+    \[
+        \frac{4}{\pi}\left(f\left(1\right)-f\left(0\right)\right) =
+        \left(1+c^2\right)f'\left(c\right).
+    \]
+\end{problem}
+\begin{solution}
+    By Cauchy's mean value theorem\footnote{Cauchy's mean value theorem is the following statement:
+    if \( a, b \in \mathbb{R} \) with \( a < b \) and \( u, v \colon \left[a;b\right]
+    \longrightarrow \mathbb{R} \) are continuous on \( \left[a;b\right] \) and differentiable on
+    \( \left]a;b\right[ \), then there exists \( c \in \left]a;b\right[ \) with
+    \( \left(u\left(b\right)-u\left(a\right)\right)v'\left(c\right) =
+    \left(v\left(b\right)-v\left(a\right)\right)u'\left(c\right) \). Indeed, the function
+    \( h :=
+    \left(u\left(b\right)-u\left(a\right)\right)v-\left(v\left(b\right)-v\left(a\right)\right)u \)
+    is continuous on \( \left[a;b\right] \), differentiable on \( \left]a;b\right[ \), and
+    \( h\left(a\right) = u\left(b\right)v\left(a\right)-v\left(b\right)u\left(a\right) =
+    h\left(b\right) \), so that the mean value theorem gives \( c \in \left]a;b\right[ \) with
+    \( h'\left(c\right) = \frac{h\left(b\right)-h\left(a\right)}{b-a} = 0 \), which is the claim.}
+    applied to \( \arctan \in D^1\left(\mathbb{R},\mathbb{R}\right) \) and \( f \) on
+    \( \left[0;1\right] \), we get that there exists \( c \in \left]0;1\right[ \) with
+    \[
+        \arctan'\left(c\right)\left(f\left(1\right)-f\left(0\right)\right) =
+        f'\left(c\right)\left(\arctan\left(1\right)-\arctan\left(0\right)\right),
+    \]
+    i.e., \( \frac{\pi}{4} f'\left(c\right) =
+    \frac{1}{1+c^2}\left(f\left(1\right)-f\left(0\right)\right) \), since \( \arctan'\left(c\right)
+    = \frac{1}{1+c^2} \), \( \arctan\left(1\right) = \frac{\pi}{4} \) and \( \arctan\left(0\right) =
+    0 \). Multiplying by \( \frac{4}{\pi}\left(1+c^2\right) \), we get:
+    \[
+        \left(1+c^2\right)f'\left(c\right) =
+        \frac{4}{\pi}\left(f\left(1\right)-f\left(0\right)\right).
+    \]
+\end{solution}

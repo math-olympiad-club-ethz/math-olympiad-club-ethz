@@ -1,0 +1,99 @@
+% title:          Second derivative equation with tangent weight
+% area:           derivatives, differential-equations
+% methods:        mean-value-theorem, rolle-theorem
+% difficulty:     medium
+% difficulty-ai:  easy
+% status:
+% review:         human
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         imc
+% origin-date:    2013-08-08
+% origin-number:  Day 1, Problem 2
+% also-in:
+% references:     Earliest known appearance (to the best of our knowledge): IMC 2013, Day 1, August 8, 2013, Problem 2 - https://www.imc-math.org.uk/imc2013/IMC2013-day1-questions.pdf
+% history:        ai
+\begin{problem}
+    Let \( f \in D^2\left(\mathbb{R},\mathbb{R}\right) \) (twice differentiable) be such that
+    \( f\left(0\right) = 0 \). Show that there exists \( c \in
+    \left]-\frac{\pi}{2};\frac{\pi}{2}\right[ \) such that
+    \[
+        f''\left(c\right) = f\left(c\right)\left(1+2\tan^2\left(c\right)\right).
+    \]
+\end{problem}
+\begin{solution}
+    Define
+    \[
+        h \colon \left]-\frac{\pi}{2};\frac{\pi}{2}\right[ \longrightarrow \left]0;+\infty\right[,
+        \quad x \longmapsto \frac{1}{\cos\left(x\right)},
+    \]
+    which is well defined, as \( \cos\left(x\right) > 0 \) for all \( x \in
+    \left]-\frac{\pi}{2};\frac{\pi}{2}\right[ \). Then, for all \( x \in
+    \left]-\frac{\pi}{2};\frac{\pi}{2}\right[ \),
+    \[
+        h'\left(x\right) = \frac{\sin\left(x\right)}{\cos^2\left(x\right)} =
+        h\left(x\right)\tan\left(x\right) \quad \text{and} \quad h''\left(x\right) =
+        h'\left(x\right)\tan\left(x\right)+h\left(x\right)\tan'\left(x\right)
+    \]
+    \[
+        = h\left(x\right)\tan^2\left(x\right)+h\left(x\right)\left(1+\tan^2\left(x\right)\right) =
+        h\left(x\right)\left(1+2\tan^2\left(x\right)\right),
+    \]
+    since \( h'\left(x\right) = h\left(x\right)\tan\left(x\right) \) and \( \tan'\left(x\right) =
+    1+\tan^2\left(x\right) \).
+    \\\\
+    Let \( W \) be the \href{https://en.wikipedia.org/wiki/Wronskian}{Wronskian} of
+    \( f|_{\left]-\frac{\pi}{2};\frac{\pi}{2}\right[} \) and \( h \), i.e.,
+    \[
+        W \colon \left]-\frac{\pi}{2};\frac{\pi}{2}\right[ \longrightarrow \mathbb{R}, \quad x
+        \longmapsto f'\left(x\right)h\left(x\right)-f\left(x\right)h'\left(x\right),
+    \]
+    which is differentiable, as \( f \) and \( h \) are twice differentiable. Then, for all
+    \( x \in \left]-\frac{\pi}{2};\frac{\pi}{2}\right[ \),
+    \[
+        W'\left(x\right) = f''\left(x\right)h\left(x\right) + f'\left(x\right)h'\left(x\right) -
+        f'\left(x\right)h'\left(x\right) - f\left(x\right)h''\left(x\right)
+    \]
+    \[
+        = f''\left(x\right)h\left(x\right) - f\left(x\right)h''\left(x\right) =
+        f''\left(x\right)h\left(x\right) -
+        f\left(x\right)h\left(x\right)\left(1+2\tan^2\left(x\right)\right)
+    \]
+    \[
+        = h\left(x\right)\left(f''\left(x\right) -
+        f\left(x\right)\left(1+2\tan^2\left(x\right)\right)\right),
+    \]
+    where we cancelled the two terms \( f'\left(x\right)h'\left(x\right) \) and used the formula for
+    \( h''\left(x\right) \) above.
+    \\\\
+    If we find \( c \in \left]-\frac{\pi}{2};\frac{\pi}{2}\right[ \) such that \( W'\left(c\right) =
+    0 \) and \( h\left(c\right) \neq 0 \), then, by the formula for \( W' \) above,
+    \( f''\left(c\right) = f\left(c\right)\left(1+2\tan^2\left(c\right)\right) \), which will
+    conclude. Since \( \operatorname{ran}\left(h\right) \subset \left]0;+\infty\right[ \), it
+    suffices to find \( c \in \left]-\frac{\pi}{2};\frac{\pi}{2}\right[ \) with \( W'\left(c\right)
+    = 0 \). By the mean value theorem applied to \( W \), it suffices to find \( a, b \in
+    \left]-\frac{\pi}{2};\frac{\pi}{2}\right[ \) with \( a \neq b \) and \( W\left(a\right) =
+    W\left(b\right) \). Since, for all \( x \in \left]-\frac{\pi}{2};\frac{\pi}{2}\right[ \),
+    \( W\left(x\right) = h\left(x\right)^2\left(\frac{f}{h}\right)'\left(x\right) =
+    h\left(x\right)^2\left(f\cos\right)'\left(x\right) \) (by the quotient rule, and as
+    \( \frac{1}{h} = \cos \)), it suffices to find \( a, b \in
+    \left]-\frac{\pi}{2};\frac{\pi}{2}\right[ \) with \( a \neq b \) and
+    \( \left(f\cos\right)'\left(a\right) = 0 = \left(f\cos\right)'\left(b\right) \) (because then
+    \( W\left(a\right) = 0 = W\left(b\right) \)).
+    \\\\
+    So, without further ado, apply the mean value theorem to \( f\cos \in
+    D^1\left(\mathbb{R},\mathbb{R}\right) \) on \( \left[0;\frac{\pi}{2}\right] \) and
+    \( \left[-\frac{\pi}{2};0\right] \): there exist \( a \in \left]-\frac{\pi}{2};0\right[ \) with
+    \[
+        \left(f\cos\right)'\left(a\right) =
+        \frac{f\left(-\frac{\pi}{2}\right)\cos\left(-\frac{\pi}{2}\right)-f\left(0\right)\cos\left(0\right)}{-\frac{\pi}{2}-0}
+        = \frac{0-0}{-\frac{\pi}{2}} = 0
+    \]
+    and \( b \in \left]0;\frac{\pi}{2}\right[ \) with
+    \[
+        \left(f\cos\right)'\left(b\right) =
+        \frac{f\left(\frac{\pi}{2}\right)\cos\left(\frac{\pi}{2}\right)-f\left(0\right)\cos\left(0\right)}{\frac{\pi}{2}-0}
+        = \frac{0-0}{\frac{\pi}{2}} = 0,
+    \]
+    since \( \cos\left(-\frac{\pi}{2}\right) = \cos\left(\frac{\pi}{2}\right) = 0 \) and
+    \( f\left(0\right) = 0 \). As \( a < 0 < b \), we have \( a \neq b \), which concludes.
+\end{solution}

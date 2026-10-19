@@ -1,0 +1,120 @@
+% title:          Third derivative from symmetric differences
+% area:           derivatives, interpolation
+% methods:        mean-value-theorem, rolle-theorem
+% difficulty:     medium
+% difficulty-ai:  easy
+% status:
+% review:         human
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         imc
+% origin-date:    2005-07
+% origin-number:  Day 2, Problem 4
+% also-in:
+% references:     Earliest known appearance (to the best of our knowledge): IMC 2005, Day 2, Problem 4 - https://www.imc-math.org.uk/imc2005/day2_solutions.pdf
+% history:        ai
+\begin{problem}
+    Let \( f \in D^3\left(\mathbb{R},\mathbb{R}\right) \) (three times differentiable). Show that
+    there exists \( c \in \left]-1;1\right[ \) with
+    \[
+        \frac{f'''\left(c\right)}{6} = \frac{f\left(1\right)-f\left(-1\right)}{2}-f'\left(0\right).
+    \]
+\end{problem}
+\begin{solution}
+    Let \( A := \frac{f\left(1\right)-f\left(-1\right)}{2}-f'\left(0\right) \in \mathbb{R} \). Now,
+    we want to search for a polynomial \( P\left(x\right) \in \mathbb{R}\left[x\right] \) of degree
+    at most \( 2 \) such that
+    \[
+        g_{P\left(x\right)} \colon \mathbb{R} \longrightarrow \mathbb{R}, \quad x \longmapsto
+        f\left(x\right)-Ax^3+P\left(x\right)
+    \]
+    has a maximal number of zeros. Indeed, the problem asks us to search for a \( c \in
+    \left]-1;1\right[ \) such that the third derivative of \( x \longmapsto f\left(x\right)-Ax^3 \)
+    vanishes at \( c \). The idea is the following: to add more freedom and maximise the chance of
+    having such a \( c \), we notice that adding a polynomial of degree at most \( 2 \) clearly does
+    not change this third derivative, and we want to add such a polynomial so that the function has
+    a maximal number of zeros, as each use of Rolle's theorem gives a zero of the derivative between
+    two zeros of a function. So, by making computations, we wish to find a polynomial
+    \( P\left(x\right) \) of degree at most \( 2 \) such that the function above has at least
+    \( 4 \) zeros. Indeed, by applying Rolle's theorem three times, we get a zero of the third
+    derivative, because we lose one zero each time we pass to the derivative. More precisely,
+    \( 3 \) distinct zeros of the function also suffice, together with a zero of its derivative
+    different from the two zeros of the derivative that Rolle's theorem gives between them: the
+    derivative then has again \( 3 \) distinct zeros, and we conclude in the same way.
+    \\\\
+    Write \( P\left(x\right) = p_2x^2+p_1x+p_0 \) with \( p_0, p_1, p_2 \in \mathbb{R} \) (possibly
+    \( p_2 = 0 \)). We want \( g_{P\left(x\right)} \) to vanish at \( -1 \), \( 0 \) and \( 1 \),
+    and its derivative to vanish at \( 0 \) too. These are the points where the statement gives
+    information, through \( f\left(-1\right) \), \( f\left(1\right) \) and \( f'\left(0\right) \),
+    and the zero at \( 0 \) costs nothing, as the constant term \( p_0 \) takes care of it. They are
+    also what Rolle's theorem needs to reach a point of \( \left]-1;1\right[ \): the three zeros
+    \( -1 < 0 < 1 \) give two zeros of the derivative, one in \( \left]-1;0\right[ \) and one in
+    \( \left]0;1\right[ \), and the zero of the derivative at \( 0 \) adds a third one between them,
+    so that the second derivative has two zeros (again in \( \left]-1;0\right[ \) and
+    \( \left]0;1\right[ \)) and hence the third derivative will have one zero in
+    \( \left]-1;1\right[ \). As \( \left(g_{P\left(x\right)}\right)'\left(x\right) =
+    f'\left(x\right)-3Ax^2+2p_2x+p_1 \) for all \( x \in \mathbb{R} \), these four conditions form
+    the linear system
+    \[
+        \begin{cases}
+            f\left(-1\right)+A+p_2-p_1+p_0 = 0, \\
+            f\left(0\right)+p_0 = 0, \\
+            f\left(1\right)-A+p_2+p_1+p_0 = 0, \\
+            f'\left(0\right)+p_1 = 0
+        \end{cases}
+    \]
+    in \( p_0 \), \( p_1 \) and \( p_2 \): four equations for three unknowns, which agree thanks to
+    the value of \( A \) (the third equation minus the first gives \( p_1 =
+    A-\frac{f\left(1\right)-f\left(-1\right)}{2} \), which is \( -f'\left(0\right) \) by the
+    definition of \( A \), as the last equation asks). After doing the work, we arrive at
+    \( p_2 = f\left(0\right)-\frac{f\left(1\right)+f\left(-1\right)}{2} \), \( p_1 =
+    -f'\left(0\right) \) and \( p_0 = -f\left(0\right) \), i.e., the function
+    \[
+        g \colon \mathbb{R} \longrightarrow \mathbb{R}, \quad x \longmapsto
+        f\left(x\right)-Ax^3+\left(f\left(0\right)-\left(\frac{f\left(1\right)+f\left(-1\right)}{2}\right)\right)x^2-f'\left(0\right)x-f\left(0\right)
+    \]
+    is in \( D^3\left(\mathbb{R},\mathbb{R}\right) \) (as the sum of \( f \) and a polynomial
+    function) and satisfies (for the sake of the verification) \( g\left(0\right) = 0 \),
+    \[
+        g\left(1\right) =
+        f\left(1\right)-A+f\left(0\right)-\left(\frac{f\left(1\right)+f\left(-1\right)}{2}\right)-f'\left(0\right)-f\left(0\right)
+    \]
+    \[
+        =
+        f\left(1\right)+f'\left(0\right)-\left(\frac{f\left(1\right)-f\left(-1\right)}{2}\right)-\left(\frac{f\left(1\right)+f\left(-1\right)}{2}\right)-f'\left(0\right)
+        = 0
+    \]
+    and
+    \[
+        g\left(-1\right) =
+        f\left(-1\right)+A+f\left(0\right)-\left(\frac{f\left(1\right)+f\left(-1\right)}{2}\right)+f'\left(0\right)-f\left(0\right)
+    \]
+    \[
+        =
+        f\left(-1\right)+\left(\frac{f\left(1\right)-f\left(-1\right)}{2}\right)-f'\left(0\right)-\left(\frac{f\left(1\right)+f\left(-1\right)}{2}\right)+f'\left(0\right)
+        = 0,
+    \]
+    where, in both computations, we replaced \( A \) by its definition and cancelled the terms in
+    \( f\left(0\right) \) for the second equality, then those in \( f'\left(0\right) \),
+    \( f\left(1\right) \) and \( f\left(-1\right) \) for the last one. So, by applying twice Rolle's
+    theorem to \( g \) on \( \left[-1;0\right] \) and \( \left[0;1\right] \) (\( g \) is
+    differentiable), there exist \( c_1 \in \left]-1;0\right[ \) and \( c_2 \in \left]0;1\right[ \)
+    with \( g'\left(c_1\right) = 0 = g'\left(c_2\right) \), where, for all \( x \in \mathbb{R} \),
+    \[
+        g'\left(x\right) =
+        f'\left(x\right)-3Ax^2+\left(2f\left(0\right)-f\left(1\right)-f\left(-1\right)\right)x-f'\left(0\right).
+    \]
+    Notice (again for the verification) that \( g'\left(0\right) = f'\left(0\right)-f'\left(0\right)
+    = 0 \), so, by again applying twice Rolle's theorem to \( g' \) on \( \left[c_1;0\right] \) and
+    \( \left[0;c_2\right] \) (\( g' \) is differentiable, as \( g \in
+    D^3\left(\mathbb{R},\mathbb{R}\right) \)), there exist \( c_3 \in \left]c_1;0\right[ \) and
+    \( c_4 \in \left]0;c_2\right[ \) with \( g''\left(c_3\right) = 0 = g''\left(c_4\right) \). Apply
+    Rolle's theorem again to \( g'' \) on \( \left[c_3;c_4\right] \) (\( g'' \) is differentiable,
+    for the same reason): there exists \( c \in \left]c_3;c_4\right[ \subset \left]-1;1\right[ \)
+    with \( g'''\left(c\right) = 0 \), i.e., as \( g'''\left(x\right) = f'''\left(x\right)-6A \) for
+    all \( x \in \mathbb{R} \) (by differentiating the expression of \( g' \) above twice),
+    \[
+        \frac{f'''\left(c\right)}{6} = A =
+        \frac{f\left(1\right)-f\left(-1\right)}{2}-f'\left(0\right),
+    \]
+    as desired.
+\end{solution}

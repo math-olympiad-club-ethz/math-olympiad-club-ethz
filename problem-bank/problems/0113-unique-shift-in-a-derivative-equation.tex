@@ -1,0 +1,122 @@
+% title:          Unique shift in a derivative equation
+% area:           derivatives
+% methods:        mean-value-theorem, construction
+% difficulty:     medium
+% difficulty-ai:  easy
+% status:
+% review:         human
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         imc
+% origin-date:    2023-08-03
+% origin-number:  Day 2, Problem 7
+% also-in:
+% references:     Earliest known appearance (to the best of our knowledge): IMC 2023, Second Day, August 3, 2023, Problem 7 (answer 1/(e-1)) - https://www.imc-math.org.uk/imc2023/imc2023-day2-questions.pdf
+% history:        ai
+\begin{problem}
+    Let \( V := \left\{ f \in D^1\left(\mathbb{R},\mathbb{R}\right) \,\middle|\, f\left(0\right) = 0
+    \wedge f\left(1\right) = 1 \right\} \). Compute
+    \[
+        S := \left\{ \alpha \in \mathbb{R} \,\middle|\, \forall f \in V \ \exists c \in
+        \left]0;1\right[ \ f\left(c\right)+\alpha = f'\left(c\right) \right\}.
+    \]
+\end{problem}
+\begin{solution}
+    The idea is that \( f\left(c\right)+\alpha = f'\left(c\right) \) says that the derivative of
+    \( \exp\left(-\_\right)\left(f+\alpha\right) \) vanishes at \( c \), while the mean value
+    theorem on \( \left[0;1\right] \) gives a point where this derivative equals a number that
+    depends only on \( \alpha \), since all the functions of \( V \) have the same values at \( 0 \)
+    and at \( 1 \)!
+    \\\\
+    Let \( \alpha \in \mathbb{R} \) and \( f \in V \), and define
+    \[
+        g_{f,\alpha} \colon \mathbb{R} \longrightarrow \mathbb{R}, \quad x \longmapsto
+        \exp\left(-x\right)\left(f\left(x\right)+\alpha\right),
+    \]
+    which is in \( D^1\left(\mathbb{R},\mathbb{R}\right) \), as a product of differentiable
+    functions, and, for all \( x \in \mathbb{R} \),
+    \[
+        \left(g_{f,\alpha}\right)'\left(x\right) =
+        \exp\left(-x\right)\left(f'\left(x\right)-\left(f\left(x\right)+\alpha\right)\right).
+    \]
+    Then there exists \( c \in \left]0;1\right[ \) with
+    \[
+        0 = \left(g_{f,\alpha}\right)'\left(c\right) =
+        \exp\left(-c\right)\left(f'\left(c\right)-\left(f\left(c\right)+\alpha\right)\right)
+    \]
+    if and only if there exists \( c \in \left]0;1\right[ \) with \( f\left(c\right)+\alpha =
+    f'\left(c\right) \), since \( \exp \) does not vanish. As \( \alpha \) and \( f \) were
+    arbitrary, this implies that
+    \[
+        S = \left\{ \alpha \in \mathbb{R} \,\middle|\, \forall f \in V \ \exists c \in
+        \left]0;1\right[ \ \left(g_{f,\alpha}\right)'\left(c\right) = 0 \right\}.
+    \]
+    Notice that, for all \( \alpha \in \mathbb{R} \) and \( f \in V \), the mean value theorem
+    applied to \( g_{f,\alpha} \in D^1\left(\mathbb{R},\mathbb{R}\right) \) on
+    \( \left[0;1\right] \) implies that there exists \( c \in \left]0;1\right[ \) with
+    \[
+        \left(g_{f,\alpha}\right)'\left(c\right) =
+        \frac{g_{f,\alpha}\left(1\right)-g_{f,\alpha}\left(0\right)}{1-0} =
+        g_{f,\alpha}\left(1\right)-g_{f,\alpha}\left(0\right) =
+        \frac{1}{e}\left(1+\alpha\right)-\alpha,
+    \]
+    where the last equality holds because \( f \in V \). Since
+    \( \frac{1}{e}\left(1+\alpha\right)-\alpha = 0 \) if and only if \( \alpha = \frac{1}{e-1} \),
+    we get that, for all \( f \in V \), there exists \( c \in \left]0;1\right[ \) with
+    \( \left(g_{f,\frac{1}{e-1}}\right)'\left(c\right) = 0 \), i.e., \( \frac{1}{e-1} \in S \).
+    \\\\
+    We claim that \( S = \left\{\frac{1}{e-1}\right\} \); by the description of \( S \) seen above,
+    it suffices to let \( \alpha \in \mathbb{R} \setminus \left\{\frac{1}{e-1}\right\} \) and to
+    show that there exists \( f_\alpha \in V \) such that, for all \( c \in \left]0;1\right[ \),
+    \[
+        0 \neq \left(g_{f_\alpha,\alpha}\right)'\left(c\right).
+    \]
+    The idea is the following. First, for any function \( f \in V \), the function
+    \( g_{f,\alpha} \) takes the values \( \alpha \) at \( 0 \) and \( \frac{1+\alpha}{e} \) at
+    \( 1 \). So, to make its derivative never zero in between, the easiest way is to take, between
+    these two values, an affine function \( x \longmapsto ax+b \) with \( a \neq 0 \). Luckily, the
+    values \( \alpha \) and \( \frac{1+\alpha}{e} \) are not equal, since \( \alpha \neq
+    \frac{1}{e-1} \) (by choice of \( \alpha \)). So, the two points \( \left(0,\alpha\right) \) and
+    \( \left(1,\frac{1+\alpha}{e}\right) \) have different heights, and hence the affine function
+    joining them is not constant (i.e., it has a non-zero slope)! We can take the line between these
+    two points and then solve for \( f_\alpha \), i.e., solve
+    \( \exp\left(-x\right)\left(f_\alpha\left(x\right)+\alpha\right) =
+    \left(\frac{1+\alpha}{e}-\alpha\right)x+\alpha \) for \( f_\alpha\left(x\right) \). This gives
+    us a function \( f_\alpha \in V \) such that \( g_{f_\alpha,\alpha} \) has a non-zero derivative
+    in between. Solving for such an \( f_\alpha \) explains the following definition.
+    \\\\
+    Let
+    \[
+        f_\alpha \colon \mathbb{R} \longrightarrow \mathbb{R}, \quad x \longmapsto
+        \left(\left(\frac{1+\alpha}{e}-\alpha\right)x+\alpha\right)\exp\left(x\right)-\alpha,
+    \]
+    which is in \( D^1\left(\mathbb{R},\mathbb{R}\right) \), as a product of differentiable
+    functions minus a constant. Then \( f_\alpha\left(0\right) = \alpha-\alpha = 0 \) and
+    \( f_\alpha\left(1\right) = \frac{1+\alpha}{e}\,e-\alpha = 1 \), so \( f_\alpha \in V \). Now,
+    for all \( x \in \mathbb{R} \),
+    \[
+        \left(f_\alpha\right)'\left(x\right) =
+        \left(\frac{1+\alpha}{e}-\alpha+\left(\frac{1+\alpha}{e}-\alpha\right)x+\alpha\right)\exp\left(x\right)
+    \]
+    \[
+        = \left(\left(\frac{1+\alpha}{e}-\alpha\right)x+\frac{1+\alpha}{e}\right)\exp\left(x\right),
+    \]
+    so that
+    \[
+        \left(g_{f_\alpha,\alpha}\right)'\left(x\right) =
+        \exp\left(-x\right)\left(\left(f_\alpha\right)'\left(x\right)-\left(f_\alpha\left(x\right)+\alpha\right)\right)
+    \]
+    \[
+        =
+        \exp\left(-x\right)\left(\left(\left(\frac{1+\alpha}{e}-\alpha\right)x+\frac{1+\alpha}{e}\right)\exp\left(x\right)-\left(\left(\frac{1+\alpha}{e}-\alpha\right)x+\alpha\right)\exp\left(x\right)\right)
+    \]
+    \[
+        =
+        \left(\frac{1+\alpha}{e}-\alpha\right)x+\frac{1+\alpha}{e}-\left(\left(\frac{1+\alpha}{e}-\alpha\right)x+\alpha\right)
+        = \frac{1+\alpha}{e}-\alpha
+    \]
+    after cancelling the two terms \( \left(\frac{1+\alpha}{e}-\alpha\right)x \), i.e.,
+    \( \left(g_{f_\alpha,\alpha}\right)'\left(x\right) = \frac{1+\alpha}{e}-\alpha \neq 0 \) for all
+    \( x \in \mathbb{R} \), since \( \alpha \neq \frac{1}{e-1} \) (by choice of \( \alpha \)). In
+    particular, \( \left(g_{f_\alpha,\alpha}\right)'\left(c\right) \neq 0 \) for all \( c \in
+    \left]0;1\right[ \). Hence, \( S = \left\{\frac{1}{e-1}\right\} \).
+\end{solution}

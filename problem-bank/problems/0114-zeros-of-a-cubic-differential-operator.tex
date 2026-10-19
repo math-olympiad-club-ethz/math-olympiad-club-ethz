@@ -1,0 +1,79 @@
+% title:          Zeros of a cubic differential operator
+% area:           derivatives
+% methods:        mean-value-theorem, rolle-theorem
+% difficulty:     easy
+% difficulty-ai:  easy
+% status:
+% review:         human
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         putnam
+% origin-date:    2015
+% origin-number:  B1
+% also-in:
+% references:     Earliest known appearance (to the best of our knowledge): Putnam 2015, Problem B1 - https://kskedlaya.org/putnam-archive/2015.tex
+% history:        ai
+\begin{problem}
+    Let \( f \in D^3\left(\mathbb{R},\mathbb{R}\right) \) (three times differentiable) be such that
+    \( \left|f^{-1}\left[\left\{0\right\}\right]\right| \geq 5 \). Show that
+    \[
+        \left|\left(f+6f'+12f''+8f'''\right)^{-1} \left[\left\{0\right\}\right]\right| \geq 2.
+    \]
+\end{problem}
+\begin{solution}
+    Since \( \left(1+2x\right)^3 = 8x^3+12x^2+6x+1 \), we have \( 8\left(x+\frac{1}{2}\right)^3 =
+    8x^3+12x^2+6x+1 \), so that, as \( \frac{\mathrm{d}}{\mathrm{d}x} \) is \( \mathbb{R} \)-linear,
+    \[
+        8\left(\frac{\mathrm{d}}{\mathrm{d}x}+\frac{1}{2}\right)^3\left(f\right) =
+        8\left(\frac{\mathrm{d}^3}{\mathrm{d}x^3}\left(f\right)\right) +
+        12\left(\frac{\mathrm{d}^2}{\mathrm{d}x^2}\left(f\right)\right) +
+        6\left(\frac{\mathrm{d}}{\mathrm{d}x}\left(f\right)\right) + f
+    \]
+    \[
+        = 8f'''+12f''+6f'+f,
+    \]
+    and because it is standard that, for all \( n \in \mathbb{N} \) and \( a \in \mathbb{R} \),
+    \[
+        \left(\frac{\mathrm{d}}{\mathrm{d}x}+a\right)^n\left(f\right) = \exp\left(-a\_\right)
+        \left(\frac{\mathrm{d}^n}{\mathrm{d}x^n}\left(\exp\left(a\_\right)f\right)\right),
+    \]
+    we have
+    \[
+        8f'''+12f''+6f'+f = 8\exp\left(-\frac{1}{2}\cdot\_\right)
+        \left(\frac{\mathrm{d}^3}{\mathrm{d}x^3}
+        \left(\exp\left(\frac{1}{2}\cdot\_\right)f\right)\right).
+    \]
+    Now, since \( \exp \) does not vanish, \( \left|f^{-1}\left[\left\{0\right\}\right]\right| \geq
+    5 \) is equivalent to
+    \[
+        \left|\left(\exp\left(\frac{1}{2}\cdot\_\right)f\right)^{-1}
+        \left[\left\{0\right\}\right]\right| \geq 5.
+    \]
+    Moreover, \( \exp\left(\frac{1}{2}\cdot\_\right)f \in D^3\left(\mathbb{R},\mathbb{R}\right) \)
+    (as a product of three times differentiable functions), so that the mean value theorem applied
+    between consecutive zeros of this function, of its derivative and of its second derivative,
+    gives successively
+    \[
+        \left|\left(\frac{\mathrm{d}}{\mathrm{d}x}
+        \left(\exp\left(\frac{1}{2}\cdot\_\right)f\right)\right)^{-1}
+        \left[\left\{0\right\}\right]\right| \geq 4,
+    \]
+    \[
+        \left|\left(\frac{\mathrm{d}^2}{\mathrm{d}x^2}
+        \left(\exp\left(\frac{1}{2}\cdot\_\right)f\right)\right)^{-1}
+        \left[\left\{0\right\}\right]\right| \geq 3,
+    \]
+    and
+    \[
+        \left|\left(\frac{\mathrm{d}^3}{\mathrm{d}x^3}
+        \left(\exp\left(\frac{1}{2}\cdot\_\right)f\right)\right)^{-1}
+        \left[\left\{0\right\}\right]\right| \geq 2,
+    \]
+    which is equivalent, as \( 8\exp\left(-\frac{1}{2}\cdot\_\right) \) does not vanish, to
+    \[
+        \left|\left(8\exp\left(-\frac{1}{2}\cdot\_\right) \left(\frac{\mathrm{d}^3}{\mathrm{d}x^3}
+        \left(\exp\left(\frac{1}{2}\cdot\_\right)f\right)\right)\right)^{-1}
+        \left[\left\{0\right\}\right]\right| \geq 2,
+    \]
+    i.e., by our equality, \( \left|\left(8f'''+12f''+6f'+f\right)^{-1}
+    \left[\left\{0\right\}\right]\right| \geq 2 \), as desired.
+\end{solution}

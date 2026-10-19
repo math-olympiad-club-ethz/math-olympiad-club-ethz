@@ -1,0 +1,40 @@
+% title:          Tangent intercept equals the endpoint value
+% area:           derivatives
+% methods:        mean-value-theorem
+% difficulty:     medium
+% difficulty-ai:  easy
+% status:
+% review:         human
+% --- history: all optional, leave EMPTY if unknown ---
+% origin:         imc
+% origin-date:    2025-07-31
+% origin-number:  Day 2, Problem 6
+% also-in:
+% references:     Earliest known appearance (to the best of our knowledge): IMC 2025, Second Day, July 31, 2025, Problem 6 - https://www.imc-math.org.uk/imc2025/imc2025-day2-questions.pdf
+% history:        ai
+\begin{problem}
+    Let \( f \colon \left]0;+\infty\right[ \longrightarrow \mathbb{R} \) be differentiable and let
+    \( a, b \in \mathbb{R} \) be such that \( 0 < a < b \) and \( k := f\left(a\right) =
+    f\left(b\right) \). Show that there exists \( c \in \left]a;b\right[ \) such that
+    \[
+        f\left(c\right)-c\,f'\left(c\right) = k.
+    \]
+\end{problem}
+\begin{solution}
+    Apply the mean value theorem to the well-defined function
+    \( \frac{\mathrm{cte}_k-f}{\mathrm{Id}_{\left]0;+\infty\right[}} \colon \left]0;+\infty\right[
+    \longrightarrow \mathbb{R} \) (which must be differentiable on \( \left]0;+\infty\right[ \), as
+    being a quotient of differentiable functions) on the interval \( \left[a;b\right] \subset
+    \left]0;+\infty\right[ \) to obtain the existence of a \( c \in \left]a;b\right[ \) with
+    \[
+        \left(\frac{\mathrm{cte}_k-f}{\mathrm{Id}_{\left]0;+\infty\right[}}\right)'\left(c\right) =
+        \frac{\left(\frac{k-f\left(b\right)}{b}\right)-\left(\frac{k-f\left(a\right)}{a}\right)}{b-a}
+        = \frac{\frac{0}{b}-\frac{0}{a}}{b-a} = \frac{0-0}{b-a} = 0,
+    \]
+    i.e., \( 0 = \frac{-f'\left(c\right)c-\left(k-f\left(c\right)\right)}{c^2} \), so that, as
+    \( c > a > 0 \),
+    \[
+        -f'\left(c\right)c-\left(k-f\left(c\right)\right) = 0, \quad \text{i.e.} \quad
+        f\left(c\right)-c\,f'\left(c\right) = k.
+    \]
+\end{solution}
