@@ -16,14 +16,18 @@ Each rule is stated once: where an item names a section of `writing-style.md`, t
 ## In the text
 
 4. **Delimiters**: every pair of brackets in mathematics sized with `\left ... \right`, even around one symbol. The
-   seminar's `leftright.py FILE --write` does it; reversed intervals are sized by hand: `\left]0;1\right[`.
+   seminar's `leftright.py FILE --write` does it; reversed intervals are sized by hand: `\left]0;1\right[`. A pair sized
+   with `\big`, `\Big`, `\bigl`, `\Bigl`, `\bigg` or `\Bigg` counts as unsized (`leftright.py` skips it): it becomes
+   `\left ... \right`.
 5. **Math mode**: no mathematics outside `\( \)` or `\[ \]`, not even a single letter (`\( S \)`, not `S`); inline
    formulas with a space inside the delimiters (`\( \mathbb{R} \)`, not `\(\mathbb{R}\)`); never `$` or `$$` (the
    validator rejects them; a dollar sign is `\$`). A number the mathematics talks about is mathematics too:
    "characteristic `\( 2 \)`", "of degree `\( 2 \)`", "between `\( 1 \)` and `\( 100 \)`", "tends to `\( 0 \)`",
    "`\( +\infty \)`" (never "+ infinity" or "plus infinity"), "a tuple of `\( 1 \)`s"; point names and expressions
    too (`\( ABC \)`, `\( AP+BP+CP \)`). Names and counts in words stay text: "Solution 2", "Day 1", "IMO 1988",
-   "two solutions", and code (`random_uniform[0,1]`).
+   "two solutions", and code (`random_uniform[0,1]`). The symbols `\forall` and `\exists` appear only in a display or
+   inside a set-builder; in an inline formula of the prose they become "for all" and "there exists"
+   (`writing-style.md`, section 6, "Logic").
 6. **Monotonicity**: "increasing" and "strictly increasing", "decreasing" and "strictly decreasing" (never
    "non-decreasing" or "non-increasing"); where a step needs the strict version, the text says "strictly"
    (`writing-style.md`, rule 15 and section 8).
@@ -61,6 +65,14 @@ Each rule is stated once: where an item names a section of `writing-style.md`, t
       (`x \underset{>}{\to} 0`, not also `0^+`).
     - A formula used as a prefix takes a hyphen outside the math: `\( \mathbb{F}_2 \)-subspace` (`writing-style.md`,
       section 7, "Hyphen after math").
+    - A definition puts the defined name on the left, `k := f\left(a\right) = f\left(b\right)`; `=:` only when the
+      formula goes on with the name, `f\left(a\right) = f\left(b\right) =: k \in \mathbb{R}` (`writing-style.md`,
+      section 6, "Sets and definitions").
+    - No reason or value written over or under a relation (`\overset{\text{clear}}{=}`, `\underset{...}{\leq}`,
+      `\underbrace{...}_{...}`): it goes into the sentence. Only a limit arrow keeps its label:
+      `\overset{n \to +\infty}{\longrightarrow}`.
+    - A name of several letters is upright: `\mathrm{Id}`, `\mathrm{cte}_k`, `\operatorname{ran}` (`writing-style.md`,
+      section 7, "Operator names").
 11. **The statement asks something**: "Show that", "Find all", "Determine whether", a question. When the source has
    no question, take it from the origin (as for the IMC problems behind Continuity 2 and 9).
 
@@ -77,9 +89,14 @@ Each rule is stated once: where an item names a section of `writing-style.md`, t
 ## Language and mathematics
 
 14. **Spelling**: every word of the prose (formulas left out) is a dictionary word or a name; British or American
-    spelling, the same within a file (`writing-style.md`, section 8).
+    spelling, the same within a file (`writing-style.md`, section 8). The abbreviations of the notes are written out:
+    "the mean value theorem" (MVT), "the intermediate value theorem" (IVT), "the fundamental theorem of calculus"
+    (FTC, FTA), "integration by parts" (IBP), "ordinary differential equation" (ODE), "the Cauchy–Schwarz
+    inequality" (CS), "theorem" (Thm) (`writing-style.md`, section 1, "Named results").
 15. **Mathematics**: every step is checked (the math check of each rewrite round): no false claim, no missing case,
-    every limit and every cited theorem with its reason, the hypotheses of a theorem checked where it is used.
+    every limit and every cited theorem with its reason, the hypotheses of a theorem checked where it is used. A
+    rewrite that reads the scan differently from its transcription (a sign, a parenthesis, an argument) says so in the
+    seminar's `TO-CHECK.md`.
 16. **Links**: a niche name (a less common theorem, a named class of numbers) is linked where it is named, with
     `\href{...}{name}` (writing-style.md, "A niche name gets its link").
 17. **Citations**: every `\appendixref{<name>}` points to an existing result (`problem-bank/appendix/`, or the
