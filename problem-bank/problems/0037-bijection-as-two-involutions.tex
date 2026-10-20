@@ -4,13 +4,13 @@
 % difficulty:     hard
 % difficulty-ai:  medium
 % status:
-% review:         human
+% review:         none
 % --- history: all optional, leave EMPTY if unknown ---
 % origin:         folklore
 % origin-date:
 % origin-number:
-% also-in:        book
-% references:     Earliest known appearance (to the best of our knowledge): classical result (every bijection of any set is a composition of two involutions). B. M. Makarov, M. G. Goluzina, A. A. Lodkin, A. N. Podkorytov, Selected Problems in Real Analysis, AMS Translations of Mathematical Monographs 107, 1992 (translation of Izbrannye zadachi po veshchestvennomu analizu, Nauka, Moscow, 1992), Problem X.1.4 (Chapter X, Section 1 'Topological dynamics', p. 125; solution p. 317); the club took the problem from here - https://analysis.spbu.ru/bib_r.html; T. K. Petersen and B. E. Tenner, How to write a permutation as a product of involutions (and why you might care), 2012 (calls the finite two-involution fact well known; for writing a permutation as a product of involutions it cites W. R. Scott, Group Theory, 1964, Exercise 10.1.17) - https://arxiv.org/pdf/1202.5319; K. Leeb, 'Every permutation is a product of two involutions: not recursively (Preliminary report)', Abstracts of Papers Presented to the AMS 6 (1985), p. 228 (index entry) - https://archive.org/stream/sim_abstracts-of-papers-american-mathematical-society_1985_6_index/sim_abstracts-of-papers-american-mathematical-society_1985_6_index_djvu.txt; Q. Yang, J. Ellis, K. Mamakani, F. Ruskey, Parallel and sequential in-place permuting and perfect shuffling using involutions, Corollary 2.2 (finite case) - https://arxiv.org/pdf/1204.1958; Math StackExchange question 3437747 (same statement for an arbitrary set) - https://math.stackexchange.com/questions/3437747/prove-that-every-bijection-of-the-set-into-itself-is-representable-as-a-composit
+% also-in:        book, imc
+% references:     Earliest known appearance (to the best of our knowledge): classical result (every bijection of any set is a composition of two involutions). B. M. Makarov, M. G. Goluzina, A. A. Lodkin, A. N. Podkorytov, Selected Problems in Real Analysis, AMS Translations of Mathematical Monographs 107, 1992 (translation of Izbrannye zadachi po veshchestvennomu analizu, Nauka, Moscow, 1992), Problem X.1.4 (Chapter X, Section 1 'Topological dynamics', p. 125; solution p. 317); the club took the problem from here - https://analysis.spbu.ru/bib_r.html; T. K. Petersen and B. E. Tenner, How to write a permutation as a product of involutions (and why you might care), 2012 (calls the finite two-involution fact well known; for writing a permutation as a product of involutions it cites W. R. Scott, Group Theory, 1964, Exercise 10.1.17) - https://arxiv.org/pdf/1202.5319; K. Leeb, 'Every permutation is a product of two involutions: not recursively (Preliminary report)', Abstracts of Papers Presented to the AMS 6 (1985), p. 228 (index entry) - https://archive.org/stream/sim_abstracts-of-papers-american-mathematical-society_1985_6_index/sim_abstracts-of-papers-american-mathematical-society_1985_6_index_djvu.txt; Q. Yang, J. Ellis, K. Mamakani, F. Ruskey, Parallel and sequential in-place permuting and perfect shuffling using involutions, Corollary 2.2 (finite case) - https://arxiv.org/pdf/1204.1958; Math StackExchange question 3437747 (same statement for an arbitrary set) - https://math.stackexchange.com/questions/3437747/prove-that-every-bijection-of-the-set-into-itself-is-representable-as-a-composit; later: IMC 1997 (4th IMC, Plovdiv), Second day (2 August 1997), Problem 5 - https://www.imc-math.org.uk/imc1997/prob_sol2.pdf
 % history:        human
 \begin{problem}
     Let \( S \) be a set and \( f: S \rightarrow S \) a bijection. Show that \( f \) can be written
@@ -18,6 +18,8 @@
     inverse.
 \end{problem}
 \begin{solution}
+    \textit{Solution 1.}
+    \\\\
     For an arbitrary point \( s \in S \), its orbit is the set of elements
     \[
         s,\quad f\left(s\right),\quad f^{-1}\left(s\right),\quad f^{2}\left(s\right),\quad
@@ -199,4 +201,23 @@
         &= f^{m+1}\left( \operatorname{Orb}_{\operatorname{eval}}(s) \right) = f\left( f^{-m}\left( \operatorname{Orb}_{\operatorname{eval}}(s) \right) \right) = f(s).
     \end{align*}
     Since \( s \in S \) was arbitrary, we conclude.
+    \\\\
+    % Solution 2 is the official solution of IMC 1997, Second day, Problem 5
+    % (https://www.imc-math.org.uk/imc1997/prob_sol2.pdf), copied word for word on 2026-10-20 at Antoine's request,
+    % with its typo ("coinside") and the IMC's own names (the set X, the involutions g_1 and g_2); not reviewed yet.
+    \textit{Solution 2.}
+    \\\\
+    Let \( f^n = \underbrace{f \circ f \circ \cdots \circ f}_{n \text{ times}} \), \( f^0 = id \),
+    \( f^{-n} = \left(f^{-1}\right)^n \) for every natural number \( n \). Let \( T\left(x\right) =
+    \left\{ f^n\left(x\right) : n \in \mathbb{Z} \right\} \) for every \( x \in X \). The sets
+    \( T\left(x\right) \) for different \( x \)'s either coinside or do not intersect. Each of them
+    is mapped by \( f \) onto itself. It is enough to prove the theorem for every such set. Let
+    \( A = T\left(x\right) \). If \( A \) is finite, then we can think that \( A \) is the set of
+    all vertices of a regular \( n \) polygon and that \( f \) is rotation by \( \frac{2\pi}{n} \).
+    Such rotation can be obtained as a composition of 2 symmetries mapping the \( n \) polygon onto
+    itself (if \( n \) is even then there are axes of symmetry making \( \frac{\pi}{n} \) angle; if
+    \( n = 2k+1 \) then there are axes making \( k\frac{2\pi}{n} \) angle). If \( A \) is infinite
+    then we can think that \( A = \mathbb{Z} \) and \( f\left(m\right) = m+1 \) for every
+    \( m \in \mathbb{Z} \). In this case we define \( g_1 \) as a symmetry relative to
+    \( \frac{1}{2} \), \( g_2 \) as a symmetry relative to \( 0 \).
 \end{solution}
