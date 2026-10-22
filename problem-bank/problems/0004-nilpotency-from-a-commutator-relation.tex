@@ -4,7 +4,7 @@
 % difficulty:     easy
 % difficulty-ai:  easy
 % status:
-% review:         human
+% review:         none
 % --- history: all optional, leave EMPTY if unknown ---
 % origin:         imc
 % origin-date:    1994-07-29
@@ -27,6 +27,7 @@
     (b) Show that there exists \( k \geq 1 \) such that \( F^k = 0 \).
 \end{problem}
 \begin{solution}
+    \textit{Solution 1.}
     \begin{enumerate}
         \item[(a)] We prove the result by induction on \( k \). The base case \( k = 1 \) is given
             by the assumption. Assume that the formula holds for some \( k \geq 1 \), i.e.,
@@ -62,4 +63,46 @@
             the space is finite-dimensional. Hence, there must exist some \( k \geq 1 \) such that
             \( F^k = 0 \).
     \end{enumerate}
+
+    % Solution 2 is a student's solution from the seminar repository (compmath,
+    % solutions/sol_matrix_algebra.tex, lines 660-687), copied word for word on 2026-10-22 at
+    % Antoine's request (only the math delimiters, and the source file's own macros and
+    % environments, changed so that it compiles here); not reviewed yet.
+    \textit{Solution 2.}
+    Part (a) strongly hints at induction. So let's try it. The base case \( k = 1 \) is precisely
+    our condition
+    \begin{equation}
+        \label{eq:p13-condition} AB - BA = \alpha A \quad .
+    \end{equation}
+
+    ~\\
+    So let's assume the equality holds for \( k \), and we wish to show it for \( k+1 \). We have:
+    \begin{align*}
+        A^{k+1}B & \underset{\clap{\tiny \text{condition \eqref{eq:p13-condition}}}}{=} A^k \cdot (\alpha A + BA)        \\
+        & \underset{\clap{\tiny \text{inductive hypothesis}}}{=} \alpha A^{k+1} + (k \alpha A^k + BA^k) \cdot A \\
+        & \overset{\checkmark}{=} (k + 1) \alpha A^{k+1} + BA^{k+1} \quad .
+    \end{align*}
+    This completes the induction step and hence the proof of part (a).
+
+    ~\\ \\
+    Part (b) becomes a one-liner using Jacobson's Lemma: Let \( C \coloneqq AB - BA \) be the
+    commutator of \( A \) and \( B \). Then \( A \) and \( C \) commute:
+    \[ AC = \alpha A^2 = CA \quad . \]
+    Using Jacobson's Lemma, we have that \( C \) is nilpotent. And since \( A = \frac{1}{\alpha}
+    C \), it follows that \( A \) itself is nilpotent, proving that there is \( m \in
+    \mathbb{Z}_{\geq 1} \) such that \( A^m = 0 \).
+
+    ~\\
+    Alternatively, observe that the left-hand side \( A^kB - BA^k \) in part (a) depends linearly on
+    \( A^k \). This motivates the linear map
+    \[ f: \mathbb{R}^{n \times n} \to \mathbb{R}^{n \times n}, \ X \mapsto XB - BX \quad , \]
+    where \( A \) and \( B \) are \( n \times n \) matrices. Then, the result from part (a) states
+    that
+    \[ f(A^k) = k \alpha A^k \text{ for all } k \in \mathbb{Z}_{\geq 1} \quad . \]
+    Now, assume for the sake of contradiction that \( A^m \neq \mathbf{0} \) for all \( m \in
+    \mathbb{Z}_{\geq 1} \). Thus, \( A^m \neq \mathbf{0} \) is an eigenvector of \( f \) to the
+    eigenvalue \( m \alpha \) for all \( m \in \mathbb{Z}_{\geq 1} \). And since \( \alpha \neq
+    0 \), we see that \( f \) has an infinite number of eigenvalues. This, of course, is a
+    contradiction, since \( f \) is an endomorphism of the finite-dimensional
+    \( \mathbb{R}^{n \times n} \).
 \end{solution}

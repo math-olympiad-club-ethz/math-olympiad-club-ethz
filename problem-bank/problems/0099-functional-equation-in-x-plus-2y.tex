@@ -4,7 +4,7 @@
 % difficulty:     easy
 % difficulty-ai:  easy
 % status:
-% review:         human
+% review:         none
 % --- history: all optional, leave EMPTY if unknown ---
 % origin:         jarnik
 % origin-date:    2017-03-31
@@ -87,4 +87,22 @@
     is the constant function \( f\left(0\right) \).
     \\\\
     So, in both cases, \( f \) is constant.
+
+    % Solution 3 is a student's solution from the seminar repository (compmath,
+    % solutions/sol_continuity.tex, lines 62-70), copied word for word on 2026-10-22 at Antoine's
+    % request (only the math delimiters, and the source file's own macros and environments, changed
+    % so that it compiles here); not reviewed yet.
+    \textit{Solution 3.}
+    \( x=-z, y=z \) yields \( f(z)=2f(-z)f(z) \) \\
+    \( x=z, y=-z \) yields \( f(-z) = 2f(-z)f(z) \) \\
+    Combining these yields \( f(-z)=2f(z)f(-z)=f(z) \) \\
+    In particular, using the \( x=-z, y=z \) substitution again, we get \( f(z)=2f(z)^2 \forall z
+    \in \mathbb{R} \). \\
+    We will now exclude the case where \( f(x)=0 \) for some \( x \) and \( f(x)=\frac{1}{2} \) for
+    others, without using continuity (as it is not needed). \\
+    Indeed suppose there exists some \( x_0 \in \mathbb{R} \) such that \( f(x_0)=0 \). In this
+    case, use \( y=x_0, x=z-2x_0 \) to get \( f(z)=0 \forall z \in \mathbb{R} \). Hence we either do
+    not have such an \( x \), in which case \( f(x)=\frac{1}{2} \forall x \in \mathbb{R} \) or
+    \( f(x)=0 \forall x \in \mathbb{R} \)
+
 \end{solution}

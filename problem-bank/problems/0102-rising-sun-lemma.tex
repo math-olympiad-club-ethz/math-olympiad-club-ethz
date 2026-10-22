@@ -4,7 +4,7 @@
 % difficulty:     medium
 % difficulty-ai:  medium
 % status:
-% review:         human
+% review:         none
 % --- history: all optional, leave EMPTY if unknown ---
 % origin:         paper
 % origin-date:    1932
@@ -27,6 +27,7 @@
     \end{enumerate}
 \end{problem}
 \begin{solution}
+    \textit{Solution 1.}
     (a) Suppose by contradiction that there exists \( x_0 \in \left]a;b\right[ \) with
     \[
         f\left(x_0\right) > f\left(b\right).
@@ -69,4 +70,22 @@
     so that \( f\left(x\right) > f\left(b\right) \), and \( x \in \left]a;b\right[ \), so that
     \( f\left(x\right) \leq f\left(b\right) \) by (a), which is a contradiction. Therefore,
     \( f\left(a\right) = f\left(b\right) \).
+
+    % Solution 2 is a student's solution from the seminar repository (compmath,
+    % solutions/sol_continuity.tex, lines 142-152), copied word for word on 2026-10-22 at Antoine's
+    % request (only the math delimiters, and the source file's own macros and environments, changed
+    % so that it compiles here); not reviewed yet.
+    \textit{Solution 2.}
+    (a) Clearly \( f(x)\le f(b) \) for all \( x\in[b,\infty) \) since \( b \) is no shadow point.
+    Let us assume there is \( x_0\in(a,b) \) with \( f(x_0)>f(b) \). Look at \( M:=\{x\in(a,b):
+    f(x)\ge f(x_0)\} \) and \( s:=\sup M\in [x_0,b) \). Take \( (x_n)_n\in M \) with
+    \( \lim_{n\to\infty}x_n=s \). Then \( f(s)=f(\lim_{n\to\infty}x_n)=\lim_{n\to\infty}f(x_n)\ge
+    \lim_{n\to\infty}f(x_0)=f(x_0)\Rightarrow s\in M \). By assumption \( s \) is a shadow point and
+    there exist \( x\in(s,b) \) with \( f(x)>f(s)>f(b) \). Therefore \( x\in M \) with \( x>s \).
+    This contradicts \( s \) as the supremum.\\
+    \\
+    (b) If \( f(b)>f(a) \) then \( a \) would be a shadow point. \newline If \( f(b)<f(a) \) then we
+    set \( \varepsilon=\frac{f(a)-f(b)}{2}>0 \). By continuity we find a \( \delta>0 \) such that
+    \( f(x)\ge f(a)-\varepsilon=\frac{f(a)+f(b)}{2}>f(b) \) for all \( x\in[a,a+\delta) \). This
+    contradicts (a). Thus \( f(a)=f(b) \).
 \end{solution}

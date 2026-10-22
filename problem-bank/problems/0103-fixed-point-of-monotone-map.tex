@@ -4,7 +4,7 @@
 % difficulty:     easy
 % difficulty-ai:  easy
 % status:
-% review:         human
+% review:         none
 % --- history: all optional, leave EMPTY if unknown ---
 % origin:         imc
 % origin-date:    2007-08-06
@@ -21,6 +21,7 @@
     p \).
 \end{problem}
 \begin{solution}
+    \textit{Solution 1.}
     First, since \( C \) is compact and non-empty, \( \max C \) is well defined, and we define the
     sequence
     \[
@@ -49,4 +50,28 @@
     \( \left\langle x_{n+1} \,\middle|\, n \in \mathbb{N} \right\rangle \) converges to the limit of
     \( x \). Hence, \( p := \inf \operatorname{ran}\left(x\right) \in C \) satisfies
     \( f\left(p\right) = p \), as required.
+
+    % Solution 2 is a student's solution from the seminar repository (compmath,
+    % solutions/sol_continuity.tex, lines 159-170), copied word for word on 2026-10-22 at Antoine's
+    % request (only the math delimiters, and the source file's own macros and environments, changed
+    % so that it compiles here); not reviewed yet.
+    \textit{Solution 2.}
+    Take the smallest interval such that \( C \subseteq [a,b] \) for \( a<b \in \mathbb{R} \). Since
+    \( C \) is closed and bounded, its endpoints are part of the interval. \newline
+
+    We assume that for all \( x\in C \) it holds that \( f(x)\neq x \). Consider \( M := \{x \in C |
+    f(x) > x\} \), and let \( s := \sup (M) \). The set \( M \) is nonempty since \( f(a)>a \) as
+    \( f \) goes from \( C \) to \( C \). We now also claim that \( s \in C \). Indeed, as it's the
+    supremum of a nonempty set, it is an accumulation point of \( M \subseteq C \), and as \( C \)
+    is compact, it contains its accumulation points and hence \( s \in C \). Thus \( f \) is defined
+    for \( s \). \newline
+
+    We now also claim that \( s \in M \). Recall \( s \) is an accumulation point of \( M \), hence
+    consider \( (x_n)_n \subseteq M \) with limit \( s \). As \( f(x_n) > x_n \forall n \in
+    \mathbb{N} \), this inequality passes to the limit, yielding \( f(s)= f(\lim_{n\to\infty} x_n)
+    =\lim_{n\to\infty} f(x_n) \ge \lim_{n\to\infty} x_n=s \). By assumption \( f(s)\neq s \) and
+    therefore \( f(s)>s \), i.e. \( s\in M \).\newline
+
+    Also, \( u:=f(s)\notin M \) since \( f(s)>s \) and \( s=\sup(M) \). Thus \( f(u)<u:=f(s) \). But
+    \( s<u \) together with \( f(s)>f(u) \) contradicts the fact that \( f \) is non-decreasing.
 \end{solution}

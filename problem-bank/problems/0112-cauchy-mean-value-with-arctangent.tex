@@ -4,7 +4,7 @@
 % difficulty:     easy
 % difficulty-ai:  easy
 % status:
-% review:         human
+% review:         none
 % --- history: all optional, leave EMPTY if unknown ---
 % origin:         jarnik
 % origin-date:    2015-03-27
@@ -21,6 +21,7 @@
     \]
 \end{problem}
 \begin{solution}
+    \textit{Solution 1.}
     By Cauchy's mean value theorem\footnote{Cauchy's mean value theorem is the following statement:
     if \( a, b \in \mathbb{R} \) with \( a < b \) and \( u, v \colon \left[a;b\right]
     \longrightarrow \mathbb{R} \) are continuous on \( \left[a;b\right] \) and differentiable on
@@ -47,4 +48,23 @@
         \left(1+c^2\right)f'\left(c\right) =
         \frac{4}{\pi}\left(f\left(1\right)-f\left(0\right)\right).
     \]
+
+    % Solution 2 is a student's solution from the seminar repository (compmath,
+    % solutions/sol_mean_value_theorem.tex, lines 92-100; the general facts stated at the top of
+    % that file are in topics-in-competition-seminar/weird/mean-value-theorem-facts.tex), copied
+    % word for word on 2026-10-22 at Antoine's request (only the math delimiters, and the source
+    % file's own macros and environments, changed so that it compiles here); not reviewed yet.
+    \textit{Solution 2.}
+    Let \( g(x)= f(tan(x)) \) on \( [0, \pi/4] \), then \( g'(x)= (1+(tan(x))^2) f'(tan(x)) \)
+
+    By MVT \( \Rightarrow \exists d \in [0, \pi/4] \) st
+    \[
+        \frac{g(\pi/4)-g(0)}{\pi/4}= g'(d)
+    \]
+    \[
+        \iff \frac{f(1)-f(0)}{\pi /4}= (1+ (tan(d))^2)f'(tan(d))
+    \]
+
+    Now take \( c=tan(d) \)
+
 \end{solution}

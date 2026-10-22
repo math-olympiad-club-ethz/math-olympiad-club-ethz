@@ -33,6 +33,7 @@
     \]
 \end{problem}
 \begin{solution}
+    \textit{Solution 1.}
     For \( A, B \subseteq N \), define
     \[
         S\left(A, B\right) := \sum_{\substack{i \in A \\ j \in B}} a_{i,j},
@@ -117,4 +118,22 @@
     \]
     Therefore, \( F\left(J\right) \geq \frac{1}{2} \sum_{i,j=1}^{n} a_{i,j} \), i.e., the subset
     \( J \subseteq N \) satisfies the inequality from the statement.
+
+    % Solution 2 is the probabilistic solution of the seminar's probability collection (compmath,
+    % solutions/sol_probability_further.tex, problem VJIMC 2005 Category II Problem 2), copied word
+    % for word on 2026-10-22 at Antoine's request (only the math delimiters, and the source file's
+    % own macros and environments, changed so that it compiles here); not reviewed yet.
+    \textit{Solution 2 (probabilistic).}
+    Choose \( J \) at random, putting each index into \( J \) independently with probability
+    \( \frac{1}{2} \). For \( i \neq j \), the term \( a_{i,j} \) appears on the left-hand side
+    exactly when one of \( i \) and \( j \) lies in \( J \) and the other does not, which happens
+    with probability \( \frac{1}{2} \); the terms \( a_{i,i} = 0 \) do not matter. By linearity of
+    expectation, the expected value of the left-hand side is \( \frac{1}{2} \sum_{i \neq j} a_{i,j}
+    = \frac{1}{2} \sum_{i,j} a_{i,j} \), so for some choice of \( J \) the left-hand side is at
+    least this large.
+
+    \begin{remark}
+        For the adjacency matrix of a graph, this is the classical fact that every graph has a cut
+        containing at least half of its edges.
+    \end{remark}
 \end{solution}

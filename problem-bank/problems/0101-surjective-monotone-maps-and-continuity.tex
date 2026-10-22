@@ -4,7 +4,7 @@
 % difficulty:     easy
 % difficulty-ai:  easy
 % status:
-% review:         human
+% review:         none
 % --- history: all optional, leave EMPTY if unknown ---
 % origin:         imc
 % origin-date:    2006-07
@@ -25,6 +25,7 @@
     \end{enumerate}
 \end{problem}
 \begin{solution}
+    \textit{Solution 1.}
     (a) False: the function \( x \mapsto x^2\left(x-1\right) \) is clearly continuous, and its range
     is \( \mathbb{R} \) by the intermediate value theorem, since it tends to \( -\infty \) at
     \( -\infty \) and to \( +\infty \) at \( +\infty \) (as \( x^2 \to +\infty \), while
@@ -108,4 +109,38 @@
         \operatorname{ran}\left(f\right) = \left]-\frac{\pi}{2};\frac{\pi}{2}\right[ \subsetneq
         \mathbb{R}.
     \]
+
+    % Solution 2 is a student's solution from the seminar repository (compmath,
+    % solutions/sol_continuity.tex, lines 16-26), copied word for word on 2026-10-22 at Antoine's
+    % request (only the math delimiters, and the source file's own macros and environments, changed
+    % so that it compiles here); not reviewed yet.
+    \textit{Solution 2.}
+    (a) Counterexample: \( f(x) = x^3-x \). This has \( f(-1)=0 \), \( f(-\frac{1}{2}) =
+    \frac{3}{8} \), and \( f(0)=0 \), hence it is not monotonous, but it is clearly surjective. \\
+    \\
+    (b) True. Take \( x_0 \in \mathbb{R} \) and let \( y_0 := f(x_0) \). Fix \( \epsilon > 0 \) and
+    pick \( x_1,x_2 \) such that \( f(x_1)=y_0 - \frac{\epsilon}{2}, f(x_2)=y_0 +
+    \frac{\epsilon}{2} \). These exist as range\( (f) = \mathbb{R} \). Now let \( \delta :=
+    \min(\frac{|x_0 - x_1|}{2}, \frac{|x_0 - x_2|}{2}) \). Without loss of generality we assume
+    \( f \) is monotonically increasing. We claim \( \forall x \in \mathbb{R} \) such that
+    \( |x-x_0| < \delta \), \( |f(x)-f(x_0)| < \epsilon \). Indeed \( - \frac{\epsilon}{2} = y_0 -
+    \frac{\epsilon}{2} - y_0 = f(x_1)-f(x_0) \leq f(x)-f(x_0) \leq f(x_2)- f(x_1) \leq y_0 +
+    \frac{\epsilon}{2} - y_0 = \frac{\epsilon}{2} \) using \( f(x_1) \leq f(x) \leq f(x_2) \) by
+    monotonicity, as \( (x_0-\delta, x_0+\delta) \subseteq (x_1,x_2) \) by definition of
+    \( \delta \). Hence, \( |f(x)-f(x_0)| \leq \frac{\epsilon}{2} < \epsilon \). As we have
+    constructed a \( \delta \) which fulfills the continuity requirement, and \( x_0 \) was
+    arbitrary, \( f \) is continuous.\\
+    \\
+    (b) \textit{Alternative solution using contradiction.} True. Assume w.l.o.g. that \( f \) is not
+    continuous at \( x_0\in\mathbb{R} \) from the left (from the right is analogous) and that
+    \( f \) is increasing (else take \( -f \)). Then there exists a \( \varepsilon>0 \) such that
+    for every \( n\in\mathbb{N} \) there is a \( x_n\in(x_0-\frac{1}{n},x_0) \) with
+    \( f(x_0)-f(x_n)>\varepsilon \). Thus \( f(x_n)\le f(x_0)-\varepsilon \) with
+    \( \lim_{n\to\infty} x_n=x_0 \). Now, using monotonicity, we see that \( f(x)\le
+    f(x_0)-\varepsilon \) for all \( x\in(-\infty,x_0) \). Again by monotonicity \( f(x)\ge
+    f(x_0) \) for \( x\in[x_0,\infty) \) and any \( y\in(f(x_0)-\varepsilon,f(x_0)) \) is not
+    attained by \( f \).\\
+    \\
+    (c) Counterexample: \( f(x)=0 \) is clearly both continuous and monotonic, but also not
+    surjective.
 \end{solution}
