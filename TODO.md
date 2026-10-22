@@ -16,6 +16,11 @@ Open work across the repository. Tick items off (`- [x]`) or delete them when do
       - The fixes listed below under "LaTeX fixes": 0045, 0049, 0056, 0057.
       - 0037 (2026-10-20): the official solution of IMC 1997, Day 2, Problem 5 is appended word for word as Solution 2
         (a second, lighter solution), with its typo "coinside" and the IMC's names (X, g_1, g_2): review it.
+      - 2026-10-22: solutions from the seminar repository (compmath) with another idea than ours, appended word for
+        word after ours, each with a `%` line giving its source; only the math delimiters and the source file's own
+        macros changed. Students' solutions: 0004 (Solution 2: Jacobson's lemma; its (a) repeats ours), 0099
+        (Solution 3), 0101 (Solution 2: its first proof of (b)), 0102, 0103, 0112 (Solution 2); the probability
+        collection's probabilistic solution: 0082 (Solution 2). Review them (checklist, writing style).
 - [ ] **History check**: check the problems with `history: ai` and set `history: human` (42 on 2026-10-19: 0013, 0030–0031, 0052, 0056, 0062, 0081–0116).
 - [ ] 0081–0087 (VJIMC 2002–2014, added 2026-09-29/30): statement **and** solution written by AI at Antoine's request
       (see the `% AI-WRITTEN` comment in each file); review them like the others before `review: human`. Review
@@ -97,6 +102,18 @@ Details, sources and the full change table: [`problem-bank/history-review.md`](p
       inequalities are rewritten (agent runs of 2026-10-19), waiting for Antoine's review; integral inequalities still
       needs its overseer pass and its REPORT.md. Then the other sheets: matrix algebra, determinant and trace,
       eigenvalues, rank, polynomials, permutations, mock competition, Series 7, 14 and 19, and the group theory bonus.
+- [ ] **Bank duplicates in the notebook**: merge each into its bank problem when its sheet is rewritten (as Telescoping 3
+      went into 0007): Determinant and trace 6 = 0029, 7 = 0012; Eigenvalues 4 = 0011; Integral inequalities 7 = 0064;
+      Matrix algebra 10 and 11 near 0004 (details: `seminar_antoine_problems_solutions/HEADERS-REVIEW.md`, "Open").
+- [ ] **Seminar repository import** (`problem-bank/topics-in-competition-seminar/`, local; see its `context.md`):
+      - Students' solutions with another idea than Antoine's, appended to notebook files on 2026-10-22: differential
+        inequalities 2, determinant and trace 4 and 5, matrix algebra 6 (Solutions 2 and 3) and 7, polynomials 3, 6
+        and 10, rank 2, 3 and 5, mock competition 6: review them with their sheets (bank ones: under "Back to
+        `review: none`" above). Only partly new, so cut the part that repeats Antoine's argument: determinant and
+        trace 5, matrix algebra 6 Solution 3, and in the bank 0004 and 0101.
+      - `weird/`: decide what to do with Georg's presentation of Jacobson's lemma (it repeats the arguments of
+        matrix algebra 11-13) and the 4 facts files (determinant and trace, differential inequalities, integral
+        inequalities, mean value theorem).
 - [ ] **Constant functions, one notation everywhere** (later): `\underline{1}` (0108; polynomials 3, mock competition 2)
       or `cte_1` (MVT 5, differential inequalities 2, 4, 5, 7, integral inequalities 6, 8, mock competition 6), and the
       same for `\underline{k}` or `cte_k`. Choose one for all the sheets and the bank; until then the rewrites keep
