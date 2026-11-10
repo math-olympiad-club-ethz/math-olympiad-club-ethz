@@ -33,11 +33,10 @@ import subprocess
 import sys
 import tempfile
 
-from bank import paths  # noqa: E402  (bank/ is importable: python3 -m bank.stitch from website/)
-sys.path.insert(0, paths.WEBSITE)
-from bank import problems as P  # noqa: E402
-from bank import appendix as A  # noqa: E402
-from bank.bib import CITE_RE, DROP_RE, bib_block, format_entry, parse_bib, parse_bib_text  # noqa: E402,F401
+from bank import paths
+from bank import problems as P
+from bank import appendix as A
+from bank.bib import CITE_RE, DROP_RE, bib_block, format_entry, parse_bib, parse_bib_text
 
 CLUB_NAME = "Math Olympiad Club ETHZ"
 DOCUMENTCLASS = r"\documentclass[11pt]{article}"
@@ -353,13 +352,9 @@ def bank_sources(problems, tags):
     return out
 
 
-def load_bank_problems(problems_dir, tags, include_new=False):
-    """Read problems_dir.  include_new=True gives new-*.tex files their provisional numbers (preview builds)."""
-    problems = P.load_problems(problems_dir)
-    if include_new:
-        from bank.number import assign_provisional_ids, read_last_id
-        assign_provisional_ids(problems, read_last_id(problems_dir))
-    return bank_sources(problems, tags)
+def load_bank_problems(problems_dir, tags):
+    """Read problems_dir (new-*.tex files, which have no number yet, are skipped)."""
+    return bank_sources(P.load_problems(problems_dir), tags)
 
 
 def _raw_origin(p):
@@ -393,7 +388,6 @@ def build_bodies(source, out_dir, ids=None, log=print):
         statement, solution, ncite = resolve_citations(statement, solution, {**bib, **own} if own else bib, log, pid)
         bodies[pid] = {"id": pid, "title": p["title"], "origin": p["origin"], "status": p["status"],
                        "methods": list(p.get("methods") or []),
-                       "solved": solution is not None and p["status"] != "partial",
                        "statement": statement, "solution": solution, "cites": list(p.get("cites") or []), "figures": figs}
         stats["problems"] += 1
         stats["figures"] += len(figs)
@@ -403,9 +397,9 @@ def build_bodies(source, out_dir, ids=None, log=print):
 
 
 def build_appendix(items, names, out_dir, log=print):
-    """The shared results `names` (see bank/appendix.py) as the browser needs them: {name: {name, title, text, cites,
-    figures}}, sorted by name.  Like a problem body: its own labels namespaced as a-<name>:key (the global ones,
-    appendix:<name>:key, stay as written), TikZ externalised to figures/figa-<name>-k.pdf, citations pre-resolved with a
+    """The shared results `names` (see bank/appendix.py) as the browser needs them: {name: {title, text, cites, figures}},
+    sorted by name.  Like a problem body: its own labels namespaced as a-<name>:key (the global ones, appendix:<name>:key,
+    stay as written), TikZ externalised to figures/figa-<name>-k.pdf, citations pre-resolved with a
     reference list at the end of the result."""
     bib = parse_bib(paths.BIB_FILE)
     fig_dir = os.path.join(out_dir, "figures")
@@ -422,7 +416,7 @@ def build_appendix(items, names, out_dir, log=print):
                                f"(definitions it needs must come before it in the same block):\n{err}") from None
         own = parse_bib_text(it.get("bibtex") or "")
         text, _, ncite = resolve_citations(text, None, {**bib, **own} if own else bib, log, name)
-        out[name] = {"name": name, "title": it["title"], "text": text, "cites": list(it["cites"]), "figures": figs}
+        out[name] = {"title": it["title"], "text": text, "cites": list(it["cites"]), "figures": figs}
         stats["results"] += 1
         stats["figures"] += len(figs)
         stats["citations"] += ncite

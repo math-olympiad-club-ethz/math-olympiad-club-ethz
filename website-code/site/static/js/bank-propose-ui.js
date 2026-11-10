@@ -43,9 +43,9 @@ function tagPicker(root, type, onChange) {
   const selected = [];
   const proposed = [];            // new tags, names as typed (bank-propose.js::newTagsLine): not in tags.yml yet
   const kind = type === 'area' ? 'area' : 'method';
-  const input = el('input', { id: `pp-${type}-input`, type: 'text', class: 'form-control form-control-sm pp-picker-input', role: 'combobox',
-    'aria-autocomplete': 'list', 'aria-expanded': 'false', 'aria-controls': `pp-${type}-list`, autocomplete: 'off', spellcheck: 'false',
-    placeholder: type === 'area' ? 'Search areas or click to browse' : 'Search methods or click to browse' });
+  const input = el('input', { id: `pp-${type}-input`, type: 'text', class: 'form-control form-control-sm', role: 'combobox',
+    'aria-autocomplete': 'list', 'aria-expanded': 'false', 'aria-controls': `pp-${type}-list`, autocomplete: 'off', autocorrect: 'off', autocapitalize: 'off', spellcheck: 'false',
+    placeholder: type === 'area' ? 'Search areas or browse' : 'Search methods or browse' });
   const chips = el('div', { class: 'pp-chips', role: 'group', 'aria-label': type === 'area' ? 'Chosen areas' : 'Chosen methods' });
   const list = el('div', { id: `pp-${type}-list`, class: 'bank-listbox pp-listbox', role: 'listbox', 'aria-multiselectable': 'true', hidden: true });
   root.append(chips, input, list);
@@ -59,7 +59,7 @@ function tagPicker(root, type, onChange) {
       el('span', { text: label(slug) }),
       el('button', { type: 'button', class: 'bank-chip-x', 'aria-label': `Remove ${label(slug)}`, onclick: () => remove(slug) }, '×'))),
     ...proposed.map(name => el('span', { class: `bank-chip bank-chip-${type} bank-chip-new`, title: `Proposed new ${kind}: a board member adds it` },
-      el('span', { text: name }), el('span', { class: 'bank-chip-type', text: 'new' }),
+      el('span', { text: name }), el('span', { class: 'bank-chip-type', text: 'New' }),
       el('button', { type: 'button', class: 'bank-chip-x', 'aria-label': `Remove the proposed ${kind} ${name}`, onclick: () => removeNew(name) }, '×'))));
   }
   function addNew(name) {
@@ -146,11 +146,19 @@ function tagPicker(root, type, onChange) {
       list.append(row);
     });
     if (!matches && !items.some(it => it.propose)) list.append(el('div', { class: 'bank-list-empty', role: 'presentation', text: 'No tag matches. Try another word.' }));
+    const wasHidden = list.hidden;
     list.hidden = false;
+    if (wasHidden) listIntoView();
     input.setAttribute('aria-expanded', 'true');
     if (active >= 0 && items[active] && (items[active].tag || items[active].groupHead || items[active].propose)) input.setAttribute('aria-activedescendant', `pp-${type}-opt-${active}`);
     else input.removeAttribute('aria-activedescendant');
   }
+  /* The list opens under the field: if that is below the screen (or a phone's keyboard), the field goes up to the header. */
+  function listIntoView() {
+    const bottom = window.visualViewport ? visualViewport.height + visualViewport.offsetTop : innerHeight;
+    if (list.getBoundingClientRect().bottom > bottom) input.scrollIntoView({ block: 'start' });
+  }
+  if (window.visualViewport) visualViewport.addEventListener('resize', () => { if (!list.hidden) listIntoView(); });
   function move(delta) {
     const opts = items.map((it, k) => (it.tag || it.groupHead || it.propose ? k : -1)).filter(k => k >= 0);
     if (!opts.length) return;
@@ -182,9 +190,10 @@ function tagPicker(root, type, onChange) {
   input.addEventListener('input', () => { open = true; active = -1; renderList(); });
   input.addEventListener('keydown', e => {
     if (e.key === 'ArrowDown') { e.preventDefault(); open = true; move(1); }
-    else if (e.key === 'ArrowUp') { e.preventDefault(); move(-1); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); open = true; move(-1); }
     else if (e.key === 'Enter') {
       e.preventDefault();
+      if (!open) return;                                // nothing to choose from: the list is closed
       const first = items.findIndex(it => it.tag);
       const i = active >= 0 ? active : (S.normalize(input.value) ? (first >= 0 ? first : items.findIndex(it => it.propose)) : -1);
       if (i >= 0) choose(i);
@@ -200,10 +209,9 @@ function tagPicker(root, type, onChange) {
   root.addEventListener('focusout', e => { if (open && !root.contains(e.relatedTarget)) { open = false; active = -1; renderList(); } });
   return {
     get: () => [...selected],
-    set(slugs) { selected.splice(0, selected.length, ...(slugs || []).filter(s => cat.byType[type].has(s))); renderChips(); renderList(); },
+    set(slugs) { selected.splice(0, selected.length, ...(Array.isArray(slugs) ? slugs : []).filter(s => cat.byType[type].has(s))); renderChips(); renderList(); },
     getNew: () => [...proposed],
-    setNew(names) { proposed.splice(0, proposed.length, ...(names || []).map(P.newTagName).filter(Boolean)); renderChips(); renderList(); },
-    input,
+    setNew(names) { proposed.splice(0, proposed.length, ...(Array.isArray(names) ? names : []).map(P.newTagName).filter(Boolean)); renderChips(); renderList(); },
   };
 }
 
@@ -268,9 +276,11 @@ function showErrors(errors) {
   shown.forEach((e, i) => ids.set(e.field, [...(ids.get(e.field) || []), `pp-error-${i}`]));
   for (const [field, id] of Object.entries(FIELD_INPUT)) {
     const input = $(id), bad = ids.has(field);
+    if (!helpTexts.has(id)) helpTexts.set(id, input.getAttribute('aria-describedby'));   // the field's own help, from the page
+    const described = [helpTexts.get(id), ...(ids.get(field) || [])].filter(Boolean).join(' ');
     input.classList.toggle('is-invalid', bad);
-    if (bad) { input.setAttribute('aria-invalid', 'true'); input.setAttribute('aria-describedby', ids.get(field).join(' ')); }
-    else { input.removeAttribute('aria-invalid'); input.removeAttribute('aria-describedby'); }
+    if (bad) input.setAttribute('aria-invalid', 'true'); else input.removeAttribute('aria-invalid');
+    if (described) input.setAttribute('aria-describedby', described); else input.removeAttribute('aria-describedby');
   }
   if (!shown.length && $('pp-submit-status').dataset.kind === 'fix') setSubmitStatus('');
   const key = shown.map(e => e.field + '|' + e.message).join('\n');
@@ -289,6 +299,8 @@ function showErrors(errors) {
 
 /* ------------------------------------------------------------------ draft changes: file name, file, autosave, preview */
 
+const helpTexts = new Map();
+
 function onDraftChange({ save = true } = {}) {
   const d = readDraft();
   $('pp-clear').hidden = !hasContent(d);                 // only when there is something to clear
@@ -299,7 +311,7 @@ function onDraftChange({ save = true } = {}) {
   const diff = S.getTag(cat, 'difficulty', d.difficulty);
   $('pp-difficulty-help').textContent = diff ? diff.description : '';
   showErrors(currentErrors(d));
-  if (save) saveSoon(d);
+  if (save) { saveSoon(d); previewHeld = false; }      // someone is writing: the preview may start
   schedulePreview();
 }
 
@@ -312,7 +324,15 @@ function saveNow() {
   if (!pendingDraft) return;
   const json = JSON.stringify(pendingDraft);
   pendingDraft = null;
-  try { localStorage.setItem(DRAFT_KEY, json); savedJson = json; $('pp-other-tab').hidden = true; } catch (e) { /* private mode / quota */ }
+  const note = $('pp-draft-note');
+  try {
+    localStorage.setItem(DRAFT_KEY, json); savedJson = json; $('pp-other-tab').hidden = true;
+    if (note.dataset.kind === 'unsaved') { note.hidden = true; delete note.dataset.kind; }
+  } catch (e) {     // private mode, or the storage is full
+    note.textContent = 'This draft could not be saved in this browser: it will be lost when you leave this page.';
+    note.dataset.kind = 'unsaved';
+    note.hidden = false;
+  }
 }
 function saveSoon(d) {
   pendingDraft = d;
@@ -325,7 +345,7 @@ function restoreDraft() {
   let d = null;
   try { savedJson = localStorage.getItem(DRAFT_KEY); d = JSON.parse(savedJson || 'null'); } catch (e) { d = null; }
   if (!d || typeof d !== 'object' || !hasContent(d)) return;
-  setDraft(d);
+  try { setDraft(d); } catch (e) { console.warn('saved draft ignored', e); setDraft(P.emptyDraft()); return; }
   $('pp-draft-note').textContent = d.sent ? 'You already sent or downloaded this problem.' : 'Your draft was restored from this browser.';
   $('pp-draft-note').hidden = false;
 }
@@ -352,8 +372,13 @@ function setPreviewStatus(text, kind = 'muted') {
   s.className = `small text-${kind}`;
 }
 
+/* Until the page knows whether the engine is stored, or as long as nobody has touched the form: a restored draft alone does
+   not start a 17 MB download. */
+let previewHeld = true;
+
 function schedulePreview() {
   clearTimeout(state.preview.timer);
+  if (previewHeld) return;
   if (!$('pp-auto').checked) { markIfStale(); return; }
   state.preview.timer = setTimeout(() => runPreview(), 900);
 }
@@ -364,7 +389,8 @@ function markIfStale() {
   if ($('pp-auto').checked || pv.running || !C.engineSupported()) return;
   const cur = currentPreview();
   if (!cur) return;
-  if (cur.tex !== pv.shownTex) setPreviewStatus('Out of date: click Update now', 'warning');
+  if (pv.shownTex == null && !pv.shownOk) setPreviewStatus('Update now shows the PDF.', 'muted');      // nothing shown yet: nothing out of date
+  else if (cur.tex !== pv.shownTex) setPreviewStatus('Out of date: click Update now', 'warning');
   else setPreviewStatus(...pv.shownStatus);
 }
 
@@ -381,7 +407,6 @@ function clearPreview() {
   $('pp-pdf').hidden = true; $('pp-pdf').removeAttribute('src');
   $('pp-pdf-links').hidden = true;
   $('pp-preview-error').hidden = true;
-  $('pp-preview-empty').hidden = false;
   showPreviewStatus('', 'muted');
 }
 
@@ -393,15 +418,17 @@ function showPreviewStatus(text, kind) {
 /* The PDF in the frame, or (no built-in viewer) behind Open / Download links. */
 function showPdf(url, d) {
   if (INLINE_PDF) {
-    $('pp-pdf').src = url;
-    $('pp-pdf').hidden = false;
+    // a new frame each time: changing the src of a frame adds an entry to the tab's history, and Back would stay on the page
+    const old = $('pp-pdf'), frame = old.cloneNode(false);
+    frame.src = url;
+    frame.hidden = false;
+    old.replaceWith(frame);
   } else {
     $('pp-pdf-open').href = url;
     $('pp-pdf-download').href = url;
     $('pp-pdf-download').download = P.fileName(d).replace(/^new-/, '').replace(/\.tex$/, '.pdf');
     $('pp-pdf-links').hidden = false;
   }
-  $('pp-preview-empty').hidden = true;
 }
 
 async function runPreview({ force = false } = {}) {
@@ -422,6 +449,10 @@ async function runPreview({ force = false } = {}) {
   if (now.tex !== cur.tex && $('pp-auto').checked) { runPreview(); return; }   // stale: compile the newer draft instead
   // (with "Update while typing" off, show what was asked for, marked out of date; "Update now" compiles the newer text)
   pv.shownTex = cur.tex;
+  // what appears above the field being typed in must not push it away
+  const inUse = document.activeElement;
+  const below = inUse && inUse !== document.body && ($('pp-preview-title').compareDocumentPosition(inUse) & Node.DOCUMENT_POSITION_FOLLOWING) ? inUse : null;
+  const belowTop = below && below.getBoundingClientRect().top;
   const errBox = $('pp-preview-error');
   if (error) {
     pv.shownOk = null;
@@ -434,8 +465,7 @@ async function runPreview({ force = false } = {}) {
     pv.url = URL.createObjectURL(new Blob([r.pdf], { type: 'application/pdf' }));
     showPdf(pv.url, cur.d);
     errBox.hidden = true;
-    const figs = (cur.d.statement + cur.d.solution).match(/\\begin\{(tikzpicture|tikzcd)\}/g);
-    showPreviewStatus(`Updated (${r.passes.reduce((a, b) => a + b, 0)} ms)` + (figs ? ' · drawings are shown as boxes here' : ''), 'success');
+    showPreviewStatus(`Updated (${r.passes.reduce((a, b) => a + b, 0)} ms)` + (cur.figures ? ' · drawings are shown as boxes here' : ''), 'success');
   } else {
     pv.shownOk = false;
     const x = P.explainLog(r.log, cur.lines, cur.d);
@@ -449,6 +479,7 @@ async function runPreview({ force = false } = {}) {
     errBox.hidden = false;
     showPreviewStatus('Not updated: LaTeX error', 'danger');
   }
+  if (below) window.scrollBy(0, below.getBoundingClientRect().top - belowTop);
   if (pv.again) runPreview();
   else markIfStale();
 }
@@ -460,10 +491,10 @@ function checkBeforeSending() {
   const d = readDraft();
   const shown = showErrors(currentErrors(d));
   if (shown.length) {
-    const first = $(FIELD_INPUT[shown[0].field]);
     const still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
     $('pp-errors').scrollIntoView({ behavior: still ? 'auto' : 'smooth', block: 'center' });
-    if (first) first.focus({ preventScroll: true });
+    $('pp-errors').tabIndex = -1;                 // the focus goes where the eye is sent: the list's links lead to each field
+    $('pp-errors').focus({ preventScroll: true });
     setSubmitStatus('Fix the points above first.', 'danger', 'fix');
     return null;
   }
@@ -523,7 +554,7 @@ async function onSubmit() {
   else {
     showFile(true);
     $('pp-file').focus(); $('pp-file').select();
-    setSubmitStatus('Could not copy automatically: the file is selected below, copy it with Ctrl+C / Cmd+C.', 'warning');
+    setSubmitStatus('Could not copy automatically: the file is selected below, copy it with Ctrl+C / Cmd+C (on a phone, touch and hold, then Copy).', 'warning');
   }
 }
 
@@ -551,7 +582,7 @@ function showFile(open) {
 
 async function showLatex() {
   const dlg = $('pp-latex');
-  if (typeof dlg.showModal === 'function') dlg.showModal(); else dlg.setAttribute('open', '');
+  dlg.showModal();
   const pre = $('pp-preamble');
   if (pre.dataset.loaded) return;
   const text = await C.loadPreamble();
@@ -585,12 +616,12 @@ function wire() {
   let pressedOutside = false;                         // a text selection that ends past the <pre> must not close it
   dlg.addEventListener('pointerdown', e => { pressedOutside = e.target === dlg && outside(e); });
   dlg.addEventListener('click', e => {
-    if (e.target.closest('[data-close]') || (pressedOutside && e.target === dlg && outside(e))) dlg.close ? dlg.close() : dlg.removeAttribute('open');
+    if (e.target.closest('[data-close]') || (pressedOutside && e.target === dlg && outside(e))) dlg.close();
     pressedOutside = false;
   });
   $('pp-form').addEventListener('submit', e => e.preventDefault());    // (Enter in a field; no inline handler: CSP)
   C.onStatus(msg => { if (msg.kind === 'progress' && state.preview.running) setPreviewStatus(msg.text); });
-  // The engine (about 25 MB) is fetched on intent only: writing a statement, or reaching for Update now.
+  // The engine (about 17 MB) is fetched on intent only: writing a statement, or reaching for Update now.
   let prefetched = false;
   const prefetch = () => { if (prefetched) return; prefetched = true; C.prefetchEngine(); };
   $('pp-statement').addEventListener('input', prefetch);
@@ -610,6 +641,14 @@ wire();
 restoreDraft();
 onDraftChange({ save: false });
 loadBib();
+// With the engine stored, the preview is free: it shows at once. Without it, it waits for the first edit, and on a touch screen
+// or a slow connection "Update while typing" starts off (the switch is still there), so that typing does not start the download.
+C.engineStored().then(stored => {
+  if (stored) { previewHeld = false; schedulePreview(); }
+  else if (!C.mayPrefetchEngine()) { $('pp-auto').checked = false; markIfStale(); }
+});
 
 /* exposed for the browser tests */
-window.propose = { state, readDraft, setDraft, runPreview, P };
+window.propose = { state, readDraft, setDraft, P };
+
+document.documentElement.setAttribute('data-ready', '');          // site.js: from now on an error is not a failed page load

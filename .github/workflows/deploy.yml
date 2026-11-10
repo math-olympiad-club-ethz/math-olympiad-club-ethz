@@ -57,7 +57,7 @@ jobs:
         run: |
           sudo apt-get update -q
           sudo apt-get install -y -q texlive-latex-base texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended \
-            texlive-fonts-extra texlive-science texlive-pictures texlive-bibtex-extra biber
+            texlive-fonts-extra texlive-science texlive-pictures texlive-bibtex-extra
           pdflatex --version | head -1
 
       # The texlyre-busytex release assets (~520 MB) are downloaded once and cached; tools/busytex_bundle.py checks

@@ -36,7 +36,7 @@ def parse_bib_entries(text):
         while k < len(text) and depth:
             depth += {"{": 1, "}": -1}.get(text[k], 0)
             k += 1
-        body = text[j:k - 1]
+        body = text[j:k - 1 if not depth else k]    # no closing brace: the text ran to the end, nothing to cut off
         i = k
         if etype in ("comment", "preamble", "string"):
             continue
@@ -56,7 +56,7 @@ def parse_bib_entries(text):
                 while q < len(rest) and depth:
                     depth += {"{": 1, "}": -1}.get(rest[q], 0)
                     q += 1
-                val = rest[pos + 1:q - 1]
+                val = rest[pos + 1:q - 1 if not depth else q]
                 pos = q
             elif rest[pos] == '"':
                 q = rest.find('"', pos + 1)
@@ -91,17 +91,6 @@ def bib_block(body):
     """Inner text of the problem's bibentries block ('' if none)."""
     m = BIB_BLOCK_RE.search(body)
     return m.group(1) if m else ""
-
-
-def cite_keys(tex):
-    """Every citation key used in `tex`, in order of first use."""
-    out = []
-    for m in CITE_RE.finditer(tex):
-        for k in m.group(3).split(","):
-            k = k.strip()
-            if k and k not in out:
-                out.append(k)
-    return out
 
 
 def _unwrap(t):

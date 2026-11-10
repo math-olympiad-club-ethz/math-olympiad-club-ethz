@@ -11,8 +11,8 @@ const [{ appendixOrder, texEscape }, { APPENDIX_LABEL_PREFIX, CITE_RE, DROP_RE, 
   labelRefs, malformedAppendixRefs, maskComments, parseBibEntries, parseBibText, placeholderFigures, pyStrip, refName,
   resolveCitations }] = await Promise.all([import(`./bank-compile.js${V}`), import(`./bank-tex.js${V}`)]);
 
-export const UNTITLED = 'Untitled problem';            // bank/problems.py::UNTITLED
-export const MAX_TITLE_WORDS = 6;
+const UNTITLED = 'Untitled problem';            // bank/problems.py::UNTITLED
+const MAX_TITLE_WORDS = 6;
 const TITLE_FORBIDDEN = '\\&%#{}~^_$';
 const DIFFICULTIES = ['easy', 'medium', 'hard', 'extreme'];
 
@@ -62,7 +62,7 @@ const header = (key, value) => (value ? `% ${key}:`.padEnd(18) + value : `% ${ke
    board member who reviews the file and adds them to tags.yml. */
 export const MAX_NEW_TAG = 60;
 export const newTagName = s => oneLine(s).replace(/"/g, "'");
-export function newTagsLine(draft) {
+function newTagsLine(draft) {
   const d = { ...emptyDraft(), ...draft };
   const parts = [...d.newArea.map(n => `area "${newTagName(n)}"`), ...d.newMethods.map(n => `method "${newTagName(n)}"`)];
   return parts.length ? `% Proposed new tags, not in tags.yml yet (a board member adds them): ${parts.join('; ')}` : '';
@@ -107,17 +107,17 @@ export function validDate(s) {
   return y >= 1 && dt.getUTCFullYear() === y && dt.getUTCMonth() === mo - 1 && dt.getUTCDate() === da;
 }
 
-/* Characters the club preamble can print in a title or an origin number: TeX specials (`forbidden`) and characters the
+/* Characters the club preamble can print in a title or an origin number: TeX specials (TITLE_FORBIDDEN) and characters the
    fonts cannot print (math symbols such as √ ≤ ∑) are returned, sorted.  Mirrors bank/problems.py::unprintable. */
 const NOT_IN_T1 = 'ĦħĸĿŀŉŦŧſ';
 const PRINTABLE_EXTRA = '–—‘’“”…·•€„‚«»†‡‰'
   + 'αβγδεζηθικλμνξοπρς'
   + 'στυφχψωϑϕϖϱϵΑΒΓΔΕΖ'
   + 'ΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ';
-export function unprintable(text, forbidden = TITLE_FORBIDDEN) {
+export function unprintable(text) {
   const ok = (c) => {
     const o = c.codePointAt(0);
-    return !forbidden.includes(c) && ((o >= 0x20 && o <= 0x7e) || (o >= 0xa0 && o <= 0x17f && !NOT_IN_T1.includes(c)) || PRINTABLE_EXTRA.includes(c));
+    return !TITLE_FORBIDDEN.includes(c) && ((o >= 0x20 && o <= 0x7e) || (o >= 0xa0 && o <= 0x17f && !NOT_IN_T1.includes(c)) || PRINTABLE_EXTRA.includes(c));
   };
   return [...new Set([...String(text || '')].filter(c => !ok(c)))].sort((a, b) => a.codePointAt(0) - b.codePointAt(0));
 }
@@ -191,7 +191,7 @@ function texErrors(text, where) {
    Set of global labels} (null = not checked); every \ref points to a label of the draft (`labels`) or to a label
    appendix:<name>:<key> of a result the box also cites with \appendixref; no label named appendix:...; nothing of this
    inside a drawing (drawn on its own).  `where(i)` as in texErrors. */
-function appendixErrors(text, where, cites, cat, labels = null) {
+function appendixErrors(text, where, cites, cat, labels) {
   const out = [];
   const masked = maskComments(text);
   let m = APPENDIX_CMD.exec(masked);
@@ -213,14 +213,13 @@ function appendixErrors(text, where, cites, cat, labels = null) {
     }
   }
   const { targets, refs } = labelRefs(masked);
-  const available = labels || new Set(Object.keys(targets));
   for (const k of Object.keys(targets)) {
     if (k.startsWith(APPENDIX_LABEL_PREFIX)) out.push(`${where(targets[k])}: the label "${k}": labels named appendix:… belong to the shared results.`);
   }
   for (const [k, i] of refs) {
     if (k.includes('#')) continue;                        // a macro parameter (\ref{#1} inside \newcommand)
     if (!k.startsWith(APPENDIX_LABEL_PREFIX)) {
-      if (!available.has(k)) out.push(`${where(i)}: "${k}" is not labelled in this problem (a label of a shared result is written appendix:<name>:<key>).`);
+      if (!labels.has(k)) out.push(`${where(i)}: "${k}" is not labelled in this problem (a label of a shared result is written appendix:<name>:<key>).`);
       continue;
     }
     const name = refName(k);
@@ -234,7 +233,7 @@ function appendixErrors(text, where, cites, cat, labels = null) {
 }
 
 /* {name: Set of global labels} from the page's list of shared results [{name, labels}] (bank/appendix.py::catalogue). */
-export function appendixCatalogue(results) {
+function appendixCatalogue(results) {
   return Object.fromEntries((results || []).map(r => [r.name, new Set([`${APPENDIX_LABEL_PREFIX}${r.name}`, ...(r.labels || [])])]));
 }
 
@@ -354,7 +353,7 @@ const keepLines = t => t.replace(DROP_RE, m => (m.endsWith('\n') ? '%\n' : '%'))
 
 /* The document the preview compiles against the club format (same macros as the bank PDFs, heading "Problem 1. Title").
    Figures become placeholders (no TikZ in the browser), citations are resolved like CI does.
-   Returns {tex, lines}: lines.statement / lines.solution = [first, last, lead, end] (1-based lines of main.tex holding
+   Returns {tex, lines, figures}: figures = the number of drawings shown as boxes; lines.statement / lines.solution = [first, last, lead, end] (1-based lines of main.tex holding
    that box; lead = blank lines dropped at the top of the box; end = the page's own \end{problem} / \end{solution} line),
    lines.refs = [[first, last], …] (reference lists made from the Bibliography box and references.bib).
    `appendix`: the catalogue of shared results [{name, title, cites}]; the ones the solution cites get a heading at the
@@ -362,8 +361,10 @@ const keepLines = t => t.replace(DROP_RE, m => (m.endsWith('\n') ? '%\n' : '%'))
 export function previewMain(draft, cat, globalBib = {}, appendix = []) {
   const d = { ...emptyDraft(), ...draft };
   const bib = Object.assign(Object.create(null), globalBib, parseBibText(d.bibtex));      // the draft's own entries win
-  const st = keepLines(placeholderFigures(block(d.statement)).tex);
-  const so = block(d.solution) ? keepLines(placeholderFigures(block(d.solution)).tex) : null;
+  const stFigs = placeholderFigures(block(d.statement));
+  const soFigs = block(d.solution) ? placeholderFigures(block(d.solution)) : null;
+  const st = keepLines(stFigs.tex);
+  const so = soFigs ? keepLines(soFigs.tex) : null;
   const r = resolveCitations(st, so, bib);
   const title = effectiveTitle(d).replace(/[\\{}~^]/g, '');
   const methods = d.methods.map(m => (cat.byType.methods.get(m) || { name: m }).name);
@@ -393,7 +394,7 @@ export function previewMain(draft, cat, globalBib = {}, appendix = []) {
     }
   }
   out.push('\\end{document}');
-  return { tex: out.join('\n') + '\n', lines };
+  return { tex: out.join('\n') + '\n', lines, figures: stFigs.figures + (soFigs ? soFigs.figures : 0) };
 }
 
 /* True when `text` opens more braces than it closes (\{ \} and % comments do not count). */

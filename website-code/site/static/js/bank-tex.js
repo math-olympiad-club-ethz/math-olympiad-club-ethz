@@ -8,7 +8,6 @@
    characters): many unclosed "\cite[" would otherwise make the scan quadratic.  Same regex as bank/bib.py::CITE_RE. */
 export const CITE_RE = /\\(?:cite|citep|citet|parencite|textcite|autocite|Cite|Parencite|Textcite|Autocite|supercite|footcite)\*?(?![A-Za-z@])[ \t\n]*(?:\[([^\]]{0,300})\][ \t\n]*)?(?:\[([^\]]{0,300})\][ \t\n]*)?\{([^{}]*)\}/g;
 export const DROP_RE = /^[ \t]*\\(printbibliography|nocite\{[^}]*\}|bibliography\{[^}]*\}|bibliographystyle\{[^}]*\}|addbibresource\{[^}]*\})[^\n]*\n?/gm;
-const BIB_BLOCK_RE = /\\begin\{bibentries\}([\s\S]*?)\\end\{bibentries\}/;
 
 /* `tex` with every % comment replaced by spaces (same length and newlines, so offsets still point into `tex`); \% is a
    percent sign, \\% a line break and then a comment.  Mirrors bank/problems.py::mask_comments (written without its
@@ -45,7 +44,7 @@ export function parseBibEntries(text) {
     const j = i + m[0].length;
     let depth = 1, k = j;
     while (k < text.length && depth) { depth += text[k] === '{' ? 1 : text[k] === '}' ? -1 : 0; k += 1; }
-    const body = text.slice(j, k - 1);
+    const body = text.slice(j, depth ? k : k - 1);     // no closing brace: the text ran to the end, nothing to cut off
     i = k;
     if (etype === 'comment' || etype === 'preamble' || etype === 'string') continue;
     const comma = body.indexOf(',');
@@ -64,7 +63,7 @@ export function parseBibEntries(text) {
       if (rest[pos] === '{') {
         let d = 1, q = pos + 1;
         while (q < rest.length && d) { d += rest[q] === '{' ? 1 : rest[q] === '}' ? -1 : 0; q += 1; }
-        val = rest.slice(pos + 1, q - 1);
+        val = rest.slice(pos + 1, d ? q : q - 1);
         pos = q;
       } else if (rest[pos] === '"') {
         let q = rest.indexOf('"', pos + 1);
@@ -92,11 +91,6 @@ export function parseBibText(text) {
   const out = Object.create(null);
   for (const [k, f] of parseBibEntries(text)) out[k] = f;
   return out;
-}
-
-export function bibBlock(body) {
-  const m = BIB_BLOCK_RE.exec(String(body || ''));
-  return m ? m[1] : '';
 }
 
 /* Every citation key in `tex`, in order of first use. */
@@ -159,10 +153,9 @@ export function formatEntry(e) {
 
 /* \cite{a,b} -> [1, 2] (numbers shared by statement and solution, statement keys first), problemreferences lists
    appended; \printbibliography & co. dropped.  Mirrors bank/stitch.py::resolve_citations.
-   Returns {statement, solution, count, missing: [keys not in bib]}. */
+   Returns {statement, solution, count}. */
 export function resolveCitations(statement, solution, bib) {
   const numbers = new Map();
-  const missing = [];
   const sub = (_m, a, b, keys) => {
     let post = b;
     if (post === undefined) post = a;               // \cite[post]{k}; a prenote \cite[pre][post]{k} is dropped
@@ -170,7 +163,7 @@ export function resolveCitations(statement, solution, bib) {
     for (let k of keys.split(',')) {
       k = pyStrip(k);
       if (!k) continue;
-      if (!numbers.has(k)) { numbers.set(k, numbers.size + 1); if (!Object.hasOwn(bib, k)) missing.push(k); }
+      if (!numbers.has(k)) numbers.set(k, numbers.size + 1);
       nums.push(String(numbers.get(k)));
     }
     let txt = nums.join(', ');
@@ -184,7 +177,7 @@ export function resolveCitations(statement, solution, bib) {
   const ordered = [...numbers.keys()];
   if (nStatement) statement = pyRstrip(statement) + reflist(ordered.slice(0, nStatement)) + '\n';
   if (solution !== null && solution !== undefined && numbers.size > nStatement) solution = pyRstrip(solution) + reflist(ordered.slice(nStatement)) + '\n';
-  return { statement, solution, count: numbers.size, missing };
+  return { statement, solution, count: numbers.size };
 }
 
 /* ------------------------------------------------------------------ figures */
@@ -255,8 +248,8 @@ export function labelRefs(tex) {
 
 /* \appendixref{<name>}, with the spaces TeX allows; m[1] is undefined when there is no {...}.  Same regex as
    bank/appendix.py::APPENDIXREF_RE. */
-export const APPENDIXREF_RE = /\\appendixref(?![A-Za-z@])(?:[ \t\n]*\{([^{}]*)\})?/g;
-export const APPENDIX_NAME_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const APPENDIXREF_RE = /\\appendixref(?![A-Za-z@])(?:[ \t\n]*\{([^{}]*)\})?/g;
+const APPENDIX_NAME_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 export const APPENDIX_LABEL_PREFIX = 'appendix:';
 
 /* 'appendix:<name>' or 'appendix:<name>:<label>' -> <name>, else null.  Mirrors bank/appendix.py::ref_name. */

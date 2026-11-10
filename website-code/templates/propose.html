@@ -12,30 +12,33 @@
 
 {% block content %}
 {% set v = ('?v=' ~ asset_version) if asset_version else '' %}
-<div class="propose">
+<div>
   <div class="bank-head">
     <h1 class="node lit">Propose a problem</h1>
     <button id="pp-clear" type="button" class="btn btn-sm" hidden>Clear the form</button>
   </div>
   <p class="bank-lede">Write your problem, check the preview and send it. A board member reviews it before it joins the <a href="{{ url_for('problems') }}">problem bank</a>. Only the statement and one area are required; the rest can be added later, by you or the board.</p>
 
+  <noscript><div class="alert alert-warning small">The form needs JavaScript. You can send your problem to olympiadclub@math.ethz.ch instead.</div></noscript>
+  <div class="alert alert-danger small" role="alert" data-load-error hidden>The form could not load. Reload the page.</div>
+
   <div id="pp-draft-note" class="alert alert-info small" role="status" hidden>Your draft was restored from this browser.</div>
   <div id="pp-other-tab" class="alert alert-warning small" role="status" hidden>Another tab changed the draft saved in this browser. Type here to save this one again.</div>
 
   <form id="pp-form" novalidate>
     <div class="mb-3">
-      <label for="pp-title" class="form-label fw-semibold">Title <span class="text-muted fw-normal small">(optional)</span></label>
+      <label for="pp-title" class="form-label">Title <span class="text-muted fw-normal small">(optional)</span></label>
       <input id="pp-title" class="form-control" type="text" maxlength="120" autocomplete="off">
     </div>
 
     <div class="row g-3 mb-3">
-      <div class="col-12 col-lg-6">
-        <label for="pp-statement" class="form-label fw-semibold">Statement <span class="text-danger" aria-hidden="true">*</span><span class="visually-hidden">(required)</span></label>
-        <textarea id="pp-statement" class="form-control pp-tex" rows="14" spellcheck="false" aria-required="true"></textarea>
+      <div class="col-lg-6">
+        <label for="pp-statement" class="form-label">Statement <span class="text-danger" aria-hidden="true">*</span><span class="visually-hidden">(required)</span></label>
+        <textarea id="pp-statement" class="form-control pp-tex" rows="14" spellcheck="false" autocorrect="off" autocapitalize="off" aria-required="true"></textarea>
       </div>
-      <div class="col-12 col-lg-6">
-        <label for="pp-solution" class="form-label fw-semibold">Solution <span class="text-muted fw-normal small">(optional)</span></label>
-        <textarea id="pp-solution" class="form-control pp-tex" rows="14" spellcheck="false"></textarea>
+      <div class="col-lg-6">
+        <label for="pp-solution" class="form-label">Solution <span class="text-muted fw-normal small">(optional)</span></label>
+        <textarea id="pp-solution" class="form-control pp-tex" rows="14" spellcheck="false" autocorrect="off" autocapitalize="off"></textarea>
       </div>
     </div>
     <details class="pp-rules small text-muted mb-4">
@@ -58,32 +61,32 @@
         <span id="pp-preview-status" class="small text-muted" role="status" aria-live="polite"></span>
         <span class="flex-grow-1"></span>
         <div class="form-check form-switch m-0">
-          <input class="form-check-input" type="checkbox" role="switch" id="pp-auto" checked>
+          <input type="checkbox" role="switch" id="pp-auto" checked>
           <label class="form-check-label small" for="pp-auto">Update while typing</label>
         </div>
         <button id="pp-refresh" type="button" class="btn btn-sm btn-outline-primary">Update now</button>
       </div>
       <div class="card-body">
         <div id="pp-preview-error" class="alert alert-danger small" role="alert" hidden></div>
-        <p id="pp-preview-empty" class="m-0"></p>
-        <iframe id="pp-pdf" class="bank-pdf" title="Preview of the problem as a PDF" hidden></iframe>
+        <iframe id="pp-pdf" class="bank-pdf" aria-label="Preview of the problem as a PDF" hidden></iframe>
         <p id="pp-pdf-links" class="mt-2 mb-0" hidden><a id="pp-pdf-open" class="btn btn-sm btn-outline-primary me-2" href="#" target="_blank" rel="noopener">Open PDF</a><a id="pp-pdf-download" class="btn btn-sm" href="#" download="preview.pdf">Download PDF</a></p>
+        <p class="legal"><a href="{{ url_for('static', filename='busytex/NOTICE.txt') }}" target="_blank" rel="noopener">licences</a></p>
       </div>
     </section>
 
     <fieldset class="mb-4">
       <legend class="node">Tags</legend>
       <div class="row g-3">
-        <div class="col-12 col-lg-6">
-          <label class="form-label fw-semibold" for="pp-area-input">Area <span class="text-danger" aria-hidden="true">*</span><span class="visually-hidden">(required)</span> <span class="text-muted fw-normal small">(what the problem is about)</span></label>
+        <div class="col-lg-6">
+          <label class="form-label" for="pp-area-input">Area <span class="text-danger" aria-hidden="true">*</span><span class="visually-hidden">(required)</span> <span class="text-muted fw-normal small">(what the problem is about)</span></label>
           <div class="pp-picker" id="pp-area"></div>
         </div>
-        <div class="col-12 col-lg-6">
-          <label class="form-label fw-semibold" for="pp-methods-input">Methods <span class="text-muted fw-normal small">(optional: what the solution uses)</span></label>
+        <div class="col-lg-6">
+          <label class="form-label" for="pp-methods-input">Methods <span class="text-muted fw-normal small">(optional: what the solution uses)</span></label>
           <div class="pp-picker" id="pp-methods"></div>
         </div>
-        <div class="col-12 col-md-6 col-lg-4">
-          <label class="form-label fw-semibold" for="pp-difficulty">Difficulty <span class="text-muted fw-normal small">(optional, your estimate)</span></label>
+        <div class="col-md-6 col-lg-4">
+          <label class="form-label" for="pp-difficulty">Difficulty <span class="text-muted fw-normal small">(optional, your estimate)</span></label>
           <select id="pp-difficulty" class="form-select"></select>
           <div class="form-text" id="pp-difficulty-help"></div>
         </div>
@@ -94,31 +97,31 @@
     <fieldset class="mb-4">
       <legend class="node">Where it comes from <span class="fw-normal small">(optional)</span></legend>
       <div class="row g-3">
-        <div class="col-12 col-md-4">
-          <label class="form-label fw-semibold" for="pp-origin">Competition or source</label>
+        <div class="col-md-4">
+          <label class="form-label" for="pp-origin">Competition or source</label>
           <select id="pp-origin" class="form-select" aria-describedby="pp-origin-help"></select>
           <div class="form-text" id="pp-origin-help">Not in the list? Write it in References.</div>
         </div>
         <div class="col-6 col-md-4">
-          <label class="form-label fw-semibold" for="pp-origin-date">Date</label>
+          <label class="form-label" for="pp-origin-date">Date</label>
           <input id="pp-origin-date" class="form-control" type="text" inputmode="numeric" autocomplete="off" aria-describedby="pp-origin-date-help">
           <div class="form-text" id="pp-origin-date-help">E.g. 1989 or 1989-12-02.</div>
         </div>
         <div class="col-6 col-md-4">
-          <label class="form-label fw-semibold" for="pp-origin-number">Problem number</label>
+          <label class="form-label" for="pp-origin-number">Problem number</label>
           <input id="pp-origin-number" class="form-control" type="text" autocomplete="off" aria-describedby="pp-origin-number-help">
           <div class="form-text" id="pp-origin-number-help">E.g. A3 or Problem 6.</div>
         </div>
-        <div class="col-12">
-          <label class="form-label fw-semibold" for="pp-references">References</label>
+        <div>
+          <label class="form-label" for="pp-references">References</label>
           <textarea id="pp-references" class="form-control" rows="2" placeholder="Sources or links, one per line"></textarea>
         </div>
       </div>
     </fieldset>
 
     <div class="mb-4">
-      <label for="pp-bibtex" class="form-label fw-semibold">Bibliography <span class="text-muted fw-normal small">(optional, BibTeX; only for <code>\cite{key}</code> in the text)</span></label>
-      <textarea id="pp-bibtex" class="form-control pp-tex" rows="5" spellcheck="false" placeholder="@article{hurwitz1967,&#10;  author  = {Solomon Hurwitz},&#10;  title   = {On the Rational Solutions of $m^n = n^m$},&#10;  journal = {The American Mathematical Monthly},&#10;  year    = {1967},&#10;}"></textarea>
+      <label for="pp-bibtex" class="form-label">Bibliography <span class="text-muted fw-normal small">(optional, BibTeX; only for <code>\cite{key}</code> in the text)</span></label>
+      <textarea id="pp-bibtex" class="form-control pp-tex" rows="5" spellcheck="false" autocorrect="off" autocapitalize="off" placeholder="@article{hurwitz1967,&#10;  author  = {Solomon Hurwitz},&#10;  title   = {On the Rational Solutions of $m^n = n^m$},&#10;  journal = {The American Mathematical Monthly},&#10;  year    = {1967},&#10;}"></textarea>
       <div class="form-text" id="pp-bib-keys"></div>
     </div>
   </form>
@@ -129,7 +132,7 @@
       <div id="pp-errors" class="alert alert-warning small" role="alert" hidden></div>
       <ol class="pp-steps small mb-3">
         <li>Click <strong>Copy file and open GitHub</strong>. GitHub opens a new file, <code id="pp-filename">new-untitled-problem.tex</code>. Sign in, or create a free account, if GitHub asks.</li>
-        <li>Paste the file (<kbd>Ctrl</kbd>+<kbd>V</kbd>, on a Mac <kbd>Cmd</kbd>+<kbd>V</kbd>).</li>
+        <li>Paste the file (<kbd>Ctrl</kbd>+<kbd>V</kbd>, on a Mac <kbd>Cmd</kbd>+<kbd>V</kbd>; on a phone, touch and hold, then Paste).</li>
         <li>Click <strong>Propose new file</strong> (or <strong>Commit changes…</strong>), then <strong>Create pull request</strong>. A board member checks it, may add tags or a solution, then adds it to the bank. You can follow the review on GitHub.</li>
       </ol>
       <div class="d-flex flex-wrap gap-2 align-items-center">

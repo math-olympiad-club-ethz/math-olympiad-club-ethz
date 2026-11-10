@@ -19,7 +19,7 @@ test('JS makeMain == Python make_main on the built bodies (problems / solutions 
     { ids: all.slice(0, 5), variant: 'problems', filters: '', showMethods: false },
     { ids: all.slice(0, 5), variant: 'solutions', filters: 'Area: Analysis & Algebra (any of) · IDs 1–20', showMethods: false },
     { ids: all, variant: 'solutions', filters: '', showMethods: true },
-    { ids: all.filter(i => (bodies[String(i).padStart(4, '0')].figures || {}) && Object.keys(bodies[String(i).padStart(4, '0')].figures || {}).length), variant: 'solutions', filters: 'figures', showMethods: true },
+    { ids: all.filter(i => Object.keys(bodies[String(i).padStart(4, '0')].figures || {}).length), variant: 'solutions', filters: 'figures', showMethods: true },
     { ids: [...all.slice(0, 12)].reverse().concat(all.slice(20, 23)), variant: 'solutions', filters: 'hand-made order', showMethods: false },   // any order, kept as given
   ];
   const appendix = JSON.parse(readFileSync(BODIES, 'utf8')).appendix || {};

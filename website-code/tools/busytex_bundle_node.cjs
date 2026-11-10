@@ -25,7 +25,6 @@
 const fs = require('fs');
 const path = require('path');
 
-const FMT_STOCK = '/texlive/texmf-dist/texmf-var/web2c/pdftex/pdflatex.fmt';
 const PROJECT = '/home/web_user/project_dir';
 const LOCAL_TREE = '/texmf/texmf-dist';
 const RERUN = ['Rerun to get', 'Label(s) may have changed', 'rerunfilecheck', 'run LaTeX again'];

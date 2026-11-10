@@ -9,7 +9,7 @@
     "test": "npm run test:unit && npm run test:python && npm run build:preview && npm run test:e2e",
     "test:unit": "node --test tests/unit/*.test.mjs",
     "test:python": "python3 -m unittest discover -s tests/python",
-    "test:e2e": "node tests/e2e/bank.mjs && node tests/e2e/propose.mjs"
+    "test:e2e": "node tests/e2e/bank.mjs && node tests/e2e/propose.mjs && node tests/e2e/phone-and-chrome.mjs"
   },
   "repository": {
     "type": "git",
@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/math-olympiad-club-ethz/math-olympiad-club-ethz#readme",
   "devDependencies": {
+    "pdfjs-dist": "6.4.299",
     "playwright": "^1.63.0"
   },
   "private": true

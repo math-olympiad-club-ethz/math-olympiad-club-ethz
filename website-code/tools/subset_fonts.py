@@ -1,19 +1,19 @@
 #!/usr/bin/env python3
-"""Cut the website's fonts, site/static/fonts/moc-typewriter-*.woff2, from Computer Modern Unicode (CMU).
+"""Cut the website's fonts, site/static/fonts/moc-{serif,typewriter}-*.woff2, from Computer Modern Unicode (CMU).
 
     npm pack computer-modern@0.1.3 && tar xzf computer-modern-0.1.3.tgz       # the CMU fonts, SIL OFL 1.1
     python3 -m venv /tmp/ft && /tmp/ft/bin/pip install fonttools brotli
     /tmp/ft/bin/python tools/subset_fonts.py package/fonts site/static/fonts
 
-The site is set in CMU Typewriter Text, the face LaTeX's \\texttt uses (the problem PDFs use Latin Modern, the same
-design). The full files are about 200 KB each. Each weight is cut in two: the basic Latin characters every page uses,
-and the rest (Latin Extended-A such as ě ă ț, accents, Greek such as the φ σ τ of a tag name), which a browser downloads
+The site's text is set in CMU Serif and its labels in CMU Typewriter Text, the face LaTeX's \\texttt uses (the problem
+PDFs use Latin Modern, the same design). The full files are about 200 KB each. Each weight is cut in two: the basic
+Latin characters every page uses, and the rest (Latin Extended-A such as ě ă ț, accents, Greek such as the φ σ τ of a tag name), which a browser downloads
 only for a page that shows one of them: site.css gives both files the same family with their unicode-range, so the
 ranges below and the ones in site.css must stay the same. The fonts have no glyph for symbols such as ≡ ≠ ✓ or emoji:
 the browser draws those in a fallback font, so the site avoids them.
 
 The SIL Open Font License reserves the name "Computer Modern Unicode" for unmodified fonts, and a subset is a modified
-font: the subsets are renamed "MOC Typewriter". The copyright (name 0) and licence records (13, 14) are kept, and OFL.txt
+font: the subsets are renamed "MOC Serif" and "MOC Typewriter". The copyright (name 0) and licence records (13, 14) are kept, and OFL.txt
 ships next to the fonts.
 
 GitHub Pages caches the fonts for 10 minutes and their URLs carry no version: give a regenerated font a new file name.
@@ -32,6 +32,8 @@ RANGES = {
             "U+0370-03FF",
 }
 FACES = [  # CMU file, family, style, output file stem
+    ("cmu-serif-500-roman", "MOC Serif", "Regular", "moc-serif-400"),
+    ("cmu-serif-700-roman", "MOC Serif", "Bold", "moc-serif-700"),
     ("cmu-typewriter-text-500-roman", "MOC Typewriter", "Regular", "moc-typewriter-400"),
     ("cmu-typewriter-text-700-roman", "MOC Typewriter", "Bold", "moc-typewriter-700"),
 ]
@@ -40,7 +42,7 @@ FACES = [  # CMU file, family, style, output file stem
 def rename(font, family, style, source):
     ps = (family + "-" + style).replace(" ", "")
     names = font["name"]
-    for nid in (1, 2, 3, 4, 6, 10, 16, 17, 21, 22):
+    for nid in (1, 2, 3, 4, 6, 10):
         names.removeNames(nameID=nid)
     for nid, val in ((1, family), (2, style), (3, f"MOC:{ps}"), (4, family if style == "Regular" else f"{family} {style}"),
                      (6, ps), (10, f"Subset of {source} from the Computer Modern Unicode fonts, renamed because the SIL "

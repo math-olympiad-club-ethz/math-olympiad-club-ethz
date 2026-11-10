@@ -27,11 +27,8 @@ from .bib import parse_bib
 from .stitch import COMPILE_TIMEOUT, PDFLATEX, split_body, tex_env, tex_escape
 from .tags import TagError, load_tags
 
-ROOT = paths.WEBSITE
-TEXROOT = paths.BANK_DIR      # where preamble.tex and references.bib live
-
 WRAPPER = r"""\documentclass[11pt]{article}
-%(stitched)s\input{preamble}
+\input{preamble}
 \begin{document}
 \bankproblem{1}{%(title)s}{%(origin)s}{%(id)s}
 \input{%(body)s}
@@ -47,7 +44,7 @@ ITEM_WRAPPER = r"""\documentclass[11pt]{article}
 PROOF_CACHE_VERSION = "2"     # bump when the way proofs are compiled changes (it is part of every cache key)
 
 
-def proof_sources(p, tags, with_solution=True, stitched=False):
+def proof_sources(p, tags, with_solution=True):
     """(main.tex, body.tex) of the standalone proof.  body.tex keeps the file's line numbers, so pdflatex's
     file:line errors point into the problem file.  The statement-only variant is exactly the statement the
     website compiles (stitch.split_body), not the body minus a regex."""
@@ -59,9 +56,8 @@ def proof_sources(p, tags, with_solution=True, stitched=False):
     body = "\n" * (p["body_line"] - 1) + body
     main = WRAPPER % {"title": tex_escape(p["title"]), "origin": tex_escape(P.origin_label(p, tags)),
                       "id": "new" if p["id"] is None else f"{p['id']:04d}", "body": "body.tex",
-                      "stitched": r"\def\BankStitched{}" + "\n" if stitched else "",
-                      # the results the solution cites, read from problem-bank/appendix/ (author mode only)
-                      "appendix": "\\bankappendixall\n" if with_solution and not stitched else ""}
+                      # the results the solution cites, read from problem-bank/appendix/ (author mode)
+                      "appendix": "\\bankappendixall\n" if with_solution else ""}
     return main, body
 
 
@@ -73,7 +69,7 @@ def problem_cites(p):
 
 def _appendix_digest(names, items):
     """What the shared results `names` and those they cite put into a compile (part of the proof cache key)."""
-    by_name = {it["name"]: it for it in items or () if it["name"]}
+    by_name = {it["name"]: it for it in items if it["name"]}
     used = sorted(A.closure(names or [], {k: v["cites"] for k, v in by_name.items()}))
     if not used:
         return ""
@@ -97,24 +93,22 @@ def _tex_inputs_digest():
     return h.hexdigest()
 
 
-def compile_problem(p, tags, with_solution=True, stitched=False, keep_log=None, cache_dir=None, items=None):
+def compile_problem(p, tags, items, with_solution=True, cache_dir=None):
     """Compile one problem standalone with pdflatex.  Returns (ok, error_excerpt).
-    cache_dir: remember successful compiles there (by a hash of everything that goes in) and skip them next time.
-    items: the shared results (bank/appendix.py::load_items, default: the folder); the ones the solution cites are
-    part of the cache key."""
-    main, body = proof_sources(p, tags, with_solution, stitched)
-    extra = (_appendix_digest(problem_cites(p), A.folder_items() if items is None else items)
-             if with_solution and not stitched else "")
-    return _compile(main, {"body.tex": body}, extra, keep_log, cache_dir)
+    items: the shared results (bank/appendix.py::load_items); the ones the solution cites are part of the cache key.
+    cache_dir: remember successful compiles there (by a hash of everything that goes in) and skip them next time."""
+    main, body = proof_sources(p, tags, with_solution)
+    extra = _appendix_digest(problem_cites(p), items) if with_solution else ""
+    return _compile(main, {"body.tex": body}, extra, cache_dir)
 
 
-def compile_item(it, items=None, keep_log=None, cache_dir=None):
+def compile_item(it, items, cache_dir=None):
     """Compile one shared result on its own (author mode, with the results it cites).  Returns (ok, error_excerpt)."""
     main = ITEM_WRAPPER % {"name": it["name"]}
-    return _compile(main, {}, _appendix_digest([it["name"]], A.folder_items() if items is None else items), keep_log, cache_dir)
+    return _compile(main, {}, _appendix_digest([it["name"]], items), cache_dir)
 
 
-def _compile(main, files, extra_key, keep_log, cache_dir):
+def _compile(main, files, extra_key, cache_dir):
     marker = None
     if cache_dir:
         key = hashlib.sha256((_tex_inputs_digest() + "\0" + main + "\0" + "\0".join(files[k] for k in sorted(files))
@@ -136,12 +130,6 @@ def _compile(main, files, extra_key, keep_log, cache_dir):
             code = r.returncode
         except subprocess.TimeoutExpired:
             return False, f"pdflatex timed out after {COMPILE_TIMEOUT} s"
-        if keep_log:
-            try:
-                with open(os.path.join(d, "main.log"), encoding="utf-8", errors="replace") as f:
-                    open(keep_log, "w").write(f.read())
-            except OSError:
-                pass
         if code == 0 and os.path.exists(os.path.join(d, "main.pdf")):
             if marker:
                 os.makedirs(cache_dir, exist_ok=True)
@@ -207,7 +195,7 @@ def compile_failures(probs, items, tags, jobs, cache_dir=PROOF_CACHE):
     failed = []
     with concurrent.futures.ThreadPoolExecutor(max_workers=jobs) as ex:
         futs = {(ex.submit(compile_item, p, items, cache_dir=cache_dir) if ws is None
-                 else ex.submit(compile_problem, p, tags, ws, cache_dir=cache_dir, items=items)): (p, ws)
+                 else ex.submit(compile_problem, p, tags, items, ws, cache_dir=cache_dir)): (p, ws)
                 for p, ws in jobs_list}
         for fut in concurrent.futures.as_completed(futs):
             p, ws = futs[fut]
@@ -234,14 +222,12 @@ def main(argv=None):
     ap.add_argument("files", nargs="*", help="problem files or shared results (default: all of problems/ and appendix/)")
     ap.add_argument("--compile", action="store_true", help="compile each problem standalone (with solution)")
     ap.add_argument("--no-solution", action="store_true", help="with --compile: also compile the statement-only variant")
-    ap.add_argument("--stitched", action="store_true", help="with --compile: use the website (stitched) preamble mode")
     ap.add_argument("--jobs", type=int, default=os.cpu_count() or 4)
-    ap.add_argument("--tags", default=paths.TAGS_FILE)
     a = ap.parse_args(argv)
     try:
-        tags = load_tags(a.tags)
+        tags = load_tags(paths.TAGS_FILE)
     except TagError as e:
-        print(f"{a.tags}: {e}")
+        print(f"{paths.TAGS_FILE}: {e}")
         return 1
     n_err = 0
     if a.files:
@@ -281,9 +267,8 @@ def main(argv=None):
             if a.no_solution and p["has_solution"]:
                 jobs.append((p, False))
         with concurrent.futures.ThreadPoolExecutor(max_workers=a.jobs) as ex:
-            futs = {ex.submit(compile_problem, p, tags, ws, a.stitched, items=all_items): (p, ws) for p, ws in jobs}
-            if not a.stitched:           # a result compiles in author mode (the website's text is made by the build)
-                futs.update({ex.submit(compile_item, it, all_items): (it, None) for it in compile_items})
+            futs = {ex.submit(compile_problem, p, tags, all_items, ws): (p, ws) for p, ws in jobs}
+            futs.update({ex.submit(compile_item, it, all_items): (it, None) for it in compile_items})
             for fut in concurrent.futures.as_completed(futs):
                 p, ws = futs[fut]
                 ok, err = fut.result()

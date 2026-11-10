@@ -1,13 +1,13 @@
 // End-to-end test of the Problems page in headless Chromium (Playwright library, no test runner):
 // filter, tick problems, Create, and check that both PDFs contain the expected problems in the expected order
-// (automatic, then dragged by hand); Edit links and the "+" button; keyboard focus, ARIA, the tag counts, the
+// (automatic, then dragged by hand); no Edit link per problem (until the administrator mode); keyboard focus, ARIA, the tag counts, the
 // layout at 360 px, the theme, the PDF links without a built-in PDF viewer (headless Chromium, like Chrome for
 // Android), the Content-Security-Policy, the engine prefetch and the message when the page's script fails to load.
 // Needs a built site (python3 build.py --preview) and the engine bundle in site/static/busytex/.
 //   node tests/e2e/bank.mjs            exit 0 = pass
 //   E2E_SHOTS=<dir> node tests/e2e/bank.mjs   also saves screenshots (360 px, dark mode) into <dir>
 import { chromium } from 'playwright';
-import { writeFileSync, mkdtempSync, mkdirSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
@@ -18,7 +18,6 @@ const CHECK_PDF = resolve(new URL('./check_pdf.py', import.meta.url).pathname);
 const SHOTS = process.env.E2E_SHOTS || '';
 if (SHOTS) mkdirSync(SHOTS, { recursive: true });
 // pre-flight: the test needs a preview build (all problems) and the engine bundle
-import { existsSync, readFileSync } from 'node:fs';
 if (!existsSync(join(DOCS, 'static', 'busytex', 'manifest.json'))) {
   console.log('The engine bundle site/static/busytex/ is missing. Build it once with:  python3 build.py --preview');
   process.exit(2);
@@ -104,13 +103,12 @@ try {
   check(ids.every((v, i) => i === 0 || v > ids[i - 1]), 'results are in order of arrival');
   check(!/\b0\d{3}\b/.test(await page.locator('#bank-results').textContent()), 'no problem number is shown in the list');
   const diffChip = (await page.locator(ROWS).first().locator('.bank-chip-unrated').textContent()).trim();
-  check(/Difficulty\s*none\s*AI: (easy|medium|hard|extreme)/.test(diffChip), `an unrated problem's chip says "Difficulty none", the AI estimate in small print on its right (${diffChip})`);
+  check(/Difficulty\s*None\s*AI: (Easy|Medium|Hard|Extreme)/.test(diffChip), `an unrated problem's chip says "Difficulty None", the AI estimate in small print on its right (${diffChip})`);
   check(await page.locator('#bank-create').isDisabled(), 'Create is disabled with no selection');
   check((await page.locator('#bank-results a.bank-edit').count()) === 0, 'no Edit link per problem (it comes with the administrator mode)');
-  check((await page.locator('#bank-propose').count()) === 0 && (await page.locator('#site-nav a[href="propose.html"]').count()) === 1,
-    'the Problems page links to the propose page only from the header');
-  check(!/\bunsolved\b/.test(await page.locator('#bank-results').textContent()) && (await page.locator(`${ROWS} .bank-marker-unsolved`).first().textContent()) === 'no solution',
-    'a problem without a solution is marked "no solution" (the same words as the filter)');
+  check((await page.locator('#site-nav a[href="propose.html"]').count()) === 1, 'the header links to the propose page');
+  check(!/\bunsolved\b/.test(await page.locator('#bank-results').textContent()) && (await page.locator(`${ROWS} .bank-marker-unsolved`).first().textContent()) === 'No solution',
+    'a problem without a solution is marked "No solution" (the same words as the filter)');
 
   console.log('2. the bar searches titles; the list suggests the tags those words could mean');
   const probe = await page.evaluate(() => {
@@ -178,8 +176,8 @@ try {
   await page.click('#bank-search');
   const SEC = '#bank-listbox .bank-list-section', OPT = '#bank-listbox .bank-option';
   await page.waitForSelector(SEC);
-  check((await page.locator(OPT).count()) === 0 && (await page.locator(SEC).count()) >= 4, 'the tag list opens with every section closed');
-  check((await page.locator('#bank-listbox .bank-list-count-head').textContent()) === 'problems', 'the counts are labelled "problems" once');
+  check((await page.locator(OPT).count()) === 0 && (await page.locator(SEC).count()) >= 3, 'the tag list opens with every section closed');
+  check((await page.locator('#bank-listbox .bank-list-count-head').textContent()) === 'Problems', 'the counts are labelled "Problems" once');
   await page.locator(SEC).first().click();
   const nArea = await page.locator(OPT).count();
   await page.locator(SEC).first().click();
@@ -233,11 +231,57 @@ try {
 
   console.log('4. advanced menu: show methods, solved, origin year; no ID range');
   await showAll();
-  await page.check('#bank-show-methods');
+  const M = await page.evaluate(() => {          // a method that some problem has
+    const { S, problems, cat } = window.bank, c = S.tagCounts(problems, cat);
+    return [...cat.byType.methods.values()].find(t => c.get('methods:' + t.slug)).name;
+  });
+  const switchOff = async () => {                // the switch lives in the Filters menu: open it if a click elsewhere closed it
+    if (await page.locator('#bank-show-methods').isHidden()) await page.click('#bank-filter-btn');
+    await page.uncheck('#bank-show-methods');
+  };
+  const offered = async () => {                  // the browse list's Methods section, and the methods suggested for M
+    await page.fill('#bank-search', '');
+    await page.click('#bank-search');
+    await page.waitForSelector('#bank-listbox .bank-list-section');
+    const section = await page.locator('#bank-listbox .bank-list-section', { hasText: 'Methods' }).count();
+    await page.fill('#bank-search', M);
+    await page.waitForSelector('#bank-listbox .bank-list-header');
+    const suggested = await page.locator('#bank-listbox .bank-option-methods').count();
+    return { section, suggested };
+  };
+  let o = await offered();
+  check(o.section === 0 && o.suggested === 0, `"Show methods" off: the search offers no method (no Methods section; "${M}" typed suggests none)`);
+  await page.fill('#bank-search', ''); await page.keyboard.press('Escape');      // emptying the bar opens the list again: then close it
+  check(await page.locator('#bank-methods-pdf').isHidden(), '"Methods in the PDFs" is not offered while "Show methods" is off');
+  if (await page.locator('#bank-show-methods').isHidden()) await page.click('#bank-filter-btn');
+  const spots = () => page.evaluate(() => {      // where "Several tags" and "Solutions" stand
+    const r = id => document.getElementById(id).getBoundingClientRect();
+    return { opX: Math.round(r('bank-op-label').left), opY: Math.round(r('bank-op-label').top), solY: Math.round(r('bank-solved-label').top), solX: Math.round(r('bank-solved-label').left) };
+  });
+  const spot0 = await spots();
+  const xs = await page.evaluate(() => new Promise(done => {     // "Show methods" on, and where "Several tags" is at each frame
+    const op = document.getElementById('bank-op-label'), seen = [], t0 = performance.now();
+    document.getElementById('bank-show-methods').click();
+    const tick = () => { seen.push(Math.round(op.getBoundingClientRect().left)); if (performance.now() - t0 < 600) requestAnimationFrame(tick); else done(seen); };
+    requestAnimationFrame(tick);
+  }));
   check((await page.locator(`${ROWS} .bank-chip-methods:visible`).count()) > 0, 'methods appear when "Show methods" is on');
-  await page.uncheck('#bank-show-methods');
+  check(await page.locator('#bank-methods-pdf').isVisible() && !(await page.isChecked('#bank-methods-pdf')), '"Methods in the PDFs" appears beside it, off');
+  const spot1 = await spots(), steps = new Set(xs).size;
+  check(steps >= 4 && xs.every((x, i) => !i || x >= xs[i - 1]) && spot1.opX > spot0.opX && spot1.opY === spot0.opY && spot1.solY === spot0.solY && spot1.solX === spot0.solX,
+    `it unfolds: "Several tags" slides right on its line in ${steps} steps (x ${spot0.opX} → ${spot1.opX}), "Solutions" stays where it was`);
+  o = await offered();
+  check(o.section === 1 && o.suggested > 0, `"Show methods" on: the list has a Methods section, and "${M}" typed suggests it`);
+  await page.locator('#bank-listbox .bank-option-methods').first().click();
+  const nM = await page.locator(ROWS).count();
+  check((await page.locator('#bank-chips .bank-chip-methods').count()) === 1 && nM < total, `picking it filters by it (${nM} problems)`);
+  await switchOff();
   check((await page.locator(`${ROWS} .bank-chip-methods:visible`).count()) === 0, 'methods hidden again');
-  check((await page.locator('#bank-id-from').count()) === 0, 'there is no ID-range filter (the ID means nothing to visitors)');
+  await page.waitForFunction(() => !/[?&]m=/.test(location.search), null, { timeout: 3000 }).catch(() => {});     // the address follows 150 ms later
+  check((await page.locator('#bank-chips .bank-chip').count()) === 0 && (await page.locator(ROWS).count()) === total && !/[?&]m=/.test(page.url()),
+    '"Show methods" off drops the method filter: its chip goes, every problem is back, no m= in the address');
+  await page.locator('#bank-methods-pdf').waitFor({ state: 'hidden', timeout: 3000 }).catch(() => {});     // it folds in .3 s
+  check(await page.locator('#bank-methods-pdf').isHidden() && (await spots()).opX === spot0.opX, '"Methods in the PDFs" folds away with it, and "Several tags" is back in its place');
   check((await page.textContent('#bank-op-help')) === 'Problems with all the tags.', 'AND explains only AND');
   await page.click('label[for=bank-op-or]');
   check((await page.textContent('#bank-op-help')) === 'Problems with at least one of the tags.', 'OR explains only OR');
@@ -277,16 +321,17 @@ try {
     check((await page.locator(`#bank-results li[data-id="${also.id}"] .bank-chip-alsoin[data-slug="${also.slug}"]:visible`).count()) === 1,
       'with Origin = one of its also-in sources, the row shows that source ("Also in")');
     await page.evaluate(() => { window.bank.state.filters.origin = []; window.bank.update(); });
-  }
+  } else check(true, 'no problem has an also-in source other than its origin (the "Also in" chips not tested)');
 
   console.log('5. select all, a link that ticks 20 problems, Create → problems PDF, solutions PDF on request');
   check(engineRequests.length === 0, 'after typing, filtering and browsing, still nothing of the LaTeX engine is downloaded');
   await page.fill('#bank-search', probe.word);
   await page.keyboard.press('Enter');                                   // the tag list floats over the results: close it
   const nWord = await page.locator(ROWS).count();
+  const manifest = page.waitForRequest(/\/static\/busytex\/manifest\.json/, { timeout: 3000 }).catch(() => {});
   await page.click('#bank-select-all');
   check((await page.evaluate(() => window.bank.state.selection.size)) === nWord, `select all ticks the ${nWord} listed problem(s)`);
-  await page.waitForTimeout(300);
+  await manifest;
   check(engineRequests.some(u => u.endsWith('manifest.json')), 'ticking problems starts fetching the engine');
   await page.click('#bank-clear-selection');
   await page.fill('#bank-search', '');
@@ -320,7 +365,7 @@ try {
   check(await page.evaluate(() => !!(document.activeElement && document.activeElement.closest('#bank-out-problems'))), 'when the PDF is ready, focus moves to it');
   check(await page.evaluate(() => window.bank.output.solutions === null) && (await page.locator('#bank-out-solutions a[download$=".pdf"]').count()) === 0,
     'Create builds the problem set alone: the solutions PDF is not compiled');
-  check(!/Loading the LaTeX engine/.test(await page.textContent('#bank-status')), `the status line ends on the result (${(await page.textContent('#bank-status')).trim()})`);
+  check((await page.textContent('#bank-status')).trim() === '' && (await page.textContent('#bank-announce')) === 'The PDF is ready.', 'the status line goes quiet once the PDF is there; a screen reader is told it is ready');
   const statuses = await page.evaluate(() => [...new Set(window.__status)]);
   check(statuses.some(t => /^Compiling the problems PDF… \d+ \/ 20$/.test(t)) && !statuses.includes('Compiling this problem…'),
     `while pdfTeX works the status line says which PDF and how far (${statuses.filter(t => / \/ /.test(t)).slice(-1)[0] || statuses.join(' | ')})`);
@@ -365,6 +410,22 @@ try {
     check(JSON.stringify(texIds(r.tex)) === JSON.stringify(autoIds), `${v} PDF lists the problems in the automatic order`);
   }
   check((await page.locator('#bank-out-problems a', { hasText: 'Download .tex' }).count()) === 1, 'Download .tex offered');
+  // methods shown on screen are not printed: "Methods in the PDFs" decides (a teacher searches by method, the sheet keeps it quiet)
+  const nWithMethods = await page.evaluate(ids => ids.filter(i => window.bank.byId.get(i).methods.length).length, autoIds);
+  const createAgain = async () => {
+    await page.evaluate(() => { document.getElementById('bank-announce').textContent = ''; });
+    await page.click('#bank-create');
+    await page.waitForFunction(() => document.getElementById('bank-announce').textContent === 'The PDF is ready.', null, { timeout: 240000 });
+    return page.evaluate(() => (window.bank.output.problems.mainTex.match(/\\bankmethods\{/g) || []).length);
+  };
+  if (await page.locator('#bank-show-methods').isHidden()) await page.click('#bank-filter-btn');
+  await page.check('#bank-show-methods');
+  const shownOnly = await createAgain();
+  await page.check('#bank-methods-pdf');
+  const printed = await createAgain();
+  check(shownOnly === 0 && printed === nWithMethods && nWithMethods > 0,
+    `"Show methods" on: the PDF still has no method; with "Methods in the PDFs" too, the ${nWithMethods} problems with methods show them`);
+  await page.uncheck('#bank-show-methods');
 
   console.log('5b. Preview one problem');
   await showAll();
@@ -372,29 +433,38 @@ try {
   const firstTitle = (await firstRow.locator('.bank-title').textContent()).trim();
   const nLi = await page.locator('#bank-results > li').count();
   await firstRow.locator('.bank-preview-btn').click();
-  await page.waitForSelector('.bank-preview-panel a[download$=".pdf"]', { timeout: 240000 });
+  await page.waitForSelector('.bank-preview-panel .bank-sheet canvas', { timeout: 240000 });
   const prev = await page.evaluate(async () => {
     const btn = document.querySelector('#bank-results > li:not([hidden]) .bank-preview-btn');
     const panel = document.getElementById(btn.getAttribute('aria-controls'));
-    const bytes = new Uint8Array(await (await fetch(panel.querySelector('a[download$=".pdf"]').href)).arrayBuffer());
-    return { head: String.fromCharCode(...bytes.slice(0, 5)), tex: window.bank.C.makePreview(await window.bank.C.loadBodies(), window.bank.state.results[0].id),
-      label: btn.getAttribute('aria-label'), inRow: !!panel && panel.parentElement === btn.closest('li'), download: panel.querySelector('a[download$=".pdf"]').getAttribute('download') };
+    const c = panel.querySelector('.bank-sheet canvas'), px = c.getContext('2d').getImageData(0, 0, c.width, c.height).data;
+    let ink = 0;
+    for (let i = 3; i < px.length; i += 4) if (px[i]) ink++;
+    return { ink, words: panel.querySelector('.textLayer').textContent.trim().length, hidden: c.getAttribute('aria-hidden'),
+      chrome: panel.querySelectorAll('a, iframe, button').length, tex: window.bank.C.makePreview(await window.bank.C.loadBodies(), window.bank.state.results[0].id),
+      label: btn.getAttribute('aria-label'), inRow: !!panel && panel.parentElement === btn.closest('li') };
   });
-  check(prev.head === '%PDF-', 'Preview shows that one problem as a PDF (Open PDF / Download PDF)');
-  check(prev.tex.includes('\\begin{problem}') && !prev.tex.includes('\\begin{solution}'), 'the preview document has the statement and no solution');
+  check(prev.ink > 1000 && prev.words > 10 && prev.hidden === 'true' && prev.chrome === 0,
+    `Preview draws that problem into the page (${prev.ink} inked pixels; its ${prev.words} characters selectable and read aloud from the text layer): no frame, no link, no button`);
+  check(prev.tex.includes('\\begin{problem}') && !prev.tex.includes('\\begin{solution}') && !prev.tex.includes('\\Large'),
+    'the preview document has the statement only: no solution, no title (its row shows it)');
   check(prev.label === `Preview “${firstTitle}”` && prev.inRow && (await page.locator('#bank-results > li').count()) === nLi,
     `each Preview button is named after its problem ("${prev.label}"), and its panel sits inside the row (no extra list item)`);
-  check(!/\d{4}/.test(prev.download), `the preview's file name carries no problem number (${prev.download})`);
+  const cross = () => firstRow.locator('.bank-preview-btn').evaluate(b => ({ x: getComputedStyle(b, '::after').content, title: b.title }));
+  const open = await cross();
+  check(/×/.test(open.x) && open.title === '', `an open preview: its button shows a cross, and no hover text (${open.x})`);
   await firstRow.locator('.bank-preview-btn').click();
-  check((await page.locator('.bank-preview-panel').count()) === 0, 'clicking Preview again closes it');
+  const shut = await cross();
+  await page.waitForFunction(() => !document.querySelector('.bank-preview-panel'), null, { timeout: 3000 }).catch(() => {});
+  check((await page.locator('.bank-preview-panel').count()) === 0 && !/×/.test(shut.x) && shut.title === '',
+    'clicking Preview again folds it away, and the cross goes');
   // abandoned previews are cancelled (bank-compile.js drops a job whose signal is aborted before it starts)
   const rowsIds = await page.evaluate(() => window.bank.state.results.slice(1, 6).map(p => p.id));
   for (const id of rowsIds) await page.click(`#bank-results li[data-id="${id}"] .bank-preview-btn`);
-  await page.waitForSelector('.bank-preview-panel a[download$=".pdf"]', { timeout: 240000 });
+  await page.waitForSelector('.bank-preview-panel .bank-sheet canvas', { timeout: 240000 });
   check((await page.locator('.bank-preview-panel').count()) === 1 && (await page.locator(`#bank-results li[data-id="${rowsIds[4]}"] .bank-preview-panel`).count()) === 1,
     'five Previews clicked in a row: only the last one stays open');
   await page.click(`#bank-results li[data-id="${rowsIds[4]}"] .bank-preview-btn`);
-  check((await page.locator('#bank-copy-link').count()) === 0, 'no Copy link button (the page address is the link)');
 
   console.log('6. shareable URL restores filters and selection; second Create is served from cache');
   await page.goto(urlBefore);
@@ -573,9 +643,10 @@ try {
     await p2.waitForSelector('#bank-out-problems iframe.bank-pdf', { timeout: 240000 });
     await showAll(p2);
     await p2.locator(ROWS).first().locator('.bank-preview-btn').click();
-    await p2.waitForSelector('.bank-preview-panel iframe.bank-preview-pdf', { timeout: 240000 });
-    check(await p2.evaluate(() => [...document.querySelectorAll('iframe.bank-pdf')].every(f => f.src.startsWith('blob:'))) && (await p2.locator('.bank-preview-panel a', { hasText: 'Open PDF' }).count()) === 1,
-      'the problems PDF and the Preview show in a frame, with Open PDF / Download PDF links too');
+    await p2.waitForSelector('.bank-preview-panel .bank-sheet canvas', { timeout: 240000 });
+    check(await p2.evaluate(() => [...document.querySelectorAll('iframe.bank-pdf')].every(f => f.src.startsWith('blob:'))) && (await p2.locator('#bank-out-problems a', { hasText: 'Open PDF' }).count()) === 1
+      && (await p2.locator('.bank-preview-panel iframe, .bank-preview-panel a').count()) === 0,
+      'the problems PDF shows in a frame, with Open PDF / Download PDF; the Preview is drawn into the page (PDF.js, under the CSP)');
     await ctx.close();
   }
 
@@ -598,7 +669,7 @@ try {
       const out = [...document.querySelectorAll('#bank-results > li:not([hidden])')].filter(li => [...li.querySelectorAll('.bank-row-actions, .bank-chip')].some(e => e.getBoundingClientRect().right > w + 0.5));
       return { scroll: document.documentElement.scrollWidth, w, out: out.length };
     });
-    check(lay.scroll <= lay.w && lay.out === 0, `problems page at 360 px (${scheme}, methods shown): no sideways scroll (${lay.scroll} px), every Preview / Edit and chip on screen`);
+    check(lay.scroll <= lay.w && lay.out === 0, `problems page at 360 px (${scheme}, methods shown): no sideways scroll (${lay.scroll} px), every Preview and chip on screen`);
     const c = await p3.evaluate(() => {
       const m = document.querySelector('#bank-results > li:not([hidden]) .bank-marker');
       const s = m && getComputedStyle(m);
@@ -635,6 +706,7 @@ try {
     p4.on('pageerror', e => errs.push(e.message));
     await p4.goto(`${base}/index.html`);
     await p4.click('#theme-toggle');
+    await p4.waitForFunction(() => document.documentElement.getAttribute('data-theme') === 'light', null, { timeout: 2000 }).catch(() => {});   // the switch is a view transition: its callback runs on the next frame
     check(errs.length === 0 && (await p4.getAttribute('html', 'data-theme')) === 'light' && /\d{4}/.test(await p4.textContent('#current-year')),
       'with site data blocked, the theme button still works and nothing throws');
     if (SHOTS) {

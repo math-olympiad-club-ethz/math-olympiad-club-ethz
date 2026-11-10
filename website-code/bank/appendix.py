@@ -22,7 +22,6 @@ appendix:<name>:<key>, both where it is set and where it is used, and that file 
 \\appendixref{<name>}; the heading of the result itself is appendix:<name>.  Only solutions (and results) cite results:
 a problems-only PDF has no appendix.
 """
-import functools
 import os
 import re
 
@@ -209,20 +208,6 @@ def load_items(appendix_dir=None):
     return [parse_item_file(os.path.join(appendix_dir, f)) for f in files]
 
 
-@functools.lru_cache(maxsize=None)
-def _cached_folder(appendix_dir):
-    return tuple(load_items(appendix_dir))
-
-
-def folder_items():
-    """load_items() of problem-bank/appendix/, read once per process (for callers that need them only for cache keys)."""
-    return list(_cached_folder(paths.APPENDIX_DIR))
-
-
-def names_of(items):
-    return {it["name"] for it in items if it["name"]}
-
-
 def validate_item(it, bib_keys=None, cat=None):
     """Append validation errors to it['errors'] and return them.  bib_keys: keys of references.bib; cat: catalogue()
     of all results (unknown names and labels are errors when given)."""
@@ -303,7 +288,7 @@ def validate_item(it, bib_keys=None, cat=None):
     if bib_keys is not None:
         known = set(bib_keys) | set(own)
         from .bib import CITE_RE
-        cited = re.sub(r"\\begin\{bibentries\}.*?\\end\{bibentries\}", lambda m: "\n" * m.group(0).count("\n"), text, flags=re.S)
+        cited = P.without_bibentries(text)
         reported = set()
         for m in CITE_RE.finditer(cited):
             for k in (k.strip() for k in m.group(3).split(",")):

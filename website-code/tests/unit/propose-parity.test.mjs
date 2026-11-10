@@ -126,7 +126,7 @@ test('comments, labels, figures and dates: JS == Python', () => {
   const texts = ['a % c\n50\\% b %x\n\\\\% y\n%z', '\\\\\\% odd, \\\\\\\\% even\n%% two\n\\%%', '', 'no comment', '%\n%\n', 'x%',
     '% \\begin{tikzpicture}\n\\begin{tikzpicture}\\draw (0,0) -- (1,1); % \\end{tikzpicture}\n\\end{tikzpicture} \\begin{tikzcd}A\\end{tikzcd}',
     '\\label{a} \\ref {a,b} \\labelcref[lemma]{c} \\crefrange{x}{y} \\Crefrange * {x} {z} \\hyperref [z, w]{t} \\label[t] {d} \\eqref*{e}\n\\hypertarget{h}{H} \\hyperlink{h}{H} \\label{a} \\cref{ a ,\u001fb}'];
-  const py = python({ mask: texts, labels: texts, figures: texts, dates: [] });
+  const py = python({ mask: texts, labels: texts, figures: texts });
   assert.deepEqual(texts.map(T.maskComments), py.mask);
   assert.deepEqual(texts.map(t => { const r = T.labelRefs(t); return [{ ...r.targets }, r.refs]; }), py.labels);
   assert.deepEqual(texts.map(T.findFigures), py.figures);

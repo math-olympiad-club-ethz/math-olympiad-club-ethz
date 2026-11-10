@@ -20,7 +20,6 @@ STATIC_DIR = os.path.join(SITE_DIR, "static")
 BANK_DATA_DIR = os.path.join(STATIC_DIR, "bank")
 BUSYTEX_DIR = os.path.join(STATIC_DIR, "busytex")
 TEMPLATES_DIR = os.path.join(WEBSITE, "templates")
-TOOLS_DIR = os.path.join(WEBSITE, "tools")
 CACHE_DIR = os.path.join(WEBSITE, ".cache")
 
 # Where the repository lives on GitHub: the site's "Edit" links and the "Propose a problem" page open

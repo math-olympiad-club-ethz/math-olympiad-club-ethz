@@ -96,7 +96,7 @@ def compile_all(probs, items, tags, jobs):
 def write_site_data(probs, items, tags, preview):
     os.makedirs(BANK_DATA_DIR, exist_ok=True)
     visible = visible_problems(probs, preview)
-    index = build_index(probs, tags, preview)
+    index = build_index(probs, preview)
     catalogue = build_tag_catalogue(tags)
     with open(os.path.join(BANK_DATA_DIR, "tags.json"), "w", encoding="utf-8") as f:
         json.dump(catalogue, f, ensure_ascii=False, separators=(",", ":"))
@@ -185,6 +185,26 @@ def engine_version():
         return None
 
 
+PDFJS_PACKAGE = os.path.join(ROOT, "node_modules", "pdfjs-dist")
+
+
+def copy_pdfjs():
+    """PDF.js (npm package pdfjs-dist, pinned in package.json; its legacy build, which older Safari runs too) into
+    site/static/pdfjs/, with its licence: it draws a problem's preview into the Problems page.  Returns its version,
+    which the page puts on the files' address (?v=), so a new release is never mixed with a cached one."""
+    try:
+        with open(os.path.join(PDFJS_PACKAGE, "package.json"), encoding="utf-8") as f:
+            version = json.load(f)["version"]
+    except (OSError, ValueError):
+        fail("node_modules/pdfjs-dist is missing: run `npm ci` in website-code/ first")
+    out = os.path.join(STATIC_DIR, "pdfjs")
+    os.makedirs(out, exist_ok=True)
+    for src, dst in (("legacy/build/pdf.min.mjs", "pdf.min.mjs"), ("legacy/build/pdf.worker.min.mjs", "pdf.worker.min.mjs"),
+                     ("LICENSE", "LICENSE")):
+        shutil.copyfile(os.path.join(PDFJS_PACKAGE, src), os.path.join(out, dst))
+    return version
+
+
 def asset_version():
     """A short hash of the page scripts and styles: the pages load them with ?v=<it> (templates), so a browser never
     mixes cached files of the last deploy with new ones."""
@@ -195,7 +215,7 @@ def asset_version():
     return h.hexdigest()[:10]
 
 
-def render_pages(index, catalogue, preview, build=None, items=()):
+def render_pages(index, catalogue, preview, build=None, items=(), pdfjs=None):
     env = Environment(loader=FileSystemLoader(TEMPLATES_DIR), autoescape=False)
 
     def url_for(endpoint, **kw):
@@ -208,8 +228,10 @@ def render_pages(index, catalogue, preview, build=None, items=()):
     def inline_json(obj):
         return json.dumps(obj, ensure_ascii=False, separators=(",", ":")).replace("<", "\\u003c")   # no "</script" or "<!--" inside
 
-    # build / engine: the problem texts and the LaTeX engine this page was built with (bank-compile.js::expectBuild)
-    bank_data = inline_json({"tags": catalogue, "index": index, "github": github, "build": build, "engine": engine_version()})
+    # build / engine: the problem texts and the LaTeX engine this page was built with (bank-compile.js::expectBuild);
+    # pdfjs: the version of site/static/pdfjs/ (bank-ui.js draws the previews with it)
+    bank_data = inline_json({"tags": catalogue, "index": index, "github": github, "build": build, "engine": engine_version(),
+                             "pdfjs": pdfjs})
     # the shared results a proposed solution may cite with \appendixref{name}: names, titles, the results they cite and
     # the labels a solution may refer to (texts are not needed); the page lists them in its writing rules
     results = [{"name": it["name"], "title": it["title"], "cites": list(it["cites"]), "labels": sorted(A.global_labels(it))}
@@ -229,6 +251,13 @@ def render_pages(index, catalogue, preview, build=None, items=()):
         with open(os.path.join(OUTPUT_DIR, template_name), "w", encoding="utf-8") as f:
             f.write(html)
         print(f"built site/{template_name}")
+    # GitHub Pages serves this for a wrong address, at any depth: so its links are absolute (and the CSP has base-uri 'none')
+    root = "/" + paths.GITHUB_REPO.split("/")[1] + "/"
+    html = env.get_template("404.html").render(url_for=lambda endpoint, **kw: root + url_for(endpoint, **kw), asset_version=version,
+                                               year=datetime.date.today().year, page="404", page_title="Page not found")
+    with open(os.path.join(OUTPUT_DIR, "404.html"), "w", encoding="utf-8") as f:
+        f.write(html)
+    print("built site/404.html")
 
 
 def main(argv=None):
@@ -267,8 +296,12 @@ def main(argv=None):
                                            if a.no_bundle else ""))
         build_bundle(ensure_assets(a.assets))
 
+    step("PDF.js (draws the previews)")
+    pdfjs = copy_pdfjs()
+    print(f"pdfjs-dist {pdfjs} → site/static/pdfjs/")
+
     step("HTML pages")
-    render_pages(index, catalogue, a.preview, build, items)
+    render_pages(index, catalogue, a.preview, build, items, pdfjs)
     print(f"\n🎉 Site built in 'website-code/site/'{' (preview)' if a.preview else ''}. Serve it with: python3 -m http.server 8000 --directory website-code/site")
 
 

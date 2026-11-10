@@ -4,19 +4,20 @@
    Data shapes (produced by build.py):
      tags.json   {area:[{slug,name,description,aliases,parent,children,depth}], methods:[{…,group}],
                   difficulty:[…], origin:[{…,kind}]}
-     index.json  {preview, count, problems:[{id,title,file,area:[],methods:[],difficulty,difficultySource,
-                  origin,alsoIn:[],originDate,originYear,originLabel,hasSolution,partial,solved,review,provisional,proposed,solutionMasked}]}
+     index.json  {preview, count, problems:[{id,title,area:[],methods:[],difficulty,difficultySource,
+                  origin,alsoIn:[],originYear,hasSolution,partial,review,provisional,proposed,solutionMasked}]}
                  (solutionMasked: a proposed problem whose solution the public site does not show yet, bank/data.py)
 */
 
 export const TAG_TYPES = ['area', 'methods', 'difficulty', 'origin'];
 export const TYPE_LABEL = { area: 'Area', methods: 'Methods', difficulty: 'Difficulty', origin: 'Origin' };
 
-export const DEFAULT_FILTERS = Object.freeze({
+const DEFAULT_FILTERS = Object.freeze({
   area: [], methods: [], difficulty: [], origin: [],
   text: '',             // what is typed in the search bar: matches the title
   op: 'and',            // AND/OR — applies to Area + Methods only
-  showMethods: false,   // methods are spoilers: hidden by default in the list and the PDFs
+  showMethods: false,   // methods are spoilers: hidden by default in the list and the search
+  methodsInPdf: false,  // and in the PDFs unless asked (only with showMethods): a teacher may search by method and hand out sheets without them
   yearFrom: null, yearTo: null,   // origin-date range (years)
   solved: 'all',        // 'all' | 'full' | 'partial' | 'none' (solution), the words of the row markers
   showProposed: false,  // proposed problems (no review yet, bank/data.py) are listed only when the visitor asks
@@ -63,10 +64,6 @@ export function buildCatalogue(tagsJson) {
   return { byType, all, desc, ancestors };
 }
 
-export function areaDescendants(cat, slug) {
-  return Array.from(cat.desc.get(slug) || [slug]);
-}
-
 export function getTag(cat, type, slug) {
   const m = cat.byType[type];
   return m ? m.get(slug) || null : null;
@@ -83,8 +80,7 @@ function problemHasTag(problem, type, slug, cat) {
     const set = cat.desc.get(slug);
     return set ? problem.area.some(a => set.has(a)) : problem.area.includes(slug);
   }
-  if (type === 'methods') return problem.methods.includes(slug);
-  return false;
+  return problem.methods.includes(slug);
 }
 
 /* Does the text typed in the search bar match this problem?  Every typed word must start a word of the title.
@@ -130,9 +126,6 @@ export function matches(problem, filters, cat) {
 /* Order of the results list = ID ascending (= order added).  (The PDF order is autoOrder() below.) */
 export function sortProblems(list) {
   return [...list].sort((a, b) => a.id - b.id);
-}
-export function sortIds(ids) {
-  return [...new Set(ids.map(Number))].sort((a, b) => a - b);
 }
 
 export function filterProblems(problems, filters, cat) {
@@ -240,7 +233,7 @@ export function formatRanges(ids) {
 }
 
 /* At most this many IDs come out of a URL list: a crafted link cannot make the page build millions of them. */
-export const MAX_URL_IDS = 10000;
+const MAX_URL_IDS = 10000;
 
 export function parseRanges(str) {
   return [...new Set(parseIdList(str))].sort((a, b) => a - b);
@@ -320,6 +313,7 @@ export function encodeState(filters, selection = [], order = null) {
   if (normalize(f.text)) p.set('q', f.text);          // symbols only search nothing: not worth a URL
   if (f.op === 'or') p.set('op', 'or');
   if (f.showMethods) p.set('sm', '1');
+  if (f.showMethods && f.methodsInPdf) p.set('mp', '1');
   if (f.yearFrom != null || f.yearTo != null) p.set('y', `${f.yearFrom ?? ''}-${f.yearTo ?? ''}`);
   if (f.solved !== 'all') p.set('s', f.solved);
   if (f.showProposed) p.set('pr', '1');
@@ -333,15 +327,16 @@ export function encodeState(filters, selection = [], order = null) {
 export function decodeState(qs, cat = null) {
   const p = new URLSearchParams(String(qs || '').replace(/^\?/, ''));
   const f = emptyFilters();
-  const list = (key, type) => (p.get(key) || '').split(',').map(s => s.trim()).filter(Boolean)
-    .filter(s => !cat || cat.byType[type].has(s));
+  const list = (key, type) => [...new Set((p.get(key) || '').split(',').map(s => s.trim()).filter(Boolean)
+    .filter(s => !cat || cat.byType[type].has(s)))];
   f.area = list('a', 'area');
   f.methods = list('m', 'methods');
   f.difficulty = list('d', 'difficulty');
   f.origin = list('o', 'origin');
   f.text = String(p.get('q') || '').slice(0, 120);        // a crafted link cannot carry an endless query
   f.op = p.get('op') === 'or' ? 'or' : 'and';
-  f.showMethods = p.get('sm') === '1';
+  f.showMethods = p.get('sm') === '1' || f.methods.length > 0;   // methods filter only while shown: an older link with m= still gives its problems
+  f.methodsInPdf = f.showMethods && p.get('mp') === '1';
   const range = (key) => {
     const m = /^(\d*)-(\d*)$/.exec(p.get(key) || '');
     return m ? [intOrNull(m[1]), intOrNull(m[2])] : [null, null];
@@ -354,25 +349,4 @@ export function decodeState(qs, cat = null) {
     return { filters: f, selection: [...order].sort((a, b) => a - b), order: order.length ? order : null };
   }
   return { filters: f, selection: parseRanges(p.get('sel')), order: null };
-}
-
-/* Human-readable description of the active filters.  (The site no longer prints it on the PDF cover.)  The typed text
-   appears reduced to a-z, 0-9 and spaces (nothing LaTeX could read as a command or fail to typeset), and the methods
-   only when "Show methods" is on: they are spoilers. */
-export function describeFilters(filters, cat) {
-  const f = { ...DEFAULT_FILTERS, ...filters };
-  const names = (type, slugs) => slugs.map(s => (getTag(cat, type, s) || { name: s }).name).join(', ');
-  const parts = [];
-  const text = normalize(f.text).replace(/[^a-z0-9 ]+/g, '').replace(/ +/g, ' ').trim();
-  if (text) parts.push(`Title: ${text}`);
-  const am = [];
-  if (f.area.length) am.push('Area: ' + names('area', f.area));
-  if (f.methods.length) am.push('Methods: ' + (f.showMethods ? names('methods', f.methods) : 'hidden'));
-  if (am.length) parts.push(am.join('; ') + (am.length > 1 || f.area.length + f.methods.length > 1 ? (f.op === 'or' ? ' (any of)' : ' (all of)') : ''));
-  if (f.difficulty.length) parts.push('Difficulty: ' + names('difficulty', f.difficulty));
-  if (f.origin.length) parts.push('Origin: ' + names('origin', f.origin));
-  if (f.yearFrom != null || f.yearTo != null) parts.push(`Origin year ${f.yearFrom ?? ''}–${f.yearTo ?? ''}`);
-  if (f.solved !== 'all') parts.push({ full: 'Full solution', partial: 'Partial solution', none: 'No solution' }[f.solved]);
-  if (f.showProposed) parts.push('With proposed problems');
-  return parts.length ? parts.join(' · ') : 'no filter (all problems)';
 }

@@ -4,18 +4,18 @@
      → {type:'init', base, force?}           load + cache the bundle, instantiate the engine (idempotent)
      ← {type:'progress', stage, loaded?, total?}   stage 'manifest' | 'download' (compressed bytes so far / expected,
                                              from manifest.json; only files not in the cache) | 'instantiate'
-     ← {type:'ready', timings, download, version}   download: {bytes (transferred, compressed), fromCache: bool, files}
-     → {type:'compile', id, mainTex, files?: {name: Uint8Array}, rerun?: true}
+     ← {type:'ready'}
+     → {type:'compile', id, mainTex, files?: {name: Uint8Array}, base}
      ← {type:'started', id}                  pdfTeX starts (the engine is loaded): the page starts its timeout here
      ← {type:'marker', id, pid}              a line "BANK:<pid>" on the terminal (\typeout before each problem, and
                                              "BANK:a-<name>" before each shared result)
-     ← {type:'result', id, version, exit, pdf?, log, passes:[ms], rerun:bool, pages, errors}
+     ← {type:'result', id, version, exit, pdf?, log, passes:[ms], pages, errors}
      ← {type:'error', id?, message}          message: a short sentence for the page (details go to the console)
 
    Assets (site/static/busytex/, built by tools/busytex_bundle.py): manifest.json, busytex.js.gz, busytex.wasm.gz,
    club.fmt.gz, club-texlive.data.gz (+ club-texlive.json index).  Everything is gzip'd on disk and decompressed
    here with DecompressionStream, so nothing depends on the server's Content-Encoding.  The compressed responses
-   are stored in the Cache API ('bank-engine-<manifest.version>'); a second visit downloads only manifest.json.
+   are stored in the Cache API (one 'bank-engine' cache across versions); a second visit downloads only manifest.json.
    Every file is checked against its sha256 in manifest.json before it is used (from the network or from the cache):
    a damaged or stale copy is dropped and downloaded once more.
 
@@ -33,11 +33,12 @@ const FILES = ['busytex.js.gz', 'busytex.wasm.gz', 'club.fmt.gz', 'club-texlive.
 const OUT_MAX = 131072, OUT_KEEP = 65536;              // terminal output kept per run: the last 64 to 128 kB
 const LOG_TAIL = 131072;                               // bytes of main.log read back (errors and rerun hints are at the end)
 const FILE_CAP = 16 * 2 ** 20, PDF_CAP = 128 * 2 ** 20; // largest file a run may write in the project dir (main.pdf: PDF_CAP)
-let state = null;          // {manifest, Module, header, base}
+let state = null;          // {manifest, Module, header, io, reset}
 let initPromise = null;
 let currentJob = null;     // id of the compile running now (for the markers)
 let capping = false;       // true while pdfTeX runs
 const capped = new Set();  // files that hit the cap in this run
+const ENGINE_VERSION_KEY = '/bank/engine-version';
 
 function post(msg, transfer) { self.postMessage(msg, transfer || []); }
 
@@ -59,12 +60,19 @@ async function getManifest(base) {
 }
 
 /* The Cache API is optional: private windows (Firefox before 122) and blocked site data make it reject. */
-async function openCache(name, force) {
+async function openCache(name, version, force) {
   if (!self.caches) return null;
   try {
     if (force) await caches.delete(name);
     const cache = await caches.open(name);
-    for (const k of await caches.keys()) if (k.startsWith('bank-engine-') && k !== name) { await caches.delete(k); await caches.delete('bank-pdfs'); }   // new engine → old PDFs are stale
+    for (const k of await caches.keys()) if (k.startsWith('bank-engine-')) await caches.delete(k);   // the earlier scheme: one cache per version
+    // one cache across versions: a new version downloads only the files that changed (each is checked against manifest.json,
+    // and a stale one is replaced). Its finished PDFs do go: a new engine makes other ones.
+    const seen = await cache.match(ENGINE_VERSION_KEY);
+    if (!seen || await seen.text() !== version) {
+      await caches.delete('bank-pdfs');
+      await cache.put(ENGINE_VERSION_KEY, new Response(version));
+    }
     return cache;
   } catch (e) { console.warn('Cache API not available: the LaTeX engine is not stored', e); return null; }
 }
@@ -116,7 +124,6 @@ async function loadFile(ctx, name) {
     failure = null;
     try { out = await decode(ctx, name, resp, !cached); } catch (e) { console.warn('engine file unreadable', name, e); failure = cached ? null : e; }
     if (out && await intact(ctx, name, out.bytes)) {
-      ctx.download.files[name] = { fromCache: !!cached };
       if (!out.compiling) return out;
       const module = (await out.compiling) || await WebAssembly.compile(out.bytes);
       return { module };
@@ -129,38 +136,38 @@ async function loadFile(ctx, name) {
 }
 
 async function init(base, force) {
-  const t = {}; const T0 = performance.now(); const mark = (k, t0) => { t[k] = Math.round(performance.now() - t0); };
   post({ type: 'progress', stage: 'manifest' });
   const manifest = await getManifest(base);
-  const cache = await openCache('bank-engine-' + manifest.version, force);
+  const cache = await openCache('bank-engine', manifest.version, force);
   const size = n => (manifest.files[n] || {}).bytes || 0;
   const ctx = { base, manifest, cache, cached: {}, puts: {}, url: n => new URL(base + n, self.location.href).href,
-    download: { bytes: 0, fromCache: true, files: {} }, loaded: 0, total: 0, lastPost: 0 };
+    loaded: 0, total: 0, lastPost: 0 };
   ctx.progress = n => {
-    ctx.loaded += n; ctx.download.bytes += n;
+    ctx.loaded += n;
     const now = performance.now();
     if (now - ctx.lastPost >= 100 || ctx.loaded >= ctx.total) { ctx.lastPost = now; post({ type: 'progress', stage: 'download', loaded: ctx.loaded, total: Math.max(ctx.total, ctx.loaded) }); }
   };
-  ctx.addTotal = n => { ctx.total += size(n); ctx.download.fromCache = false; };
+  ctx.addTotal = n => { ctx.total += size(n); };
 
-  // 1. what the cache already holds, then the rest from the network, all in parallel; the wasm is compiled while it
-  //    streams out of the gunzip, and every file is checked before it is used.
-  const t0 = performance.now();
+  // 1. what the cache already holds, all at once; then the rest from the network, one file at a time and the smallest
+  //    first: a file is stored only once complete, so a visitor who leaves during the download (a minute or more on a phone)
+  //    keeps whatever has arrived. The wasm is compiled while it streams out of the gunzip, and every file is checked before it is used.
   if (cache) await Promise.all(FILES.map(async n => { try { ctx.cached[n] = (await cache.match(ctx.url(n))) || null; } catch (e) { ctx.cached[n] = null; } }));
   for (const n of FILES) if (!ctx.cached[n]) ctx.addTotal(n);
   if (ctx.total) post({ type: 'progress', stage: 'download', loaded: 0, total: ctx.total });
-  const [js, wasm, fmt, data, idx] = await Promise.all(FILES.map(n => loadFile(ctx, n)));
-  mark('downloadDecompressCheckCompileWasm', t0);
+  const got = {};
+  await Promise.all(FILES.filter(n => ctx.cached[n]).map(async n => { got[n] = await loadFile(ctx, n); }));
+  for (const n of FILES.filter(f => !ctx.cached[f]).sort((a, b) => size(a) - size(b))) got[n] = await loadFile(ctx, n);
+  const [js, wasm, fmt, data, idx] = FILES.map(n => got[n]);
   const jsText = new TextDecoder().decode(js.bytes);
   const index = JSON.parse(new TextDecoder().decode(idx.bytes));
   const fmtBytes = fmt.bytes, dataBytes = data.bytes, wasmModule = wasm.module;
 
   // 2. the Emscripten factory: busytex.js declares `var busytex = ...` and has a UMD tail that is inert in a worker.
   post({ type: 'progress', stage: 'instantiate' });
-  const t1 = performance.now();
   if (typeof self.busytex !== 'function' || force) (0, eval)(jsText);
   const factory = self.busytex;
-  let stdout = '', stderr = '';
+  let stdout = '';
   let instantiateFailed;
   const failed = new Promise((_, reject) => { instantiateFailed = reject; });
   const Module = await Promise.race([failed, factory({
@@ -170,13 +177,12 @@ async function init(base, force) {
       stdout += s + '\n'; if (stdout.length > OUT_MAX) stdout = stdout.slice(-OUT_KEEP);
       if (currentJob !== null && s.startsWith('BANK:')) { const m = /^BANK:(\d+|a-[a-z0-9-]+)\s*$/.exec(s); if (m) post({ type: 'marker', id: currentJob, pid: m[1] }); }
     },
-    printErr: s => { stderr += s + '\n'; if (stderr.length > OUT_MAX) stderr = stderr.slice(-OUT_KEEP); },
+    printErr: () => {},
     setStatus: () => {},
     locateFile: f => base + f,
     instantiateWasm(imports, done) { WebAssembly.instantiate(wasmModule, imports).then(inst => done(inst, wasmModule)).catch(instantiateFailed); return {}; },
     preRun: [M => {
       Object.assign(M.ENV, manifest.env);
-      const tm = performance.now();
       // 3. mount the trimmed TeX Live tree: plain MEMFS files viewing into the one decompressed blob (no copy)
       const dirs = new Set(['/']);
       const mkdirp = d => { if (dirs.has(d)) return; mkdirp(d.slice(0, d.lastIndexOf('/')) || '/'); if (!M.FS.analyzePath(d).exists) M.FS.mkdir(d); dirs.add(d); };
@@ -189,15 +195,12 @@ async function init(base, force) {
       M.FS.createDataFile(fp.slice(0, fi), fp.slice(fi + 1), fmtBytes, true, false, true);
       mkdirp(PROJECT);
       mkdirp('/bin'); if (!M.FS.analyzePath('/bin/busytex').exists) M.FS.writeFile('/bin/busytex', '');   // kpathsea needs SELFAUTOLOC = dirname(argv[0])
-      t.mount = Math.round(performance.now() - tm);
     }],
   })]);
-  mark('instantiateAndMount', t1);
   capWrites(Module.FS);
   const header = Uint8Array.from(Module.HEAPU8.subarray(0, MEM_HEADER));
-  state = { manifest, Module, header, base, io: () => ({ stdout, stderr }), reset: () => { stdout = ''; stderr = ''; } };
-  t.total = Math.round(performance.now() - T0);
-  post({ type: 'ready', timings: t, download: ctx.download, version: manifest.version, files: index.files.length });
+  state = { manifest, Module, header, io: () => ({ stdout }), reset: () => { stdout = ''; } };
+  post({ type: 'ready' });
 }
 
 /* While pdfTeX runs, a write that would make a file in the project dir larger than its cap fails with ENOSPC
@@ -242,23 +245,22 @@ function clearProject(FS) {
   for (const f of FS.readdir(PROJECT)) if (f !== '.' && f !== '..') FS.unlink(PROJECT + '/' + f);
 }
 
-function compile(id, mainTex, files, rerun) {
+function compile(id, mainTex, files) {
   const { Module, manifest } = state; const FS = Module.FS;
   clearProject(FS);
   FS.writeFile(PROJECT + '/main.tex', mainTex);
   for (const [n, data] of Object.entries(files || {})) FS.writeFile(PROJECT + '/' + n, data);
   FS.chdir(PROJECT);
   post({ type: 'started', id });
-  const passes = []; let log = ''; let exit = 0; let didRerun = false; let last = null;
+  const passes = []; let log = ''; let exit = 0; let last = null;
   currentJob = id;
   try {
     for (let pass = 0; pass < 3; pass++) {
       last = runTeX(manifest.pdftex_args); passes.push(last.ms); exit = last.exit;
       log = readTail(FS, PROJECT + '/main.log', LOG_TAIL);
       try { FS.unlink(PROJECT + '/main.log'); } catch (e) { /* no log */ }
-      if (exit !== 0 || rerun === false) break;
+      if (exit !== 0) break;
       if (!manifest.rerun_patterns.some(p => log.includes(p))) break;
-      didRerun = true;
     }
   } finally { currentJob = null; }
   const pdfPath = PROJECT + '/main.pdf';
@@ -269,13 +271,11 @@ function compile(id, mainTex, files, rerun) {
   if (pdf && (pdf.length === 0 || /^No pages of output\.$/m.test(log) || /^No pages of output\.$/m.test(last.stdout))) { pdf = null; if (!errors.length) errors.push('! No pages of output.'); }
   if (capped.has(pdfPath)) { pdf = null; errors.push('! The PDF is too large.'); }
   clearProject(FS);                              // big files a run wrote are freed now, not at the next compile
-  const msg = { type: 'result', id, version: manifest.version, exit, pdf, log, passes, rerun: didRerun, pages, errors,
-    stdoutTail: (last && last.stdout || '').slice(-3000), stderrTail: (last && last.stderr || '').slice(-3000) };
-  post(msg, pdf ? [pdf.buffer] : []);
+  post({ type: 'result', id, version: manifest.version, exit, pdf, log, passes, pages, errors }, pdf ? [pdf.buffer] : []);
 }
 
 function ensureInit(base, force) {
-  if (!initPromise || force) initPromise = init(base || '../static/busytex/', force).catch(e => { initPromise = null; throw e; });
+  if (!initPromise || force) initPromise = init(base, force).catch(e => { initPromise = null; throw e; });
   return initPromise;
 }
 
@@ -284,16 +284,13 @@ self.onmessage = async ({ data }) => {
     if (data.type === 'init') {
       if (initPromise && !data.force) {          // already initialised (or in progress): answer once it is ready
         await initPromise;
-        post({ type: 'ready', timings: {}, download: { bytes: 0, fromCache: true, files: {} }, version: state.manifest.version, cached: true });
+        post({ type: 'ready' });
         return;
       }
       await ensureInit(data.base, data.force);    // init() posts 'ready' itself
-    } else if (data.type === 'exec') {            // debugging / tests: run any applet, e.g. ['kpsewhich', 'article.cls']
-      if (!state) await ensureInit(data.base);
-      post({ type: 'result', id: data.id, ...runTeX(data.args) });
     } else if (data.type === 'compile') {
       if (!state) await ensureInit(data.base);
-      compile(data.id, data.mainTex, data.files, data.rerun);
+      compile(data.id, data.mainTex, data.files);
     }
   } catch (e) {
     console.error('LaTeX engine:', e);             // the details (and the stack) stay in the console

@@ -5,7 +5,8 @@
         [--bodies site/static/bank/bodies.json] [--out site/static/busytex] [--staging .cache/busytex-staging]
 
 Output (all git-ignored build products):
-    busytex.js.gz, busytex.wasm.gz      the texlyre-busytex engine (combined binary — no pdftex-only build exists)
+    busytex.js.gz, busytex.wasm.gz      the texlyre-busytex engine (combined binary — no pdftex-only build exists),
+                                         with the ICU data only XeTeX and LuaTeX read blanked (blank_unused_icu)
     club.fmt.gz                          pdfTeX format = \\documentclass[11pt]{article} + STITCHED preamble.tex,
                                          built by the WASM engine itself (tools/busytex_bundle_node.cjs)
     club-texlive.data.gz, club-texlive.json   trimmed TeX Live tree (files opened while building the format and
@@ -27,7 +28,9 @@ import gzip
 import hashlib
 import json
 import os
+import re
 import shutil
+import struct
 import subprocess
 import sys
 import tempfile
@@ -150,6 +153,25 @@ def verify_assets(assets_dir):
     return bad
 
 
+def blank_unused_icu(wasm):
+    """The engine is one binary for pdfTeX, XeTeX and LuaTeX. About 22 MB of its data segment (9 MB compressed, a third of
+    the whole download) is ICU's: locales, converters, collation, which only XeTeX and LuaTeX read, and this site runs only
+    pdfTeX. It is overwritten with zeros, same length, so nothing else in the wasm moves. The PDFs stay identical, byte for
+    byte (checked over the whole bank). Each ICU item starts with a DataHeader: headerSize, 0xda 0x27, ..., a 4-letter format."""
+    formats = (b"ResB", b"cnvt", b"UCol", b"Brk ", b"Dict", b"Nrm2", b"CvAl", b"Cfu ", b"Emoj", b"Layo", b"unam")
+    items = []
+    for m in re.finditer(rb"\xda\x27", wasm):
+        p = m.start() - 2
+        size = struct.unpack("<H", wasm[p:p + 2])[0]
+        if 16 <= size <= 512 and wasm[p + 8] == 0 and wasm[p + 12:p + 16] in formats:
+            items.append(p)
+    if len(items) < 2:
+        print("  no ICU data found in the wasm: left as it is", flush=True)
+        return wasm
+    print(f"  blanking {items[-1] - items[0]:,d} bytes of ICU data in the wasm", flush=True)
+    return wasm[:items[0]] + bytes(items[-1] - items[0]) + wasm[items[-1]:]
+
+
 def gz(data, level=9):
     return gzip.compress(data, compresslevel=level, mtime=0)
 
@@ -221,7 +243,6 @@ def main(argv=None):
     ap.add_argument("--bodies", default=os.path.join(paths.BANK_DATA_DIR, "bodies.json"))
     ap.add_argument("--out", default=paths.BUSYTEX_DIR)
     ap.add_argument("--staging", default=os.path.join(paths.CACHE_DIR, "busytex-staging"))
-    ap.add_argument("--keep-staging", action="store_true")
     a = ap.parse_args(argv)
     t0 = time.time()
     log = lambda *a: print(*a, flush=True)
@@ -247,7 +268,7 @@ def main(argv=None):
     for variant in ("problems", "solutions"):
         tex = stitch.make_main(bodies, ids, variant, filters="all problems", appendix=appendix)
         files = {os.path.basename(m): os.path.join(fig_dir, os.path.basename(m))
-                 for m in stitch.re.findall(r"\\includegraphics(?:\[[^\]]*\])?\{([^}]+)\}", tex)}
+                 for m in re.findall(r"\\includegraphics(?:\[[^\]]*\])?\{([^}]+)\}", tex)}
         docs.append((f"all_{variant}", tex, files))
     docs.append(("census", CENSUS_DOC, {}))
     log(f"{len(ids)} problems; documents: {', '.join(d[0] for d in docs)}")
@@ -300,11 +321,11 @@ def main(argv=None):
     os.makedirs(a.out, exist_ok=True)
     for stale in glob.glob(os.path.join(a.out, "*")):
         os.remove(stale)
-    manifest = {"generated": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "files": {}, "env": {
+    manifest = {"files": {}, "env": {
         "TEXMFDIST": "/texlive/texmf-dist", "TEXMFVAR": "/texlive/texmf-dist/texmf-var", "TEXMFCACHE": "/texlive/texmf-dist/texmf-var",
         "TEXMFCNF": "/texlive/texmf-dist/web2c", "TEXMFLOG": "/tmp/texmf.log", "SOURCE_DATE_EPOCH": "0", "FORCE_SOURCE_DATE": "1",
         "TEXLIVE_REMOTE_ENDPOINT": ""},
-        "fmt_path": "/texlive/texmf-dist/texmf-var/web2c/pdftex/club.fmt", "data_mount": "/texlive/texmf-dist",
+        "fmt_path": "/texlive/texmf-dist/texmf-var/web2c/pdftex/club.fmt",
         "pdftex_args": ["pdflatex", "-interaction=nonstopmode", "-halt-on-error", "--fmt", "/texlive/texmf-dist/texmf-var/web2c/pdftex/club.fmt", "main.tex"],
         "rerun_patterns": ["Rerun to get", "Label(s) may have changed", "rerunfilecheck", "run LaTeX again"]}
     build_report = {"report": report}
@@ -321,9 +342,12 @@ def main(argv=None):
     with open(os.path.join(a.assets, "busytex.js"), "rb") as f:
         emit("busytex.js", f.read())
     with open(os.path.join(a.assets, "busytex.wasm"), "rb") as f:
-        emit("busytex.wasm", f.read())
+        emit("busytex.wasm", blank_unused_icu(f.read()))
     with open(os.path.join(a.staging, "club.fmt"), "rb") as f:
-        emit("club.fmt", f.read())
+        fmt = f.read()
+    # pdfTeX gzips its format, which then compresses badly a second time and is inflated again at each LaTeX pass: unpacked,
+    # the download is smaller and each pass faster
+    emit("club.fmt", gzip.decompress(fmt) if fmt[:2] == b"\x1f\x8b" else fmt)
     emit("club-texlive.data", blob)
     emit("club-texlive.json", json.dumps(meta, separators=(",", ":")).encode(), compress=False)
     manifest["data"] = {"files": len(index), "raw_bytes": len(blob)}
@@ -346,15 +370,30 @@ def main(argv=None):
             shutil.copy(cand, os.path.join(a.out, "LICENSE-texlyre-busytex.txt"))
             break
     with open(os.path.join(a.out, "NOTICE.txt"), "w") as f:
-        f.write("This directory contains texlyre-busytex (https://github.com/TeXlyre/texlyre-busytex, AGPL-3.0):\n"
-                "busytex.js / busytex.wasm (pdfTeX, XeTeX, LuaTeX, bibtex8, makeindex, kpathsea compiled to WebAssembly,\n"
-                "TeX Live 2026) and a trimmed subset of the TeX Live texmf tree (club-texlive.data, GPL/LPPL per file),\n"
-                "plus stmaryrd / bbm / algorithmicx / algorithms taken from a local TeX Live 2025 and bbm PK bitmaps\n"
-                "generated by METAFONT.  club.fmt is a pdfTeX format built from preamble.tex.  See manifest.json.\n")
+        # what the "licences" link of the Problems and Propose pages opens: the AGPL's Appropriate Legal Notices
+        f.write("The PDFs of this site are made in your browser by pdfTeX, through TeXlyre-BusyTeX. Nothing is uploaded.\n\n"
+                "TeXlyre-BusyTeX (busytex.js, busytex.wasm: pdfTeX, XeTeX, LuaTeX, bibtex8, makeindex and kpathsea compiled\n"
+                "to WebAssembly, TeX Live 2026)\n"
+                "Copyright the TeXlyre-BusyTeX authors and the authors of the programs it contains.\n"
+                "It is free software: you may use, change and pass it on under the GNU Affero General Public License,\n"
+                "version 3. The licence is in this folder: LICENSE-texlyre-busytex.txt\n"
+                "It comes with NO WARRANTY of any kind, as sections 15 and 16 of that licence say.\n\n"
+                "The copy on this site is modified: the ICU data of busytex.wasm, which only XeTeX and LuaTeX read and this\n"
+                "site never runs, is overwritten with zeros.\n\n"
+                "Source code:\n"
+                "- the engine: https://github.com/TeXlyre/texlyre-busytex\n"
+                f"- this site, and the modification: https://github.com/{paths.GITHUB_REPO}\n"
+                "  (website-code/tools/busytex_bundle.py makes this folder; website-code/build.py names the upstream release\n"
+                "  used, as ASSETS_URL, and website-code/tools/busytex-assets.sha256 pins it)\n\n"
+                "Also in this folder: a trimmed subset of the TeX Live tree (club-texlive.data, GPL or LPPL per file), with\n"
+                "stmaryrd, bbm, algorithmicx and algorithms from a local TeX Live 2025 and bbm PK bitmaps generated by METAFONT.\n"
+                "club.fmt is a pdfTeX format built from the club's preamble.tex. See manifest.json.\n\n"
+                "PDF.js (the folder ../pdfjs/) draws the preview of a problem on the Problems page.\n"
+                "Copyright the Mozilla Foundation and the PDF.js contributors, under the Apache License, version 2.0:\n"
+                "../pdfjs/LICENSE. Source code: https://github.com/mozilla/pdf.js\n")
     total = sum(v["bytes"] for v in manifest["files"].values())
     log(f"total first download {total:,d} bytes ({total / 1e6:.2f} MB) in {time.time() - t0:.0f} s → {a.out}")
-    if not a.keep_staging:
-        shutil.rmtree(os.path.join(a.staging, "texmfvar"), ignore_errors=True)
+    shutil.rmtree(os.path.join(a.staging, "texmfvar"), ignore_errors=True)
     return 0
 
 

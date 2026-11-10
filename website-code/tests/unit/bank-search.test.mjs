@@ -43,7 +43,7 @@ const problems = [
 const f = (o) => ({ ...S.emptyFilters(), ...o });
 
 test('tree: selecting a node matches all its descendants', () => {
-  assert.deepEqual(S.areaDescendants(cat, 'analysis').sort(), ['analysis', 'real-analysis', 'sequences', 'series']);
+  assert.deepEqual([...cat.desc.get('analysis')].sort(),['analysis', 'real-analysis', 'sequences', 'series']);
   assert.deepEqual(S.filterProblems(problems, f({ area: ['analysis'] }), cat).map(p => p.id), [1, 2]);
   assert.deepEqual(S.filterProblems(problems, f({ area: ['real-analysis'] }), cat).map(p => p.id), [1, 2]);
   assert.deepEqual(S.filterProblems(problems, f({ area: ['sequences'] }), cat).map(p => p.id), [1]);
@@ -97,7 +97,6 @@ test('proposed problems (not reviewed yet) are listed only with "Show proposed p
   assert.equal(S.encodeState(f({})), '');
   assert.equal(S.decodeState('?pr=1').filters.showProposed, true);
   assert.equal(S.decodeState('?pr=0').filters.showProposed, false);
-  assert.match(S.describeFilters(f({ showProposed: true }), cat), /With proposed problems/);
 });
 
 test('suggestions: names, slugs, descriptions and aliases; children of a matching area; selected tags excluded', () => {
@@ -143,6 +142,20 @@ test('URL state round-trips and drops unknown slugs', () => {
   assert.equal(S.encodeState(S.emptyFilters(), []), '');
   assert.deepEqual(S.decodeState('?a=series,nope&d=hard&x=1&sel=abc,4', cat), { filters: f({ area: ['series'], difficulty: ['hard'] }), selection: [4], order: null });
   assert.deepEqual(S.decodeState('', cat).filters, S.emptyFilters());
+});
+
+test('methods filter only while shown: a link with m= and no sm=1 (made before that rule) turns "Show methods" on', () => {
+  assert.deepEqual(S.decodeState('?m=induction', cat).filters, f({ methods: ['induction'], showMethods: true }));
+  assert.equal(S.decodeState('?m=nope', cat).filters.showMethods, false);     // an unknown method is dropped first: nothing to show
+  assert.equal(S.encodeState(S.decodeState('?m=induction', cat).filters), 'm=induction&sm=1');
+});
+
+test('methods in the PDFs: a switch of its own, only with "Show methods"', () => {
+  const both = f({ showMethods: true, methodsInPdf: true });
+  assert.equal(S.encodeState(both), 'sm=1&mp=1');
+  assert.deepEqual(S.decodeState('sm=1&mp=1', cat).filters, both);
+  assert.equal(S.decodeState('mp=1', cat).filters.methodsInPdf, false);          // without sm=1 it means nothing
+  assert.equal(S.encodeState(f({ methodsInPdf: true })), '');
 });
 
 test('suggestions can be limited to some tag types', () => {
@@ -195,17 +208,6 @@ test('range formatting', () => {
   assert.deepEqual(S.parseRanges('1-3, 5,7-8'), [1, 2, 3, 5, 7, 8]);
   assert.deepEqual(S.parseRanges('9-3'), [3, 4, 5, 6, 7, 8, 9]);           // a range written backwards still counts
   assert.deepEqual(S.parseIdList('5-3,9'), [5, 4, 3, 9]);                 // and keeps its order in a hand-made order
-});
-
-test('describeFilters: plain text only, methods only when shown', () => {
-  assert.equal(S.describeFilters(S.emptyFilters(), cat), 'no filter (all problems)');
-  assert.equal(S.describeFilters(f({ text: 'fermat', difficulty: ['hard'] }), cat), 'Title: fermat · Difficulty: Hard');
-  assert.equal(S.describeFilters(f({ area: ['series'], methods: ['induction'], op: 'or', difficulty: ['hard'] }), cat),
-    'Area: Series; Methods: hidden (any of) · Difficulty: Hard');                // methods are spoilers
-  assert.equal(S.describeFilters(f({ methods: ['induction'], showMethods: true }), cat), 'Methods: Induction');
-  // typed text never reaches LaTeX raw: \ { } ^ ~ $ # emoji and non-Latin letters are dropped
-  assert.equal(S.describeFilters(f({ text: 'x^2 \\input{a} ~$#_ 🙂 Ωмега' }), cat), 'Title: x 2 input a');
-  assert.equal(S.describeFilters(f({ text: '^{}🙂' }), cat), 'no filter (all problems)');
 });
 
 test('symbols-only queries filter nothing and stay out of the URL; letters of any script are searchable', () => {

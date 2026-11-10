@@ -38,11 +38,10 @@ def _check_tag(t, where, errors):
     return True
 
 
-def load_tags(path="tags.yml"):
+def load_tags(path):
     """Return a dict with, per type, an ordered mapping slug -> tag dict.
 
-    Area tags get extra keys: 'parent' (slug or None), 'depth', 'children' (slugs),
-    'path' (list of slugs from the root).  Methods get 'group'.  Origins have 'kind'.
+    Area tags get extra keys: 'parent' (slug or None), 'depth', 'children' (slugs).  Methods get 'group'.  Origins have 'kind'.
     Raises TagError listing every problem found.
     """
     with open(path, encoding="utf-8") as f:
@@ -56,7 +55,7 @@ def load_tags(path="tags.yml"):
 
     area = {}
 
-    def walk(nodes, parent, depth, path):
+    def walk(nodes, parent, depth):
         if not isinstance(nodes, list):
             errors.append(f"area: children of {parent!r} must be a list")
             return
@@ -71,13 +70,13 @@ def load_tags(path="tags.yml"):
                 continue
             node = dict(n)
             node.pop("children", None)          # raw nested list; replaced by the slug list below
-            node.update(parent=parent, depth=depth, path=path + [slug], children=[])
+            node.update(parent=parent, depth=depth, children=[])
             area[slug] = node
             if parent:
                 area[parent]["children"].append(slug)
-            walk(n.get("children") or [], slug, depth + 1, path + [slug])
+            walk(n.get("children") or [], slug, depth + 1)
 
-    walk(raw["area"], None, 1, [])
+    walk(raw["area"], None, 1)
 
     methods = {}
     if not isinstance(raw["methods"], list):

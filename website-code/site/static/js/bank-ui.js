@@ -34,7 +34,8 @@ const shownTotal = () => (state.filters.showProposed ? problems : reviewed).leng
 const counts = { all: S.tagCounts(problems, cat), reviewed: S.tagCounts(reviewed, cat) };
 const countOf = (type, slug) => (state.filters.showProposed ? counts.all : counts.reviewed).get(type + ':' + slug) || 0;
 const inlinePdf = navigator.pdfViewerEnabled !== false;     // no built-in PDF viewer (Chrome on Android): links, no frame
-const smooth = () => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'; } catch (e) { return 'auto'; } };
+const reducedMotion = () => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return true; } };
+const smooth = () => reducedMotion() ? 'auto' : 'smooth';
 const state = {
   filters: S.emptyFilters(),
   selection: new Set(),
@@ -45,13 +46,19 @@ const state = {
   showAll: false,         // the list stays hidden until the visitor searches, filters or clicks Show all
 };
 
-function loadFromUrl() {
+function loadFromUrl(first = false) {
   let decoded;
   try { decoded = S.decodeState(location.search, cat); }
   catch (e) { decoded = { filters: S.emptyFilters(), selection: [], order: null }; }      // a broken link: start empty
   const { filters, selection, order } = decoded;
   state.filters = filters;
-  $('bank-search').value = filters.text;
+  // a hand-written link may name years the bank does not have: the filter takes the years the slider can show
+  const [yearLo, yearHi] = yearIndices(filters);
+  if (filters.yearFrom != null) filters.yearFrom = yearLo === 0 ? null : YEARS[yearLo];
+  if (filters.yearTo != null) filters.yearTo = yearHi === YMAX ? null : YEARS[yearHi];
+  // on arrival, what was typed while this script was on its way stays
+  const box = $('bank-search');
+  if (first && box.value.trim() && !filters.text) filters.text = box.value.trim(); else box.value = filters.text;
   state.selection = new Set(selection.filter(id => byId.has(id)));
   state.order = order ? order.filter(id => byId.has(id)) : null;
   if (state.order && !state.order.length) state.order = null;
@@ -69,18 +76,24 @@ function syncUrl() {
 /* ------------------------------------------------------------------ rendering: chips */
 function tagBadge(type, slug, { removable = false, clickable = false, typeLabel = S.TYPE_LABEL[type] } = {}) {
   const tag = S.getTag(cat, type, slug) || { name: slug };
-  const b = el('span', { class: `bank-chip bank-chip-${type}`, title: type === 'area' ? S.areaPath(cat, slug) : (tag.description || '') });
+  const b = el('span', { class: `bank-chip bank-chip-${type}`, 'data-tip': type === 'area' ? S.areaPath(cat, slug) : (tag.description || '') });   // the bubble: tips.js
   b.append(el('span', { class: 'bank-chip-type', text: typeLabel }), el('span', { text: tag.name }));
   if (removable) {
     b.append(el('button', { type: 'button', class: 'bank-chip-x', 'aria-label': `Remove ${tag.name}`, onclick: (e) => removeChip(e.currentTarget, type, slug) }, '×'));
   } else if (clickable) {
     b.classList.add('bank-chip-clickable');
     b.setAttribute('role', 'button'); b.tabIndex = -1;      // a mouse shortcut: the keyboard picks tags in the search bar (fewer Tab stops per row)
-    const add = (e) => { e.preventDefault(); e.stopPropagation(); addFilterTag(type, slug); };
+    const add = (e) => { e.preventDefault(); e.stopPropagation(); addFilterTag(type, slug); chipsIntoView(); };
     b.addEventListener('click', add);
     b.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') add(e); });
   }
   return b;
+}
+
+/* A tag pressed far down the list shrinks it: the chosen tag and the first results come into view. */
+function chipsIntoView() {
+  const box = $('bank-chips'), r = box.getBoundingClientRect();
+  if (r.top < document.querySelector('.site-head').offsetHeight || r.bottom > innerHeight) box.scrollIntoView({ block: 'start', behavior: smooth() });
 }
 
 /* The difficulty is a human's rating.  Until someone rates a problem, its chip says "none" and carries the AI's
@@ -89,15 +102,15 @@ const diffName = slug => (S.getTag(cat, 'difficulty', slug) || { name: slug }).n
 function difficultyChip(p) {
   if (p.difficultySource === 'human') return tagBadge('difficulty', p.difficulty, { clickable: true });
   const chip = el('span', { class: 'bank-chip bank-chip-unrated' },
-    el('span', { class: 'bank-chip-type', text: S.TYPE_LABEL.difficulty }), el('span', { text: 'none' }));
+    el('span', { class: 'bank-chip-type', text: S.TYPE_LABEL.difficulty }), el('span', { text: 'None' }));
   if (p.difficultySource === 'ai') {
-    chip.title = `Not rated yet. The AI estimates: ${diffName(p.difficulty)}`;
-    chip.append(el('span', { class: 'bank-ai', text: `AI: ${diffName(p.difficulty).toLowerCase()}` }));
+    chip.dataset.tip = `Not rated yet. The AI estimates: ${diffName(p.difficulty)}`;
+    chip.append(el('span', { class: 'bank-ai', text: `AI: ${diffName(p.difficulty)}` }));
   }
   return chip;
 }
 const difficultyText = p => p.difficultySource === 'human' ? diffName(p.difficulty)
-  : p.difficultySource === 'ai' ? `difficulty none (AI: ${diffName(p.difficulty).toLowerCase()})` : 'difficulty none';
+  : p.difficultySource === 'ai' ? `Difficulty none (AI: ${diffName(p.difficulty)})` : 'Difficulty none';
 
 function renderChips() {
   const box = $('bank-chips');
@@ -127,12 +140,13 @@ function listItems() {
   if (S.normalize(q)) {
     state.list.mode = 'suggest';
     const n = state.results.length;
-    // what the typed words already do (filter the titles), then the tags they could stand for
-    const tags = S.suggest(cat, q, state.filters, Infinity).filter(({ tag }) => countOf(tag.type, tag.slug) > 0).slice(0, 12)
+    // what the typed words already do (filter the titles), then the tags they could stand for (methods only when shown)
+    const types = state.filters.showMethods ? null : S.TAG_TYPES.filter(t => t !== 'methods');
+    const tags = S.suggest(cat, q, state.filters, Infinity, types).filter(({ tag }) => countOf(tag.type, tag.slug) > 0).slice(0, 12)
       .map(({ tag }) => ({ tag, label: tag.name, count: countOf(tag.type, tag.slug), sub: tag.type === 'area' ? (tag.parent ? S.areaPath(cat, tag.slug) : tag.description || '') : tag.type === 'methods' ? tag.group : (tag.description || '') }));
     if (!n) return [{ header: `No title contains “${q.trim()}”.` + (tags.length ? ' Press Enter to filter by the first tag.' : '') }, ...tags];   // see Enter in wire()
     const head = { header: `${n} problem${n === 1 ? '' : 's'} with “${q.trim()}” in the title. Press Enter to see them.` };
-    return tags.length ? [head, { header: 'or filter by one of these tags' }, ...tags] : [head];
+    return tags.length ? [head, { header: 'Or filter by one of these tags' }, ...tags] : [head];
   }
   state.list.mode = 'browse';
   const items = [];
@@ -155,14 +169,16 @@ function listItems() {
   };
   for (const [slug, t] of cat.byType.area) if (!t.parent && countOf('area', slug) > 0) pushArea(slug, 0);
   section('area', 'Area', areas);
-  const methods = [];
-  let group = null;
-  for (const t of cat.byType.methods.values()) {
-    if (!countOf('methods', t.slug)) continue;
-    if (t.group !== group) { group = t.group; methods.push({ subheader: group }); }
-    methods.push(option(t, 1));
+  if (state.filters.showMethods) {               // methods are spoilers: offered only while "Show methods" is on
+    const methods = [];
+    let group = null;
+    for (const t of cat.byType.methods.values()) {
+      if (!countOf('methods', t.slug)) continue;
+      if (t.group !== group) { group = t.group; methods.push({ subheader: group }); }
+      methods.push(option(t, 1));
+    }
+    section('methods', 'Methods', methods);
   }
-  section('methods', 'Methods (hidden in results unless "Show methods" is on)', methods);
   section('difficulty', 'Difficulty', [...cat.byType.difficulty.values()].filter(t => countOf('difficulty', t.slug)).map(t => option(t, 0, t.description)));
   section('origin', 'Origin', [...cat.byType.origin.values()].filter(t => countOf('origin', t.slug)).map(t => option(t, 0, t.description)));
   return items;
@@ -185,13 +201,13 @@ function renderList() {
         title: it.collapsed ? 'Show' : 'Hide', onclick: (e) => { e.stopPropagation(); toggleSection(it.section); } },
         el('span', { class: 'bank-list-caret', 'aria-hidden': 'true', text: it.collapsed ? '+' : '−' }), el('span', { text: it.header }),
         el('span', { class: 'visually-hidden', text: it.collapsed ? ' (collapsed)' : ' (expanded)' }));
-      if (it.countHead) head.append(el('span', { class: 'bank-list-count-head', text: 'problems' }));
+      if (it.countHead) head.append(el('span', { class: 'bank-list-count-head', text: 'Problems' }));
       box.append(head);
       return;
     }
     if (it.header) { box.append(el('div', { class: 'bank-list-header', role: 'presentation', text: it.header })); return; }
     if ('subheader' in it) { box.append(el('div', { class: 'bank-list-subheader', role: 'presentation', text: it.subheader })); return; }
-    it.optionIndex = optIndex++;
+    optIndex++;
     const row = el('div', { class: `bank-option bank-option-${it.tag.type}` + (it.selected ? ' bank-option-selected' : ''), role: 'option', id: `bank-opt-${i}`,
       'aria-selected': it.selected ? 'true' : 'false', style: { '--depth': String(it.depth || 0) }, 'data-index': i });
     if (it.toggle) {       // a mouse target, not a button (no control inside an option): the keyboard opens a node with → and ←
@@ -210,6 +226,7 @@ function renderList() {
   box.hidden = false;
   input.setAttribute('aria-expanded', 'true');
   setActive(state.list.active, false);
+  fitList();                                     // its room may have changed: a tag chosen adds a row of chips above it
 }
 
 function setActive(i, scroll = true) {
@@ -244,7 +261,20 @@ function toggleExpand(slug) {
   renderList();
 }
 
-function openList() { state.list.open = true; state.list.active = -1; renderList(); }
+function openList() { state.list.open = true; state.list.active = -1; renderList(); fitList(true); }
+/* On a small window, or over a phone's keyboard, the list would open below what can be seen: on opening, the search box goes up
+   to the header; and whenever it is drawn, the list keeps to the room left below it. */
+function fitList(scroll = false) {
+  const box = $('bank-listbox');
+  if (box.hidden) return;
+  const vv = window.visualViewport, bottom = vv ? vv.height + vv.offsetTop : innerHeight;
+  let top = box.getBoundingClientRect().top;
+  if (scroll && top + box.offsetHeight > bottom) {
+    const up = $('bank-searchbox').getBoundingClientRect().top - document.querySelector('.site-head').offsetHeight - 8;
+    if (up > 0) { window.scrollBy(0, up); top -= up; }
+  }
+  box.style.setProperty('max-height', `${Math.max(120, Math.min(innerHeight * .6, bottom - top - 8))}px`);
+}
 function closeList() { state.list.open = false; state.list.active = -1; renderList(); }
 
 function chooseItem(i) {
@@ -311,6 +341,8 @@ function onYearInput(e) {
 function readAdvanced() {
   const f = state.filters;
   f.showMethods = $('bank-show-methods').checked;
+  if (!f.showMethods) f.methods = [];            // hidden methods filter nothing: their chips go too
+  f.methodsInPdf = f.showMethods && $('bank-methods-pdf').checked;
   f.showProposed = $('bank-show-proposed').checked;
   f.op = $('bank-op-or').checked ? 'or' : 'and';
   f.solved = document.querySelector('input[name="bank-solved"]:checked').value;
@@ -320,6 +352,8 @@ function readAdvanced() {
 function writeAdvanced() {
   const f = state.filters;
   $('bank-show-methods').checked = f.showMethods;
+  $('bank-methods-pdf').checked = f.methodsInPdf;
+  setMethodsPdf(f.showMethods);
   $('bank-show-proposed').checked = f.showProposed;
   $('bank-op-and').checked = f.op !== 'or'; $('bank-op-or').checked = f.op === 'or';
   $('bank-op-help').textContent = f.op === 'or' ? 'Problems with at least one of the tags.' : 'Problems with all the tags.';
@@ -330,9 +364,37 @@ function writeAdvanced() {
     drawYears(lo, hi);
   }
   document.querySelector(`input[name="bank-solved"][value="${f.solved}"]`).checked = true;
-  const n = (f.op === 'or' ? 1 : 0) + (f.showMethods ? 1 : 0) + (f.showProposed ? 1 : 0) + (f.yearFrom != null || f.yearTo != null ? 1 : 0) + (f.solved !== 'all' ? 1 : 0);
+  const n = (f.op === 'or' ? 1 : 0) + (f.showMethods ? 1 : 0) + (f.methodsInPdf ? 1 : 0) + (f.showProposed ? 1 : 0) + (f.yearFrom != null || f.yearTo != null ? 1 : 0) + (f.solved !== 'all' ? 1 : 0);
   $('bank-filter-count').textContent = n ? String(n) : '';
   $('bank-filter-count').hidden = !n;
+}
+
+/* "In the PDFs" comes and goes with "Show": it unfolds beside it (under it on a narrow screen) to its exact size, pushing
+   what follows aside along one smooth curve while it fades in; folding is the same, backwards, from wherever it is.  At
+   once while the menu is closed, and for those who ask for less motion. */
+let fold = null;            // {anim, open}: the unfolding or folding under way
+function setMethodsPdf(open) {
+  const el = $('bank-methods-pdf-option');
+  if (open === (fold ? fold.open : !el.hidden)) return;
+  const box = el.parentElement, wide = getComputedStyle(box).flexDirection !== 'column';
+  const dim = wide ? 'width' : 'height', edge = wide ? 'marginLeft' : 'marginTop';
+  const at = el.hidden ? 0 : el.getBoundingClientRect()[dim];
+  if (fold) fold.anim.cancel();
+  fold = null;
+  el.hidden = false;
+  const size = el.getBoundingClientRect()[dim];
+  if (!el.animate || $('bank-advanced').hidden || !size || reducedMotion()) { el.hidden = !open; return; }
+  const gap = parseFloat(getComputedStyle(box)[wide ? 'columnGap' : 'rowGap']) || 0;
+  // folded, it takes no room, not even the gap before it (its own margin is -4px: site.css .bank-fold)
+  const frame = s => ({ [dim]: `${s}px`, [edge]: `${-4 - gap * (1 - s / size)}px`, opacity: s / size });
+  const anim = el.animate([frame(at), frame(open ? size : 0)], { duration: open ? 380 : 280, easing: 'cubic-bezier(.4, 0, .2, 1)', fill: 'both' });
+  fold = { anim, open };
+  anim.finished.then(() => {
+    if (!fold || fold.anim !== anim) return;
+    fold = null;
+    el.hidden = !open;
+    anim.cancel();
+  }, () => {});
 }
 
 function resetFilters() {
@@ -342,16 +404,120 @@ function resetFilters() {
 }
 
 /* ------------------------------------------------------------------ Preview: one problem, read here */
-let preview = null;         // {id, panel, btn, url, abort, status, done}: at most one open at a time
+/* The statement is typeset by pdfTeX (bank-compile.js makePreview) and drawn into the page by PDF.js (site/static/pdfjs/,
+   copied by build.py; loaded on the first Preview): no frame, no toolbar, the page's own background and ink, and the size
+   of the page's own text, which is Computer Modern too.  A text layer over the drawing lets it be selected and read
+   aloud.  Where PDF.js cannot run, the browser's PDF frame as before. */
+let preview = null;         // {id, panel, btn, url, task, abort, status, done, measure, folding, watch}: one open at a time
+const EASE = 'cubic-bezier(.4, 0, .2, 1)';
+const pxPerPt = () => (parseFloat(getComputedStyle(document.body).fontSize) || 18) / 10.95;   // the bank's \normalsize: 11pt class
+const SHEET_PT = 426.79;    // the sheets' measure (preamble.tex: A4, 3 cm side margins): wider screens use it as it is
+
+let pdfjsLib = null;
+function loadPdfjs() {
+  if (!pdfjsLib) {
+    const v = data.pdfjs ? `?v=${encodeURIComponent(data.pdfjs)}` : '';
+    pdfjsLib = import(new URL(`../pdfjs/pdf.min.mjs${v}`, import.meta.url).href).then(lib => {
+      lib.GlobalWorkerOptions.workerSrc = new URL(`../pdfjs/pdf.worker.min.mjs${v}`, import.meta.url).href;
+      return lib;
+    });
+    pdfjsLib.catch(() => { pdfjsLib = null; });       // tried again at the next Preview
+  }
+  return pdfjsLib;
+}
+
+/* The measure of the statement, in pt: what the panel holds at the page's text size (the sheets' when it holds more). */
+function panelWidth(panel) {
+  const cs = getComputedStyle(panel);
+  return panel.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+}
+function previewMeasure(panel) {           // 3 pt to spare: a line may end a hair past the measure
+  return Math.max(150, Math.min(SHEET_PT, panelWidth(panel) / pxPerPt() - 2 * C.PREVIEW_MARGIN_PT - 3));
+}
+
+/* The page of the PDF into a canvas (as far right as the text goes), with its text layer.  Resolves the element. */
+async function drawSheet(mine, pdf) {
+  const lib = await loadPdfjs();
+  if (mine.task) mine.task.destroy();              // the drawing of an older measure
+  mine.task = lib.getDocument({ data: pdf.slice(), useWasm: false, stopAtErrors: false });
+  const doc = await mine.task.promise;
+  const page = await doc.getPage(1);
+  const text = await page.getTextContent();
+  const pt = page.getViewport({ scale: 1 });
+  let right = 0;
+  for (const it of text.items) if (it.str && it.width) right = Math.max(right, it.transform[4] + it.width);
+  const w = Math.min(pt.width, Math.ceil((right || pt.width) + C.PREVIEW_MARGIN_PT));
+  // a formula wider than a phone: the statement a little smaller, to fit (down to 70%; past that, it scrolls sideways)
+  const s = Math.max(.7 * pxPerPt(), Math.min(pxPerPt(), panelWidth(mine.panel) / w));
+  // sharp on this screen, and on a touch screen still sharp at 1.5x zoom; at most 12 million pixels
+  let k = s * (window.devicePixelRatio || 1) * (matchMedia('(pointer: coarse)').matches ? 1.5 : 1);
+  k = Math.min(k, Math.sqrt(12e6 / (w * pt.height)));
+  const canvas = el('canvas', { 'aria-hidden': 'true' });
+  canvas.width = Math.ceil(w * k); canvas.height = Math.ceil(pt.height * k);
+  await page.render({ canvasContext: canvas.getContext('2d'), viewport: page.getViewport({ scale: k }), background: 'rgba(0, 0, 0, 0)' }).promise;
+  const layer = el('div', { class: 'textLayer' });
+  layer.style.setProperty('--total-scale-factor', String(s));
+  await new lib.TextLayer({ textContentSource: text, container: layer, viewport: page.getViewport({ scale: s }) }).render();
+  const sheet = el('div', { class: 'bank-sheet' }, canvas, layer);
+  sheet.style.width = `${(w * s).toFixed(2)}px`;
+  sheet.style.height = `${(pt.height * s).toFixed(2)}px`;
+  return el('div', { class: 'bank-sheet-scroll' }, sheet);     // a formula wider than a phone: scrolled sideways
+}
+
+/* The panel goes smoothly from its height before `change` to its height after, what `change` brings fading in. */
+function morph(panel, change) {
+  const from = panel.getBoundingClientRect().height;
+  change();
+  if (!panel.animate || reducedMotion()) return Promise.resolve();
+  const to = panel.getBoundingClientRect().height;
+  if (panel.lastElementChild) panel.lastElementChild.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 320, easing: 'ease-out' });
+  return panel.animate([{ height: `${from}px` }, { height: `${to}px` }], { duration: 320, easing: EASE }).finished.catch(() => {});
+}
 
 function closePreview() {
   if (!preview) return;
   preview.abort.abort();                        // a compile still waiting for the engine is dropped, not run for nothing
   if (preview.url) URL.revokeObjectURL(preview.url);
+  if (preview.task) preview.task.destroy();
+  if (preview.watch) preview.watch.disconnect();
   preview.panel.remove();
   preview.btn.setAttribute('aria-expanded', 'false');
   preview.btn.removeAttribute('aria-controls');
   preview = null;
+}
+
+/* The cross: the preview folds away, then goes. */
+function foldPreview() {
+  const mine = preview;
+  mine.btn.setAttribute('aria-expanded', 'false');       // the cross goes at once
+  if (!mine.panel.animate || reducedMotion()) { closePreview(); return; }
+  const h = mine.panel.getBoundingClientRect().height;
+  mine.folding = mine.panel.animate([{ height: `${h}px`, opacity: 1 }, { height: '0px', opacity: 0, paddingTop: '0px', paddingBottom: '0px', marginTop: '0px' }],
+    { duration: 260, easing: EASE, fill: 'forwards' });
+  mine.folding.finished.then(() => { if (preview === mine) closePreview(); }, () => {});
+}
+
+/* Typeset at the panel's measure and drawn; again when that measure changes (a phone turned, a window made narrower). */
+async function showStatement(mine, p, first) {
+  const measure = previewMeasure(mine.panel);
+  mine.measure = measure;
+  loadPdfjs().catch(() => {});                  // fetched while pdfTeX works
+  const res = await C.compilePreview(p.id, { signal: mine.abort.signal, width: measure < SHEET_PT ? measure : null });
+  if (preview !== mine) return;
+  let shown;
+  try { shown = await drawSheet(mine, res.pdf); } catch (e) {
+    if (preview !== mine) return;
+    console.warn('PDF.js could not draw the preview; the PDF frame instead', e);
+    mine.url = mine.url || URL.createObjectURL(new Blob([res.pdf], { type: 'application/pdf' }));
+    shown = el('div', {}, pdfLinks(mine.url, (S.normalize(p.title).replace(/ /g, '-') || 'problem') + '.pdf'));
+    if (inlinePdf) shown.append(el('iframe', { class: 'bank-pdf bank-preview-pdf', src: mine.url, 'aria-label': `Preview of ${p.title}` }));
+  }
+  if (preview !== mine) return;
+  mine.done = true;
+  if (first) {
+    await morph(mine.panel, () => mine.panel.replaceChildren(shown));
+    if (preview === mine) mine.panel.scrollIntoView({ behavior: smooth(), block: 'nearest' });
+  } else mine.panel.replaceChildren(shown);
 }
 
 /* Open PDF and Download always; the PDF itself in the page only where the browser has a PDF viewer. */
@@ -362,25 +528,31 @@ function pdfLinks(url, filename) {
 }
 
 async function togglePreview(p, row, btn) {
-  const wasOpen = preview && preview.id === p.id;
+  const wasOpen = preview && preview.id === p.id && !preview.folding;
+  if (wasOpen) { foldPreview(); return; }
   closePreview();
-  if (wasOpen) return;
   prefetch();
   const status = el('div', { class: 'small text-muted', role: 'status', text: 'Compiling this problem…' });
   const panel = el('div', { class: 'bank-preview-panel', id: `bank-preview-${p.id}` }, status);
-  row.append(panel);                            // inside the problem's row: not an extra item of the list
-  btn.setAttribute('aria-expanded', 'true');
+  btn.setAttribute('aria-expanded', 'true');       // and the CSS gives the button a cross
   btn.setAttribute('aria-controls', panel.id);
-  const mine = preview = { id: p.id, panel, btn, url: null, abort: new AbortController(), status, done: false };
+  const mine = preview = { id: p.id, panel, btn, url: null, task: null, abort: new AbortController(), status, done: false };
+  morph(panel, () => row.append(panel));        // inside the problem's row: not an extra item of the list
+  panel.scrollIntoView({ behavior: smooth(), block: 'nearest' });
   try {
-    const res = await C.compilePreview(p.id, { signal: mine.abort.signal });
-    if (preview !== mine) return;               // closed, or another Preview opened meanwhile
-    mine.done = true;
-    mine.url = URL.createObjectURL(new Blob([res.pdf], { type: 'application/pdf' }));
-    panel.replaceChildren(pdfLinks(mine.url, (S.normalize(p.title).replace(/ /g, '-') || 'problem') + '.pdf'));
-    if (inlinePdf) panel.append(el('iframe', { class: 'bank-pdf bank-preview-pdf', src: mine.url, title: `Preview of ${p.title}` }));
+    await showStatement(mine, p, true);
+    if (preview !== mine || !window.ResizeObserver) return;
+    let timer = 0;
+    mine.watch = new ResizeObserver(() => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        if (preview === mine && !mine.folding && Math.abs(previewMeasure(panel) - mine.measure) > 6) showStatement(mine, p, false).catch(() => {});
+      }, 250);
+    });
+    mine.watch.observe(panel);
   } catch (e) {
-    if (preview !== mine || (e && e.name === 'AbortError')) return;
+    if (preview !== mine) return;
+    if (e && e.name === 'AbortError') { closePreview(); return; }       // the engine was reset under it: nothing will come
     mine.done = true;
     panel.replaceChildren(el('div', { class: 'alert alert-danger small mb-0', role: 'alert' }, 'Could not show this problem: ' + ((e && e.message) || e), resetLink(e)));
   }
@@ -400,7 +572,7 @@ function listShown() { return shownTotal() > 0 && (state.showAll || hasQuery());
 const rows = new Map();     // id -> {li, cb}
 
 function buildRow(p) {
-  const cb = el('input', { type: 'checkbox', class: 'form-check-input bank-check', id: `bank-p-${p.id}`, 'data-id': p.id, 'aria-label': `Select “${p.title}”` });
+  const cb = el('input', { type: 'checkbox', class: 'bank-check', id: `bank-p-${p.id}`, 'data-id': p.id, 'aria-label': `Select “${p.title}”` });
   cb.addEventListener('change', () => { select([p.id], cb.checked); if (cb.checked) prefetch(); syncRow(p.id); renderSelectionState(); syncUrl(); });
   const tags = el('span', { class: 'bank-tags' });
   for (const a of p.area) tags.append(tagBadge('area', a, { clickable: true }));
@@ -412,15 +584,14 @@ function buildRow(p) {
   }
   tags.append(difficultyChip(p));
   for (const m of p.methods) tags.append(tagBadge('methods', m, { clickable: true }));      // visible only with "Show methods" (CSS)
-  const marker = p.solutionMasked ? el('span', { class: 'bank-marker bank-marker-masked', title: 'The solution is published once it has been reviewed', text: 'solution under review' })
-    : !p.hasSolution ? el('span', { class: 'bank-marker bank-marker-unsolved', title: 'No solution in the bank yet', text: 'no solution' })
-    : p.partial ? el('span', { class: 'bank-marker bank-marker-partial', title: 'The solution is unfinished', text: 'partial solution' }) : null;
-  const review = data.index.preview ? el('span', { class: `bank-review bank-review-${p.review}`, text: `review: ${p.review}` })
-    : p.proposed ? el('span', { class: 'bank-review bank-review-proposed', title: 'Not reviewed by the board yet: it may contain mistakes', text: 'proposed' }) : null;
+  const marker = p.solutionMasked ? el('span', { class: 'bank-marker bank-marker-masked', 'data-tip': 'The solution is published once it has been reviewed', text: 'Solution under review' })
+    : !p.hasSolution ? el('span', { class: 'bank-marker bank-marker-unsolved', 'data-tip': 'No solution in the bank yet', text: 'No solution' })
+    : p.partial ? el('span', { class: 'bank-marker bank-marker-partial', 'data-tip': 'The solution is unfinished', text: 'Partial solution' }) : null;
+  const review = data.index.preview ? el('span', { class: `bank-review bank-review-${p.review}`, 'data-tip': p.review === 'human' ? 'Reviewed by a board member' : 'Not reviewed by the board yet', text: `Review: ${p.review}` })
+    : p.proposed ? el('span', { class: 'bank-review bank-review-proposed', 'data-tip': 'Not reviewed by the board yet: it may contain mistakes', text: 'Proposed' }) : null;
   // no per-problem Edit link for now: it comes back with the administrator mode (TODO.md)
-  const edit = p.provisional ? el('span', { class: 'bank-review bank-review-new', title: 'Proposed problem, not merged yet', text: 'new' }) : null;
-  const previewBtn = el('button', { type: 'button', class: 'btn btn-sm btn-link bank-preview-btn', 'aria-expanded': 'false', 'aria-label': `Preview “${p.title}”`,
-    title: 'Read this problem here (statement only, compiled in your browser)', text: 'Preview' });
+  const edit = p.provisional ? el('span', { class: 'bank-review bank-review-new', 'data-tip': 'Proposed problem, not merged yet', text: 'New' }) : null;
+  const previewBtn = el('button', { type: 'button', class: 'btn btn-sm btn-link bank-preview-btn', 'aria-expanded': 'false', 'aria-label': `Preview “${p.title}”`, text: 'Preview' });
   const li = el('li', { class: 'list-group-item bank-row', 'data-id': p.id, hidden: true },
     cb,
     el('span', { class: 'bank-row-main' },
@@ -440,6 +611,7 @@ function syncRow(id) {
   r.li.classList.toggle('bank-row-selected', on);
 }
 
+let shownKey = '';
 function renderResults() {
   state.results = S.filterProblems(problems, state.filters, cat);
   const shown = listShown();
@@ -450,6 +622,8 @@ function renderResults() {
     list.append(all);
   }
   const visible = new Set(shown ? state.results.map(p => p.id) : []);
+  const key = shown ? state.results.map(p => p.id).join(',') : '';
+  if (key !== shownKey) { shownKey = key; list.scrollTop = 0; }      // other problems: their list starts at the top (it scrolls in its own box on a computer)
   if (preview && !visible.has(preview.id)) closePreview();
   for (const [id, r] of rows) {
     const on = visible.has(id);
@@ -478,7 +652,7 @@ function renderSelectionState() {
   all.checked = visible.length > 0 && visibleSelected === visible.length;
   all.indeterminate = visibleSelected > 0 && visibleSelected < visible.length;
   all.disabled = visible.length === 0;
-  $('bank-results-head').hidden = problems.length === 0 || (n === 0 && !listShown());
+  $('bank-results-head').hidden = problems.length === 0 || (n === 0 && !listShown() && !job);
   $('bank-selected-count').textContent = n ? `${n} selected` : '';
   $('bank-clear-selection').hidden = n === 0;
   // busy: aria-disabled, not disabled, so a keyboard user's focus stays on the button while the PDF is made
@@ -492,7 +666,7 @@ function renderSelectionState() {
   $('bank-order-btn').disabled = n < 2;
   $('bank-order-btn').textContent = state.order ? 'PDF order: yours' : 'PDF order: automatic';
   if (n < 2 && !$('bank-order').hidden) toggleOrderPanel(false);
-  else if (!$('bank-order').hidden) renderOrder();
+  else if (!$('bank-order').hidden && orderKey(pdfOrder()) !== orderShown) renderOrder();     // only when the ticks or their order changed
   // the solutions are offered for exactly the problems of the PDF on screen: once the ticks or their order change,
   // the offer goes (Create PDF again makes a new pair)
   if (lastCreate && !state.busy && !output.solutions && pdfOrder().join(',') !== lastCreate.ids.join(',')) {
@@ -512,6 +686,7 @@ function update() {
 
 /* ------------------------------------------------------------------ selection + PDF order */
 function select(ids, on) {
+  if (!state.busy) setStatus('');                 // the last message is about a job that is over
   const removed = new Set();
   for (const id of ids) {
     if (on && !state.selection.has(id)) { state.selection.add(id); if (state.order) state.order.push(id); }
@@ -531,20 +706,30 @@ function toggleOrderPanel(open) {
   const panel = $('bank-order');
   panel.hidden = !open;
   $('bank-order-btn').setAttribute('aria-expanded', String(open));
-  if (open) renderOrder();
+  if (open) {
+    renderOrder();
+    const r = panel.getBoundingClientRect();
+    if (r.top < stickyBar().getBoundingClientRect().bottom || r.top > innerHeight) panel.scrollIntoView({ behavior: smooth(), block: 'start' });
+  }
 }
 
 const HANDLE = () => el('span', { class: 'bank-order-handle', 'aria-hidden': 'true', title: 'Drag to move' }, '↕');
 
+// what the open order panel shows, so it is drawn again only when that changes (not on every keystroke or Create)
+let orderShown = '';
+const orderKey = ids => (state.order ? 'yours:' : 'automatic:') + ids.join(',');
+
 function renderOrder() {
   const list = $('bank-order-list');
   const ids = pdfOrder();
+  orderShown = orderKey(ids);
   $('bank-order-mode').textContent = state.order ? 'your order' : 'automatic: easiest first, then by area';
   $('bank-order-reset').disabled = !state.order;
   list.replaceChildren();
   ids.forEach((id, k) => {
     const p = byId.get(id);
-    const move = (delta) => {
+    const move = (delta, pressed) => {
+      const y0 = pressed.getBoundingClientRect().top;
       const next = [...ids];
       const j = k + delta;
       if (j < 0 || j >= next.length) return;
@@ -552,7 +737,12 @@ function renderOrder() {
       state.order = next;
       renderSelectionState(); syncUrl();                    // redraws the (open) order panel
       const btn = document.querySelector(`#bank-order-list li[data-id="${id}"] .bank-order-${delta < 0 ? 'up' : 'down'}`);
-      (btn && !btn.disabled ? btn : document.querySelector(`#bank-order-list li[data-id="${id}"] .bank-order-${delta < 0 ? 'down' : 'up'}`))?.focus();
+      const again = btn && !btn.disabled ? btn : document.querySelector(`#bank-order-list li[data-id="${id}"] .bank-order-${delta < 0 ? 'down' : 'up'}`);
+      if (!again) return;
+      again.focus({ preventScroll: true });
+      // the row moved: the list scrolls so that the arrow is where the finger is, and the page does the rest
+      list.scrollTop += again.getBoundingClientRect().top - y0;
+      window.scrollBy(0, again.getBoundingClientRect().top - y0);
     };
     const handle = HANDLE();
     const li = el('li', { class: 'list-group-item bank-order-row', 'data-id': id },
@@ -560,8 +750,8 @@ function renderOrder() {
       el('span', { class: 'bank-order-pos', text: `${k + 1}.` }),
       el('span', { class: 'bank-title', text: p ? p.title : '' }),
       el('span', { class: 'bank-order-meta small text-muted', text: p ? [difficultyText(p), p.area[0] ? S.areaPath(cat, p.area[0]).split(' › ')[0] : ''].filter(Boolean).join(' · ') : '' }),
-      el('button', { type: 'button', class: 'btn btn-sm btn-outline-secondary bank-order-up', 'aria-label': `Move “${p ? p.title : ''}” up`, disabled: k === 0, onclick: () => move(-1) }, '↑'),
-      el('button', { type: 'button', class: 'btn btn-sm btn-outline-secondary bank-order-down', 'aria-label': `Move “${p ? p.title : ''}” down`, disabled: k === ids.length - 1, onclick: () => move(1) }, '↓'));
+      el('button', { type: 'button', class: 'btn btn-sm bank-order-up', 'aria-label': `Move “${p ? p.title : ''}” up`, disabled: k === 0, onclick: e => move(-1, e.currentTarget) }, '↑'),
+      el('button', { type: 'button', class: 'btn btn-sm bank-order-down', 'aria-label': `Move “${p ? p.title : ''}” down`, disabled: k === ids.length - 1, onclick: e => move(1, e.currentTarget) }, '↓'));
     handle.addEventListener('pointerdown', e => startDrag(e, li));
     list.append(li);
   });
@@ -588,7 +778,8 @@ function startDrag(e, li) {
   const scroll = () => {
     const r = list.getBoundingClientRect();
     const edge = 32;
-    const step = lastY < r.top + edge ? -Math.min(24, r.top + edge - lastY) : lastY > r.bottom - edge ? Math.min(24, lastY - r.bottom + edge) : 0;
+    const bottom = Math.min(r.bottom, innerHeight);       // in landscape the list is taller than the screen
+    const step = lastY < r.top + edge ? -Math.min(24, r.top + edge - lastY) : lastY > bottom - edge ? Math.min(24, lastY - bottom + edge) : 0;
     if (step) { const before = list.scrollTop; list.scrollTop += step; if (list.scrollTop !== before) place(); }
     raf = requestAnimationFrame(scroll);
   };
@@ -617,6 +808,8 @@ function startDrag(e, li) {
 /* ------------------------------------------------------------------ Create → the problems PDF, solutions on demand */
 const output = { problems: null, solutions: null };
 let preambleText = null;
+let preambleReady = Promise.resolve();            // needed only for the .tex link: the PDF does not wait for it to start
+const preambleOrTimeout = () => Promise.race([preambleReady, new Promise(r => setTimeout(r, 1500))]);    // nor for long to show
 let lastCreate = null;          // what the problems PDF on screen was built from; the solutions PDF reuses it
 
 let busyLabel = '';              // what the status line says while pdfTeX works on the current Create
@@ -624,7 +817,9 @@ let job = null;                  // AbortController of the PDF being made (the C
 function setStatus(text, kind = 'muted') {
   const s = $('bank-status');
   s.textContent = text;
-  s.className = 'bank-status small ' + (kind === 'muted' ? 'text-muted' : `text-${kind}-emphasis`);    // -emphasis: readable in dark mode too
+  const was = s.className;
+  s.className = 'bank-status small ' + (kind === 'muted' ? 'text-muted' : `text-${kind}-emphasis`);
+  if (s.className !== was) syncStuckHeights();    // -emphasis: readable in dark mode too
 }
 
 function texFilename(ids, variant, ext) {
@@ -639,11 +834,11 @@ function renderOutput(variant, res, err, idsForName) {
   for (const u of card._urls || []) URL.revokeObjectURL(u);
   card._urls = [];
   const mk = (bytes, type) => { const u = URL.createObjectURL(new Blob([bytes], { type })); card._urls.push(u); return u; };
-  const ids = res ? res.ids : (idsForName || S.sortIds([...state.selection]));
+  const ids = res ? res.ids : idsForName;
   const actions = res && res.pdf ? pdfLinks(mk(res.pdf, 'application/pdf'), texFilename(ids, variant, '.pdf')) : el('div', { class: 'bank-out-actions' });
   const tex = res ? res.mainTex : err && err.mainTex;
   if (tex) {
-    actions.append(el('a', { class: 'btn btn-sm btn-outline-secondary', href: mk(C.standaloneTex(tex, preambleText), 'text/plain'), download: texFilename(ids, variant, '.tex'), text: 'Download .tex',
+    actions.append(el('a', { class: 'btn btn-sm', href: mk(C.standaloneTex(tex, preambleText), 'text/plain'), download: texFilename(ids, variant, '.tex'), text: 'Download .tex',
       title: preambleText ? 'Standalone LaTeX source (preamble inlined)' : 'LaTeX source; needs preamble.tex from the repository next to it' }));
     if (/\\includegraphics\{fig(?:\d{4}|a-[a-z0-9-]+)-\d+\.pdf\}/.test(tex)) actions.append(el('span', { class: 'small text-muted align-self-center', text: 'The .tex references externalised figures (fig….pdf) that are not included.' }));
   }
@@ -651,7 +846,7 @@ function renderOutput(variant, res, err, idsForName) {
   if (res && res.pdf) {
     const info = res.fromCache ? 'from cache' : `${res.passes.length} pass${res.passes.length === 1 ? '' : 'es'}, ${(res.ms / 1000).toFixed(1)} s`;
     body.append(el('div', { class: 'small text-muted', text: `${ids.length} problem${ids.length === 1 ? '' : 's'}${res.pages ? `, ${res.pages} pages` : ''} · ${info}` }));
-    if (inlinePdf) body.append(el('iframe', { class: 'bank-pdf', src: card._urls[0], title: `${variant} PDF` }));
+    if (inlinePdf) body.append(el('iframe', { class: 'bank-pdf', src: card._urls[0], 'aria-label': `${variant} PDF` }));
   } else if (err) {
     body.append(el('div', { class: 'alert alert-danger small mb-0', role: 'alert' }, el('strong', { text: 'Could not build this PDF. ' }), err.message, resetLink(err)));
   }
@@ -692,21 +887,26 @@ function renderSolutionsOffer(ids) {
 }
 
 /* Resolves 'ok', 'cancelled' or 'failed'. */
-async function compileInto(variant, ids, filtersText, showMethods, doneMessage, signal) {
+async function compileInto(variant, ids, showMethods, doneMessage, signal) {
   try {
     busyLabel = variant === 'problems' ? 'Compiling the problems PDF…' : 'Compiling the PDF with the solutions…';
     setStatus(busyLabel);
-    const res = await C.compileSelection(ids, variant, { filtersText, showMethods, signal });
+    $('bank-announce').textContent = '';
+    const res = await C.compileSelection(ids, variant, { showMethods, signal });
+    await preambleOrTimeout();
     output[variant] = res;
     renderOutput(variant, res, null, ids);
-    setStatus(doneMessage, 'success');
+    // the PDF itself is the news: the status line goes quiet, and only a screen reader is told
+    setStatus('');
+    $('bank-announce').textContent = doneMessage;
     return 'ok';
   } catch (e) {
     const name = e && e.name;
     if (name === 'AbortError') { setStatus('Cancelled.'); return 'cancelled'; }
     const message = (e && e.message) || String(e);
+    await preambleOrTimeout();
     let mainTex = e && e.mainTex;
-    if (!mainTex && name !== 'StaleError') { try { mainTex = C.makeMain(await C.loadBodies(), ids, variant, { filters: filtersText, showMethods, appendix: C.loadedAppendix() }); } catch (e2) { /* no bodies */ } }
+    if (!mainTex && name !== 'StaleError') { try { mainTex = C.makeMain(await C.loadBodies(), ids, variant, { showMethods, appendix: C.loadedAppendix() }); } catch (e2) { /* no bodies */ } }
     renderOutput(variant, null, { name, message, mainTex }, ids);
     setStatus(`The ${variant === 'problems' ? 'problems' : 'solutions'} PDF could not be built: ${message.split('\n')[0]}` + (mainTex ? ' You can still download the .tex file.' : ''), 'danger');
     return 'failed';
@@ -719,8 +919,8 @@ async function onCreate() {
   const mine = job = new AbortController();
   renderSelectionState();
   const ids = pdfOrder();
-  const filtersText = '';        // no "Selection" line on the cover: it described the filters, not the ticked problems, and could leak methods or carry raw search text
-  const showMethods = state.filters.showMethods;
+  const showMethods = state.filters.showMethods && state.filters.methodsInPdf;     // shown on screen is not printed: a switch of its own
+  const before = { problems: output.problems, solutions: output.solutions, lastCreate };
   output.solutions = null;
   lastCreate = null;
   $('bank-output').hidden = false;
@@ -730,22 +930,29 @@ async function onCreate() {
   try {
     try {
       setStatus('Loading problem texts…');
-      await C.loadBodies();
-      preambleText = await C.loadPreamble();
+      C.prefetchEngine();                       // alongside the texts, not after them (a phone without a stored engine waits for them)
+      preambleReady = C.loadPreamble().then(t => { preambleText = t; });     // it never rejects: without it the .tex link says so
+      await Promise.race([C.loadBodies(), new Promise(resolve => mine.signal.addEventListener('abort', resolve, { once: true }))]);
     } catch (e) {
       const msg = (e && e.message) || String(e);        // bank-compile.js says it all ("Could not download the problem texts …")
       setStatus(msg, 'danger');
       renderOutput('problems', null, { name: e && e.name, message: msg, mainTex: null, noReset: true }, ids);
       return;
     }
-    const done = mine.signal.aborted ? 'cancelled' : await compileInto('problems', ids, filtersText, showMethods, 'The PDF is ready.', mine.signal);
+    const done = mine.signal.aborted ? 'cancelled' : await compileInto('problems', ids, showMethods, 'The PDF is ready.', mine.signal);
     if (done === 'ok') {
-      lastCreate = { ids, filtersText, showMethods };
+      lastCreate = { ids, showMethods };
       renderSolutionsOffer(ids);
     } else if (done === 'cancelled') {
-      $('bank-out-problems').hidden = true;
-      $('bank-output').hidden = true;
       setStatus('Cancelled.');
+      if (before.problems && before.lastCreate) {         // the PDFs that were on screen come back
+        output.problems = before.problems; output.solutions = before.solutions; lastCreate = before.lastCreate;
+        renderOutput('problems', before.problems, null, lastCreate.ids);
+        if (before.solutions) renderOutput('solutions', before.solutions, null, lastCreate.ids); else renderSolutionsOffer(lastCreate.ids);
+      } else {
+        $('bank-out-problems').hidden = true;
+        $('bank-output').hidden = true;
+      }
     }
   } finally {
     job = null;
@@ -775,13 +982,13 @@ async function onCreateSolutions() {
   state.busy = true;
   const mine = job = new AbortController();
   renderSelectionState();
-  const { ids, filtersText, showMethods } = lastCreate;
+  const { ids, showMethods } = lastCreate;
   const card = $('bank-out-solutions');
   card.hidden = false;
   card.querySelector('.bank-out-body').replaceChildren(el('div', { class: 'small text-muted', text: 'Compiling…' }));
   let done = 'failed';
   try {
-    done = await compileInto('solutions', ids, filtersText, showMethods, 'The PDF with the solutions is ready.', mine.signal);
+    done = await compileInto('solutions', ids, showMethods, 'The PDF with the solutions is ready.', mine.signal);
     if (done === 'cancelled') renderSolutionsOffer(ids);        // the problems PDF is still there: offer again
   } finally {
     job = null;
@@ -792,8 +999,9 @@ async function onCreateSolutions() {
   }
 }
 
-/* The engine (25 MB) and the problem texts are fetched ahead only on a clear sign that a PDF is coming: a first tick,
-   a Preview, the pointer or the focus on Create.  Not on a mere scroll or click on the page. */
+/* The engine (about 17 MB) and the problem texts are fetched ahead only on a clear sign that a PDF is coming: a first tick,
+   a Preview, the pointer or the focus on a Create that can be used.  Not on a mere scroll or click on the page, and for the
+   engine not at all on a touch screen or a slow connection (C.mayPrefetchEngine): there, Create starts it. */
 let prefetched = false;
 function prefetch() { if (prefetched) return; prefetched = true; C.prefetchEngine(); C.prefetchBodies(); }
 
@@ -802,8 +1010,9 @@ function wire() {
   const input = $('bank-search');
   input.addEventListener('focus', () => { if (!quietFocus) openList(); });
   input.addEventListener('click', () => { if (!state.list.open) openList(); });        // focus has just opened it
-  // what is typed filters the titles live; the list below still offers the tags those words could mean
-  input.addEventListener('input', () => { state.filters.text = input.value.trim(); state.list.open = true; state.list.active = -1; update(); });
+  // what is typed filters the titles live; the list below still offers the tags those words could mean.
+  // The chips and the Filters panel do not depend on the text: only the results, the list and the URL are redrawn.
+  input.addEventListener('input', () => { state.filters.text = input.value.trim(); state.list.open = true; state.list.active = -1; renderResults(); renderList(); syncUrl(); });
   input.addEventListener('keydown', e => {
     if (e.key === 'ArrowDown') { e.preventDefault(); if (!state.list.open) openList(); moveActive(1); }
     else if (e.key === 'ArrowUp') { e.preventDefault(); if (state.list.open) moveActive(-1); }
@@ -812,13 +1021,16 @@ function wire() {
       const best = state.list.mode === 'suggest' && !state.results.length ? state.list.items.findIndex(it => it.tag) : -1;
       if (state.list.active >= 0) chooseItem(state.list.active);     // a tag picked with the arrow keys
       else if (best >= 0) chooseItem(best);                          // no title contains the words: the best tag, not an empty list
-      else closeList();                                             // otherwise the typed words stay as a title search
+      else {                                                        // otherwise the typed words stay as a title search
+        closeList();
+        if (matchMedia('(hover: none)').matches) input.blur();      // a phone's keyboard goes, and the results can be seen
+      }
     } else if (e.key === 'Escape') { closeList(); }
     else if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
       const it = state.list.items[state.list.active];
       if (it && it.toggle) { e.preventDefault(); const open = it.toggle === 'open'; if ((e.key === 'ArrowRight') !== open) toggleExpand(it.tag.slug); }
       else if (it && it.section) { e.preventDefault(); if ((e.key === 'ArrowRight') === it.collapsed) toggleSection(it.section); }
-    } else if (e.key === 'Backspace' && input.value === '') {
+    } else if (e.key === 'Backspace' && input.value === '' && !e.repeat) {   // held down to clear the words: it stops at the tags
       for (const type of [...S.TAG_TYPES].reverse()) { const arr = state.filters[type]; if (arr.length) { removeFilterTag(type, arr[arr.length - 1]); break; } }
     }
   });
@@ -835,13 +1047,13 @@ function wire() {
     $('bank-filter-btn').setAttribute('aria-expanded', String(!panel.hidden));
     if (!panel.hidden) $('bank-show-methods').focus();
   });
-  for (const id of ['bank-show-methods', 'bank-show-proposed', 'bank-op-and', 'bank-op-or']) $(id).addEventListener('change', readAdvanced);
+  for (const id of ['bank-show-methods', 'bank-methods-pdf', 'bank-show-proposed', 'bank-op-and', 'bank-op-or']) $(id).addEventListener('change', readAdvanced);
   $('bank-proposed-option').hidden = reviewed.length === problems.length;     // the switch only when there is something behind it
   $('bank-year-box').hidden = YEARS.length < 2;                       // nothing to choose between
   for (const id of ['bank-year-lo', 'bank-year-hi']) { $(id).max = String(YMAX); $(id).addEventListener('input', onYearInput); }
   document.querySelectorAll('input[name="bank-solved"]').forEach(r => r.addEventListener('change', readAdvanced));
   $('bank-reset').addEventListener('click', resetFilters);
-  $('bank-clear-selection').addEventListener('click', () => { state.selection.clear(); state.order = null; renderResults(); syncUrl(); });
+  $('bank-clear-selection').addEventListener('click', () => { if (!state.busy) setStatus(''); state.selection.clear(); state.order = null; renderResults(); syncUrl(); });
 
   $('bank-select-all').addEventListener('change', e => {
     const ids = state.results.map(p => p.id);
@@ -851,7 +1063,7 @@ function wire() {
   });
   $('bank-create').addEventListener('click', onCreate);
   $('bank-cancel').addEventListener('click', () => { if (job) job.abort(); });
-  for (const ev of ['pointerenter', 'focus']) $('bank-create').addEventListener(ev, prefetch);
+  for (const ev of ['pointerenter', 'focus']) $('bank-create').addEventListener(ev, () => { if (!$('bank-create').disabled) prefetch(); });
   $('bank-show-all').addEventListener('click', () => { state.showAll = true; update(); });
   $('bank-hide-all').addEventListener('click', () => { state.showAll = false; update(); $('bank-show-all').focus(); });
   $('bank-order-btn').addEventListener('click', () => toggleOrderPanel($('bank-order').hidden));
@@ -867,15 +1079,54 @@ function wire() {
   });
 
   window.addEventListener('popstate', () => { loadFromUrl(); update(); });
+  if (window.visualViewport) visualViewport.addEventListener('resize', () => fitList(true));      // a phone's keyboard opening or closing
 }
 
 /* exposed for the browser tests */
-window.bank = { state, cat, problems, byId, S, C, update, compile: onCreate, compileSolutions: onCreateSolutions, output, pdfOrder };
+window.bank = { state, cat, problems, byId, S, C, update, output, pdfOrder };
 
 // bank-compile.js refuses problem texts or an engine from another deploy than this page's (build.py writes both; absent = no check)
 C.expectBuild({ build: data.build, engine: data.engine });
-loadFromUrl();
+loadFromUrl(true);
 wire();
 update();
 if (!C.engineSupported()) $('bank-engine-warning').hidden = false;
+/* Once the bar above the results is stuck under the header, it also hides the rows that would pass between the header's
+   capsules (.is-stuck in site.css).  Which of the two sticks depends on the width (see .bank-bar there), and where it
+   sticks on the header's height, so the watch starts again when that changes. */
+function stickyBar() { return document.querySelector(matchMedia('(max-width: 62rem)').matches ? '.bank-actions' : '.bank-bar'); }
+let stuckAt = null, stuckBars = null;
+function watchStuckBars() {
+  const at = parseFloat(getComputedStyle(document.querySelector('.bank-bar')).top) || 0;
+  if (at === stuckAt) return;
+  stuckAt = at;
+  if (stuckBars) stuckBars.disconnect();
+  stuckBars = new IntersectionObserver(entries => {
+    for (const e of entries) e.target.classList.toggle('is-stuck', e.boundingClientRect.height > 0 && e.intersectionRatio < 1 && e.boundingClientRect.top <= at + 1);
+  }, { rootMargin: `-${at + 1}px 0px 100000px 0px`, threshold: 1 });      // below the window counts as inside: only the top edge means stuck
+  for (const bar of document.querySelectorAll('.bank-bar, .bank-actions')) stuckBars.observe(bar);
+}
+watchStuckBars();
+window.addEventListener('resize', watchStuckBars);
+
+/* The bar wraps when its content does not fit (Cancel showing, a narrow window), and a message can take several lines: the
+   status line sticks under the bar's real height, and a focused element stops below all of it (site.css: --bar-h, --status-h). */
+function syncStuckHeights() {
+  const bar = stickyBar(), status = $('bank-status'), style = document.documentElement.style;
+  const barH = bar.offsetHeight && getComputedStyle(bar).position === 'sticky' ? bar.offsetHeight : 0;
+  const statusH = getComputedStyle(status).position === 'sticky' ? status.offsetHeight : 0;
+  if (style.getPropertyValue('--bar-h') !== `${barH}px`) style.setProperty('--bar-h', `${barH}px`);
+  if (style.getPropertyValue('--status-h') !== `${statusH}px`) style.setProperty('--status-h', `${statusH}px`);
+}
+{
+  const sizes = new ResizeObserver(syncStuckHeights);
+  for (const e of [document.querySelector('.bank-bar'), document.querySelector('.bank-actions'), $('bank-status')]) sizes.observe(e);
+  window.addEventListener('resize', syncStuckHeights);
+  let zoomed = false;
+  new MutationObserver(() => {
+    const now = document.documentElement.classList.contains('is-zoomed');
+    if (now !== zoomed) { zoomed = now; syncStuckHeights(); }
+  }).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+}
+
 document.documentElement.setAttribute('data-ready', '');          // site.js: from now on an error is not a failed page load

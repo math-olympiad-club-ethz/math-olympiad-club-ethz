@@ -458,7 +458,7 @@ def origin_label(p, tags):
     return s
 
 
-def load_problems(problems_dir="problems"):
+def load_problems(problems_dir):
     files = sorted(f for f in os.listdir(problems_dir) if f.endswith(".tex") and not f.startswith("_"))
     return [parse_problem_file(os.path.join(problems_dir, f)) for f in files]
 
@@ -470,7 +470,7 @@ LOCAL_LEFTOVERS = (".pdf", ".synctex.gz", ".synctex(busy)", ".aux", ".log", ".ou
                    ".blg", ".run.xml", ".toc", ".xdv", ".dvi", "-SAVE-ERROR")
 
 
-def stray_files(problems_dir="problems"):
+def stray_files(problems_dir):
     """(path, line, message) for every entry of problems/ that is neither a problem file nor a helper.  load_problems
     reads only *.tex, so a file whose extension was forgotten or mistyped (new-foo, 0081-x.TEX) would otherwise be
     skipped silently, and a latexmkrc there would run on the maintainer's machine at the next preview."""

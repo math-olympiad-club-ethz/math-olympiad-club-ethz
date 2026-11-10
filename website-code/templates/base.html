@@ -15,44 +15,47 @@
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}" media="(prefers-color-scheme: light)">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon_dark.png') }}" media="(prefers-color-scheme: dark)">
     {% set v = ('?v=' ~ asset_version) if asset_version else '' %}
-    <!-- theme (before the first paint), footer year -->
-    <script src="{{ url_for('static', filename='js/site.js') }}{{ v }}"></script>
     <link href="{{ url_for('static', filename='css/site.css') }}{{ v }}" rel="stylesheet">
     {% block head %}{% endblock %}
+    <!-- theme (before the first paint), footer year. Last in the head: with a Content-Security-Policy in the page, the browser
+         fetches nothing that follows a blocking script until the script has run, so the stylesheet would lose a round trip. -->
+    <script src="{{ url_for('static', filename='js/site.js') }}{{ v }}"></script>
 </head>
 <body>
-    <div class="shell">
-        <header class="site-head">
-            <div class="frame">
-                <a class="brand" href="{{ url_for('home') }}">
-                    <span class="club-logo" aria-hidden="true"></span>
-                    <span>Math Olympiad Club at <span class="ac">ETHZ</span></span>
-                </a>
-                <nav id="site-nav" class="site-nav" aria-label="Main">
-                    <ul>
-                        <li><a href="{{ url_for('home') }}"{% if page == 'home' %} aria-current="page"{% endif %}>Home</a></li>
-                        <li><a href="{{ url_for('problems') }}"{% if page == 'problems' %} aria-current="page"{% endif %}>Problems</a></li>
-                        <li><a href="{{ url_for('propose') }}"{% if page == 'propose' %} aria-current="page"{% endif %}>Propose a problem</a></li>
-                    </ul>
-                </nav>
-                <button id="theme-toggle" class="theme" type="button"><span class="disc" aria-hidden="true"></span><span class="theme-label-light">Dark</span><span class="theme-label-dark">Light</span></button>
-            </div>
-        </header>
-
-        <main>
-            <div class="frame"><div class="col">
-                {% block content %}{% endblock %}
-            </div></div>
-        </main>
-    </div>
-
-    <footer class="site-foot">
+    <header class="site-head">
         <div class="frame">
-            <div class="foot-row">
-                <span>© <span id="current-year">{{ year }}</span> Math Olympiad Club at <span class="ac">ETHZ</span></span>
-                <a href="mailto:olympiadclub@math.ethz.ch">olympiadclub@math.ethz.ch</a>
-            </div>
+            <a class="brand" href="{{ url_for('home') }}" aria-label="Math Olympiad Club at ETHZ, home">
+                <span class="club-logo" aria-hidden="true"></span>
+            </a>
+            <nav id="site-nav" class="site-nav" aria-label="Main">
+                <ul>
+                    <li><a href="{{ url_for('home') }}"{% if page == 'home' %} aria-current="page"{% endif %}>Home</a></li>
+                    <li><a class="nav-cta" href="{{ url_for('problems') }}"{% if page == 'problems' %} aria-current="page"{% endif %}>Problems</a></li>
+                    <li><a href="{{ url_for('propose') }}"{% if page == 'propose' %} aria-current="page"{% endif %}>Propose a problem</a></li>
+                </ul>
+            </nav>
+            <button id="theme-toggle" class="theme" type="button"><span class="disc" aria-hidden="true"></span><span class="theme-label-light">Dark</span><span class="theme-label-dark">Light</span></button>
         </div>
-    </footer>
+    </header>
+
+    <!-- everything but the header: what a pinch on a trackpad magnifies (site.js) -->
+    <div class="page">
+        <div class="shell">
+            <main>
+                <div class="frame"><div class="col">
+                    {% block content %}{% endblock %}
+                </div></div>
+            </main>
+        </div>
+
+        <footer class="site-foot">
+            <div class="frame">
+                <div class="foot-row">
+                    <span>© <span id="current-year">{{ year }}</span> Math Olympiad Club at ETHZ</span>
+                    <a href="mailto:olympiadclub@math.ethz.ch">olympiadclub@math.ethz.ch</a>
+                </div>
+            </div>
+        </footer>
+    </div>
 </body>
 </html>

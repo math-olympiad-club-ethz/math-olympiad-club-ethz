@@ -1,7 +1,8 @@
-/* site.css: the whole look of the website, no framework. One typewriter face (Computer Modern Typewriter, the face
-   of LaTeX's \texttt), lowercase headings in amber, a thin line down the left with a dot per section, dashed links,
-   rules instead of boxes. The palette follows xent.ai; the light/dark switch is <html data-theme> (site.js).
-   The scripts build some of the markup with these class names: bank-ui.js, bank-propose-ui.js. */
+/* site.css: the whole look of the website, no framework. Set like a paper on squared paper: Computer Modern Serif (the
+   design of the problem PDFs) for the text, Computer Modern Typewriter (LaTeX's \texttt) for labels, tags and buttons,
+   one amber accent, a fine line down the left with a dot per section, rules instead of boxes, and the header's words in
+   capsules of glass. The light/dark switch is <html data-theme> (site.js).
+   The scripts build some of the markup with these class names: bank-ui.js, bank-propose-ui.js, tips.js. */
 
 /* Each weight comes in two files: the basic Latin every page uses, and the rest (ě ă ț, accents, Greek), which a browser
    downloads only for a page that shows one of these characters. The ranges are those of tools/subset_fonts.py. */
@@ -13,6 +14,25 @@
   unicode-range: U+0020-007E, U+00A0-00FF, U+0131, U+0152-0153, U+2000-206F, U+20AC, U+2122, U+2190-2199, U+2212, U+FB00-FB06; }
 @font-face { font-family: "MOC Typewriter"; src: url("../fonts/moc-typewriter-700-ext.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: swap;
   unicode-range: U+0100-0130, U+0132-0151, U+0154-017F, U+0218-021B, U+02BC, U+02C6-02C7, U+02D8-02DD, U+0300-030C, U+0326-0328, U+0370-03FF; }
+@font-face { font-family: "MOC Serif"; src: url("../fonts/moc-serif-400.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap;
+  unicode-range: U+0020-007E, U+00A0-00FF, U+0131, U+0152-0153, U+2000-206F, U+20AC, U+2122, U+2190-2199, U+2212, U+FB00-FB06; }
+@font-face { font-family: "MOC Serif"; src: url("../fonts/moc-serif-400-ext.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap;
+  unicode-range: U+0100-0130, U+0132-0151, U+0154-017F, U+0218-021B, U+02BC, U+02C6-02C7, U+02D8-02DD, U+0300-030C, U+0326-0328, U+0370-03FF; }
+@font-face { font-family: "MOC Serif"; src: url("../fonts/moc-serif-700.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: swap;
+  unicode-range: U+0020-007E, U+00A0-00FF, U+0131, U+0152-0153, U+2000-206F, U+20AC, U+2122, U+2190-2199, U+2212, U+FB00-FB06; }
+@font-face { font-family: "MOC Serif"; src: url("../fonts/moc-serif-700-ext.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: swap;
+  unicode-range: U+0100-0130, U+0132-0151, U+0154-017F, U+0218-021B, U+02BC, U+02C6-02C7, U+02D8-02DD, U+0300-030C, U+0326-0328, U+0370-03FF; }
+/* The same for the serif: size-adjust = the mean advance of CMU Serif over English text (.4374 em, bold .5049) / that of
+   the local font (Georgia .4343, bold .5062; Times New Roman and Liberation Serif .3954, bold .4206); the overrides are
+   CMU Serif's ascent and descent (regular .935 / .25, bold .937 / .308) divided by size-adjust. */
+@font-face { font-family: "MOC Georgia"; src: local("Georgia"); font-weight: 400;
+  size-adjust: 100.73%; ascent-override: 92.82%; descent-override: 24.82%; line-gap-override: 0%; }
+@font-face { font-family: "MOC Georgia"; src: local("Georgia Bold"), local("Georgia-Bold"); font-weight: 700;
+  size-adjust: 99.76%; ascent-override: 93.93%; descent-override: 30.87%; line-gap-override: 0%; }
+@font-face { font-family: "MOC Times"; src: local("Times New Roman"), local("TimesNewRomanPSMT"), local("Liberation Serif"), local("LiberationSerif"); font-weight: 400;
+  size-adjust: 110.64%; ascent-override: 84.51%; descent-override: 22.6%; line-gap-override: 0%; }
+@font-face { font-family: "MOC Times"; src: local("Times New Roman Bold"), local("TimesNewRomanPS-BoldMT"), local("Liberation Serif Bold"), local("LiberationSerif-Bold"); font-weight: 700;
+  size-adjust: 120.06%; ascent-override: 78.04%; descent-override: 25.65%; line-gap-override: 0%; }
 /* Until the font has arrived (and for the few characters it lacks), a monospace font of the system, scaled to its
    width: the text takes the same room before and after the swap, so nothing moves. size-adjust = 0.525 em (the
    advance of Computer Modern Typewriter) / the advance of the local font; the overrides are CMU's ascent and descent
@@ -32,162 +52,226 @@
   size-adjust: 87.49%; ascent-override: 98.98%; descent-override: 26.29%; line-gap-override: 0%; }
 
 /* ===================== tokens ===================== */
-/* Contrast on --bg: ink 14.0:1 (dark 16.6), ink-dim 6.4 (5.4), accent-text 4.8 (14.2), danger 6.0 (8.8), ok 5.6 (11.1).
-   --accent is only for large text, dots and lines (4.5:1 in light mode); --ink-faint, --edge, --chip-line and
+/* Contrast on --bg: ink 14.0:1 (dark 14.7), ink-dim 6.4 (7.1), accent-text 4.8 (14.0), danger 6.0 (8.6), ok 5.6 (10.9).
+   --accent is only for large text, dots and lines (4.5:1 in light mode); --ink-faint, --edge, --chip-line, --grid and
    --accent-dim are for lines only, never for text. */
 :root {
   color-scheme: light;
   --bg: #f4f1e8;
+  --surface: #fbf9f3;                   /* the paper of a bubble */
   --ink: #26221c;
   --ink-dim: #5c5749;
   --ink-faint: #969077;
   --accent: #8f680d;
-  --accent-text: #8a640c;
+  --accent-text: #86610b;
   --accent-dim: rgba(143, 104, 13, .3);
   --on-accent: #f4f1e8;
   --edge: rgba(42, 38, 32, .14);
   --chip-line: rgba(42, 38, 32, .28);
   --wash: rgba(42, 38, 32, .045);
+  --wash-strong: rgba(42, 38, 32, .08);
+  --grid: rgba(42, 38, 32, .05);
+  --glass: rgba(244, 241, 232, .35);            /* one glass for the seal and the buttons: clear enough that the line shows through the seal */
+  --glass-fx: blur(.8px);                       /* no saturate: it would shift the glass off the colour of the page */
+  --glass-rim: inset 0 1px 0 rgba(255, 255, 255, .8), inset 0 0 0 1px rgba(42, 38, 32, .08), 0 2px 10px -2px rgba(0, 0, 0, .1);
   --danger: #a3361d;
   --ok: #3f6a2a;
   --backdrop: rgba(38, 34, 28, .45);
 
+  --serif: "MOC Serif", "MOC Georgia", "MOC Times", Georgia, "Times New Roman", serif;
   --mono: "MOC Typewriter", "MOC Menlo", "MOC Consolas", "MOC Mono", ui-monospace, monospace;
-  --fs: 16.5px;  --lh: 26.4px;          /* body */
-  --fs-h1: 44px; --lh-h1: 52.8px;
-  --fs-h2: 24px; --lh-h2: 33px;
-  --fs-h3: 19px; --lh-h3: 28px;
-  --fs-sm: 14px; --lh-sm: 22px;         /* nav, labels, buttons */
-  --fs-xs: 13px; --lh-xs: 20px;         /* tags, fine print */
+  /* Computer Modern has a small x-height: its text is set larger than a usual web face */
+  --fs: 18px;    --lh: 29px;            /* body */
+  --fs-h1: clamp(2.25rem, 1.4rem + 3.2vw, 3.75rem); --lh-h1: calc(var(--fs-h1) * 1.12);
+  --fs-tool: clamp(2rem, 1.6rem + 1.4vw, 2.5rem);   /* the title of a working page: Problems, Propose */
+  --fs-h2: 26px; --lh-h2: 34px;
+  --fs-h3: 20px; --lh-h3: 28px;
+  --fs-note: 16px; --lh-note: 25px;     /* small print in the serif */
+  --fs-sm: 14px; --lh-sm: 22px;         /* typewriter: nav, labels, buttons */
+  --fs-xs: 13px; --lh-xs: 20px;         /* typewriter: tags */
   --u: calc(var(--lh) / 2);             /* the unit of vertical space: half a line */
-  /* the line falls from the middle of the logo; the text starts where the club's name starts */
+  /* the line falls from the middle of the seal; the text starts one --logo and one --gap after the frame's edge */
   --pad: 40px;
-  --logo: 44px;
+  --logo: 40px;                         /* the margin's unit, and the height of the header's capsules */
+  --seal: 56px;                         /* the club's seal in the header, centred on the line */
   --gap: 12px;
   --off: calc(var(--logo) / 2 + var(--gap));
-  --dot: 7px;
+  --dot: 5px;
   --frame: 1120px;
-  --head-top: 30px;
+  --head-top: 4px;
+  --head-h: calc(var(--head-top) * 2 + var(--seal));   /* what stays stuck at the top */
+  --bar-h: 0px; --status-h: 0px;        /* the Problems page's bar and status under it: their real heights, from bank-ui.js */
+  --grid-cell: 2rem;
 }
 [data-theme="dark"] {
   color-scheme: dark;
-  --bg: #0c0c11;
-  --ink: #f0ede1;
-  --ink-dim: #8b8676;
+  --bg: #0f0f0d;
+  --surface: #191916;
+  --ink: #e6e1d6;
+  --ink-dim: #a39d8f;
   --ink-faint: #55524a;
   --accent: #ffd874;
   --accent-text: #ffd874;
   --accent-dim: rgba(255, 216, 116, .28);
-  --on-accent: #0c0c11;
+  --on-accent: #0f0f0d;
   --edge: rgba(240, 237, 225, .10);
   --chip-line: rgba(240, 237, 225, .22);
   --wash: rgba(240, 237, 225, .05);
+  --wash-strong: rgba(240, 237, 225, .08);
+  --grid: rgba(240, 237, 225, .035);
+  --glass: rgba(15, 15, 13, .35);
+  --glass-rim: inset 0 1px 0 rgba(255, 255, 255, .14), inset 0 0 0 1px rgba(240, 237, 225, .08), 0 2px 10px -2px rgba(0, 0, 0, .45);
   --danger: #ff8f73;
   --ok: #9fd18b;
   --backdrop: rgba(0, 0, 0, .6);
 }
-/* phones: the face has a small x-height, so the text stays at 16 px */
+/* phones */
 @media (max-width: 40rem) {
   :root {
-    --pad: 16px; --logo: 32px; --gap: 10px; --head-top: 16px;
-    --fs: 16px; --lh: 25.6px; --fs-h1: 30px; --lh-h1: 38.4px; --fs-h2: 21px; --lh-h2: 28.8px; --fs-h3: 18px; --lh-h3: 26px;
+    --pad: 16px; --logo: 32px; --seal: 44px; --gap: 10px;
+    --fs-h2: 22px; --lh-h2: 29px; --fs-h3: 19px; --lh-h3: 26px;
   }
+}
+/* the narrowest phones: the header's words go under the seal (see .site-nav) */
+@media (max-width: 22.4375rem) {
+  :root { --head-h: calc(var(--head-top) * 2 + var(--seal) + var(--logo) + 4px); }
 }
 
 /* ===================== base ===================== */
 *, *::before, *::after { box-sizing: border-box; }
-html { background: var(--bg); color: var(--ink); -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+html {
+  background-color: var(--bg); color: var(--ink); -webkit-text-size-adjust: 100%; text-size-adjust: 100%;
+  scroll-padding-top: calc(var(--head-h) + var(--bar-h) + var(--status-h) + 8px);   /* a focused field or an anchor stops below what is stuck */
+}
 body {
   margin: 0; min-height: 100vh; display: flex; flex-direction: column; overflow-x: clip;
-  font-family: var(--mono); font-size: var(--fs); line-height: var(--lh); font-weight: 400;
-  letter-spacing: .012em; font-variant-ligatures: none;
-  background: var(--bg); color: var(--ink);
+  font-family: var(--serif); font-size: var(--fs); line-height: var(--lh); font-weight: 400;
+  font-kerning: normal; font-variant-ligatures: common-ligatures; font-synthesis: none;
+}
+/* the typewriter: whatever is a label rather than a sentence (always at weight 400: a page then never downloads its bold) */
+.site-head, .site-foot, .btn, .form-label, .form-check-label, .kv dt, .team dt, .tip-btn, .pp-rules summary,
+.bank-searchbox, .bank-bar, .bank-status, .bank-listbox, .bank-advanced-title, .bank-chip, .bank-marker, .bank-review, .bank-order-pos, code, kbd, pre, .pp-tex {
+  font-family: var(--mono); letter-spacing: .012em; font-variant-ligatures: none;
+}
+/* The squared paper: it stays still and the page moves over it, when scrolling and when zooming. Two faint gradients on one
+   layer, drawn once. It reaches below the window, for a phone's toolbar that slides away. */
+body::before {
+  content: ""; position: fixed; inset: 0 0 -8rem; z-index: -1; pointer-events: none;
+  background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: var(--grid-cell) var(--grid-cell); background-position: center top;
 }
 [hidden] { display: none !important; }       /* the scripts show and hide everything with the hidden attribute */
 ::selection { background: var(--accent-text); color: var(--on-accent); }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-p, ul, ol, dl, dd, h1, h2, h3, figure, pre { margin: 0; }
+p, ul, ol, dl, dd, h1, h2, pre { margin: 0; }
 ul, ol { padding: 0; }
 button, input, select, textarea { font: inherit; letter-spacing: inherit; color: inherit; }
-img { display: block; max-width: 100%; height: auto; }
-strong, b { font-weight: 700; }
-hr { border: 0; border-top: 1px solid var(--edge); margin: calc(var(--u) * 2) 0; }
+strong { font-weight: 700; }
 
-a { color: inherit; text-decoration: underline dashed var(--accent) 1px; text-underline-offset: .28em; }
-a:hover { color: var(--accent-text); text-decoration-style: solid; }
-a.ext::after, a[target="_blank"]:not(.btn)::after { content: "\2197"; content: "\2197" / ""; display: inline-block; margin-left: .3ch; font-size: .8em; color: var(--ink-dim); text-decoration: none; }
+a { color: inherit; text-decoration: underline solid var(--accent) 1px; text-underline-offset: .2em; }
+@media (hover: hover) { a:hover { color: var(--accent-text); } }
+a[target="_blank"]:not(.btn)::after { content: "\2197"; content: "\2197" / ""; display: inline-block; margin-left: .3ch; font-size: .8em; color: var(--ink-dim); text-decoration: none; }
 
-h1, h2, h3, legend, .h5 { font-weight: 700; color: var(--accent); text-transform: lowercase; text-wrap: balance; }
-h1 { font-size: var(--fs-h1); line-height: var(--lh-h1); letter-spacing: -.01em; --node-lh: var(--lh-h1); }
-h2 { font-size: var(--fs-h2); line-height: var(--lh-h2); letter-spacing: .01em; --node-lh: var(--lh-h2); }
-h3, legend, .h5 { font-size: var(--fs-h3); line-height: var(--lh-h3); --node-lh: var(--lh-h3); }
-.ac { text-transform: none; }               /* ETHZ, PDF: capitals kept inside lowercased text */
+h1, h2, legend, .h5 { font-weight: 700; color: var(--ink); text-wrap: balance; }
+h1 { font-size: var(--fs-h1); line-height: var(--lh-h1); font-weight: 400; letter-spacing: -.015em; --node-lh: var(--lh-h1); }
+h2 { font-size: var(--fs-h2); line-height: var(--lh-h2); --node-lh: var(--lh-h2); }
+legend, .h5 { font-size: var(--fs-h3); line-height: var(--lh-h3); --node-lh: var(--lh-h3); }
 .nb { white-space: nowrap; }
 
-code { font: inherit; font-size: .94em; color: var(--accent-text); overflow-wrap: anywhere; }
-kbd { font: inherit; font-size: .9em; padding: 0 .35em; border: 1px solid var(--chip-line); border-bottom-width: 2px; }
-pre { font: inherit; }
+code { font-size: .86em; color: var(--accent-text); overflow-wrap: anywhere; }
+kbd { font-size: .8em; padding: 0 .35em; border: 1px solid var(--chip-line); border-bottom-width: 2px; }
 
 /* ===================== frame, the line down the left, header, footer ===================== */
 .frame { width: 100%; max-width: var(--frame); margin: 0 auto; padding: 0 var(--pad); }
 .shell { position: relative; flex: 1 0 auto; display: flex; flex-direction: column; }
-.shell::before {
-  content: ""; position: absolute; width: 1px; background: var(--chip-line); bottom: 0;
+.shell::before {     /* half a pixel wide: one device pixel on a sharp screen, a fainter line on any other */
+  content: ""; position: absolute; width: 1px; background: var(--chip-line); top: 0; bottom: 0; transform: scaleX(.5);
   left: calc(max(0px, (100% - var(--frame)) / 2) + var(--pad) + var(--logo) / 2 - .5px);
-  top: calc(var(--head-top) + var(--logo) + 10px);
 }
 .col { margin-left: calc(var(--logo) + var(--gap)); min-width: 0; }
-main { flex: 1 0 auto; padding-top: calc(var(--u) * 7); padding-bottom: calc(var(--u) * 8); }
-@media (max-width: 40rem) { main { padding-top: calc(var(--u) * 5); padding-bottom: calc(var(--u) * 6); } }
+main { flex: 1 0 auto; padding-top: calc(var(--head-h) + var(--u) * 5); padding-bottom: calc(var(--u) * 7); }
+@media (max-width: 40rem) { main { padding-top: calc(var(--head-h) + var(--u) * 4); padding-bottom: calc(var(--u) * 5); } }
+/* a pinch on a trackpad magnifies .page and leaves the header alone (site.js). The page then scrolls both ways, and what
+   sticks stops sticking: position: sticky does not count a parent's transform. */
+.page { flex: 1 0 auto; display: flex; flex-direction: column; transform-origin: 0 0; }
+.page.is-zooming { will-change: transform; }
+.zoom-room { position: absolute; top: 0; left: 0; visibility: hidden; pointer-events: none; }   /* its size: see site.js */
+.is-zoomed body { overflow-x: visible; }
+.is-zoomed :is(.bank-bar, .bank-actions, .bank-status) { position: static; }
+.is-zoomed .is-stuck::before { content: none; }
 
 /* a dot on the line, level with the middle of the x-height of the element's first line (the first one lit).
-   Computer Modern Typewriter: ascent .827 em, descent .233 em, x-height .431 em. */
+   Computer Modern Serif: ascent .935 em, descent .25 em, x-height .431 em. */
 .node { position: relative; }
 .node::before {
   content: ""; position: absolute; width: var(--dot); height: var(--dot); border-radius: 50%;
   left: calc(-1 * var(--off) - var(--dot) / 2);
-  top: calc((var(--node-lh, var(--lh)) - 1.06em) / 2 + .6115em - var(--dot) / 2);
+  top: calc((var(--node-lh, var(--lh)) - 1.185em) / 2 + .7195em - var(--dot) / 2);
   background: var(--ink-faint);
 }
 .node.lit::before { background: var(--accent); }
 
+/* The header is always on screen, outside the page. The bar itself is clear, and each of its words sits in its own capsule
+   of glass, which blurs only what passes under that word; between the capsules, a click reaches the page. */
+.site-head { position: fixed; top: 0; left: 0; right: 0; z-index: 30; pointer-events: none; transform-origin: 0 0; }   /* the origin: for a pinch on a touch screen, see site.js */
 .site-head .frame {
-  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; column-gap: 28px;
-  padding-top: var(--head-top);
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; column-gap: 6px;
+  padding-top: var(--head-top); padding-bottom: var(--head-top);
 }
-.brand {
-  display: inline-flex; align-items: center; gap: var(--gap); min-height: 44px; color: var(--ink); text-decoration: none;
-  font-weight: 700; font-size: var(--fs-sm); line-height: var(--lh-sm); letter-spacing: .02em; text-transform: lowercase;
+.brand, .site-nav a, .theme {
+  pointer-events: auto; border-radius: 999px; background: var(--glass); box-shadow: var(--glass-rim);
+  -webkit-backdrop-filter: var(--glass-fx); backdrop-filter: var(--glass-fx);
 }
-.brand:hover { color: var(--ink); }
-/* logos are CSS backgrounds, so a visitor downloads only the current theme's file (176 px: sharp up to 4x screens;
-   made from the 1024 px originals in association-documents/logo/) */
-.club-logo { flex: none; width: var(--logo); height: var(--logo); background: url("../images/club_logo_light_176.webp") center / contain no-repeat; }
-[data-theme="dark"] .club-logo { background-image: url("../images/club_logo_dark_176.webp"); }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { :root, [data-theme="dark"] { --glass: var(--bg); } }
+@media (prefers-reduced-transparency: reduce) { :root, [data-theme="dark"] { --glass: var(--bg); --glass-fx: none; } }
+.brand {     /* the seal alone, on a disc of the same glass, on the line; the link's name is in its aria-label */
+  display: inline-flex; align-items: center; justify-content: center; width: var(--seal); height: var(--seal);
+  margin-left: calc((var(--logo) - var(--seal)) / 2);
+}
+/* logos are CSS backgrounds, so a visitor downloads only the current theme's file (176 px, the seal cropped tight: sharp up to 3x screens;
+   made from the 1024 px originals in association-documents/logo/; a recut keeps the name, so raise the ?v=) */
+.club-logo { flex: none; width: calc(var(--seal) - 4px); height: calc(var(--seal) - 4px); background: url("../images/club_logo_light_176.webp?v=2") center / contain no-repeat; }
+[data-theme="dark"] .club-logo { background-image: url("../images/club_logo_dark_176.webp?v=2"); }
 .site-nav { justify-self: end; }
-.site-nav ul { display: flex; column-gap: 26px; list-style: none; white-space: nowrap; }
+.site-nav ul { display: flex; column-gap: 6px; list-style: none; white-space: nowrap; }
 .site-nav a {
-  display: inline-flex; align-items: center; min-height: 44px; font-size: var(--fs-sm); line-height: var(--lh-sm);
-  color: var(--ink-dim); text-transform: lowercase; text-decoration-color: transparent;
+  position: relative; display: inline-flex; align-items: center; min-height: var(--logo); padding: 0 14px; font-size: var(--fs-sm); line-height: var(--lh-sm);
+  color: var(--ink); text-decoration-color: transparent;
 }
-.site-nav a:hover { color: var(--ink); text-decoration-color: var(--accent); }
-.site-nav a[aria-current="page"] { color: var(--ink); text-decoration-style: solid; text-decoration-color: var(--accent); }
+.site-nav a[aria-current="page"] { text-decoration-color: var(--accent); }
+@media (hover: hover) { .site-nav a:hover { text-decoration-color: var(--accent); } }
+.site-nav .nav-cta { box-shadow: var(--glass-rim), inset 0 0 0 1px var(--chip-line); }   /* the way to the bank, from anywhere */
+/* the capsules are drawn smaller than the 44 px that a finger gets */
+.site-nav a::after { content: ""; position: absolute; inset: calc((var(--logo) - 44px) / 2) 0; }
+.theme::after { content: ""; position: absolute; inset: calc((var(--logo) - 44px) / 2); }
 .theme {
-  display: inline-flex; align-items: center; gap: 9px; min-height: 44px; padding: 0 2px; background: none; border: 0; cursor: pointer;
-  font-size: var(--fs-sm); line-height: var(--lh-sm); color: var(--ink-dim); text-transform: lowercase;
+  position: relative; display: inline-flex; align-items: center; justify-content: center; width: var(--logo); height: var(--logo); padding: 0; border: 0; cursor: pointer;
+  color: var(--ink-dim);
 }
-.theme:hover { color: var(--ink); }
-.theme .disc { position: relative; flex: none; width: 11px; height: 11px; border: 1px solid currentColor; border-radius: 50%; overflow: hidden; }
+@media (hover: hover) { .theme:hover { color: var(--accent-text); } }
+.theme .disc { position: relative; flex: none; width: 13px; height: 13px; border: 1px solid currentColor; border-radius: 50%; overflow: hidden; }
 .theme .disc::after { content: ""; position: absolute; top: 0; bottom: 0; left: 50%; right: 0; background: currentColor; }
-/* the button says what a click does: "dark" on the light page, "light" on the dark one */
+/* the button shows its disc alone; its name, for a screen reader, says what a click does: "dark" on the light page */
+.theme-label-light, .theme-label-dark { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .theme-label-dark, [data-theme="dark"] .theme-label-light { display: none; }
 [data-theme="dark"] .theme-label-dark { display: inline; }
-/* narrow: the links go under the brand (always visible, no menu button) */
-@media (max-width: 48rem) {
-  .site-head .frame { grid-template-columns: minmax(0, 1fr) auto; column-gap: 12px; }
-  .site-nav { grid-column: 1 / -1; grid-row: 2; justify-self: start; margin-left: calc(var(--logo) + var(--gap)); }
-  .site-nav ul { flex-wrap: wrap; column-gap: 18px; white-space: normal; }
-  .site-nav li { white-space: nowrap; }
+/* narrow: one row still, always on screen, with no menu to open: the words share one capsule */
+@media (max-width: 30rem) {
+  .site-head .frame { column-gap: 4px; }
+  .site-nav ul {
+    column-gap: 0; padding: 0 4px; border-radius: 999px; background: var(--glass); box-shadow: var(--glass-rim); pointer-events: auto;
+    -webkit-backdrop-filter: var(--glass-fx); backdrop-filter: var(--glass-fx);
+  }
+  .site-nav a, .site-nav .nav-cta { padding: 0 7px; background: none; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
+@media (max-width: 23.75rem) {
+  .site-nav a, .site-nav .nav-cta { padding: 0 4px; }
+}
+/* the narrowest phones: the words go under the seal (--head-h says so too): one row needs 359 px */
+@media (max-width: 22.4375rem) {
+  .site-head .frame { grid-template-columns: minmax(0, 1fr) auto; row-gap: 4px; }
+  .brand { justify-self: start; }
+  .site-nav { grid-column: 1 / -1; grid-row: 2; justify-self: start; }
   .theme { grid-column: 2; grid-row: 1; }
 }
 
@@ -195,48 +279,57 @@ main { flex: 1 0 auto; padding-top: calc(var(--u) * 7); padding-bottom: calc(var
 .site-foot .frame { padding-bottom: calc(var(--u) * 4); }
 .foot-row {     /* the rule starts on the line, so the line turns the corner into it */
   margin-left: calc(var(--logo) / 2 - .5px); padding: calc(var(--u) * 2) 0 0 calc(var(--logo) / 2 + .5px + var(--gap));
-  display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 24px; border-top: 1px solid var(--chip-line);
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 24px; border-top: 1px solid var(--edge);
 }
-.foot-row > :first-child { text-transform: lowercase; }
 .site-foot a { color: var(--ink-dim); text-decoration-color: var(--ink-faint); }
-.site-foot a:hover { color: var(--accent-text); text-decoration-color: var(--accent); }
+@media (hover: hover) { .site-foot a:hover { color: var(--accent-text); text-decoration-color: var(--accent); } }
 
 /* ===================== home page ===================== */
-.sec + .sec { margin-top: calc(var(--u) * 7); }
+.sec + .sec { margin-top: calc(var(--u) * 6); }
 h1 .l { display: block; }
-.prose { max-width: 66ch; margin-top: calc(var(--u) * 3); }
+.prose { max-width: 33em; margin-top: calc(var(--u) * 3); }
 .prose p { text-wrap: pretty; }
 .prose p + p { margin-top: var(--u); }
 .prose a { white-space: nowrap; }
-h2.node { margin-bottom: calc(var(--u) * 2); }
 
-/* three items side by side, each with a thin amber rule on its left */
-.trio { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 32px; row-gap: calc(var(--u) * 3); }
-.item { border-left: 1px solid var(--accent-dim); padding: 2px 0 2px 16px; }
-.item h2 { font-size: var(--fs); line-height: var(--lh); color: var(--accent-text); letter-spacing: .02em; margin-bottom: var(--u); --node-lh: var(--lh); }
-.trio > .node::before { left: calc(-1 * var(--off) - var(--dot) / 2 - 1px); top: calc(2px + (var(--lh) - 1.06em) / 2 + .6115em - var(--dot) / 2); }
-.trio > .node + .node::before { display: none; }      /* side by side, the three share one dot */
-.item .when { color: var(--ink-dim); margin-bottom: var(--u); }
-.kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); column-gap: 2ch; }
-.kv dt { color: var(--ink-dim); text-transform: lowercase; }
+/* A section opens on a rule that branches off the line, with its dot where they meet. */
+.ruled { position: relative; padding-top: calc(var(--u) * 2); }
+.ruled::before { content: ""; position: absolute; top: 0; right: 0; left: calc(-1 * var(--off)); border-top: 1px solid var(--edge); }
+.ruled::after {
+  content: ""; position: absolute; width: var(--dot); height: var(--dot); border-radius: 50%; background: var(--ink-faint);
+  top: calc(.5px - var(--dot) / 2); left: calc(-1 * var(--off) - var(--dot) / 2);
+}
+.sec-title { margin-bottom: calc(var(--u) * 1.5); }
+
+/* three items side by side, each opening with a short amber tick on the section's rule */
+.trio { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 32px; padding-top: 0; }
+.item { position: relative; padding-top: calc(var(--u) * 2); }
+.item::before, .team > div::before { content: ""; position: absolute; top: 0; left: 0; width: 2rem; border-top: 1px solid var(--accent); }
+.item h2 { font-size: var(--fs); line-height: var(--lh); margin-bottom: var(--u); }
+.item .when { color: var(--ink-dim); margin-bottom: 4px; }
+.kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); column-gap: 2ch; align-items: baseline; }
+.kv dt { font-size: var(--fs-sm); color: var(--ink-dim); }
 .dash { list-style: none; }
-.dash li { position: relative; padding-left: 2ch; text-wrap: balance; }
+.dash li { position: relative; padding-left: 1.1em; text-wrap: balance; }
 .dash li + li { margin-top: calc(var(--u) / 2); }
-.dash li::before { content: "\2013"; position: absolute; left: 0; color: var(--ink-dim); }
+.dash li::before { content: ""; position: absolute; left: 0; top: .62em; width: .4em; height: .4em; background: var(--accent); }
 .sponsor-logo { display: block; margin-top: var(--u); width: 168px; max-width: 100%; aspect-ratio: 1238 / 322;
   background: url("../images/janestreet_logo_light_512.webp") left center / contain no-repeat; }
 [data-theme="dark"] .sponsor-logo { background-image: url("../images/janestreet_logo_dark_512.webp"); }
-.team > div { display: grid; grid-template-columns: 33ch minmax(0, 1fr); column-gap: 2ch; padding: var(--u) 0; border-top: 1px solid var(--edge); }
-.team > div:last-child { border-bottom: 1px solid var(--edge); }
-.team dt { color: var(--ink-dim); }
+/* the team, set like the author block of a paper */
+.team { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: calc(var(--u) * 2) 32px; }
+.team > div { position: relative; padding-top: var(--u); border-top: 1px solid var(--edge); }
+.team > div::before { top: -1px; }
+.team dt { margin-bottom: 4px; font-size: var(--fs-sm); line-height: var(--lh-sm); color: var(--ink-dim); }
 .team .nm { white-space: nowrap; }
 @media (max-width: 64rem) {
   .trio { grid-template-columns: minmax(0, 1fr); }
-  .item { max-width: 46ch; }
-  .trio > .node + .node::before { display: block; }
+  .item + .item { margin-top: calc(var(--u) * 2); border-top: 1px solid var(--edge); }
+  .item + .item::before { top: -1px; }
+  .team { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 40rem) {
-  .team > div { grid-template-columns: minmax(0, 1fr); row-gap: 2px; }
+  .team { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* ===================== small layout helpers (also used by the scripts) ===================== */
@@ -255,12 +348,11 @@ h2.node { margin-bottom: calc(var(--u) * 2); }
 }
 .visually-hidden { position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important;
   overflow: hidden !important; clip: rect(0 0 0 0) !important; white-space: nowrap !important; border: 0 !important; }
-.small { font-size: var(--fs-sm); line-height: var(--lh-sm); }
+.small { font-size: var(--fs-note); line-height: var(--lh-note); }
 .text-muted { color: var(--ink-dim) !important; }
 .text-danger, .text-danger-emphasis { color: var(--danger) !important; }
 .text-success, .text-success-emphasis { color: var(--ok) !important; }
-.text-warning, .text-warning-emphasis { color: var(--accent-text) !important; }
-.fw-semibold { font-weight: 700; }
+.text-warning { color: var(--accent-text) !important; }
 .fw-normal { font-weight: 400 !important; }
 .d-flex { display: flex; }
 .d-block { display: block; }
@@ -285,7 +377,6 @@ h2.node { margin-bottom: calc(var(--u) * 2); }
 .me-2 { margin-right: 8px; }
 .ms-2 { margin-left: 8px; }
 .p-0 { padding: 0 !important; }
-.ps-3 { padding-left: 2ch !important; }
 
 /* ===================== buttons ===================== */
 .btn {
@@ -293,65 +384,66 @@ h2.node { margin-bottom: calc(var(--u) * 2); }
   font-size: var(--fs-sm); line-height: var(--lh-sm); font-weight: 400; text-decoration: none; white-space: nowrap;
   color: var(--ink); background: transparent; border: 1px solid var(--chip-line); border-radius: 0; cursor: pointer;
 }   /* buttons keep their case: the scripts write labels such as "PDF order: yours" */
-.btn:hover { color: var(--ink); border-color: var(--ink-dim); }
-.btn-primary { color: var(--on-accent); background: var(--accent-text); border-color: var(--accent-text); font-weight: 700; }
-.btn-primary:hover { color: var(--bg); background: var(--ink); border-color: var(--ink); }
+@media (hover: hover) { .btn:hover { color: var(--ink); border-color: var(--ink-dim); } }
+.btn-primary { color: var(--bg); background: var(--ink); border-color: var(--ink); }
+@media (hover: hover) { .btn-primary:hover { color: var(--on-accent); background: var(--accent-text); border-color: var(--accent-text); } }
 .btn-outline-primary { border-color: var(--accent-dim); }
-.btn-outline-primary:hover { border-color: var(--accent); }
+@media (hover: hover) { .btn-outline-primary:hover { border-color: var(--accent); } }
 .btn-outline-danger { color: var(--danger); border-color: var(--danger); }
-.btn-outline-danger:hover { color: var(--bg); background: var(--danger); border-color: var(--danger); }
+@media (hover: hover) { .btn-outline-danger:hover { color: var(--bg); background: var(--danger); border-color: var(--danger); } }
 .btn-sm { min-height: 34px; padding: 0 12px; font-size: var(--fs-xs); line-height: var(--lh-xs); }
 @media (pointer: coarse) { .btn-sm { min-height: 44px; } }
 .btn-link {
   min-height: 0; padding: 0; border: 0; background: none; color: var(--ink);
-  text-decoration: underline dashed var(--accent) 1px; text-underline-offset: .28em;
+  text-decoration: underline solid var(--accent) 1px; text-underline-offset: .2em;
 }
-.btn-link:hover { color: var(--accent-text); text-decoration-style: solid; }
+@media (hover: hover) { .btn-link:hover { color: var(--accent-text); } }
 .btn:disabled, .btn.disabled { opacity: .45; cursor: default; }
-.btn:disabled:hover, .btn.disabled:hover { border-color: var(--chip-line); color: var(--ink); background: transparent; }
-.btn-primary:disabled:hover, .btn-primary.disabled:hover { color: var(--on-accent); background: var(--accent-text); border-color: var(--accent-text); }
+@media (hover: hover) { .btn:disabled:hover, .btn.disabled:hover { border-color: var(--chip-line); color: var(--ink); background: transparent; } }
+@media (hover: hover) { .btn-primary:disabled:hover, .btn-primary.disabled:hover { color: var(--bg); background: var(--ink); border-color: var(--ink); } }
 /* a group of radio buttons drawn as one segmented control */
 .btn-group { display: inline-flex; flex-wrap: wrap; }
-.btn-group > .btn + .btn-check + .btn, .btn-group > .btn-check + .btn ~ .btn { margin-left: -1px; }
+.btn-group > .btn-check + .btn ~ .btn { margin-left: -1px; }
 .btn-check { position: absolute; clip: rect(0 0 0 0); pointer-events: none; width: 1px; height: 1px; overflow: hidden; }
 .btn-check:checked + .btn { color: var(--bg); background: var(--ink); border-color: var(--ink); position: relative; }
 .btn-check:focus-visible + .btn { outline: 2px solid var(--accent); outline-offset: 2px; position: relative; z-index: 1; }
 .btn-close { flex: none; width: 44px; height: 44px; margin: -8px -12px -8px 0; padding: 0; border: 0; background: none; color: var(--ink-dim); cursor: pointer; font-size: 22px; line-height: 1; }
 .btn-close::before { content: "\00D7"; }
-.btn-close:hover { color: var(--accent-text); }
+@media (hover: hover) { .btn-close:hover { color: var(--accent-text); } }
 
 
 /* ===================== forms ===================== */
-.form-label { display: block; margin-bottom: 4px; font-size: var(--fs-sm); line-height: var(--lh-sm); }
-.form-text { margin-top: 4px; font-size: var(--fs-xs); line-height: var(--lh-xs); color: var(--ink-dim); }
+.form-label { display: block; margin-bottom: 6px; font-size: var(--fs-sm); line-height: var(--lh-sm); color: var(--ink-dim); }
+.form-label .small { font-size: inherit; line-height: inherit; }
+.form-text { margin-top: 4px; font-size: 15px; line-height: 22px; color: var(--ink-dim); }
+/* a field: a faint wash over one rule, like writing on a form; on focus the rule turns amber and doubles */
 .form-control, .form-select {
-  display: block; width: 100%; min-height: 44px; padding: 8px 0; font-size: max(16px, var(--fs)); line-height: var(--lh);
-  color: var(--ink); background: transparent; border: 0; border-bottom: 1px solid var(--ink-dim); border-radius: 0;
+  display: block; width: 100%; min-height: 46px; padding: 8px 12px; font-size: max(16px, var(--fs)); line-height: var(--lh);
+  color: var(--ink); background-color: var(--wash); border: 0; border-bottom: 1px solid var(--ink-dim); border-radius: 0;
 }
 .form-control::placeholder { color: var(--ink-dim); opacity: 1; }
-textarea.form-control { padding: 10px 12px; border: 1px solid var(--chip-line); resize: vertical; }
-.form-control:focus, .form-select:focus { outline: none; border-color: var(--accent); box-shadow: 0 1px 0 var(--accent); }
-textarea.form-control:focus { box-shadow: inset 0 0 0 1px var(--accent); }
+textarea.form-control { padding: 10px 12px; resize: vertical; }
+@media (hover: hover) { .form-control:hover, .form-select:hover { border-color: var(--ink); } }
+.form-control:focus, .form-select:focus { outline: none; background-color: var(--wash-strong); border-color: var(--accent); box-shadow: 0 1px 0 var(--accent); }
 .form-control[readonly] { color: var(--ink-dim); }
-.form-control.is-invalid, .form-select.is-invalid { border-color: var(--danger); }
-textarea.form-control.is-invalid { box-shadow: inset 0 0 0 1px var(--danger); }
-.form-control-sm { min-height: 40px; padding: 6px 0; font-size: max(16px, var(--fs-sm)); }
+.form-control.is-invalid, .form-select.is-invalid { border-color: var(--danger); box-shadow: 0 1px 0 var(--danger); }
+.form-control-sm { min-height: 40px; padding: 6px 12px; font-size: max(16px, var(--fs-sm)); }
 /* a select with a chevron drawn from two gradients */
 .form-select {
-  appearance: none; -webkit-appearance: none; padding-right: 22px; cursor: pointer;
+  appearance: none; padding-right: 30px; cursor: pointer;
   background-image: linear-gradient(45deg, transparent 50%, var(--ink-dim) 50%), linear-gradient(135deg, var(--ink-dim) 50%, transparent 50%);
-  background-position: calc(100% - 10px) 52%, calc(100% - 5px) 52%; background-size: 5px 5px; background-repeat: no-repeat;
+  background-position: calc(100% - 17px) 52%, calc(100% - 12px) 52%; background-size: 5px 5px; background-repeat: no-repeat;
 }
 .form-select option, .form-select optgroup { color: var(--ink); background: var(--bg); }
 .pp-tex { font-size: 14px; line-height: 1.5; tab-size: 2; }
 fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
 legend { float: left; width: 100%; padding: 0; margin: 0 0 var(--u); }
 legend + * { clear: left; }
-legend .small { text-transform: none; color: var(--ink-dim); }
+legend .small { color: var(--ink-dim); }
 
 /* checkboxes, drawn */
 input[type="checkbox"] {
-  appearance: none; -webkit-appearance: none; flex: none; margin: 0; cursor: pointer; vertical-align: -.2em;
+  appearance: none; flex: none; margin: 0; cursor: pointer; vertical-align: -.2em;
   width: 18px; height: 18px; border: 1px solid var(--ink-dim); border-radius: 0; background: transparent;
   display: inline-grid; place-content: center;
 }
@@ -363,9 +455,10 @@ input[type="checkbox"]:checked { background: var(--accent-text); border-color: v
 input[type="checkbox"]:checked::before { opacity: 1; }
 input[type="checkbox"]:indeterminate { border-color: var(--accent-text); }
 input[type="checkbox"]:indeterminate::before { width: 10px; height: 0; border-left: 0; border-bottom: 2px solid var(--accent-text); transform: none; opacity: 1; }
-input[type="checkbox"]:hover { border-color: var(--accent-text); }
+@media (hover: hover) { input[type="checkbox"]:hover { border-color: var(--accent-text); } }
 .form-check { display: flex; align-items: center; gap: 12px; min-height: 44px; }
-.form-check-label { cursor: pointer; }
+.form-check-label { cursor: pointer; font-size: var(--fs-sm); line-height: var(--lh-sm); }
+.form-check-label .small { font-size: inherit; line-height: inherit; }
 /* a switch: a box with a square knob */
 .form-switch input[type="checkbox"] { width: 34px; height: 18px; place-content: center start; padding: 2px; }
 .form-switch input[type="checkbox"]::before {
@@ -376,10 +469,10 @@ input[type="checkbox"]:hover { border-color: var(--accent-text); }
 
 /* ===================== cards, alerts, lists ===================== */
 .card { border-left: 1px solid var(--accent-dim); padding: 4px 0 4px 16px; }
-.card-header { font-weight: 700; color: var(--accent-text); text-transform: lowercase; margin-bottom: 8px; }
+.card-header { font-weight: 700; color: var(--ink); margin-bottom: 8px; }
 .card-header:focus { outline: none; }
 .card-header:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-.card-header .small, .card-header .form-check-label { font-weight: 400; color: var(--ink-dim); text-transform: none; }
+.card-header .small, .card-header .form-check-label { font-weight: 400; color: var(--ink-dim); }
 .card-body { padding: 0; }
 .alert { margin: 0 0 var(--u); padding: 8px 14px; border-left: 2px solid var(--ink-dim); background: var(--wash); color: var(--ink); }
 .alert-danger { border-left-color: var(--danger); }
@@ -387,41 +480,45 @@ input[type="checkbox"]:hover { border-color: var(--accent-text); }
 .alert-warning { border-left-color: var(--accent); }
 .alert-info { border-left-color: var(--ink-dim); }
 .alert-link { color: inherit; font-weight: 700; }
-.py-2 { padding-top: 8px; padding-bottom: 8px; }
 .list-group { list-style: none; margin: 0; padding: 0; }
 .list-group-item { border-bottom: 1px solid var(--edge); }
 
 /* ===================== Problems page ===================== */
 .bank-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; }
-.bank-lede { color: var(--ink-dim); max-width: 62ch; margin: var(--u) 0 calc(var(--u) * 2); }
+.bank-head h1 { font-size: var(--fs-tool); line-height: 1.2; --node-lh: calc(var(--fs-tool) * 1.2); }
+.bank-lede { color: var(--ink-dim); max-width: 33em; margin: calc(var(--u) / 2) 0 var(--u); text-wrap: pretty; }
 .bank { position: relative; }
+html[data-list]:not([data-ready]) .bank { min-height: 100vh; }     /* a link that shows a list: the footer waits below the screen for it (site.js) */
+/* otherwise the script puts in the line that offers Show all: its room is kept from the first paint, so that the footer does not jump */
+html:not([data-ready]):not([data-list]) #bank-idle[hidden] { display: block !important; visibility: hidden; }
 
 /* search: one rule, a prompt, the chosen tags below */
-.bank-toolbar { position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-top: calc(var(--u) * 2); }
+.bank-toolbar { position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-top: var(--u); }
 .bank-searchbox {
   flex: 1 1 18rem; min-width: 0; display: flex; align-items: center; gap: 10px;
-  min-height: 52px; border-bottom: 1px solid var(--ink-dim);
+  min-height: 52px; padding: 0 12px; background: var(--wash); border-bottom: 1px solid var(--ink-dim);
 }
-.bank-searchbox::before { content: ">"; flex: none; color: var(--accent-text); font-weight: 700; }
-.bank-searchbox:focus-within { border-bottom: 2px solid var(--accent); margin-bottom: -1px; }
-.bank-search { flex: 1 1 auto; min-width: 0; height: 44px; padding: 0; border: 0; background: transparent; outline: none; font-size: max(16px, var(--fs)); }
+.bank-searchbox::before { content: ">"; flex: none; color: var(--accent-text); }
+.bank-searchbox:focus-within { background: var(--wash-strong); border-bottom: 2px solid var(--accent); margin-bottom: -1px; }
+.bank-search { flex: 1 1 auto; min-width: 0; height: 44px; padding: 0; border: 0; background: transparent; outline: none; font-size: 16px; }
+@media (max-width: 40rem) { .bank-searchbox { padding: 0 8px; gap: 8px; } }
 .bank-search::placeholder { color: var(--ink-dim); opacity: 1; }
 .bank-filter-btn { flex: 0 0 auto; }
 .bank-filter-btn .chev { width: 6px; height: 6px; border-right: 1px solid currentColor; border-bottom: 1px solid currentColor; transform: translateY(-2px) rotate(45deg); }
 .bank-filter-btn[aria-expanded="true"] .chev { transform: translateY(2px) rotate(-135deg); }
-.bank-filter-count { display: inline-flex; justify-content: center; min-width: 20px; padding: 0 5px; font-size: var(--fs-xs); line-height: 20px; font-weight: 700;
+.bank-filter-count { display: inline-flex; justify-content: center; min-width: 20px; padding: 0 5px; font-size: var(--fs-xs); line-height: 20px;
   color: var(--on-accent); background: var(--accent-text); }
-.bank-chips { flex: 1 1 100%; display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
+.bank-chips { flex: 1 1 100%; min-width: 0; display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
 
 /* tags: a dashed hairline, the type as a muted prefix, the value in ink */
 .bank-chip {
   display: inline-flex; align-items: baseline; gap: .8ch; max-width: 100%; padding: 1px 7px;
   border: 1px dashed var(--chip-line); font-size: var(--fs-xs); line-height: var(--lh-xs); color: var(--ink); white-space: nowrap;
 }
-.bank-chip-type { flex: none; color: var(--ink-dim); text-transform: lowercase; }
-.bank-chips .bank-chip, .pp-chips .bank-chip { border-style: solid; border-color: var(--accent-dim); }
+.bank-chip-type { flex: none; color: var(--ink-dim); }
+.bank-chips .bank-chip, .pp-chips .bank-chip { border-style: solid; border-color: var(--accent-dim); white-space: normal; overflow-wrap: anywhere; }   /* a long tag wraps: its × stays on screen */
 .bank-chip-clickable { cursor: pointer; }
-.bank-chip-clickable:hover { border-style: solid; border-color: var(--ink-dim); }
+@media (hover: hover) { .bank-chip-clickable:hover { border-style: solid; border-color: var(--ink-dim); } }
 .bank-chip-clickable:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .bank-chip-alsoin { border-style: dotted; }
 .pp-chips .bank-chip-new { border-style: dashed; }                       /* a proposed tag, not in tags.yml yet */
@@ -431,74 +528,125 @@ input[type="checkbox"]:hover { border-color: var(--accent-text); }
   position: relative; align-self: center; margin: 0 -3px 0 2px; padding: 0 3px; border: 0; background: none; cursor: pointer;
   color: var(--ink-dim); font-size: var(--fs-sm); line-height: 1;
 }
-.bank-chip-x::after { content: ""; position: absolute; inset: -14px -10px; }   /* a 44 px target, drawn small */
-.bank-chip-x:hover { color: var(--accent-text); }
+.bank-chip-x::after { content: ""; position: absolute; inset: -15px; }   /* a 44 px target, drawn small */
+@media (hover: hover) { .bank-chip-x:hover { color: var(--accent-text); } }
 .bank-chip-x:focus-visible { outline-offset: 1px; }
 
 /* the Problems page's tag list floats over the page: opening or closing it never moves what is below (a click there
    would miss). The propose page's pickers use the same look, in the flow. */
 .bank > .bank-listbox { position: absolute; left: 0; right: 0; }
 .bank-listbox {
-  position: relative; z-index: 20; max-height: 60vh; overflow-y: auto; margin-top: 4px; padding: 4px 0;
+  overscroll-behavior: contain; position: relative; z-index: 20; max-height: 60vh; overflow-y: auto; margin-top: 4px; padding: 4px 0;
   border: 1px solid var(--chip-line); background: var(--bg); font-size: var(--fs-sm); line-height: var(--lh-sm);
 }
-.bank-list-header { padding: 10px 12px 4px; font-size: var(--fs-xs); line-height: var(--lh-xs); color: var(--ink-dim); text-transform: lowercase; border-top: 1px solid var(--edge); }
+.bank-list-header { overflow-wrap: anywhere; padding: 10px 12px 4px; font-size: var(--fs-xs); line-height: var(--lh-xs); color: var(--ink-dim); border-top: 1px solid var(--edge); }
 .bank-list-header:first-child { border-top: 0; }
 .bank-list-section { display: flex; align-items: center; gap: .6ch; cursor: pointer; user-select: none; }
-.bank-list-section:hover { color: var(--ink); }
-.bank-list-caret { flex: none; width: 1.5ch; color: var(--accent-text); font-weight: 700; }
+@media (hover: hover) { .bank-list-section:hover { color: var(--ink); } }
+.bank-list-caret { flex: none; width: 1.5ch; color: var(--accent-text); }
 .bank-list-count-head { margin-left: auto; }
-.bank-list-subheader { padding: 6px 12px 2px 28px; font-size: var(--fs-xs); font-weight: 700; color: var(--ink-dim); }
+.bank-list-subheader { padding: 6px 12px 2px 28px; font-size: var(--fs-xs); color: var(--ink-dim); }
 .bank-option { display: flex; align-items: baseline; gap: 1ch; padding: 6px 12px; padding-left: calc(12px + var(--depth, 0) * 2.5ch); cursor: pointer; }
-.bank-option:hover, .bank-option-active { background: var(--wash); }
-.bank-option-active { box-shadow: inset 2px 0 0 var(--accent); }
-.bank-option-selected .bank-option-label { font-weight: 700; }
+.bank-option-active { background: var(--wash); box-shadow: inset 2px 0 0 var(--accent); }
+@media (hover: hover) { .bank-option:hover { background: var(--wash); } }
+.bank-option-selected .bank-option-label { color: var(--accent-text); }
 .bank-option-selected .bank-option-label::after {   /* a tick, drawn: the face has no glyph for it */
   content: ""; display: inline-block; width: 5px; height: 10px; margin-left: 1ch; border: solid var(--accent-text);
   border-width: 0 2px 2px 0; transform: translateY(-1px) rotate(45deg);
 }
-.bank-option-type { flex: none; min-width: 10ch; font-size: var(--fs-xs); color: var(--ink-dim); text-transform: lowercase; }
+.bank-option-type { flex: none; min-width: 10ch; font-size: var(--fs-xs); color: var(--ink-dim); }
 .bank-option-sub { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--fs-xs); color: var(--ink-dim); }
 .bank-option-count { margin-left: auto; padding-left: 1ch; font-size: var(--fs-xs); color: var(--ink-dim); font-variant-numeric: tabular-nums; }
-.bank-toggle { flex: none; width: 2ch; margin-left: -.5ch; text-align: center; color: var(--accent-text); font-weight: 700; cursor: pointer; }
+.bank-toggle { flex: none; width: 2ch; margin-left: -.5ch; text-align: center; color: var(--accent-text); cursor: pointer; }
 .bank-toggle-empty { display: inline-block; cursor: default; }
 .bank-list-empty { padding: 8px 12px; color: var(--ink-dim); }
 
-/* the advanced filters */
-.bank-advanced { margin-top: calc(var(--u) * 2); }
-.bank-advanced-title { display: block; margin-bottom: 4px; font-size: var(--fs-sm); line-height: var(--lh-sm); font-weight: 700; }
+/* the advanced filters: their explanations wait in the bubbles (.tip-btn), so the options sit side by side */
+.bank-advanced { margin-top: var(--u); }
+.bank-advanced .row { gap: 12px 40px; margin: 0; align-items: flex-start; }
+.bank-advanced .row > * { flex: 0 1 auto; max-width: none; padding: 0; }
+.bank-advanced .row > #bank-year-box { flex: 1 1 18rem; max-width: 26rem; }
+.bank-advanced .row + .row { margin-top: 12px; }
+/* every group is a title with its controls below; the switches are as high as the buttons beside them */
+.bank-advanced .form-check { min-height: 34px; }
+@media (pointer: coarse) { .bank-advanced .form-check { min-height: 44px; } }
+.bank-switches { display: flex; align-items: center; column-gap: 24px; row-gap: 4px; }
+@media (max-width: 47.9375rem) { .bank-switches { flex-direction: column; align-items: flex-start; } }
+/* "In the PDFs" unfolds beside "Show" (under it on a narrow screen) to its exact size: bank-ui.js setMethodsPdf.  It
+   clips what is not unfolded yet, its label on one line; 4 px of padding keep a focus ring inside the clip. */
+.bank-fold { overflow: hidden; padding: 4px; margin: -4px; }
+.bank-fold > * { flex-shrink: 0; }
+.bank-fold .form-check-label { white-space: nowrap; }
+.bank-advanced-title { display: block; margin-bottom: 4px; font-size: var(--fs-sm); line-height: var(--lh-sm); }
+
+/* a bubble: a note that opens from a small amber asterisk, or from a tag (tips.js moves the one bubble of the page) */
+.tip-btn {
+  position: relative; flex: none; margin-left: -4px; padding: 0 2px; border: 0; background: none; color: var(--accent-text); cursor: help;
+  font-size: var(--fs-sm); line-height: 1; vertical-align: .25em;
+}
+.tip-btn::after { content: ""; position: absolute; inset: -15px -16px; }   /* a 44 px target, drawn small */
+[data-tip]:not([data-tip=""]) { cursor: help; }
+.bank-chip-clickable[data-tip] { cursor: pointer; }
+.tip {
+  position: fixed; z-index: 40; left: 0; top: 0; transform: translate(var(--x, 0), var(--y, 0));
+  width: max-content; max-width: min(24rem, calc(100vw - 16px)); padding: 9px 13px;
+  font-size: var(--fs-note); line-height: var(--lh-note); text-wrap: pretty;
+  color: var(--ink); background: var(--surface); border: 1px solid var(--chip-line); border-left: 2px solid var(--accent);
+}
 /* origin-year slider: two range inputs on one track; only their handles take the pointer */
 .bank-range { position: relative; height: 32px; }
 .bank-range-track { position: absolute; left: 7px; right: 7px; top: 50%; height: 1px; background: var(--ink-dim); }
 .bank-range-fill { position: absolute; top: -1px; bottom: -1px; left: var(--lo, 0%); right: calc(100% - var(--hi, 100%)); background: var(--accent); }
-.bank-range-input { position: absolute; inset: 0; width: 100%; height: 32px; margin: 0; background: none; pointer-events: none; -webkit-appearance: none; appearance: none; }
+.bank-range-input { position: absolute; inset: 0; width: 100%; height: 32px; margin: 0; background: none; pointer-events: none; appearance: none; }
 .bank-range-input::-webkit-slider-runnable-track { height: 32px; background: none; }
 .bank-range-input::-moz-range-track { background: none; }
-.bank-range-input::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; pointer-events: auto; width: 14px; height: 14px; margin-top: 9px; background: var(--accent-text); border: 2px solid var(--bg); cursor: pointer; }
+.bank-range-input::-webkit-slider-thumb { appearance: none; pointer-events: auto; width: 14px; height: 14px; margin-top: 9px; background: var(--accent-text); border: 2px solid var(--bg); cursor: pointer; }
 .bank-range-input::-moz-range-thumb { pointer-events: auto; width: 14px; height: 14px; border-radius: 0; background: var(--accent-text); border: 2px solid var(--bg); cursor: pointer; }
 .bank-range-input:focus { outline: 0; }
 .bank-range-input:focus-visible::-webkit-slider-thumb { outline: 2px solid var(--accent); outline-offset: 2px; }
 .bank-range-input:focus-visible::-moz-range-thumb { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-/* the bar above the results */
-.bank-results-head { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; margin: calc(var(--u) * 2) 0 var(--u); font-size: var(--fs-sm); line-height: var(--lh-sm); }
+/* The bar above the results: it stays on screen while the list scrolls, under the header, with the count and Create PDF.
+   Solid, not glass: it is as wide as the list, which scrolls under it all the time. Where it would wrap, only the actions
+   stay (the wrapper's box goes, so that they can stick to the whole page). The status has its own line under it, kept
+   even when empty, so that a message never moves the list; it sticks too, so that it can always be seen. */
+.bank-bar {
+  position: sticky; top: var(--head-h); z-index: 15; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 14px;
+  margin-top: var(--u); padding: 8px 0; background: var(--bg); border-bottom: 1px solid var(--edge); font-size: var(--fs-sm); line-height: var(--lh-sm);
+}
+.bank-bar:has(> .bank-results-head[hidden]) { display: none; }
+.is-stuck::before { content: ""; position: absolute; left: 0; right: 0; bottom: 100%; height: var(--head-h); background: var(--bg); }   /* set by bank-ui.js: no row between the capsules of the header */
+.bank-results-head, .bank-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; }
 .bank-results-head .form-check { gap: 12px; }
-.bank-results-head .form-check-label { text-transform: lowercase; }
 #bank-count { color: var(--ink-dim); }
-#bank-selected-count { font-weight: 700; }
-#bank-clear-selection { font-size: var(--fs-sm); text-transform: lowercase; }
-.bank-status { min-height: var(--lh-sm); }
+#bank-selected-count { color: var(--accent-text); }
+#bank-clear-selection { font-size: var(--fs-sm); }
+.bank-status {
+  position: sticky; top: calc(var(--head-h) + var(--bar-h)); z-index: 14; min-height: 27px; overflow-wrap: anywhere; padding: 2px 0; font-size: var(--fs-sm); line-height: var(--lh-sm);
+  background: var(--bg); border-bottom: 1px solid var(--edge);
+}
+.bank-status:empty { background: none; border-color: transparent; pointer-events: none; }
+.bank-status.text-danger-emphasis, .bank-status.text-success-emphasis { position: static; }   /* a job's outcome scrolls away with the page: only progress stays */
+/* the bar's own buttons are where they are: focusing one must not scroll the page */
+.bank-bar :is(button, input), .bank-actions button { scroll-margin-top: calc(-1 * (var(--bar-h) + var(--status-h) + 8px)); }
+@media (max-width: 62rem) {
+  .bank-bar { display: contents; }
+  .bank-bar.is-stuck::before { content: none; }
+  .bank-results-head { margin-top: var(--u); padding-bottom: 4px; }
+  .bank-actions { position: sticky; top: var(--head-h); z-index: 15; padding: 8px 0; background: var(--bg); border-bottom: 1px solid var(--edge); }
+}
 @media (max-width: 40rem) {
-  .bank-results-head .flex-grow-1 { flex-basis: 100%; height: 0; }
   #bank-order-btn, #bank-create, #bank-cancel { flex: 1 1 auto; padding: 0 12px; }
+}
+@media (max-height: 26rem) {     /* a phone in landscape, or a page zoomed far: the bar scrolls away and leaves its room; the status line stays */
+  .bank-bar, .bank-actions { position: static; }
+  .is-stuck::before { content: none; }
 }
 
 /* the rows */
-.bank-results { border-top: 1px solid var(--edge); }
-.bank-results:not(:has(> li:not([hidden]))) { border-top: 0; }
 .bank-row {
-  position: relative; display: grid; grid-template-columns: 18px minmax(0, 1fr) auto; column-gap: 18px; row-gap: 8px; align-items: start;
-  padding: calc(var(--u) * 1.5) 0;
+  position: relative; display: grid; grid-template-columns: 18px minmax(0, 1fr) auto; column-gap: 18px; row-gap: 6px; align-items: start;
+  padding: var(--u) 0;
 }
 .bank-row > .bank-check { grid-column: 1; grid-row: 1; margin-top: calc((var(--lh) - 18px) / 2); }
 .bank-row-main { grid-column: 2; grid-row: 1; min-width: 0; }
@@ -508,13 +656,28 @@ input[type="checkbox"]:hover { border-color: var(--accent-text); }
 .bank-row-tags .bank-chip { white-space: normal; }
 .bank-tags { display: contents; }
 .bank-results:not(.bank-show-methods) .bank-chip-methods { display: none; }
+/* On a computer a long list scrolls in its own box, one window high under the bar: the wheel over it scrolls the list,
+   anywhere else the page, so the PDFs below it are near.  The box reaches left to the line, where a ticked problem shows
+   its mark.  A phone keeps one scroll: a box inside the page is hard to leave with a finger. */
+@media (hover: hover) and (pointer: fine) and (min-height: 26.0625rem) {
+  .bank-results {
+    max-height: calc(100vh - var(--head-h) - var(--bar-h) - var(--status-h) - 16px); overflow-y: auto;
+    margin-left: calc(-1 * var(--off) - 2px); padding-left: calc(var(--off) + 2px);
+    scrollbar-width: thin; scrollbar-color: var(--chip-line) transparent;
+  }
+}
 .bank-row-actions { grid-column: 3; grid-row: 1; display: flex; align-items: center; gap: 10px; white-space: nowrap; }
-.bank-preview-btn { font-size: var(--fs-sm); line-height: var(--lh); text-transform: lowercase; }
+.bank-preview-btn { position: relative; font-size: var(--fs-sm); line-height: var(--lh); }
+/* an open preview: its button takes a cross, and a second click closes it.  The cross sits in the button's padding, out of
+   the flow: a flex item would get the word's underline and the button's gap. */
+.bank-preview-btn[aria-expanded="true"] { padding-right: 1.4em; }
+.bank-preview-btn[aria-expanded="true"]::after {
+  content: "×"; content: "×" / ""; position: absolute; top: 0; right: 0; bottom: 0; display: flex; align-items: center; font-size: 1.4em;
+}
 /* a ticked problem lights its stretch of the line */
-.bank-row-selected::before { content: ""; position: absolute; top: -1px; bottom: -1px; width: 3px; background: var(--accent); left: calc(-1 * var(--off) - 1.5px); }
+.bank-row-selected::before { content: ""; position: absolute; top: -1px; bottom: -1px; width: 2px; background: var(--accent); left: calc(-1 * var(--off) - 1px); }
 .bank-marker {
-  display: inline-flex; padding: 1px 7px; font-size: var(--fs-xs); line-height: var(--lh-xs); text-transform: lowercase;
-  color: var(--accent-text); background: var(--bg); border: 1px solid var(--accent-text);
+  display: inline-flex; padding: 1px 7px; font-size: var(--fs-xs); line-height: var(--lh-xs);  color: var(--accent-text); background: var(--bg); border: 1px solid var(--accent-text);
 }
 .bank-marker-partial { border-style: dashed; }
 .bank-marker-masked { border-style: dotted; }
@@ -522,16 +685,41 @@ input[type="checkbox"]:hover { border-color: var(--accent-text); }
 .bank-review-human { border-style: solid; color: var(--ok); }
 .bank-review-new { color: var(--ok); border-color: var(--ok); }
 .bank-review-proposed { color: var(--accent-text); border-color: var(--accent-dim); }
-.bank-preview-panel { grid-column: 1 / -1; margin-top: 4px; padding: 8px 0 8px 14px; border-left: 1px solid var(--accent-dim); }
+/* a problem's preview: its statement under its title, drawn into the page by PDF.js (bank-ui.js drawSheet).  The drawing
+   is black on no background: softened, it is the page's ink; turned over, the dark theme's. */
+.bank-preview-panel { grid-column: 2 / -1; margin-top: 2px; padding: 6px 0 6px 16px; border-left: 1px solid var(--accent-dim); overflow: hidden; }
+@media (max-width: 40rem) { .bank-preview-panel { grid-column: 1 / -1; padding-left: 12px; } }     /* a phone: every pixel of the row */
+.bank-sheet-scroll { overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain; scrollbar-width: thin; scrollbar-color: var(--chip-line) transparent; }
+.bank-sheet { position: relative; }
+.bank-sheet canvas { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .86; }
+[data-theme="dark"] .bank-sheet canvas { filter: invert(1) hue-rotate(180deg); opacity: .88; }
+/* its text layer: the words, invisible, over the drawing, to select and to read aloud (pdfjs-dist web/pdf_viewer.css,
+   without nesting) */
+.bank-sheet .textLayer {
+  position: absolute; inset: 0; overflow: clip; text-align: initial; line-height: 1; letter-spacing: normal; word-spacing: normal;
+  -webkit-text-size-adjust: none; text-size-adjust: none; forced-color-adjust: none; transform-origin: 0 0; z-index: 0;
+  --min-font-size: 1; --text-scale-factor: calc(var(--total-scale-factor) * var(--min-font-size)); --min-font-size-inv: calc(1 / var(--min-font-size));
+}
+.bank-sheet .textLayer :is(span, br) {
+  color: transparent; position: absolute; white-space: pre; cursor: text; transform-origin: 0% 0%; -webkit-user-select: text; user-select: text;
+}
+.bank-sheet .textLayer > :not(.markedContent), .bank-sheet .textLayer .markedContent span:not(.markedContent) {
+  z-index: 1; --font-height: 0; font-size: calc(var(--text-scale-factor) * var(--font-height)); --scale-x: 1; --rotate: 0deg;
+  transform: rotate(var(--rotate)) scaleX(var(--scale-x)) scale(var(--min-font-size-inv));
+}
+.bank-sheet .textLayer .markedContent { display: contents; }
+.bank-sheet .textLayer ::selection { background: rgba(143, 104, 13, .28); color: transparent; }
+.bank-sheet .textLayer br::selection { background: transparent; }
+.bank-sheet .textLayer .endOfContent { display: block; position: absolute; inset: 100% 0 0; z-index: 0; cursor: default; -webkit-user-select: none; user-select: none; }
 @media (max-width: 40rem) {
   .bank-row { column-gap: 14px; }
   .bank-row-tags { grid-column: 2 / -1; }
 }
 
 /* PDF order */
-.bank-order { margin-bottom: calc(var(--u) * 2); }
-.bank-order-list { max-height: 26rem; overflow-y: auto; border-top: 1px solid var(--edge); }
-.bank-order-row { display: flex; align-items: center; gap: 1ch; padding: 4px 0; user-select: none; }
+.bank-order { margin: var(--u) 0 calc(var(--u) * 2); }
+.bank-order-list { overscroll-behavior: contain; max-height: 26rem; overflow-y: auto; border-top: 1px solid var(--edge); }
+.bank-order-row { contain: layout; display: flex; align-items: center; gap: 1ch; padding: 4px 0; user-select: none; }
 .bank-order-row .bank-title { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .bank-order-handle { flex: none; padding: 6px 8px; color: var(--accent-text); cursor: grab; touch-action: none; }
 .bank-order-pos { flex: none; min-width: 3ch; text-align: right; color: var(--ink-dim); font-variant-numeric: tabular-nums; }
@@ -548,39 +736,101 @@ input[type="checkbox"]:hover { border-color: var(--accent-text); }
 .bank-preview-pdf { height: 55vh; }
 @media (max-width: 40rem) { .bank-pdf { height: 55vh; } .bank-option-type { display: none; } }
 
+/* the engine's licence notice, where the engine is used: one quiet word */
+.legal { margin-top: 8px; font-family: var(--mono); font-size: 12px; line-height: 18px; letter-spacing: .012em; text-align: right; }
+.legal a { display: inline-block; padding: 3px 0; color: var(--ink-dim); text-decoration-color: var(--ink-faint); }
+.legal a[target]::after { content: none; }
+
 /* ===================== Propose a problem ===================== */
-.pp-rules summary { width: max-content; max-width: 100%; cursor: pointer; list-style: none; color: var(--ink); }
+.pp-rules summary { width: max-content; max-width: 100%; cursor: pointer; list-style: none; color: var(--ink); font-size: var(--fs-sm); }
 .pp-rules summary::-webkit-details-marker { display: none; }
-.pp-rules summary::before { content: "+"; display: inline-block; width: 2ch; color: var(--accent-text); font-weight: 700; }   /* the face's own sign */
+.pp-rules summary::before { content: "+"; display: inline-block; width: 2ch; color: var(--accent-text); }   /* the face's own sign */
 .pp-rules[open] > summary::before { content: "\2212"; }
-.pp-rules summary span { text-decoration: underline dashed var(--accent) 1px; text-underline-offset: .28em; }
-.pp-rules summary:hover { color: var(--accent-text); }
-.pp-rules summary:hover span { text-decoration-style: solid; }
+.pp-rules summary span { text-decoration: underline solid var(--accent) 1px; text-underline-offset: .2em; }
+@media (hover: hover) { .pp-rules summary:hover { color: var(--accent-text); } }
 .pp-rules ul { list-style: none; }
-.pp-rules li { position: relative; padding-left: 2ch; }
-.pp-rules li::before { content: "\2013"; position: absolute; left: 0; color: var(--ink-dim); }
+.pp-rules li { position: relative; padding-left: 1.1em; }
+.pp-rules li + li { margin-top: 4px; }
+.pp-rules li::before { content: ""; position: absolute; left: 0; top: .6em; width: .4em; height: .4em; background: var(--accent); }
 .pp-steps { padding-left: 3ch; }
 .pp-steps li + li { margin-top: 4px; }
 .pp-picker .pp-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
 .pp-picker .pp-chips:empty { display: none; }
 .pp-picker .pp-listbox { max-height: 18rem; }
 .pp-dialog {
-  width: min(58rem, calc(100vw - 2rem)); max-height: calc(100vh - 3rem); padding: 16px 20px;
+  width: min(58rem, calc(100vw - 2rem)); max-height: calc(100vh - 3rem); max-height: calc(100dvh - 3rem); padding: 16px 20px; overscroll-behavior: contain;
   color: var(--ink); background: var(--bg); border: 1px solid var(--chip-line);
 }
+.pp-dialog[open] { display: flex; flex-direction: column; }     /* one scroller inside: the preamble */
 .pp-dialog::backdrop { background: var(--backdrop); }
-.pp-preamble { max-height: calc(100vh - 13rem); overflow: auto; margin: 0; padding: 12px; font-size: 12.5px; line-height: 1.5; white-space: pre;
+html:has(.pp-dialog[open]) { overflow: hidden; }                 /* the page behind stays still */
+.pp-preamble { flex: 1 1 auto; min-height: 0; overscroll-behavior: contain; overflow: auto; margin: 0; padding: 12px; font-size: 12.5px; line-height: 1.5; white-space: pre;
   background: var(--wash); border: 1px solid var(--edge); }
 #pp-errors ul { padding-left: 2ch; }
+#pp-errors:focus { outline: none; }
+
+/* ===================== touch screens, small windows, other media ===================== */
+/* the title of a row is part of its tick, on all its lines; hit areas larger than what is drawn */
+.bank-row-title { display: inline-block; }
+.bank-row > .bank-check { position: relative; }
+.bank-row > .bank-check::after { content: ""; position: absolute; inset: -13px; }
+.bank-toggle { position: relative; }
+.bank-toggle::after { content: ""; position: absolute; inset: -6px -8px; }
+.card-header .form-check { position: relative; }
+.card-header .form-check-label::after { content: ""; position: absolute; inset: 0; }
+.card-header .form-check input { position: relative; z-index: 1; }      /* the switch itself stays on top of its label's area */
+.brand:focus-visible { outline-offset: 1px; }                  /* so close to the top of the window, its ring must fit */
+a, button, input, label, summary { touch-action: manipulation; }
+.bank-order-row, .bank-list-section { -webkit-user-select: none; -webkit-touch-callout: none; }
+@media (pointer: coarse) {
+  .pp-tex { font-size: 16px; }                                  /* under 16 px, an iPhone zooms the page on focus */
+  .bank-preview-btn { min-height: 44px; display: inline-flex; align-items: center; margin-block: -8px; }
+  #bank-clear-selection { min-height: 44px; }
+  .bank-order-handle { padding: 8px 13px; margin-left: -9px; }
+  .bank-order-row .btn { min-height: 44px; min-width: 40px; }
+  .bank-toggle::after { inset: -11px -14px; }
+  .bank-option { padding-block: 10px; }
+  /* the year handles: 14 px drawn, 28 px to take */
+  .bank-range-track { left: 14px; right: 14px; }
+  .bank-range-input::-webkit-slider-thumb { width: 28px; height: 28px; margin-top: 2px; border: 7px solid transparent; background-clip: padding-box; }
+  .bank-range-input::-moz-range-thumb { width: 28px; height: 28px; border: 7px solid transparent; background-clip: padding-box; }
+}
+@media (max-width: 40rem) {
+  .bank-order-row .bank-title { white-space: normal; overflow-wrap: anywhere; }   /* on one line, problems could not be told apart */
+}
+@media (min-width: 30rem) { .bank-advanced .btn-group { flex-wrap: nowrap; } }
+@media (max-width: 18.75rem) { .btn { white-space: normal; text-align: center; } }
+@media (max-width: 17rem) { .site-nav ul { flex-wrap: wrap; } }
+/* without scripts, what needs one goes */
+@media (scripting: none) { .theme, #pp-download { display: none; } }
+/* where the system imposes its colours, the switch and the disc must still say something */
+@media (forced-colors: active) {
+  .form-switch input[type="checkbox"]::before, .theme .disc::after { forced-color-adjust: none; background: ButtonText; }
+  .form-switch input[type="checkbox"]:checked::before { background: Highlight; }
+}
+/* on paper: light, without what belongs on a screen */
+@media print {
+  :root, [data-theme="dark"] {
+    color-scheme: light; --bg: #fff; --ink: #26221c; --ink-dim: #5c5749; --ink-faint: #969077; --accent: #8f680d; --accent-text: #86610b;
+    --edge: rgba(42, 38, 32, .14); --chip-line: rgba(42, 38, 32, .28); --wash: rgba(42, 38, 32, .045); --glass: #fff; --glass-fx: none;
+  }
+  body::before, .theme, .bank-bar, .bank-status { display: none; }
+  .site-head { position: absolute; }
+  .club-logo, .sponsor-logo { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  [data-theme="dark"] .sponsor-logo { background-image: url("../images/janestreet_logo_light_512.webp"); }
+  [data-theme="dark"] .club-logo { background-image: url("../images/club_logo_light_176.webp?v=2"); }
+  .item, .team > div, .bank-row { break-inside: avoid; }
+}
 
 /* ===================== motion: colour only ===================== */
-/* A theme switch fades every colour together (site.js sets .theme-fade on <html> for that moment only), so no text is
-   ever drawn in the new colour on the old background. Hover feedback is a short fade of the element itself. */
+/* A theme switch is one cross-fade of the whole page, by the browser (site.js). A fade per element cannot do that: an inherited
+   colour restarts its transition at each level of nesting, so deep text reached its colour three times later than the
+   background. During the switch nothing else fades, so that the page faded to is already in its final colours.
+   Hover feedback is a short fade of the element itself. */
+::view-transition-group(root), ::view-transition-old(root), ::view-transition-new(root) { animation-duration: .5s; }
+.theme-switching :is(a, .btn, .theme, .bank-chip, .bank-chip-x), .theme-switching .form-switch input[type="checkbox"]::before { transition: none !important; }
 @media (prefers-reduced-motion: no-preference) {
   a, .btn, .theme, .bank-chip, .bank-chip-x { transition: color .18s ease, border-color .18s ease, background-color .18s ease, text-decoration-color .18s ease; }
-  .theme-fade, .theme-fade *, .theme-fade *::before, .theme-fade *::after {
-    transition: color .3s ease, background-color .3s ease, border-color .3s ease, text-decoration-color .3s ease, box-shadow .3s ease !important;
-  }
 }
 @media (prefers-reduced-motion: reduce) {
   .form-switch input[type="checkbox"]::before { transition: none; }

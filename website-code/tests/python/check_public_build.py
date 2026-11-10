@@ -119,10 +119,11 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--site", default=paths.SITE_DIR)
     a = ap.parse_args(argv)
-    errors = check(a.site, P.load_problems(paths.PROBLEMS_DIR), A.load_items())
+    problems = P.load_problems(paths.PROBLEMS_DIR)
+    errors = check(a.site, problems, A.load_items())
     for msg in errors:
         print(f"public build: {msg}")
-    n = len(visible_problems(P.load_problems(paths.PROBLEMS_DIR)))
+    n = len(visible_problems(problems))
     print(f"public build: {len(errors)} problem(s) found" if errors else f"public build OK ({n} published problem(s))")
     return 1 if errors else 0
 

@@ -9,8 +9,6 @@ review in the real UI (nothing is marked proposed there); new-*.tex files appear
 """
 import re
 
-from .problems import origin_label
-
 
 PROPOSED_NOTE = "proposed, not reviewed yet"
 # What a solutions PDF prints instead of the solution of a proposed problem (defined in problem-bank/preamble.tex).
@@ -52,46 +50,39 @@ def origin_year(p):
     return int(m.group(1)) if m else None
 
 
-def index_entry(p, tags):
+def index_entry(p):
     """One row of index.json.  Derived fields are computed here, never typed by hand."""
     return {
         "id": p["id"],
         "title": p["title"],
-        "file": p["file"],
         "area": list(p["area"]),
         "methods": list(p["methods"]),
         "difficulty": p["difficulty_effective"],                     # human, else AI, else "unrated"
         "difficultySource": "human" if p["difficulty"] else ("ai" if p["difficulty_ai"] else ""),
         "origin": p["origin"] or "",
         "alsoIn": list(p["also_in"]),
-        "originDate": p["origin_date"] or "",
         "originYear": origin_year(p),
-        "originLabel": origin_label(p, tags),
         "hasSolution": bool(p["has_solution"]),
         "partial": p["status"] == "partial",
-        "solved": bool(p["solved"]),
         "review": p["review"],
         "provisional": bool(p.get("provisional")),                   # new-*.tex shown under its future number (preview only)
     }
 
 
-def build_index(problems, tags, preview=False):
+def build_index(problems, preview=False):
     rows = []
     for p in visible_problems(problems, preview):
-        row = dict(index_entry(p, tags), proposed=not preview and is_proposed(p), solutionMasked=False)
+        row = dict(index_entry(p), proposed=not preview and is_proposed(p), solutionMasked=False)
         if row["proposed"] and row["hasSolution"]:            # the site has no solution to show: see mask_solutions
-            row.update(hasSolution=False, partial=False, solved=False, solutionMasked=True)
+            row.update(hasSolution=False, partial=False, solutionMasked=True)
         rows.append(row)
     rows.sort(key=lambda r: r["id"])
     return {"preview": bool(preview), "count": len(rows), "problems": rows}
 
 
-def _tag_public(t, extra=()):
-    out = {"slug": t["slug"], "name": t["name"], "description": t.get("description") or "",
-           "aliases": list(t.get("aliases") or [])}
-    for k in extra:
-        out[k] = t.get(k)
-    return out
+def _tag_public(t):
+    return {"slug": t["slug"], "name": t["name"], "description": t.get("description") or "",
+            "aliases": list(t.get("aliases") or [])}
 
 
 def build_tag_catalogue(tags):
