@@ -15,47 +15,35 @@
 \begin{problem}
     A function \( f : \left[0, 1\right] \rightarrow \mathbb{R} \) is \textit{chromatic} if:
     \begin{itemize}
-        \item for all \( x, y \in \left[0, 1\right], |f\left(x\right) - f\left(y\right)| \leq |x -
-            y| \), and
+        \item for all \( x, y \in \left[0, 1\right], |f\left(x\right) - f\left(y\right)| \leq |x - y| \), and
         \item \( \int_{0}^{1} f\left(x\right) dx = 1/2 \).
     \end{itemize}
 
 
-    Over all pairs \( f, g : \left[0, 1\right] \rightarrow \mathbb{R} \) of chromatic functions,
-    what is the minimum value of
+    Over all pairs \( f, g : \left[0, 1\right] \rightarrow \mathbb{R} \) of chromatic functions, what is the minimum value of
 
     \[
         \int_{0}^{1} f\left(x\right)g\left(x\right) dx?
     \]
 \end{problem}
 \begin{solution}
-    Notice that each chromatic function is continuous and therefore its Riemann integral is well
-    defined. Define
+    Notice that each chromatic function is continuous and therefore its Riemann integral is well defined. Define
     \[
-        \mathcal{A} := \left\{ h \mid h : \left[0, 1\right] \rightarrow \mathbb{R}
-        \text{ is chromatic} \right\} \subset \mathcal{F}\left(\left[0,1\right], \mathbb{R}\right).
+        \mathcal{A} := \left\{ h \mid h : \left[0, 1\right] \rightarrow \mathbb{R} \text{ is chromatic} \right\} \subset \mathcal{F}\left(\left[0,1\right], \mathbb{R}\right).
     \]
     Observe that for each \( h \in \mathcal{A} \) we have \( 1 - h \in \mathcal{A} \), so that
     \[
         1 - \_ : \mathcal{A} \rightarrow \mathcal{A}
     \]
-    is well defined and clearly \( \left(1 - \_\right) \circ \left(1 - \_\right) =
-    \mathrm{Id}_{\mathcal{A}} \), hence it is a bijection. Furthermore, if \( f, h \in
-    \mathcal{A} \), then
+    is well defined and clearly \( \left(1 - \_\right) \circ \left(1 - \_\right) = \mathrm{Id}_{\mathcal{A}} \), hence it is a bijection. Furthermore, if \( f, h \in \mathcal{A} \), then
     \[
-        \int_{0}^{1} f\left(x\right) \left( 1 - h\left(x\right) \right) \, dx = \frac{1}{2} -
-        \int_{0}^{1} f\left(x\right) h\left(x\right) \, dx,
+        \int_{0}^{1} f\left(x\right) \left( 1 - h\left(x\right) \right) \, dx = \frac{1}{2} - \int_{0}^{1} f\left(x\right) h\left(x\right) \, dx,
     \]
     so that in total we have
     \[
-        \inf_{f, h \in \mathcal{A}} \int_{0}^{1} f\left(x\right) h\left(x\right) \, dx =
-        \inf_{f, h \in \mathcal{A}} \int_{0}^{1} f\left(x\right) \left( 1 - h\left(x\right) \right)
-        \, dx = \frac{1}{2} - \sup_{f, h \in \mathcal{A}} \int_{0}^{1} f\left(x\right)
-        h\left(x\right) \, dx.
+        \inf_{f, h \in \mathcal{A}} \int_{0}^{1} f\left(x\right) h\left(x\right) \, dx = \inf_{f, h \in \mathcal{A}} \int_{0}^{1} f\left(x\right) \left( 1 - h\left(x\right) \right) \, dx = \frac{1}{2} - \sup_{f, h \in \mathcal{A}} \int_{0}^{1} f\left(x\right) h\left(x\right) \, dx.
     \]
-    If we can find \( f, h\in\mathcal{A} \) such that \( \int_{0}^{1} f\left(x\right)
-    h\left(x\right) \, dx \) is maximal, then we know that \( \displaystyle \int_{0}^{1}
-    f\left(x\right) \left( 1 - h\left(x\right) \right) \, dx \) is minimal.
+    If we can find \( f, h\in\mathcal{A} \) such that \( \int_{0}^{1} f\left(x\right) h\left(x\right) \, dx \) is maximal, then we know that \( \displaystyle \int_{0}^{1} f\left(x\right) \left( 1 - h\left(x\right) \right) \, dx \) is minimal.
 
     \textcolor{red}{to finish}
 \end{solution}

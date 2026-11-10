@@ -36,11 +36,15 @@
   "latex-workshop.message.warning.show": false,
 
   // Cmd+S lays out the source when "editor.formatOnSave" is on: website-code/bank/texformat.py indents it with
-  // latexindent (4 spaces per level, website-code/bank/latexindent.yaml) and wraps the lines longer than 100
-  // characters (problem-bank/writing-style.md, section 7). Only whitespace changes; a second save changes nothing.
+  // latexindent (4 spaces per level, website-code/bank/latexindent.yaml) and joins each paragraph into one line
+  // (problem-bank/writing-style.md, section 7). Only whitespace changes; a second save changes nothing.
   "latex-workshop.formatting.latex": "latexindent",
   "latex-workshop.formatting.latexindent.path": "python3",
   "latex-workshop.formatting.latexindent.args": ["%WORKSPACE_FOLDER%/website-code/bank/texformat.py", "%TMPFILE%"],
+  // A paragraph is one source line: the editor wraps it at the edge of the window, whatever its width.
+  "[latex]": {
+    "editor.wordWrap": "on"
+  },
 
   // Hide the SyncTeX files of the previews in the Explorer (VS Code's default exclusions kept).
   "files.exclude": {

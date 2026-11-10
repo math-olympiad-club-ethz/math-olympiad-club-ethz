@@ -10,7 +10,8 @@ Each rule is stated once: where an item names a section of `writing-style.md`, t
 `python3 website-code/bank/texformat.py FILE --write` (in the seminar folder: `python3 indent.py FILE --write`).
 
 1. **Indentation**: 4 spaces per nesting level (`writing-style.md`, section 7, "Source layout").
-2. **Line width**: every paragraph refilled within 100 characters; lines that stay alone are listed in the guide.
+2. **Line width**: every paragraph on one line, which the editor wraps at the edge of its window; lines that stay
+   alone are listed in the guide.
 3. **Double spaces**: a single space between words inside a paragraph.
 
 ## In the text

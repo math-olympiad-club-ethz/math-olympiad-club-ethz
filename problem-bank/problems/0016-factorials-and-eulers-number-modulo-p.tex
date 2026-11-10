@@ -15,64 +15,47 @@
 \begin{problem}
     Let \( e \) be Euler's number. Show that for any odd prime \( p \), the integer
     \[
-        1! + 2! + 3! + \cdots + \left(p-1\right)! - \left\lfloor \frac{\left(p-1\right)!}{e}
-        \right\rfloor
+        1! + 2! + 3! + \cdots + \left(p-1\right)! - \left\lfloor \frac{\left(p-1\right)!}{e} \right\rfloor
     \]
     is divisible by \( p \).
 \end{problem}
 \begin{solution}
     First note that:
     \[
-        \frac{1}{e} = 1 - \frac{1}{1!} + \frac{1}{2!} - \frac{1}{3!} + \cdots = \sum_{i=0}^{+\infty}
-        \frac{\left(-1\right)^i}{i!}.
+        \frac{1}{e} = 1 - \frac{1}{1!} + \frac{1}{2!} - \frac{1}{3!} + \cdots = \sum_{i=0}^{+\infty} \frac{\left(-1\right)^i}{i!}.
     \]
     Thus, we have
     \[
-        \left\lfloor \frac{\left(p-1\right)!}{e} \right\rfloor = \left\lfloor \sum_{i=0}^{+\infty}
-        \frac{\left(-1\right)^i \left(p-1\right)!}{i!} \right\rfloor
+        \left\lfloor \frac{\left(p-1\right)!}{e} \right\rfloor = \left\lfloor \sum_{i=0}^{+\infty} \frac{\left(-1\right)^i \left(p-1\right)!}{i!} \right\rfloor
     \]
     Notice that:
     \[
         \sum_{i=0}^{p-2} \frac{\left(-1\right)^i \left(p-1\right)!}{i!}\in\mathbb{Z}
     \]
-    We argue that the tail \( \sum_{i=p-1}^{+\infty}
-    \frac{\left(-1\right)^i \left(p-1\right)!}{i!}\in \left]0;1\right[ \), indeed since \( p \) is
-    odd:
+    We argue that the tail \( \sum_{i=p-1}^{+\infty} \frac{\left(-1\right)^i \left(p-1\right)!}{i!}\in \left]0;1\right[ \), indeed since \( p \) is odd:
     \[
-        \sum_{i=p-1}^{+\infty} \frac{\left(-1\right)^i \left(p-1\right)!}{i!}= \sum_{j=0}^{+\infty}
-        \left(\frac{\left(p-1\right)!}{\left(p-1+2j\right)!}-\frac{\left(p-1\right)!}{\left(p+2j\right)!}\right)
+        \sum_{i=p-1}^{+\infty} \frac{\left(-1\right)^i \left(p-1\right)!}{i!}= \sum_{j=0}^{+\infty} \left(\frac{\left(p-1\right)!}{\left(p-1+2j\right)!}-\frac{\left(p-1\right)!}{\left(p+2j\right)!}\right)
     \]
-    is certainly bigger than \( 0 \) since each term
-    \( \left(\frac{\left(p-1\right)!}{\left(p-1+2j\right)!}-\frac{\left(p-1\right)!}{\left(p+2j\right)!}\right)=\frac{\left(p-1\right)!}{\left(p-1+2j\right)!}\left(1-\frac{1}{p+2j}\right)>0 \).
-    Similarly since \( p \) is odd:
+    is certainly bigger than \( 0 \) since each term \( \left(\frac{\left(p-1\right)!}{\left(p-1+2j\right)!}-\frac{\left(p-1\right)!}{\left(p+2j\right)!}\right)=\frac{\left(p-1\right)!}{\left(p-1+2j\right)!}\left(1-\frac{1}{p+2j}\right)>0 \). Similarly since \( p \) is odd:
     \[
-        \sum_{i=p-1}^{+\infty} \frac{\left(-1\right)^i \left(p-1\right)!}{i!}=1-\sum_{j=0}^\infty
-        \left(\frac{\left(p-1\right)!}{\left(p+2j\right)!}-\frac{\left(p-1\right)!}{\left(p+2j+1\right)!}\right)
+        \sum_{i=p-1}^{+\infty} \frac{\left(-1\right)^i \left(p-1\right)!}{i!}=1-\sum_{j=0}^\infty \left(\frac{\left(p-1\right)!}{\left(p+2j\right)!}-\frac{\left(p-1\right)!}{\left(p+2j+1\right)!}\right)
     \]
-    is certainly smaller than \( 1 \) since each term
-    \( \left(\frac{\left(p-1\right)!}{\left(p+2j\right)!}-\frac{\left(p-1\right)!}{\left(p+2j+1\right)!}\right)=\frac{\left(p-1\right)!}{\left(p+2j\right)!}\left(1-\frac{1}{p+2j+1}\right)>0 \).
+    is certainly smaller than \( 1 \) since each term \( \left(\frac{\left(p-1\right)!}{\left(p+2j\right)!}-\frac{\left(p-1\right)!}{\left(p+2j+1\right)!}\right)=\frac{\left(p-1\right)!}{\left(p+2j\right)!}\left(1-\frac{1}{p+2j+1}\right)>0 \).
     \\\\
     Therefore,
     \[
-        \left\lfloor \frac{\left(p-1\right)!}{e} \right\rfloor = \sum_{i=0}^{p-2}
-        \frac{\left(-1\right)^i \left(p-1\right)!}{i!}.
+        \left\lfloor \frac{\left(p-1\right)!}{e} \right\rfloor = \sum_{i=0}^{p-2} \frac{\left(-1\right)^i \left(p-1\right)!}{i!}.
     \]
-    Now note that for each \( 0\leq j\leq p-1 \) we have \( j\equiv -\left(p-j\right)\pmod{p} \) and
-    thus for fixed \( 0\leq i < p-1 \):
+    Now note that for each \( 0\leq j\leq p-1 \) we have \( j\equiv -\left(p-j\right)\pmod{p} \) and thus for fixed \( 0\leq i < p-1 \):
     \[
         \frac{\left(-1\right)^i \left(p-1\right)!}{i!} = \left(-1\right)^i
         \left(i+1\right)\left(i+2\right)\cdots\left(p-1\right) \]
     \[
-        \equiv \left(-1\right)^i
-        \left(p-\left(i+1\right)\right)\left(p-\left(i+2\right)\right)\cdots 2 \cdot 1 \cdot
-        \left(-1\right)^{p-\left(i+1\right)} \equiv \left(p-\left(i+1\right)\right)! \pmod{p},
+        \equiv \left(-1\right)^i \left(p-\left(i+1\right)\right)\left(p-\left(i+2\right)\right)\cdots 2 \cdot 1 \cdot \left(-1\right)^{p-\left(i+1\right)} \equiv \left(p-\left(i+1\right)\right)! \pmod{p},
     \]
-    where we used that there are \( p-\left(i+1\right) \) factors in
-    \( \frac{\left(p-1\right)!}{i!} \) and the fact that \( p \) is odd again. Hence, we have
+    where we used that there are \( p-\left(i+1\right) \) factors in \( \frac{\left(p-1\right)!}{i!} \) and the fact that \( p \) is odd again. Hence, we have
     \[
-        \left\lfloor \frac{\left(p-1\right)!}{e} \right\rfloor \equiv \sum_{i=0}^{p-2}
-        \left(p-\left(i+1\right)\right)! \equiv \sum_{i=1}^{p-1} i! \pmod{p},
+        \left\lfloor \frac{\left(p-1\right)!}{e} \right\rfloor \equiv \sum_{i=0}^{p-2} \left(p-\left(i+1\right)\right)! \equiv \sum_{i=1}^{p-1} i! \pmod{p},
     \]
-    since \( i\mapsto p-\left(i+1\right) \) is a bijection from \( \llbracket 0;p-2 \rrbracket \) to
-    \( \llbracket 1;p-1 \rrbracket \). This shows the problem's statement.
+    since \( i\mapsto p-\left(i+1\right) \) is a bijection from \( \llbracket 0;p-2 \rrbracket \) to \( \llbracket 1;p-1 \rrbracket \). This shows the problem's statement.
 \end{solution}

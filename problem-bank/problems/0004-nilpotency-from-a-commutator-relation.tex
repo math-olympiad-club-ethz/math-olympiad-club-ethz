@@ -13,8 +13,7 @@
 % references:     Earliest known appearance (to the best of our knowledge): IMC 1994 (1st IMC, Plovdiv), Day 1, Problem 4, official problems & solutions - https://www.imc-math.org.uk/imc1994/prob_sol.pdf; Kalva archive, 1st IMC 1994, A4 - https://prase.cz/kalva/imc/imc94.html; reused as Problem 9.12 (1994) in M. A. Daas, 'A Brief IMC Training' (Emory Putnam notes) - http://www.cs.emory.edu/~mic/putnam/general/IMC.pdf; alpha=1 case as a standard exercise, MathSE 811160 (2014) - https://math.stackexchange.com/questions/811160/ab-ba-a-implies-a-is-singular-and-a-is-nilpotent; underlying theorem: Jacobson's lemma ([A,[A,B]]=0 implies [A,B] nilpotent), N. Jacobson, Ann. of Math. 36 (1935), 875-881, as stated in J. Bracic, 'On the Jacobson's lemma' - https://jankobracic.wordpress.com/wp-content/uploads/2011/02/on-the-jacobsons-lemma.pdf
 % history:        human
 \begin{problem}
-    Let \( \alpha \in \mathbb{R} \setminus \left\{0\right\} \) and suppose that \( F \) and \( G \)
-    are linear maps (operators) from \( \mathbb{R}^n \) into \( \mathbb{R}^n \) satisfying
+    Let \( \alpha \in \mathbb{R} \setminus \left\{0\right\} \) and suppose that \( F \) and \( G \) are linear maps (operators) from \( \mathbb{R}^n \) into \( \mathbb{R}^n \) satisfying
     \[
         F \circ G - G \circ F = \alpha F.
     \]
@@ -29,8 +28,7 @@
 \begin{solution}
     \textit{Solution 1.}
     \begin{enumerate}
-        \item[(a)] We prove the result by induction on \( k \). The base case \( k = 1 \) is given
-            by the assumption. Assume that the formula holds for some \( k \geq 1 \), i.e.,
+        \item[(a)] We prove the result by induction on \( k \). The base case \( k = 1 \) is given by the assumption. Assume that the formula holds for some \( k \geq 1 \), i.e.,
             \[
                 F^k \circ G - G \circ F^k = \alpha k F^k.
             \]
@@ -47,21 +45,15 @@
             \end{align*}
             This completes the induction step, proving the result.
 
-        \item[(b)] Consider the linear operator \( L \) defined on the space of \( n \times n \)
-            matrices by
+        \item[(b)] Consider the linear operator \( L \) defined on the space of \( n \times n \) matrices by
             \[
                 L\left(F\right) = F \circ G - G \circ F.
             \]
-            By the given assumption, we have \( L\left(F\right) = \alpha F \). Also using part (a),
-            we obtain
+            By the given assumption, we have \( L\left(F\right) = \alpha F \). Also using part (a), we obtain
             \[
                 L\left(F^k\right) = \alpha k F^k.
             \]
-            The operator \( L \) acts on an \( n^2 \)-dimensional space and can have at most
-            \( n^2 \) distinct eigenvalues. However, if \( F^k \neq 0 \) for all \( k \), then
-            \( L \) has infinitely many eigenvalues \( \alpha k \), which contradicts the fact that
-            the space is finite-dimensional. Hence, there must exist some \( k \geq 1 \) such that
-            \( F^k = 0 \).
+            The operator \( L \) acts on an \( n^2 \)-dimensional space and can have at most \( n^2 \) distinct eigenvalues. However, if \( F^k \neq 0 \) for all \( k \), then \( L \) has infinitely many eigenvalues \( \alpha k \), which contradicts the fact that the space is finite-dimensional. Hence, there must exist some \( k \geq 1 \) such that \( F^k = 0 \).
     \end{enumerate}
 
     % Solution 2 is a student's solution from the seminar repository (compmath,
@@ -69,8 +61,7 @@
     % Antoine's request (only the math delimiters, and the source file's own macros and
     % environments, changed so that it compiles here); not reviewed yet.
     \textit{Solution 2.}
-    Part (a) strongly hints at induction. So let's try it. The base case \( k = 1 \) is precisely
-    our condition
+    Part (a) strongly hints at induction. So let's try it. The base case \( k = 1 \) is precisely our condition
     \begin{equation}
         \label{eq:p13-condition} AB - BA = \alpha A \quad .
     \end{equation}
@@ -85,24 +76,14 @@
     This completes the induction step and hence the proof of part (a).
 
     ~\\ \\
-    Part (b) becomes a one-liner using Jacobson's Lemma: Let \( C \coloneqq AB - BA \) be the
-    commutator of \( A \) and \( B \). Then \( A \) and \( C \) commute:
+    Part (b) becomes a one-liner using Jacobson's Lemma: Let \( C \coloneqq AB - BA \) be the commutator of \( A \) and \( B \). Then \( A \) and \( C \) commute:
     \[ AC = \alpha A^2 = CA \quad . \]
-    Using Jacobson's Lemma, we have that \( C \) is nilpotent. And since \( A = \frac{1}{\alpha}
-    C \), it follows that \( A \) itself is nilpotent, proving that there is \( m \in
-    \mathbb{Z}_{\geq 1} \) such that \( A^m = 0 \).
+    Using Jacobson's Lemma, we have that \( C \) is nilpotent. And since \( A = \frac{1}{\alpha} C \), it follows that \( A \) itself is nilpotent, proving that there is \( m \in \mathbb{Z}_{\geq 1} \) such that \( A^m = 0 \).
 
     ~\\
-    Alternatively, observe that the left-hand side \( A^kB - BA^k \) in part (a) depends linearly on
-    \( A^k \). This motivates the linear map
+    Alternatively, observe that the left-hand side \( A^kB - BA^k \) in part (a) depends linearly on \( A^k \). This motivates the linear map
     \[ f: \mathbb{R}^{n \times n} \to \mathbb{R}^{n \times n}, \ X \mapsto XB - BX \quad , \]
-    where \( A \) and \( B \) are \( n \times n \) matrices. Then, the result from part (a) states
-    that
+    where \( A \) and \( B \) are \( n \times n \) matrices. Then, the result from part (a) states that
     \[ f(A^k) = k \alpha A^k \text{ for all } k \in \mathbb{Z}_{\geq 1} \quad . \]
-    Now, assume for the sake of contradiction that \( A^m \neq \mathbf{0} \) for all \( m \in
-    \mathbb{Z}_{\geq 1} \). Thus, \( A^m \neq \mathbf{0} \) is an eigenvector of \( f \) to the
-    eigenvalue \( m \alpha \) for all \( m \in \mathbb{Z}_{\geq 1} \). And since \( \alpha \neq
-    0 \), we see that \( f \) has an infinite number of eigenvalues. This, of course, is a
-    contradiction, since \( f \) is an endomorphism of the finite-dimensional
-    \( \mathbb{R}^{n \times n} \).
+    Now, assume for the sake of contradiction that \( A^m \neq \mathbf{0} \) for all \( m \in \mathbb{Z}_{\geq 1} \). Thus, \( A^m \neq \mathbf{0} \) is an eigenvector of \( f \) to the eigenvalue \( m \alpha \) for all \( m \in \mathbb{Z}_{\geq 1} \). And since \( \alpha \neq 0 \), we see that \( f \) has an infinite number of eigenvalues. This, of course, is a contradiction, since \( f \) is an endomorphism of the finite-dimensional \( \mathbb{R}^{n \times n} \).
 \end{solution}

@@ -14,24 +14,20 @@
 % history:        human
 \begin{problem}
     \begin{enumerate}
-        \item[(a)] Let \( a \) and \( b \) be positive integers such that \( ab + 1 \) divides
-            \( a^{2} + b^{2} \). Show that
+        \item[(a)] Let \( a \) and \( b \) be positive integers such that \( ab + 1 \) divides \( a^{2} + b^{2} \). Show that
             \[ \frac{a^{2} + b^{2}}{ab + 1} \]
             is the square of an integer.
-        \item[(b)] Let \( a \) and \( b \) be positive integers. Show that if \( 4ab - 1 \) divides
-            \( \left(4a^{2} - 1\right)^{2} \), then \( a = b \).
+        \item[(b)] Let \( a \) and \( b \) be positive integers. Show that if \( 4ab - 1 \) divides \( \left(4a^{2} - 1\right)^{2} \), then \( a = b \).
     \end{enumerate}
 \end{problem}
 \begin{solution}
     (a) Define
     \[
-        S := \left\{ \left(a,b\right) \in \mathbb{N}^{*} \times \mathbb{N}^{*} \mid ab+1 \mid a^2 +
-        b^2 \right\}.
+        S := \left\{ \left(a,b\right) \in \mathbb{N}^{*} \times \mathbb{N}^{*} \mid ab+1 \mid a^2 + b^2 \right\}.
     \]
     For each \( k \in \mathbb{N}^{*} \), define
     \[
-        S_k := \left\{ \left(a,b\right) \in \mathbb{N}^{*} \times \mathbb{N}^{*} \mid a^2 + b^2 =
-        k\left(ab+1\right) \right\}.
+        S_k := \left\{ \left(a,b\right) \in \mathbb{N}^{*} \times \mathbb{N}^{*} \mid a^2 + b^2 = k\left(ab+1\right) \right\}.
     \]
     Clearly, \( S \) is decomposed into the sets \( S_k \):
     \[
@@ -41,16 +37,13 @@
     \[
         \left(a,b\right) \in S_k \Leftrightarrow \left(b,a\right) \in S_k.
     \]
-    To show the statement of the problem, we therefore need to show that for a fixed \( k > 0 \)
-    with \( S_k \neq \varnothing \), we have \( k \in \square_{\mathbb{N}} := \left\{ n^2 \mid n \in
-    \mathbb{N} \right\} \).
+    To show the statement of the problem, we therefore need to show that for a fixed \( k > 0 \) with \( S_k \neq \varnothing \), we have \( k \in \square_{\mathbb{N}} := \left\{ n^2 \mid n \in \mathbb{N} \right\} \).
     \\\\
     For a fixed \( k > 0 \) with \( S_k \neq \varnothing \), we can define the following minimum:
     \[
         b' := \min \left\{ \min\left\{a,b\right\} \mid \left(a,b\right) \in S_k \right\}.
     \]
-    By construction, there exists \( \left(a,b\right) \in S_k \) such that \( b' =
-    \min\left\{a,b\right\} \). Label
+    By construction, there exists \( \left(a,b\right) \in S_k \) such that \( b' = \min\left\{a,b\right\} \). Label
     \[
         a' = \max\left\{a, b\right\}.
     \]
@@ -58,16 +51,13 @@
     \[
         a'^2 - k a' b' + b'^2 - k = 0,
     \]
-    which is quadratic in \( a' \). Let \( c' \in \mathbb{C} \) be the other root of the polynomial
-    \( X^2 - k b' X + b'^2 - k \) (this is the famous \textit{root jumping}). We show that
-    \( c' = 0 \), leading to the factorization
+    which is quadratic in \( a' \). Let \( c' \in \mathbb{C} \) be the other root of the polynomial \( X^2 - k b' X + b'^2 - k \) (this is the famous \textit{root jumping}). We show that \( c' = 0 \), leading to the factorization
     \[
         X^2 - k b' X + b'^2 - k = X\left(X - a'\right),
     \]
     and this will imply that \( k = b'^2 \), which will show that \( k\in\square_{\mathbb{N}} \).
     \\\\
-    By Vieta's formulas for the coefficient of degree \( 1 \) and the constant coefficient, we
-    obtain respectively:
+    By Vieta's formulas for the coefficient of degree \( 1 \) and the constant coefficient, we obtain respectively:
     \[
         c' = k b' - a' \in \mathbb{Z},
     \]
@@ -75,8 +65,7 @@
     \[
         a' c' = b'^2 - k < b'^2,
     \]
-    where we used the fact that \( k \geq 1 \). In particular, \( c' \) is subject to the order
-    \( < \) of \( \mathbb{Z} \). Suppose to obtain a contradiction that \( c' > 0 \); then:
+    where we used the fact that \( k \geq 1 \). In particular, \( c' \) is subject to the order \( < \) of \( \mathbb{Z} \). Suppose to obtain a contradiction that \( c' > 0 \); then:
     \[
         b' c' \leq a' c' < b'^2 \implies c' < b',
     \]
@@ -86,55 +75,35 @@
     \[
         c'^2 + b'^2 = k\left(c' b' + 1\right),
     \]
-    which implies that \( \left(c',b'\right) \in S_k \). As \( c' < b' \), we have a contradiction
-    to the minimality of \( b' \). Thus \( c' \leq 0 \).
+    which implies that \( \left(c',b'\right) \in S_k \). As \( c' < b' \), we have a contradiction to the minimality of \( b' \). Thus \( c' \leq 0 \).
     \\\\
     Additionally,
     \[
-        \left(a' + 1\right)\left(c' + 1\right) = a' c' + a' + c' + 1 = b'^2 - k + b' k + 1 = b'^2 +
-        \left(b' - 1\right)k + 1 \geq 1,
+        \left(a' + 1\right)\left(c' + 1\right) = a' c' + a' + c' + 1 = b'^2 - k + b' k + 1 = b'^2 + \left(b' - 1\right)k + 1 \geq 1,
     \]
-    where we used \( b' \geq 1 \) and \( k > 0 \). As \( a' + 1 > 1 \), we must have \( c' + 1 >
-    0 \), i.e., \( c' > -1 \), so we conclude that \( c' = 0 \) as desired. Since \( k > 0 \) with
-    \( S_k \neq \varnothing \) was arbitrary, we are done.
+    where we used \( b' \geq 1 \) and \( k > 0 \). As \( a' + 1 > 1 \), we must have \( c' + 1 > 0 \), i.e., \( c' > -1 \), so we conclude that \( c' = 0 \) as desired. Since \( k > 0 \) with \( S_k \neq \varnothing \) was arbitrary, we are done.
     \\\\
-    (b) Standard manipulations\footnote{Let \( m = 4ab - 1 \). Since \( \gcd\left(b,m\right)=1 \),
-    \( b \) is invertible modulo \( m \). Note that
+    (b) Standard manipulations\footnote{Let \( m = 4ab - 1 \). Since \( \gcd\left(b,m\right)=1 \), \( b \) is invertible modulo \( m \). Note that
     \[
-        4a^2b \;=\;a\,\left(4ab\right)\;\equiv\;a\pmod{m} \quad\Longrightarrow\quad 4a^2 \equiv
-        a\,b^{-1} \pmod{m}.
+        4a^2b \;=\;a\,\left(4ab\right)\;\equiv\;a\pmod{m} \quad\Longrightarrow\quad 4a^2 \equiv a\,b^{-1} \pmod{m}.
     \]
-    Hence \( b\,\left(4a^2 - 1\right)\equiv b\,\left(ab^{-1}-1\right)\equiv a - b \pmod{m}
-    \quad\Longrightarrow\quad b^2\,\left(4a^2 - 1\right)^2 \equiv \left(a-b\right)^2 \pmod{m} \). By
-    hypothesis \( m\mid \left(4a^2-1\right)^2 \), so \( m\mid b^2\left(4a^2-1\right)^2 \).
-    Therefore, \( 4ab-1 \mid \left(a-b\right)^2 \), as claimed.} of \( 4ab - 1 \mid \left(4a^{2} -
-    1\right)^{2} \) show that this implies \( 4ab - 1 \mid \left(a - b\right)^{2} \). \\
+    Hence \( b\,\left(4a^2 - 1\right)\equiv b\,\left(ab^{-1}-1\right)\equiv a - b \pmod{m} \quad\Longrightarrow\quad b^2\,\left(4a^2 - 1\right)^2 \equiv \left(a-b\right)^2 \pmod{m} \). By hypothesis \( m\mid \left(4a^2-1\right)^2 \), so \( m\mid b^2\left(4a^2-1\right)^2 \). Therefore, \( 4ab-1 \mid \left(a-b\right)^2 \), as claimed.} of \( 4ab - 1 \mid \left(4a^{2} - 1\right)^{2} \) show that this implies \( 4ab - 1 \mid \left(a - b\right)^{2} \). \\
     \\
-    So it suffices to show the statement that if \( 4ab - 1 \mid_{\mathbb{Z}} \left(a -
-    b\right)^2 \) then \( a = b \). Assume for the sake of contradiction that there exist positive
-    integers \( a \) and \( b \) with \( a \neq b \) such that \( 4ab - 1 \mid \left(a -
-    b\right)^{2} \). Define:
+    So it suffices to show the statement that if \( 4ab - 1 \mid_{\mathbb{Z}} \left(a - b\right)^2 \) then \( a = b \). Assume for the sake of contradiction that there exist positive integers \( a \) and \( b \) with \( a \neq b \) such that \( 4ab - 1 \mid \left(a - b\right)^{2} \). Define:
     \[
         k = \frac{\left(a - b\right)^{2}}{4ab - 1} > 0.
     \]
     Consider the set
     \[
-        S_k := \left\{ \left(a', b'\right) \in \mathbb{N}^{*} \times \mathbb{N}^{*} \mid \left(a' -
-        b'\right)^{2} = k\left(4a'b' - 1\right) \right\}.
+        S_k := \left\{ \left(a', b'\right) \in \mathbb{N}^{*} \times \mathbb{N}^{*} \mid \left(a' - b'\right)^{2} = k\left(4a'b' - 1\right) \right\}.
     \]
-    Notice that \( S_k \) cannot contain a pair on the diagonal of \( \mathbb{N}^{*} \) as
-    \( 4a'b' - 1 \geq 3 \) and \( k > 0 \) and, in addition, \( \left(a', b'\right) \in S_k
-    \Leftrightarrow \left(b', a'\right) \in S_k \).
+    Notice that \( S_k \) cannot contain a pair on the diagonal of \( \mathbb{N}^{*} \) as \( 4a'b' - 1 \geq 3 \) and \( k > 0 \) and, in addition, \( \left(a', b'\right) \in S_k \Leftrightarrow \left(b', a'\right) \in S_k \).
     \\\\
-    Since \( S_k \neq \varnothing \), there exists a pair \( \left(A, B\right) \in S_k \) that
-    minimizes \( A + B \). As said above, we necessarily have \( A \neq B \) and by the symmetry
-    above we can without loss of generality assume \( A > B \). Consider the quadratic polynomial
-    arising from the condition of \( \left(A, B\right)\in S_k \):
+    Since \( S_k \neq \varnothing \), there exists a pair \( \left(A, B\right) \in S_k \) that minimizes \( A + B \). As said above, we necessarily have \( A \neq B \) and by the symmetry above we can without loss of generality assume \( A > B \). Consider the quadratic polynomial arising from the condition of \( \left(A, B\right)\in S_k \):
     \[
         X^{2} - \left(2B + 4kB\right)X + B^{2} + k = 0.
     \]
-    This polynomial has the root \( x_1 := A > 0 \) by construction. By Vieta's formulas for the
-    coefficient of degree \( 1 \) and the constant coefficient, we obtain respectively that:
+    This polynomial has the root \( x_1 := A > 0 \) by construction. By Vieta's formulas for the coefficient of degree \( 1 \) and the constant coefficient, we obtain respectively that:
     \[
         x_2 := 2B + 4kB - A \in \mathbb{Z}
     \]
@@ -142,9 +111,7 @@
     \[
         x_2 = \frac{B^{2} + k}{A} > 0.
     \]
-    Since \( x_2 \) is a positive integer, we have \( \left(x_2, B\right) \in S_k \). By the
-    minimality of \( A + B \): \( A + B \leq x_2 + B \) from which it follows that \( x_2 \geq A \),
-    i.e.,
+    Since \( x_2 \) is a positive integer, we have \( \left(x_2, B\right) \in S_k \). By the minimality of \( A + B \): \( A + B \leq x_2 + B \) from which it follows that \( x_2 \geq A \), i.e.,
     \[
         \frac{B^{2} + k}{A} \geq A.
     \]
@@ -156,11 +123,9 @@
     \[
         \left(A - B\right)^{2} = k\left(4AB - 1\right)\geq \left(A^{2} - B^{2}\right)3.
     \]
-    Since \( A-B>0 \) we can divide the inequality on both sides without changing the inequality
-    direction to obtain:
+    Since \( A-B>0 \) we can divide the inequality on both sides without changing the inequality direction to obtain:
     \[
         A + B \geq A - B \geq 3\left(A + B\right).
     \]
-    Again dividing by \( A+B>0 \) the inequality is preserved and we obtain \( 1 \geq 3 \). This is
-    a contradiction. Thus, our assumption must be false, and the statement is proven.
+    Again dividing by \( A+B>0 \) the inequality is preserved and we obtain \( 1 \geq 3 \). This is a contradiction. Thus, our assumption must be false, and the statement is proven.
 \end{solution}

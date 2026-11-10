@@ -4,32 +4,17 @@
 % The proof environment opened here was closed only after the field-norm part (A.2) in 0041; it now ends here.
 \begin{appendixitem}{Capelli's Lemma}
     \begin{lemma}{Capelli's Lemma:}
-        Let \( K \) be a field, and let \( P\left(X\right), g\left(X\right) \in K\left[X\right] \).
-        Let \( \iota:K \hookrightarrow K^{\text{alg}} \) be an algebraic closure of \( K \), and let
-        \( \alpha \in K^{\text{alg}} \) be a root of \( P\left(X\right) \). Assume without loss of
-        generality that \( K\subset K^{\text{alg}} \) (the ring morphism is injective).
+        Let \( K \) be a field, and let \( P\left(X\right), g\left(X\right) \in K\left[X\right] \). Let \( \iota:K \hookrightarrow K^{\text{alg}} \) be an algebraic closure of \( K \), and let \( \alpha \in K^{\text{alg}} \) be a root of \( P\left(X\right) \). Assume without loss of generality that \( K\subset K^{\text{alg}} \) (the ring morphism is injective).
         \\\\
-        Then the polynomial \( P\left( g\left(X\right) \right) \) (obtained via the canonical
-        universal evaluation morphism at \( g\left(X\right) \)) is irreducible over
-        \( K\left[X\right] \) if and only if the following two conditions hold simultaneously:
+        Then the polynomial \( P\left( g\left(X\right) \right) \) (obtained via the canonical universal evaluation morphism at \( g\left(X\right) \)) is irreducible over \( K\left[X\right] \) if and only if the following two conditions hold simultaneously:
         \begin{enumerate}
             \item \( P\left(X\right) \) is irreducible over \( K\left[X\right] \), and
-            \item \( g\left(X\right) - \alpha \) is irreducible over
-                \( K\left(\alpha\right)\left[X\right] \), where \( K\left(\alpha\right) \) is the
-                smallest subfield of \( K^{\text{alg}} \) containing
-                \( K\cup\left\{\alpha\right\} \).
+            \item \( g\left(X\right) - \alpha \) is irreducible over \( K\left(\alpha\right)\left[X\right] \), where \( K\left(\alpha\right) \) is the smallest subfield of \( K^{\text{alg}} \) containing \( K\cup\left\{\alpha\right\} \).
         \end{enumerate}
     \end{lemma}
 
     \begin{proof}
-        Let \( K \) be a field, and let \( P\left(X\right), g\left(X\right) \in K\left[X\right] \).
-        Let \( K \hookrightarrow K^{\text{alg}} \) be an algebraic closure of \( K \), and let
-        \( \alpha \in K^{\text{alg}} \) be a root of \( P\left(X\right) \). Now, let \( \theta \in
-        K^{\text{alg}} \) be a root of \( g\left(X\right) - \alpha\in
-        K^{\text{alg}}\left[X\right] \). From \( g\left(\theta\right) = \alpha \), we obtain
-        \( P\left( g\left(\theta\right) \right) = 0 \). Notice then that
-        \( \alpha=g\left(\theta\right) \in K\left(\theta\right) \), so that \( K\left(\alpha\right)
-        \subset K\left(\theta\right) \). Now it is a matter of field extensions:
+        Let \( K \) be a field, and let \( P\left(X\right), g\left(X\right) \in K\left[X\right] \). Let \( K \hookrightarrow K^{\text{alg}} \) be an algebraic closure of \( K \), and let \( \alpha \in K^{\text{alg}} \) be a root of \( P\left(X\right) \). Now, let \( \theta \in K^{\text{alg}} \) be a root of \( g\left(X\right) - \alpha\in K^{\text{alg}}\left[X\right] \). From \( g\left(\theta\right) = \alpha \), we obtain \( P\left( g\left(\theta\right) \right) = 0 \). Notice then that \( \alpha=g\left(\theta\right) \in K\left(\theta\right) \), so that \( K\left(\alpha\right) \subset K\left(\theta\right) \). Now it is a matter of field extensions:
         \[
             \begin{tikzcd}
                 K & {K(\alpha)} & {K(\theta)} & {K^{\mathrm{alg}}}
@@ -38,45 +23,23 @@
                 \arrow[hook, from=1-3, to=1-4]
             \end{tikzcd}
         \]
-        Let \( P_{\min, K, \alpha}\left(X\right) \in K\left[X\right] \),
-        \( P_{\min, K, \theta}\left(X\right) \in K\left[X\right] \), and
-        \( P_{\min, K\left(\alpha\right), \theta}\left(X\right) \in
-        K\left(\alpha\right)\left[X\right] \) be the minimal polynomial of \( \alpha \in
-        K^{\text{alg}} \) over \( K \), and the minimal polynomials of \( \theta \in
-        K^{\text{alg}} \) over \( K \) and \( K\left(\alpha\right) \) respectively. Then
-        \( P_{\min, K, \alpha}\left(X\right) \mid_{K\left[X\right]} P\left(X\right) \),
-        \( P_{\min, K, \theta}\left(X\right) \mid_{K\left[X\right]}
-        P\left(g\left(X\right)\right) \), and
-        \( P_{\min, K\left(\alpha\right), \theta}\left(X\right)
-        \mid_{K\left(\alpha\right)\left[X\right]} g\left(X\right) - \alpha \). Hence,
+        Let \( P_{\min, K, \alpha}\left(X\right) \in K\left[X\right] \), \( P_{\min, K, \theta}\left(X\right) \in K\left[X\right] \), and \( P_{\min, K\left(\alpha\right), \theta}\left(X\right) \in K\left(\alpha\right)\left[X\right] \) be the minimal polynomial of \( \alpha \in K^{\text{alg}} \) over \( K \), and the minimal polynomials of \( \theta \in K^{\text{alg}} \) over \( K \) and \( K\left(\alpha\right) \) respectively. Then \( P_{\min, K, \alpha}\left(X\right) \mid_{K\left[X\right]} P\left(X\right) \), \( P_{\min, K, \theta}\left(X\right) \mid_{K\left[X\right]} P\left(g\left(X\right)\right) \), and \( P_{\min, K\left(\alpha\right), \theta}\left(X\right) \mid_{K\left(\alpha\right)\left[X\right]} g\left(X\right) - \alpha \). Hence,
         \begin{equation}
-            \label{A.1.1} \tag{1} \left[ K\left(\alpha\right) : K \right] = \deg\left(
-            P_{\min, K, \alpha}\left(X\right) \right) \leq \deg\left( P\left(X\right) \right),
+            \label{A.1.1} \tag{1} \left[ K\left(\alpha\right) : K \right] = \deg\left( P_{\min, K, \alpha}\left(X\right) \right) \leq \deg\left( P\left(X\right) \right),
         \end{equation}
         \begin{equation}
-            \label{A.1.2} \tag{2} \left[ K\left(\theta\right) : K \right] = \deg\left(
-            P_{\min, K, \theta}\left(X\right) \right) \leq \deg\left( P\left( g\left(X\right)
-                \right) \right) = \deg\left( P\left(X\right) \right) \cdot \deg\left( g\left(X\right)
-            \right),
+            \label{A.1.2} \tag{2} \left[ K\left(\theta\right) : K \right] = \deg\left( P_{\min, K, \theta}\left(X\right) \right) \leq \deg\left( P\left( g\left(X\right) \right) \right) = \deg\left( P\left(X\right) \right) \cdot \deg\left( g\left(X\right) \right),
         \end{equation}
         \begin{equation}
-            \label{A.1.3} \tag{3} \left[ K\left(\theta\right) : K\left(\alpha\right) \right] =
-            \deg\left( P_{\min, K\left(\alpha\right), \theta}\left(X\right) \right) \leq \deg\left(
-            g\left(X\right) - \alpha \right) = \deg\left( g\left(X\right) \right).
+            \label{A.1.3} \tag{3} \left[ K\left(\theta\right) : K\left(\alpha\right) \right] = \deg\left( P_{\min, K\left(\alpha\right), \theta}\left(X\right) \right) \leq \deg\left( g\left(X\right) - \alpha \right) = \deg\left( g\left(X\right) \right).
         \end{equation}
-        It is clear that each inequality becomes an equality if and only if the corresponding
-        polynomial is irreducible (because then they are, up to units, the corresponding minimal
-        polynomial). Recall the general dimension formula,
+        It is clear that each inequality becomes an equality if and only if the corresponding polynomial is irreducible (because then they are, up to units, the corresponding minimal polynomial). Recall the general dimension formula,
         \begin{equation}
-            \label{A.1.4} \tag{4} \left[ K\left(\theta\right) : K \right] = \left[
-            K\left(\theta\right) : K\left(\alpha\right) \right] \cdot \left[ K\left(\alpha\right) :
-            K \right].
+            \label{A.1.4} \tag{4} \left[ K\left(\theta\right) : K \right] = \left[ K\left(\theta\right) : K\left(\alpha\right) \right] \cdot \left[ K\left(\alpha\right) : K \right].
         \end{equation}
-        If \( P\left(g\left(X\right)\right) \) is irreducible over \( K\left[X\right] \) then
-        \eqref{A.1.2} is an equality:
+        If \( P\left(g\left(X\right)\right) \) is irreducible over \( K\left[X\right] \) then \eqref{A.1.2} is an equality:
         \[
-            \left[ K\left(\theta\right) : K \right] = \deg\left( P\left(X\right) \right) \cdot
-            \deg\left( g\left(X\right) \right),
+            \left[ K\left(\theta\right) : K \right] = \deg\left( P\left(X\right) \right) \cdot \deg\left( g\left(X\right) \right),
         \]
         but then by (in order) \eqref{A.1.3}, \eqref{A.1.4}, and \eqref{A.1.1}:
         \begin{align*}
@@ -84,31 +47,20 @@
             &= \deg\left( P(X) \right) \cdot \deg\left( g(X) \right) \\
             &\geq \left[ K(\alpha) : K \right]\cdot \deg\left( g(X) \right).
         \end{align*}
-        This implies (since everything is finite and positive) that \( \deg\left( P\left(X\right)
-        \right) = \left[ K\left(\alpha\right) : K \right] \), i.e., \( P\left(X\right) \) is
-        irreducible over \( K\left[X\right] \). Therefore, from \eqref{A.1.4}, we have:
+        This implies (since everything is finite and positive) that \( \deg\left( P\left(X\right) \right) = \left[ K\left(\alpha\right) : K \right] \), i.e., \( P\left(X\right) \) is irreducible over \( K\left[X\right] \). Therefore, from \eqref{A.1.4}, we have:
         \[
-            \left[ K\left(\theta\right) : K\left(\alpha\right) \right] \cdot \left[
-            K\left(\alpha\right) : K \right] = \left[ K\left(\theta\right) : K \right]
+            \left[ K\left(\theta\right) : K\left(\alpha\right) \right] \cdot \left[ K\left(\alpha\right) : K \right] = \left[ K\left(\theta\right) : K \right]
         \]
         \[
-            = \deg\left( P\left(X\right) \right) \cdot \deg\left( g\left(X\right) \right) = \left[
-            K\left(\alpha\right) : K \right] \cdot \deg\left( g\left(X\right) \right).
+            = \deg\left( P\left(X\right) \right) \cdot \deg\left( g\left(X\right) \right) = \left[ K\left(\alpha\right) : K \right] \cdot \deg\left( g\left(X\right) \right).
         \]
-        Since everything is finite and positive, it follows that \( \deg\left( g\left(X\right) -
-        \alpha \right) = \deg\left( g\left(X\right) \right) = \left[ K\left(\theta\right) :
-        K\left(\alpha\right) \right] \), i.e., \( g\left(X\right) - \alpha \) is irreducible over
-        \( K\left(\alpha\right)\left[X\right] \).
+        Since everything is finite and positive, it follows that \( \deg\left( g\left(X\right) - \alpha \right) = \deg\left( g\left(X\right) \right) = \left[ K\left(\theta\right) : K\left(\alpha\right) \right] \), i.e., \( g\left(X\right) - \alpha \) is irreducible over \( K\left(\alpha\right)\left[X\right] \).
         \\\\
-        Conversely, if \( P\left(X\right) \) is irreducible over \( K\left[X\right] \) and
-        \( g\left(X\right) - \alpha \) is irreducible over \( K\left(\alpha\right)\left[X\right] \),
-        then \eqref{A.1.1} and \eqref{A.1.3} are equalities, and so, by (in order) \eqref{A.1.4} and
-        \eqref{A.1.2}, we have:
+        Conversely, if \( P\left(X\right) \) is irreducible over \( K\left[X\right] \) and \( g\left(X\right) - \alpha \) is irreducible over \( K\left(\alpha\right)\left[X\right] \), then \eqref{A.1.1} and \eqref{A.1.3} are equalities, and so, by (in order) \eqref{A.1.4} and \eqref{A.1.2}, we have:
         \begin{align*}
             \deg\left( P(g(X)) \right) &= \deg\left( P(X) \right) \cdot \deg\left( g(X) \right)\\&=\left[ K(\alpha) : K \right] \cdot\left[ K(\theta) : K(\alpha) \right]\\ &= \left[ K(\theta) : K \right]\\&\leq \deg\left( P(g(X)) \right),
         \end{align*}
-        hence \( \deg\left( P\left(g\left(X\right)\right) \right) = \left[ K\left(\theta\right) : K
-        \right] \), i.e., \( P\left(g\left(X\right)\right) \) is irreducible.
+        hence \( \deg\left( P\left(g\left(X\right)\right) \right) = \left[ K\left(\theta\right) : K \right] \), i.e., \( P\left(g\left(X\right)\right) \) is irreducible.
         \\\\
         This concludes the lemma.
     \end{proof}

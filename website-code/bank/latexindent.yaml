@@ -1,12 +1,12 @@
 # latexindent settings of this repository, used by texformat.py (also on save in VS Code, see .vscode/settings.json).
 # They give the indentation of problem-bank/writing-style.md, section 7 ("Source layout"): 4 spaces per nesting
-# level. latexindent only changes leading spaces with these settings; texformat.py wraps the long lines.
+# level. latexindent only changes leading spaces with these settings; texformat.py joins the lines of each paragraph.
 defaultIndent: "    "
 
 # latexindent's own default leaves the body of an environment called "problem" unindented
 noAdditionalIndent:
     problem: 0
-    footnote: 1       # a footnote's text, refilled by texformat.py, keeps the indentation of its paragraph
+    footnote: 1       # a footnote's text, joined with its paragraph by texformat.py, keeps its indentation
 
 # the lines that continue an \item: 4 spaces further than the \item
 indentRules:
@@ -26,7 +26,7 @@ verbatimEnvironments:
     bibentries: 1
 
 # $...$ and $$...$$ are not treated as blocks: latexindent pairs the dollars differently from one run to the next
-# (texformat.py never breaks a line inside them anyway)
+# (texformat.py never breaks a line anyway)
 specialBeginEnd:
     inlineMath:
         lookForThis: 0

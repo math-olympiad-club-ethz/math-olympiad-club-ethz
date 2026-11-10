@@ -69,29 +69,17 @@
         P\left(w\right) = 11\left(w^5 - 5w^3 + 5w\right) - 10\left(w^4 - 4w^2 + 2\right).
     \end{equation*}
 
-    \medskip
-    \noindent\emph{Claim: all five roots of \( P \) are real and lie in \( \left(-2, 2\right) \).}
-    For \( w = 2\cos\theta \) we have \( w^5 - 5w^3 + 5w = 2\cos 5\theta \) and \( w^4 - 4w^2 + 2 =
-    2\cos 4\theta \), so
+    \medskip \noindent\emph{Claim: all five roots of \( P \) are real and lie in \( \left(-2, 2\right) \).} For \( w = 2\cos\theta \) we have \( w^5 - 5w^3 + 5w = 2\cos 5\theta \) and \( w^4 - 4w^2 + 2 = 2\cos 4\theta \), so
     \begin{equation*}
         P\left(2\cos\theta\right) = 22\cos 5\theta - 20\cos 4\theta.
     \end{equation*}
-    At \( \theta_k = k\pi/5 \) we have \( \cos 5\theta_k = \left(-1\right)^k \), and \( |20\cos
-    4\theta_k| \le 20 < 22 \), hence
+    At \( \theta_k = k\pi/5 \) we have \( \cos 5\theta_k = \left(-1\right)^k \), and \( |20\cos 4\theta_k| \le 20 < 22 \), hence
     \begin{equation*}
-        \operatorname{sign} P\left(2\cos\theta_k\right) = \left(-1\right)^k, \qquad k = 0, 1, \dots,
-        5.
+        \operatorname{sign} P\left(2\cos\theta_k\right) = \left(-1\right)^k, \qquad k = 0, 1, \dots, 5.
     \end{equation*}
-    The points \( 2\cos\theta_0 > 2\cos\theta_1 > \dots > 2\cos\theta_5 \) are strictly decreasing,
-    and \( P \) changes sign on each of the five consecutive intervals between them. By the
-    intermediate value theorem, \( P \) has a root in each of these five disjoint open intervals,
-    all contained in \( \left(-2, 2\right) \). Since \( \deg P = 5 \), these are all the roots of
-    \( P \).
+    The points \( 2\cos\theta_0 > 2\cos\theta_1 > \dots > 2\cos\theta_5 \) are strictly decreasing, and \( P \) changes sign on each of the five consecutive intervals between them. By the intermediate value theorem, \( P \) has a root in each of these five disjoint open intervals, all contained in \( \left(-2, 2\right) \). Since \( \deg P = 5 \), these are all the roots of \( P \).
 
-    \medskip \noindent\emph{Conclusion.} Let \( z \) be a root of the original equation. Then
-    \( w = i\left(z - z^{-1}\right) \) is a root of \( P \), so \( w = a \) is real with
-    \( |a| < 2 \). Multiplying \( i\left(z - z^{-1}\right) = a \) by \( -iz \) shows that \( z \)
-    satisfies
+    \medskip \noindent\emph{Conclusion.} Let \( z \) be a root of the original equation. Then \( w = i\left(z - z^{-1}\right) \) is a root of \( P \), so \( w = a \) is real with \( |a| < 2 \). Multiplying \( i\left(z - z^{-1}\right) = a \) by \( -iz \) shows that \( z \) satisfies
     \begin{equation*}
         z^2 + iaz - 1 = 0 \quad\Longrightarrow\quad z = \frac{-ia \pm \sqrt{4 - a^2}}{2}.
     \end{equation*}
@@ -99,6 +87,5 @@
     \begin{equation*}
         |z|^2 = \frac{a^2 + \left(4 - a^2\right)}{4} = 1.
     \end{equation*}
-    Hence \( |z| = 1 \). (For real \( a \) with \( |a| > 2 \) the roots are purely imaginary with
-    modulus \( \neq 1 \), which is why the bound \( |a| < 2 \) is exactly what is needed.)
+    Hence \( |z| = 1 \). (For real \( a \) with \( |a| > 2 \) the roots are purely imaginary with modulus \( \neq 1 \), which is why the bound \( |a| < 2 \) is exactly what is needed.)
 \end{solution}

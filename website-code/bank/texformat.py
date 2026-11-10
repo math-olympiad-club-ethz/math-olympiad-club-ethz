@@ -1,22 +1,23 @@
 #!/usr/bin/env python3
 r"""Lay out the source of a LaTeX file of the bank so that it reads well in an editor: the indentation of
 problem-bank/writing-style.md, section 7 ("Source layout"), by latexindent with latexindent.yaml (4 spaces per
-nesting level), and every paragraph of a problem, a solution or a shared result refilled so that its lines are as
-full as they can be within 100 characters (the rest of a file, such as the preamble, keeps its lines).
+nesting level), and every paragraph of a problem, a solution or a shared result joined into one line (the rest of a
+file, such as the preamble, keeps its lines). The editor wraps a long line at the edge of its window
+("editor.wordWrap": "on", .vscode/settings.json), so the text always fits the window, whatever its width: the file
+itself never gets a line break added.
 
     python3 texformat.py FILE                 print the laid-out file (VS Code runs this on save)
     python3 texformat.py FILE... --write      rewrite the files in place; prints the ones that changed
     python3 texformat.py FILE... --check      exit status 1 if a file is not laid out yet
 
-A paragraph (consecutive lines of text) is joined and refilled: each line takes as much of the text as fits, so
-that no line could take a word from the next one. Lines that stay alone, never joined: blank lines, comment lines
-(so the % header keeps one field per line), `\\\\` lines, \begin and \end lines, display delimiters \[ \] and
-$$, labels such as \textit{Solution 1.}, and the contents of aligned formulas, matrices, tables, TikZ pictures, code
-listings, algorithms and BibTeX blocks. An \item starts a new paragraph; a line ending with a comment or with \\
-ends one. Double spaces inside a paragraph become single spaces. A line breaks only at a space outside braces and outside $ $ (where latexindent would indent the next
-line), never right after \( or before \), and outside inline math when that costs at most an eighth of the line.
-Only whitespace changes (a line break is a space for LaTeX). Running it twice changes nothing more.
-Self-contained (standard library + latexindent), so VS Code can run it by its path.
+A paragraph (consecutive lines of text) is joined into one line. Lines that stay alone, never joined: blank lines,
+comment lines (so the % header keeps one field per line), `\\\\` lines, \begin and \end lines, display delimiters
+\[ \] and $$, labels such as \textit{Solution 1.}, and the contents of aligned formulas, matrices, tables, TikZ
+pictures, code listings, algorithms and BibTeX blocks. An \item starts a new paragraph; a line ending with a comment
+or with \\ ends one, and so does a line that leaves a brace or a $ $ open (latexindent would indent the next line).
+Double spaces inside a paragraph become single spaces. Only whitespace changes (a line break is a space for LaTeX).
+Running it twice changes nothing more. Self-contained (standard library + latexindent), so VS Code can run it by its
+path.
 """
 import collections
 import os
@@ -28,20 +29,17 @@ import tempfile
 
 HERE = pathlib.Path(__file__).resolve().parent
 CONFIG = HERE / "latexindent.yaml"
-WIDTH = 100
 NO_WRAP = {"bibentries", "tikzpicture", "tikzcd", "verbatim", "verbatim*", "Verbatim", "lstlisting", "minted", "comment",
            "filecontents", "filecontents*", "algorithm", "algorithmic", "align", "align*", "aligned", "alignat", "alignat*",
            "alignedat", "gather", "gather*", "gathered", "multline", "multline*", "split", "cases", "array",
            "matrix", "pmatrix", "bmatrix", "Bmatrix", "vmatrix", "Vmatrix", "smallmatrix", "tabular", "tabularx",
            "eqnarray", "eqnarray*", "flalign", "flalign*"}
 BEGIN_END = re.compile(r"\\(begin|end)\{([^}]*)\}")
-# only the text of these environments (a problem, its solution, a shared result) is refilled: the rest of a file (its
-# % header, the preamble's commands, one per line) keeps its lines
+# only the paragraphs of these environments (a problem, its solution, a shared result) are joined: the rest of a file
+# (its % header, the preamble's commands, one per line) keeps its lines
 CONTENT = {"problem", "solution", "appendixitem"}
 DISPLAY = re.compile(r"(?<!\\)(?:\\\\)*\\[\[\]]")       # \[ or \], not the line break \\ followed by [
 LABEL = re.compile(r"(?:\\noindent\s*)?\\textit\{[^{}]*\}")
-# what may not start a line inside a paragraph (it would make that line stay alone or start a new paragraph)
-STARTERS = ("\\item", "\\begin{", "\\end{", "\\[", "\\]", "\\)", "\\\\", "$$", "%", "[")
 
 
 SIZER = re.compile(r"\\(?:left|right|bigl|bigr|Bigl|Bigr|biggl|biggr|Biggl|Biggr|big|Big|bigg|Bigg)(?![A-Za-z])")
@@ -107,20 +105,13 @@ def code_part(line):
     return line if m is None else line[:m.end() - 1]
 
 
-def scan(s, math=False, dollar=False):
-    r"""Walk s from a state (math: inside \( \) or \[ \]; dollar: inside $ $ or $$ $$). Return, for each position,
-    whether a line may break there (a space outside braces opened in s and outside $ $) and whether it lies in
-    math; the state at the end of s; and the brace depth at the end of s (negative: s closes braces opened before)."""
-    ok, in_math, depth, i = [False] * len(s), [False] * len(s), 0, 0
+def scan(s, dollar=False):
+    """Walk s from a state (dollar: inside $ $ or $$ $$). Return the state at the end of s and the brace depth at the
+    end of s (negative: s closes braces opened before)."""
+    depth, i = 0, 0
     while i < len(s):
         c = s[i]
-        in_math[i] = math or dollar
         if c == "\\":
-            two = s[i:i + 2]
-            if two in ("\\(", "\\["):
-                math = True
-            elif two in ("\\)", "\\]"):
-                math = False
             i += 2                      # a control symbol (\{, \\, \$, \ ) or the first letter of a command
             continue
         if c == "$":
@@ -131,10 +122,8 @@ def scan(s, math=False, dollar=False):
             depth += 1
         elif c == "}":
             depth -= 1
-        elif c == " " and depth <= 0 and not dollar:
-            ok[i] = True
         i += 1
-    return ok, in_math, (math, dollar), depth
+    return dollar, depth
 
 
 def balanced(s):
@@ -151,55 +140,20 @@ def alone(s):
             or BEGIN_END.match(s) is not None or not balanced(code_part(s)))
 
 
-def break_point(s, room, state, strict=True):
-    """Where to break s (index of a space) so that s[:index] fits in room; None if s has no usable space. Strict (in
-    a paragraph): the line before the break must not be one that stays alone, nor the next one start like one."""
-    code = code_part(s)
-    ok, in_math, _, _ = scan(code, *state)
-
-    def allowed(i):
-        head, tail = code[:i].rstrip(), code[i:].lstrip()
-        if not tail or tail.startswith(("\\)", "[", "%")) or head.endswith("\\("):
-            return False
-        return not strict or (not tail.startswith(STARTERS) and not head.endswith(("\\\\", "$$"))
-                              and not alone(head.strip()))
-
-    cands = [i for i in range(1, len(code)) if ok[i] and code[i - 1] != " "]
-    fitting = [i for i in reversed(cands) if i <= room]           # from the right
-    best = next((i for i in fitting if allowed(i)), None)
-    if best is None:
-        return next((i for i in cands if i > room and allowed(i)), None)   # a line too long: its first usable break
-    if in_math[best]:                   # a formula is not cut when that saves at most an eighth of the line
-        floor = room - room // 8
-        alt = next((i for i in fitting if floor <= i < best and not in_math[i] and allowed(i)), None)
-        if alt is not None:
-            return alt
-    return best
-
-
-def fill(lines, state, strict=True):
-    """The lines of one paragraph, joined and refilled within WIDTH."""
+def join(lines):
+    """The lines of one paragraph joined into one line, with the indentation of the first one."""
     first = lines[0]
     indent = first[:len(first) - len(first.lstrip())]
-    cont = indent + "    " if strict and first.lstrip().startswith("\\item") else indent   # latexindent's \item rule
-    rest, current, out = " ".join(line.strip() for line in lines), indent, []
-    code = code_part(rest)
+    text = " ".join(line.strip() for line in lines)
+    code = code_part(text)
     if "\\verb" not in code:                       # several spaces are one space for LaTeX: keep a single one
-        rest = re.sub(r"(?<=\S) {2,}(?=\S)", " ", code) + rest[len(code):]
-    while len(current) + len(rest) > WIDTH:
-        cut = break_point(rest, WIDTH - len(current), state, strict)
-        if cut is None:
-            break
-        out.append(current + rest[:cut].rstrip())
-        state = scan(rest[:cut], *state)[2]
-        rest, current = rest[cut:].lstrip(), cont
-    out.append(current + rest)
-    return out
+        text = re.sub(r"(?<=\S) {2,}(?=\S)", " ", code) + text[len(code):]
+    return indent + text
 
 
 def reflow(text):
-    out, envs, state = [], [], (False, False)
-    para, para_state, depth, closed = [], None, 0, False
+    out, envs, dollar = [], [], False
+    para, depth, closed = [], 0, False
     for line in text.split("\n"):
         code, s = code_part(line), line.strip()
         found = BEGIN_END.findall(code)
@@ -209,29 +163,26 @@ def reflow(text):
         protected = any(e in NO_WRAP for e in envs) or any(n in NO_WRAP and n not in ended for n in opened)
         if protected or alone(s) or not any(e in CONTENT for e in envs):
             if para:
-                out.extend(fill(para, para_state))
+                out.append(join(para))
                 para = []
-            # a long line that stays alone (a display on one line, ...) is still split, but never joined
-            long_alone = (not protected and len(line) > WIDTH and not s.startswith("%")
-                          and any(e in CONTENT for e in envs))
-            out.extend(fill([line], state, strict=False) if long_alone else [line])
+            out.append(line)
         else:
-            joins = (para and not closed and not s.startswith("\\item") and depth <= 0 and not state[1])
+            joins = para and not closed and not s.startswith("\\item") and depth <= 0 and not dollar
             if not joins:
                 if para:
-                    out.extend(fill(para, para_state))
-                para, para_state, depth = [], state, 0
+                    out.append(join(para))
+                para, depth = [], 0
             para.append(line)
-            depth += scan(code, *state)[3]
+            depth += scan(code, dollar)[1]
             closed = code != line or s.endswith("\\\\")      # a comment or a forced line break ends the paragraph
         for kind, name in found:
             if kind == "begin":
                 envs.append(name)
             elif name in envs:
                 del envs[len(envs) - 1 - envs[::-1].index(name)]
-        state = scan(code, *state)[2]
+        dollar = scan(code, dollar)[0]
     if para:
-        out.extend(fill(para, para_state))
+        out.append(join(para))
     return "\n".join(out)
 
 
@@ -259,8 +210,8 @@ FOOT = {"{": "⦃", "}": "⦄"}                # stand-ins for the braces of \fo
 
 def mask_footnotes(text):
     r"""The text with the two braces of every \footnote{...} replaced by stand-ins, so that the footnote's text is
-    refilled like the text around it (a line never breaks inside braces; latexindent.yaml gives a footnote no extra
-    indentation). Comments are skipped; escaped braces \{ \} are not braces."""
+    joined with the text around it (a line that leaves a brace open is not joined to the next; latexindent.yaml gives
+    a footnote no extra indentation). Comments are skipped; escaped braces \{ \} are not braces."""
     out, stack, i, comment = list(text), [], 0, False
     while i < len(text):
         c = text[i]
@@ -294,10 +245,10 @@ def unmask_footnotes(text):
 def lay_out(text):
     text = latexindent(join_lone_delimiters(text))
     for _ in range(5):
-        refilled = unmask_footnotes(reflow(mask_footnotes(text)))
-        if refilled == text:
+        joined = unmask_footnotes(reflow(mask_footnotes(text)))
+        if joined == text:
             return text
-        text = latexindent(refilled)
+        text = latexindent(joined)
     return text
 
 

@@ -24,36 +24,26 @@
     \\
     -\( \left(S,\cdot\right) \) forms a semi-group i.e \( \cdot \) is associative;
     \[
-        \forall a,b,c\in
-        S,\cdot(\left(a,\cdot\left(\left(b,c\right)\right)\right)=\cdot\left(\left(\cdot\left(a,b\right),c\right)\right)\ i.e.\ a\cdot\left(b\cdot
-        c\right)=\left(a\cdot b\right)\cdot c
+        \forall a,b,c\in S,\cdot(\left(a,\cdot\left(\left(b,c\right)\right)\right)=\cdot\left(\left(\cdot\left(a,b\right),c\right)\right)\ i.e.\ a\cdot\left(b\cdot c\right)=\left(a\cdot b\right)\cdot c
     \]
     -\( \cdot \) is injective in left and right coordinate \( \forall a,b,c\in S \);\\
     \[
-        \cdot\left(\left(a,b\right)\right)=\cdot\left(\left(a,c\right)\right)\Rightarrow
-        b=c\ i.e.\ a\cdot b=a\cdot c\Rightarrow b=c
+        \cdot\left(\left(a,b\right)\right)=\cdot\left(\left(a,c\right)\right)\Rightarrow b=c\ i.e.\ a\cdot b=a\cdot c\Rightarrow b=c
     \]
     \[
-        \cdot\left(\left(b,a\right)\right)=\cdot\left(\left(c,a\right)\right)\Rightarrow
-        b=c\ i.e.\ b\cdot a=c\cdot a\Rightarrow b=c
+        \cdot\left(\left(b,a\right)\right)=\cdot\left(\left(c,a\right)\right)\Rightarrow b=c\ i.e.\ b\cdot a=c\cdot a\Rightarrow b=c
     \]
     \\
-    -\( \forall a\in S, a^{\mathbb{N}_{\geq 1}}:=\left\{a^n |\ n\in\mathbb{N}_{\geq 1}\right\} \) is
-    finite, where,
+    -\( \forall a\in S, a^{\mathbb{N}_{\geq 1}}:=\left\{a^n |\ n\in\mathbb{N}_{\geq 1}\right\} \) is finite, where,
     \[
         a^1:=a\ and\ for\ n>1,\ a^n=a\cdot a^{n-1}
     \]
-    Note that this definition is independent where we start to compute since \( \cdot \) is
-    associative.\\\\
+    Note that this definition is independent where we start to compute since \( \cdot \) is associative.\\\\
     Show \( \left(S,\cdot\right) \) is a group.
 \end{problem}
 \begin{solution}
-    In order to show \( \left(S,\cdot\right) \) is a group we need to start by showing that
-    \( \left(S,\cdot\right) \) is a monoid; that is a semi-group where there exist an identity
-    element for \( \cdot \) . We know \( \left(S,\cdot\right) \) is a semi-group. We search an
-    identity element.\\\\
-    Let \( a\in S \) which exists since it is non-empty, now we know \( a^{\mathbb{N}_{\geq 1}} \)
-    is not infinite which means the following statement is true:
+    In order to show \( \left(S,\cdot\right) \) is a group we need to start by showing that \( \left(S,\cdot\right) \) is a monoid; that is a semi-group where there exist an identity element for \( \cdot \) . We know \( \left(S,\cdot\right) \) is a semi-group. We search an identity element.\\\\
+    Let \( a\in S \) which exists since it is non-empty, now we know \( a^{\mathbb{N}_{\geq 1}} \) is not infinite which means the following statement is true:
     \[
         \neg\left(\forall m',n'\in\mathbb{N}_{\geq 1}, m'< n'\rightarrow a^{m'}\neq a^{n'}\right)
     \]
@@ -73,8 +63,7 @@
     \[
         e_S^2=e_S
     \]
-    This identity will be the key in our context to show \( e_S \) is the identity element for
-    \( \left(S,\cdot\right) \) i.e. \( \forall b\in S, e_S\cdot b=b=b\cdot e_S \).\\\\
+    This identity will be the key in our context to show \( e_S \) is the identity element for \( \left(S,\cdot\right) \) i.e. \( \forall b\in S, e_S\cdot b=b=b\cdot e_S \).\\\\
     Let \( b\in S \), one has using that \( S \) is a semi group:
     \[
         b\cdot e_S=b\cdot e_S^2=\left(b\cdot e_S\right)\cdot e_S
@@ -83,22 +72,16 @@
     \[
         e_S\cdot b=e_S^2\cdot b=e_S\cdot\left(e_S\cdot b\right)
     \]
-    using injectivity in the right and left coordinate respectively: \( b=b\cdot e_S \) and
-    \( b=e_S\cdot b \) as desired.\\
-    We have therefore shown \( \left(S,\cdot,e_S\right) \) is a monoid, to show it is a group we
-    need to show \( \forall g\in S,\exists h\in S,g\cdot h=e_S=h\cdot g \) (each element have right
-    and left inverse which are the same). Let \( g\in S \):\\
+    using injectivity in the right and left coordinate respectively: \( b=b\cdot e_S \) and \( b=e_S\cdot b \) as desired.\\
+    We have therefore shown \( \left(S,\cdot,e_S\right) \) is a monoid, to show it is a group we need to show \( \forall g\in S,\exists h\in S,g\cdot h=e_S=h\cdot g \) (each element have right and left inverse which are the same). Let \( g\in S \):\\
     if \( g=e_S \) we have \( e_S^2=e_S \) so \( e_S \) has an inverse which is itself. \\
     If \( g\neq e_S \) then \( \exists r,s\in\mathbb{N}_{\geq 1}, r< s\wedge g^r=g^s \):
     \[
         e_S\cdot g=g=g^1=g^{r-\left(r-1\right)}=g^{s-\left(r-1\right)}=g^{s-r}\cdot g
     \]
-    using injectivity in right coordinate: \( g^{s-r}=e_S \) we know \( s-r\geq 1 \) if \( s-r=1 \)
-    then \( g=e_S \) a contradiction therefore \( s-r\geq 2 \) so that \( s-r-1\geq 1 \) and we
-    have:
+    using injectivity in right coordinate: \( g^{s-r}=e_S \) we know \( s-r\geq 1 \) if \( s-r=1 \) then \( g=e_S \) a contradiction therefore \( s-r\geq 2 \) so that \( s-r-1\geq 1 \) and we have:
     \[
         g\cdot g^{s-r-1}=e_S=g^{s-r-1}\cdot g
     \]
-    so that \( g \) has an inverse which is \( g^{s-r-1} \). Hence \( \left(S,\cdot,e_S\right) \) is
-    a group.
+    so that \( g \) has an inverse which is \( g^{s-r-1} \). Hence \( \left(S,\cdot,e_S\right) \) is a group.
 \end{solution}

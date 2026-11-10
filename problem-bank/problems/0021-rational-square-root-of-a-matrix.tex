@@ -27,27 +27,15 @@
 \begin{solution}
     We will show that the only such number is \( a = 0 \).
     \\\\
-    Let \( A \) be as given above, and suppose that \( A = B^2 \) for some matrix \( B \) with
-    rational entries. It is easy to compute the characteristic polynomial of \( A \), which is
+    Let \( A \) be as given above, and suppose that \( A = B^2 \) for some matrix \( B \) with rational entries. It is easy to compute the characteristic polynomial of \( A \), which is
     \[
-        P_{\text{char},A}\left(X\right) := {\det}_{\mathbb{Q}\left(X\right)}\left(XI_4-A\right) =
-        \left(X^2 + 1\right)^2.
+        P_{\text{char},A}\left(X\right) := {\det}_{\mathbb{Q}\left(X\right)}\left(XI_4-A\right) = \left(X^2 + 1\right)^2.
     \]
-    By the Cayley-Hamilton theorem, we have \( P_{\text{char},A}\left(B^2\right) =
-    P_{\text{char},A}\left(A\right) = 0 \). Since
-    \( P_{\text{char},A}\left(X^2\right)\in\mathbb{Q}\left[X\right] \) annihilates \( B \), we can
-    take the unique (non-zero) monic minimal polynomial that annihilates \( B \),
-    \( P_{\text{min},B}\left(X\right)\in\mathbb{Q}\left[X\right] \). The minimal polynomial is
-    irreducible over \( \mathbb{Q}\left[X\right] \) and divides all polynomials with rational
-    coefficients that vanish at \( B \); in particular, \( P_{\text{min},B}\left(X\right) \) must be
-    a divisor of the polynomial \( P_{\text{char},A}\left(X^2\right) = \left(X^4 + 1\right)^2 \). So
-    \( P_{\text{min},B}\left(X\right) \) must be a divisor of the polynomial \( X^4 + 1 \). However
-    \( X^4 + 1 \) is the \( 8 \)-th cyclotomic polynomial since:
+    By the Cayley-Hamilton theorem, we have \( P_{\text{char},A}\left(B^2\right) = P_{\text{char},A}\left(A\right) = 0 \). Since \( P_{\text{char},A}\left(X^2\right)\in\mathbb{Q}\left[X\right] \) annihilates \( B \), we can take the unique (non-zero) monic minimal polynomial that annihilates \( B \), \( P_{\text{min},B}\left(X\right)\in\mathbb{Q}\left[X\right] \). The minimal polynomial is irreducible over \( \mathbb{Q}\left[X\right] \) and divides all polynomials with rational coefficients that vanish at \( B \); in particular, \( P_{\text{min},B}\left(X\right) \) must be a divisor of the polynomial \( P_{\text{char},A}\left(X^2\right) = \left(X^4 + 1\right)^2 \). So \( P_{\text{min},B}\left(X\right) \) must be a divisor of the polynomial \( X^4 + 1 \). However \( X^4 + 1 \) is the \( 8 \)-th cyclotomic polynomial since:
     \[
         \Phi_{8}\left(X\right)=\Phi_{2^3}\left(X\right)=\Phi_{2}\left(X^{\left(2^{3-1}\right)}\right)=X^4+1,
     \]
-    and therefore is irreducible over \( \mathbb{Q}\left[X\right] \). Hence
-    \( P_{\text{min},B}\left(X\right)= X^4+1 \). Therefore,
+    and therefore is irreducible over \( \mathbb{Q}\left[X\right] \). Hence \( P_{\text{min},B}\left(X\right)= X^4+1 \). Therefore,
     \[
         A^2 + I = P_{\text{min},B}\left(B\right) = 0.
     \]

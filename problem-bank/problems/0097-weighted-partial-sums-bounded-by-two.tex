@@ -24,26 +24,19 @@
     converges and is bounded by \( 2 \).
 \end{problem}
 \begin{solution}
-    Since \( \frac{a_n}{k^2} \geq 0 \) for all \( k, n \in \mathbb{N}_{\geq 1} \), we have by
-    Tonelli's theorem
+    Since \( \frac{a_n}{k^2} \geq 0 \) for all \( k, n \in \mathbb{N}_{\geq 1} \), we have by Tonelli's theorem
     \[
-        \sum_{k=1}^{+\infty} \sum_{n=1}^{k} \frac{a_n}{k^2} = \sum_{n=1}^{+\infty}
-        \sum_{k=n}^{+\infty} \frac{a_n}{k^2} \in \left[0;+\infty\right],
+        \sum_{k=1}^{+\infty} \sum_{n=1}^{k} \frac{a_n}{k^2} = \sum_{n=1}^{+\infty} \sum_{k=n}^{+\infty} \frac{a_n}{k^2} \in \left[0;+\infty\right],
     \]
-    and it suffices to show that \( \sum_{n=1}^{+\infty} \sum_{k=n}^{+\infty} \frac{a_n}{k^2} \leq
-    2 \).
+    and it suffices to show that \( \sum_{n=1}^{+\infty} \sum_{k=n}^{+\infty} \frac{a_n}{k^2} \leq 2 \).
     \\\\
     Now, for every \( k \in \mathbb{N}_{\geq 1} \),
     \[
-        \frac{1}{k^2} \leq \frac{1}{k^2-\frac{1}{4}} =
-        \frac{1}{\left(k-\frac{1}{2}\right)\left(k+\frac{1}{2}\right)} = \frac{1}{k-\frac{1}{2}} -
-        \frac{1}{k+\frac{1}{2}},
+        \frac{1}{k^2} \leq \frac{1}{k^2-\frac{1}{4}} = \frac{1}{\left(k-\frac{1}{2}\right)\left(k+\frac{1}{2}\right)} = \frac{1}{k-\frac{1}{2}} - \frac{1}{k+\frac{1}{2}},
     \]
     so that for every \( n \in \mathbb{N}_{\geq 1} \) and every \( N \in \mathbb{N}_{\geq n} \),
     \[
-        \sum_{k=n}^{N} \frac{1}{k^2} \leq \sum_{k=n}^{N} \left(\frac{1}{k-\frac{1}{2}} -
-        \frac{1}{k+\frac{1}{2}}\right) = \frac{1}{n-\frac{1}{2}} - \frac{1}{N+\frac{1}{2}} \leq
-        \frac{1}{n-\frac{1}{2}}= \frac{2}{2n-1}.
+        \sum_{k=n}^{N} \frac{1}{k^2} \leq \sum_{k=n}^{N} \left(\frac{1}{k-\frac{1}{2}} - \frac{1}{k+\frac{1}{2}}\right) = \frac{1}{n-\frac{1}{2}} - \frac{1}{N+\frac{1}{2}} \leq \frac{1}{n-\frac{1}{2}}= \frac{2}{2n-1}.
     \]
     Hence, since the partial sums are increasing and bounded, the limit exists and
     \[
@@ -55,11 +48,7 @@
     \]
     and thus
     \[
-        \sum_{n=1}^{+\infty} \sum_{k=n}^{+\infty} \frac{a_n}{k^2} = \limsup_{N \to +\infty}
-        \sum_{n=1}^{N} \sum_{k=n}^{+\infty} \frac{a_n}{k^2} \leq \limsup_{N \to +\infty} 2
-        \sum_{n=1}^{N} \frac{a_n}{2n-1} = 2,
+        \sum_{n=1}^{+\infty} \sum_{k=n}^{+\infty} \frac{a_n}{k^2} = \limsup_{N \to +\infty} \sum_{n=1}^{N} \sum_{k=n}^{+\infty} \frac{a_n}{k^2} \leq \limsup_{N \to +\infty} 2 \sum_{n=1}^{N} \frac{a_n}{2n-1} = 2,
     \]
-    where the first equality is clear as the partial sums are increasing, the inequality is standard
-    and the last equality holds since the limit exists. Therefore, \( \sum_{k=1}^{+\infty}
-    \sum_{n=1}^{k} \frac{a_n}{k^2} \) converges and is bounded by \( 2 \).
+    where the first equality is clear as the partial sums are increasing, the inequality is standard and the last equality holds since the limit exists. Therefore, \( \sum_{k=1}^{+\infty} \sum_{n=1}^{k} \frac{a_n}{k^2} \) converges and is bounded by \( 2 \).
 \end{solution}
