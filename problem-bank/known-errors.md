@@ -1,9 +1,6 @@
 # Known errors in the problems
 
-Mistakes found in the statements and solutions of `problems/` that need a mathematical fix. The pure typos were fixed
-on 2026-09-23 (with Antoine's OK). Each remaining entry has a **Proposal** written by an AI: check it before applying.
-Fix the file, then delete its line here. Delete this file when it is empty.
-Line numbers in the entries refer to the old 2025 files (now removed): search the problem file for the quoted text.
+Mistakes found in the statements and solutions of `problems/` that need a mathematical fix. The pure typos were fixed on 2026-09-23 (with Antoine's OK). Each remaining entry has a **Proposal** written by an AI: check it before applying. Fix the file, then delete its line here. Delete this file when it is empty. Line numbers in the entries refer to the old 2025 files (now removed): search the problem file for the quoted text.
 
 ## Errors in statements and solutions (83 left)
 

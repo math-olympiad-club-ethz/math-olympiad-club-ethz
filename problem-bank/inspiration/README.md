@@ -1,16 +1,13 @@
 # Inspiration / source material (local only)
 
-This folder is **git-ignored on purpose.** Drop your own books, past-competition
-PDFs, and any reference material you use to find or build problems **here, on your
-own machine** — it is never committed or published.
+This folder is **git-ignored on purpose.** Drop your own books, past-competition PDFs, and any reference material you use to find or build problems **here, on your own machine** — it is never committed or published.
 
 Why local-only:
 - Inspiration sources are personal and differ from member to member.
 - Many are copyrighted, and this repository is **public**.
 - It keeps the repo small (no large binaries baked into git history).
 
-Only this `README.md` is tracked; everything else under `inspiration/` is ignored
-(see `.gitignore`). Nothing in here is used to build the website.
+Only this `README.md` is tracked; everything else under `inspiration/` is ignored (see `.gitignore`). Nothing in here is used to build the website.
 
 ## Suggested layout
 

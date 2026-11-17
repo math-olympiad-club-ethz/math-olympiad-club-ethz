@@ -1,58 +1,33 @@
 # History review — problem bank
 
-What the AI history pass (2026-09-22) changed in the problem headers, with its sources, and what you still
-have to review. Set `history: human` in a problem's header once you accept its history. Delete this file when
-every problem is reviewed.
+What the AI history pass (2026-09-22) changed in the problem headers, with its sources, and what you still have to review. Set `history: human` in a problem's header once you accept its history. Delete this file when every problem is reviewed.
 
-Branch `problem-bank`, nothing committed.
-Fields written: `origin`, `origin-date`, `origin-number`, `also-in`, `references`, and `history: ai` on all 80 problems.
-Not touched: statements, solutions, titles, file names, area/methods, difficulty, review, taken-from.
-`python3 -m bank.validate` prints "80 problem files, all good".
+Branch `problem-bank`, nothing committed. Fields written: `origin`, `origin-date`, `origin-number`, `also-in`, `references`, and `history: ai` on all 80 problems. Not touched: statements, solutions, titles, file names, area/methods, difficulty, review, taken-from. `python3 -m bank.validate` prints "80 problem files, all good".
 
 ## How the values were obtained
 
-- One research agent per source unit (58 units, 1–3 problems each), then an independent checker per unit that
-  re-opened every cited page and dropped any value it could not confirm. When the checker changed a value, a second
-  checker decided between the two (13 units).
-- Then a manual review pass: merged the proposed slugs, restored three dropped club-source notes (0035, 0056, 0057),
-  confirmed the eight Bernoulli problem numbers against the club's local solutions PDF
-  (`inspiration/competitions/bernoulli/Bernoulli 2023-2024-2025-2026 Solutions.pdf`), cleared one misplaced number (0056).
-- **Limit:** the account's web-search quota (200 searches) ran out during the checker phase. The checkers still
-  re-opened every cited URL, but for these 63 problems the checker could not run its own search for an
-  *older* source than the one proposed (the researcher's searches still apply):
-  0001, 0002, 0003, 0004, 0006, 0007, 0008, 0009, 0011, 0012, 0013, 0014, 0015, 0016, 0018, 0019, 0021, 0022, 0023, 0024, 0027, 0028, 0029, 0030, 0033, 0035, 0036, 0037, 0038, 0039, 0041, 0042, 0043, 0044, 0046, 0047, 0048, 0050, 0052, 0053, 0054, 0055, 0057, 0058, 0059, 0060, 0061, 0062, 0063, 0064, 0068, 0069, 0070, 0071, 0072, 0073, 0074, 0075, 0076, 0077, 0078, 0079, 0080.
-- Confidence (checker): high 52, medium 25, low 3
-  (low: 0015, 0053, 0061).
+- One research agent per source unit (58 units, 1–3 problems each), then an independent checker per unit that re-opened every cited page and dropped any value it could not confirm. When the checker changed a value, a second checker decided between the two (13 units).
+- Then a manual review pass: merged the proposed slugs, restored three dropped club-source notes (0035, 0056, 0057), confirmed the eight Bernoulli problem numbers against the club's local solutions PDF (`inspiration/competitions/bernoulli/Bernoulli 2023-2024-2025-2026 Solutions.pdf`), cleared one misplaced number (0056).
+- **Limit:** the account's web-search quota (200 searches) ran out during the checker phase. The checkers still re-opened every cited URL, but for these 63 problems the checker could not run its own search for an *older* source than the one proposed (the researcher's searches still apply): 0001, 0002, 0003, 0004, 0006, 0007, 0008, 0009, 0011, 0012, 0013, 0014, 0015, 0016, 0018, 0019, 0021, 0022, 0023, 0024, 0027, 0028, 0029, 0030, 0033, 0035, 0036, 0037, 0038, 0039, 0041, 0042, 0043, 0044, 0046, 0047, 0048, 0050, 0052, 0053, 0054, 0055, 0057, 0058, 0059, 0060, 0061, 0062, 0063, 0064, 0068, 0069, 0070, 0071, 0072, 0073, 0074, 0075, 0076, 0077, 0078, 0079, 0080.
+- Confidence (checker): high 52, medium 25, low 3 (low: 0015, 0053, 0061).
 
 ## Known doubts — resolved
 
 - **0001** — not IMO 1956 (there was none): IMO 1959 Problem 1, official PDF imo-official.org.
-- **0010 / 0017** — both labels "Putnam and Beyond, Example p. 140" are correct: two worked Examples on p. 140
-  (1st ed., Sect. 3.2.5). First appearances: 0010 D. Andrica, Revista Matematică Timișoara 1989, Problem 6143
-  (attribution printed in Andreescu–Andrica, *360 Problems*; the RMT issue is not online); 0017 Romanian NMO 1984,
-  grade XI, Problem 3 (original paper opened).
-- **0057** — first appearance is Putnam 1971 A6. Bernoulli 2025 Problem 1 is a re-use (confirmed in the club PDF);
-  Hongler's 2021 Analysis I lecture is where the club saw it (kept as "Club source").
+- **0010 / 0017** — both labels "Putnam and Beyond, Example p. 140" are correct: two worked Examples on p. 140 (1st ed., Sect. 3.2.5). First appearances: 0010 D. Andrica, Revista Matematică Timișoara 1989, Problem 6143 (attribution printed in Andreescu–Andrica, *360 Problems*; the RMT issue is not online); 0017 Romanian NMO 1984, grade XI, Problem 3 (original paper opened).
+- **0057** — first appearance is Putnam 1971 A6. Bernoulli 2025 Problem 1 is a re-use (confirmed in the club PDF); Hongler's 2021 Analysis I lecture is where the club saw it (kept as "Club source").
 - **0069** — not Putnam 1984 B3 (that is the binary-operation problem): Putnam 1982 B3.
 - **0062** — not the AMM: *The Pentagon* (Kappa Mu Epsilon), Spring 2023, Problem 922, proposer T. P. Sharma.
-- Other doubts from the migration report: 0002 1st All-Russian 1961 P5 confirmed; 0014 IMC 2014 Day 1 P4; 0018 Sutner 1988;
-  0025 part 2 = IMO 2007 P5 (also-in imo); 0031 "BMO 2005" = British MO Round 2 2005 P1, "AMC 12 2012" = AMC 12B 2007
-  P23; 0035 USAMO 2009 P6; 0038 Monge 1799; 0039 IMO Shortlist 1981 #18; 0040 Tournament of Towns Fall 2014;
-  0046 Moscow MO 1949; 0047 the official IMC 2024 P6 *is* the bank's statement (the doubt was wrong); 0049 Makarov et al.
-  1992, X.1.2; 0058/0059 Bulgarian Autumn 2023; 0063/0064 are ICMC 2025 Round 2 Problems 3 and 4 (not 1 and 2);
-  0065 IMO 2025 P5; 0066/0067 Levi's book is *The Mathematical Mechanic* (club source), origins are Fermat / Apollonius.
+- Other doubts from the migration report: 0002 1st All-Russian 1961 P5 confirmed; 0014 IMC 2014 Day 1 P4; 0018 Sutner 1988; 0025 part 2 = IMO 2007 P5 (also-in imo); 0031 "BMO 2005" = British MO Round 2 2005 P1, "AMC 12 2012" = AMC 12B 2007 P23; 0035 USAMO 2009 P6; 0038 Monge 1799; 0039 IMO Shortlist 1981 #18; 0040 Tournament of Towns Fall 2014; 0046 Moscow MO 1949; 0047 the official IMC 2024 P6 *is* the bank's statement (the doubt was wrong); 0049 Makarov et al. 1992, X.1.2; 0058/0059 Bulgarian Autumn 2023; 0063/0064 are ICMC 2025 Round 2 Problems 3 and 4 (not 1 and 2); 0065 IMO 2025 P5; 0066/0067 Levi's book is *The Mathematical Mechanic* (club source), origins are Fermat / Apollonius.
 
 ## New origin slugs added to tags.yml
 
-`romania-nmo`, `imo-shortlist`, `tournament-of-towns`, `moscow-mo`, `historical` (kind book: treatises, letters —
-0034 Bernoulli–Goldbach 1728, 0066 Fermat, 0067 Apollonius), `paper` (kind journal: research article, because
-`journal` is described as "problem section" — 0005, 0016, 0018, 0030, 0036).
+`romania-nmo`, `imo-shortlist`, `tournament-of-towns`, `moscow-mo`, `historical` (kind book: treatises, letters — 0034 Bernoulli–Goldbach 1728, 0066 Fermat, 0067 Apollonius), `paper` (kind journal: research article, because `journal` is described as "problem section" — 0005, 0016, 0018, 0030, 0036).
 
 ## Still unknown
 
 - **No origin:** 0015 (9^x+4^x+2^x = 8^x+6^x+1) — nothing found; not in Putnam and Beyond (full text grepped).
-- **Origin without a date:** 0013 (Gazeta Matematică, proposer I. Tomescu, year/number not found), 0019, 0032, 0037,
-  0048, 0052, 0053, 0060, 0061 (folklore), 0066, 0067 (historical, pre-modern).
+- **Origin without a date:** 0013 (Gazeta Matematică, proposer I. Tomescu, year/number not found), 0019, 0032, 0037, 0048, 0052, 0053, 0060, 0061 (folklore), 0066, 0067 (historical, pre-modern).
 
 ## Established names found — NOT applied (title and file name unchanged)
 
@@ -71,27 +46,15 @@ Not touched: statements, solutions, titles, file names, area/methods, difficulty
 ## Questions for the maintainer
 
 1. **Titles**: apply which of the names above? (each = title line + `mv` of the file, number kept.)
-2. **Convention "first appearance of the result" vs "first time posed as a problem"**: the pass uses the result's
-   paper when the statement *is* the published theorem (0005 Baum–Sweet 1976 / Putnam 1989 A6; 0016 Ivić–Mijajlović
-   1995 / Bernoulli 2023 P2; 0018 Sutner 1988 / Bernoulli 2023 P3; 0030 Minkowski 1887 / Bernoulli 2024 P4; 0036
-   Gustafson 1973) and the competition when it is only a special case of a theorem (0080 Bulgaria 2024 P5, special case
-   of Frankl 1983). OK, or switch to competitions-first?
-3. **New slugs** `paper` and `historical`: keep, or rather widen the `journal` description / use `book`? (0038 Monge
-   1799 stayed `book`.)
-4. **Folklore vs first verified appearance**: 0053 (only verified source: Vakil's Stanford Putnam masterclass,
-   17 Nov 2003 — use `course` with that date?), 0048 (double-free sets, Wang 1989 not opened), 0045 (Clifford–Preston
-   1961 book kept as origin; or folklore?), 0055 (folklore, earliest opened: Wu :: riddles 2002).
+2. **Convention "first appearance of the result" vs "first time posed as a problem"**: the pass uses the result's paper when the statement *is* the published theorem (0005 Baum–Sweet 1976 / Putnam 1989 A6; 0016 Ivić–Mijajlović 1995 / Bernoulli 2023 P2; 0018 Sutner 1988 / Bernoulli 2023 P3; 0030 Minkowski 1887 / Bernoulli 2024 P4; 0036 Gustafson 1973) and the competition when it is only a special case of a theorem (0080 Bulgaria 2024 P5, special case of Frankl 1983). OK, or switch to competitions-first?
+3. **New slugs** `paper` and `historical`: keep, or rather widen the `journal` description / use `book`? (0038 Monge 1799 stayed `book`.)
+4. **Folklore vs first verified appearance**: 0053 (only verified source: Vakil's Stanford Putnam masterclass, 17 Nov 2003 — use `course` with that date?), 0048 (double-free sets, Wang 1989 not opened), 0045 (Clifford–Preston 1961 book kept as origin; or folklore?), 0055 (folklore, earliest opened: Wu :: riddles 2002).
 5. **0019**: the earliest record is your own MSE post (2025-04-01). Does your friend remember where it came from?
 6. **0031** (collection): origin = first part (AMC 12B 2007 P23) or earliest part (AIME 1998 P14)?
-7. **0010**: RMT year 1989 comes from a printed attribution; the same book dates RMT problem 6191 to 1987, so 1989 may
-   be a misprint. Anyone with access to RMT?
-8. **0020**: origin = Cover 1987 "Pick the largest number" (the randomized-switching version, which is the club's
-   question) or the envelope paradox itself (Kraitchik 1953 / folklore)?
-9. **taken-from** (outside this pass): the club sources are kept in references as "Club source: …" (Sudakov &
-   Milojević 0035/0038/0039/0040; Hongler 0046/0051/0052/0056/0057; Wu 0032/0055; Levi 0066/0067; Vakil 0053).
-   Move them to taken-from?
-10. **Older-source searches**: re-run a search-only pass for the 63 problems listed above once the search
-    quota resets?
+7. **0010**: RMT year 1989 comes from a printed attribution; the same book dates RMT problem 6191 to 1987, so 1989 may be a misprint. Anyone with access to RMT?
+8. **0020**: origin = Cover 1987 "Pick the largest number" (the randomized-switching version, which is the club's question) or the envelope paradox itself (Kraitchik 1953 / folklore)?
+9. **taken-from** (outside this pass): the club sources are kept in references as "Club source: …" (Sudakov & Milojević 0035/0038/0039/0040; Hongler 0046/0051/0052/0056/0057; Wu 0032/0055; Levi 0066/0067; Vakil 0053). Move them to taken-from?
+10. **Older-source searches**: re-run a search-only pass for the 63 problems listed above once the search quota resets?
 11. **0025** holds two separate IMO problems (1988 P6 and 2007 P5): split into two files?
 
 ## Content issues
@@ -100,8 +63,7 @@ Moved to [`known-errors.md`](known-errors.md).
 
 ## Change table (old → new)
 
-`history: none → ai` on all 80 files is not listed. References are truncated here; full text is in the files.
-The URL column is the page the checker opened for that field (for references: the first cited URL).
+`history: none → ai` on all 80 files is not listed. References are truncated here; full text is in the files. The URL column is the page the checker opened for that field (for references: the first cited URL).
 
 | ID | field | old → new | reference | confidence |
 |---|---|---|---|---|
