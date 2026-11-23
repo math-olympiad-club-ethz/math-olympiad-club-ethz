@@ -121,20 +121,11 @@ How to read this list: one idea per step, in order. Each step has a nickname, wh
 - Website speed pass (2026-10-02), follow-ups:
   - [x] Logos (2026-10-07): the 1024 px club logo originals, light and dark, moved to `association-documents/logo/` (kept for events, never deployed); the site keeps only what it uses, made from them at a size sharp on every screen: header logo 176 px WebP (was 96), sponsor logo 512 px WebP (was 400), link preview 600 px on the site's background (was a transparent 280). Unused copies deleted (git history keeps them, and Jane Street's official 2968 px logo files: `static/images/LOGO_stacked_w_registration_*`).
 
-- [ ] **PDF title and author** (Antoine, 2026-11-23: later). The PDFs made on the site have an empty Title and Author, so
-  one opened in a new tab shows a meaningless id: set them (`\hypersetup{pdftitle=…, pdfauthor=Math Olympiad Club at ETHZ}`) in
-  `bank-compile.js::makeMain`, its twin `bank/stitch.py::make_main` (the parity test compares them) and `bank-propose.js::previewMain`.
+- [ ] **PDF title and author** (Antoine, 2026-11-23: later). The PDFs made on the site have an empty Title and Author, so one opened in a new tab shows a meaningless id: set them (`\hypersetup{pdftitle=…, pdfauthor=Math Olympiad Club at ETHZ}`) in `bank-compile.js::makeMain`, its twin `bank/stitch.py::make_main` (the parity test compares them) and `bank-propose.js::previewMain`.
 
-- [ ] **Three symbols the web fonts lack** (2026-11-23). The descriptions of three methods in `problem-bank/tags.yml`
-  use ≡ (fermat-little-theorem), ↦ (integration-tricks) and ≠ (gelfond-schneider); shown in their bubbles and in the
-  search's suggestions, they come in another font than the rest of the site. Write them in words, or leave them (the
-  build says so on every run: `build.py::check_fonts`).
+- [ ] **Three symbols the web fonts lack** (2026-11-23). The descriptions of three methods in `problem-bank/tags.yml` use ≡ (fermat-little-theorem), ↦ (integration-tricks) and ≠ (gelfond-schneider); shown in their bubbles and in the search's suggestions, they come in another font than the rest of the site. Write them in words, or leave them (the build says so on every run: `build.py::check_fonts`).
 
-- [ ] **A faster first PDF on a slow connection** (2026-11-23, information). The first Create on a device downloads the
-  LaTeX engine (16.3 MB; stored afterwards). Measured from Antoine's Mac that day: GitHub Pages 14 to 63 KB/s, Cloudflare
-  91 KB/s, jsDelivr 113 KB/s (a slow line that day; a normal one takes 1 to 3 s). Options: host the site on Cloudflare
-  Pages (free; about twice as fast as GitHub Pages on that line), or a server that compiles the PDF (the browser then gets
-  some 100 KB instead of the engine; costs money and upkeep).
+- [ ] **A faster first PDF on a slow connection** (2026-11-23, information). The first Create on a device downloads the LaTeX engine (16.3 MB; stored afterwards). Measured from Antoine's Mac that day: GitHub Pages 14 to 63 KB/s, Cloudflare 91 KB/s, jsDelivr 113 KB/s (a slow line that day; a normal one takes 1 to 3 s). Options: host the site on Cloudflare Pages (free; about twice as fast as GitHub Pages on that line), or a server that compiles the PDF (the browser then gets some 100 KB instead of the engine; costs money and upkeep).
 
 - [ ] **Move the site's Python to uv** (Antoine, 2026-11-15), later. CI builds with Python 3.12 (`setup-python` in `deploy.yml`) and Antoine's Mac with Python 3.15 from `website-code/.venv`, so the two can differ. To do: replace `website-code/requirements.txt` with `pyproject.toml` + `uv.lock` (Python version pinned), run the `package.json` scripts through `uv run`, make `deploy.yml` and `number-new-problems.yml` install uv and run `uv sync --locked` in place of `pip install -r requirements.txt`, update "Run locally" in `README.md`. One commit of its own: a failed run deploys nothing, and a pull request runs the build and the tests without deploying. uv is already on the Mac (Homebrew). Until then, on the Mac: `source .venv/bin/activate` in `website-code/` before `python3 build.py` or `npm test`.
 
