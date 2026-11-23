@@ -42,7 +42,8 @@ const state = {
   selection: new Set(),
   order: null,            // null = automatic PDF order (S.autoOrder); otherwise the IDs in the order chosen by hand
   results: [],
-  all: false,             // All problems chosen in the tree: the whole bank is listed (no link says it: a link names its topic or its filters)
+  all: false,             // All problems chosen in the tree, or by a search: the whole bank is listed (a link says a=*)
+  searched: false,        // that list was opened by the search bar: 'words' typed (erased, they take it away) or a 'tag' picked under it (Clear all takes either away)
   list: { open: false, items: [], active: -1 },      // the suggestions under the search bar
   menu: null,             // the filter whose menu is open (a key of FILTERS)
   busy: false,
@@ -52,7 +53,7 @@ function loadFromUrl(first = false) {
   let decoded;
   try { decoded = S.decodeState(location.search, cat); }
   catch (e) { decoded = { filters: S.emptyFilters(), selection: [], order: null }; }      // a broken link: start empty
-  const { filters, selection, order } = decoded;
+  const { filters, selection, order, all } = decoded;
   state.filters = filters;
   // a hand-written link may name years the bank does not have: the filter takes the years the slider can show
   const [yearLo, yearHi] = yearIndices(filters);
@@ -65,14 +66,16 @@ function loadFromUrl(first = false) {
   state.order = order ? order.filter(id => byId.has(id)) : null;
   if (state.order && !state.order.length) state.order = null;
   if ([...state.selection].some(id => byId.get(id).proposed)) state.filters.showProposed = true;   // a link to a proposed problem shows it
-  state.all = false;
+  // what the link shows: its topic, All problems (a=*), or what its words find (a search, as when they are typed)
+  state.all = !!all || (!state.filters.area.length && !!S.normalize(state.filters.text));
+  state.searched = state.all && !all ? 'words' : false;
   for (const a of state.filters.area) reveal(a);        // the topic of a link can be seen in the tree
 }
 let urlTimer = null;
 function syncUrl() {
   clearTimeout(urlTimer);
   urlTimer = setTimeout(() => {
-    const qs = S.encodeState(state.filters, [...state.selection], state.order);
+    const qs = S.encodeState(state.filters, [...state.selection], state.order, state.all);
     history.replaceState(null, '', location.pathname + (qs ? '?' + qs : '') + location.hash);
   }, 150);
 }
@@ -93,12 +96,16 @@ function tagBadge(type, slug, { clickable = false, typeLabel = S.TYPE_LABEL[type
 }
 
 /* A tag pressed on a problem, or picked among the suggestions of the search bar.  A topic is chosen as in the tree (one
-   at a time, and the tree unfolds to it); any other tag joins its filter. */
+   at a time, and the tree unfolds to it); any other tag joins its filter, and, picked in the search bar with nothing
+   listed, lists what it finds (a search shows its results; a filter set in its menu only narrows). */
 function pickTag(type, slug) {
   if (!S.getTag(cat, type, slug)) return;
   const f = state.filters;
-  if (type === 'area') { f.area = [slug]; state.all = false; reveal(slug); tree.linked = true; tree.phoneOpen = false; }
-  else if (!f[type].includes(slug)) { f[type] = [...f[type], slug]; if (type === 'methods') f.showMethods = true; }
+  if (type === 'area') { f.area = [slug]; state.all = false; state.searched = false; reveal(slug); tree.linked = true; tree.phoneOpen = false; }
+  else {
+    if (!f[type].includes(slug)) { f[type] = [...f[type], slug]; if (type === 'methods') f.showMethods = true; }
+    if (!state.all && !f.area.length) { state.all = true; state.searched = 'tag'; tree.linked = true; tree.phoneOpen = false; }
+  }
   update();
   // a topic far down the tree: brought into sight, lit (on a phone the tree has folded into its line)
   const lit = type === 'area' && !$('bank-tree-topics').hidden && $('bank-tree-topics').querySelector('.tt-name[aria-current]');
@@ -206,6 +213,7 @@ function chooseItem(i) {
   const input = $('bank-search');
   input.value = '';
   state.filters.text = '';                  // the typed words were there to find this tag, not to search titles
+  if (state.searched === 'words') state.searched = 'tag';      // the list they opened shows what was found with them
   closeList();                              // gone from the screen at once: update() draws only an open list
   pickTag(it.tag.type, it.tag.slug);
   input.focus();
@@ -386,10 +394,11 @@ function closeMenu(refocus = false) {
   renderFilters(); renderMenu();
   if (refocus) focusFilter(key);
 }
-/* Clear all: the words and every filter; the topic chosen in the tree stays. */
+/* Clear all: the words and every filter; the topic chosen in the tree stays (a list the words had opened goes with them). */
 function clearFilters() {
   const area = state.filters.area;
   state.filters = { ...S.emptyFilters(), area };
+  if (state.searched) { state.all = false; state.searched = false; }
   $('bank-search').value = '';
   state.menu = null;
   update();
@@ -664,13 +673,11 @@ async function togglePreview(p, row, btn) {
 }
 
 /* ------------------------------------------------------------------ rendering: results */
-/* A calm page: on arrival the tree of topics and no list.  The list comes, on the right of the tree, with a topic chosen
-   there (or All problems), with typed words or with a filter.  Ticked problems stay ticked while no list is shown. */
-function hasQuery() {              // words, or a filter that narrows; the topic is apart, the tree says it
-  const f = state.filters;
-  return !!S.normalize(f.text) || ['methods', 'difficulty', 'origin'].some(t => f[t].length > 0) || f.yearFrom != null || f.yearTo != null || f.solved !== 'all';
-}
-function listShown() { return shownTotal() > 0 && (state.all || state.filters.area.length > 0 || hasQuery()); }
+/* A calm page: on arrival the tree of topics and no list.  The list comes, on the right of the tree, with what is chosen
+   there: a topic, or All problems (a search with nothing chosen chooses All problems: typed words, a tag picked under
+   the bar).  A filter only narrows: the numbers of the tree, and the list if one is there; it opens nothing.  What is
+   lit in the tree is what is listed, and a click on it lets it go.  Ticked problems stay ticked while no list is shown. */
+function listShown() { return shownTotal() > 0 && (state.all || state.filters.area.length > 0); }
 
 /* Every row is built once (in ID order, the order of the results) and afterwards only hidden or shown: typing, filtering
    and ticking do not rebuild the list, and focus stays where it was.  They are built ahead, a few at a time while the
@@ -845,6 +852,7 @@ function chooseTopic(slug) {
   const f = state.filters;
   if (slug) { f.area = f.area.length === 1 && f.area[0] === slug ? [] : [slug]; state.all = false; }
   else { state.all = f.area.length > 0 || !state.all; f.area = []; }      // All problems lets go of the topic; clicked again, of itself
+  state.searched = false;
   tree.linked = true;
   tree.phoneOpen = false;
   const treeShown = PHONE.matches && !$('bank-tree-topics').hidden;
@@ -864,7 +872,7 @@ function renderTopics() {
   const left = without({ area: [] });
   tree.counts = S.tagCounts(left, cat);
   tree.left = left.length;
-  tree.lit = new Set(shown ? (f.area.length ? f.area : [ROOT]) : []);        // words or a filter alone list the whole bank: All problems is lit
+  tree.lit = new Set(shown ? (f.area.length ? f.area : [ROOT]) : []);        // what is listed is lit: a topic, or All problems
   let again = null;
   if (tree.drawn !== drawnFor()) {
     const had = document.activeElement && box.contains(document.activeElement) ? document.activeElement : null;
@@ -952,6 +960,7 @@ function foldChoice(slug) {
   if (!hidden.length) return;
   if (slug) f.area = [...new Set(f.area.map(a => (hidden.includes(a) ? slug : a)))];
   else { f.area = []; state.all = true; }
+  state.searched = false;
   tree.linked = true;
   update();
 }
@@ -1157,7 +1166,7 @@ async function onResetEngine() {
 
 /* The solutions PDF is never built by itself: it is offered here, for exactly the problems of the PDF above,
    so a projected or shared problem set can never give the solutions away by accident. */
-function renderSolutionsOffer(ids) {
+function renderSolutionsOffer() {
   const card = $('bank-out-solutions');
   card.hidden = false;
   for (const u of card._urls || []) URL.revokeObjectURL(u);
@@ -1222,13 +1231,13 @@ async function onCreate() {
     const done = mine.signal.aborted ? 'cancelled' : await compileInto('problems', ids, showMethods, 'The PDF is ready.', mine.signal);
     if (done === 'ok') {
       lastCreate = { ids, showMethods };
-      renderSolutionsOffer(ids);
+      renderSolutionsOffer();
     } else if (done === 'cancelled') {
       setStatus('Cancelled.');
       if (before.problems && before.lastCreate) {         // the PDFs that were on screen come back
         output.problems = before.problems; output.solutions = before.solutions; lastCreate = before.lastCreate;
         renderOutput('problems', before.problems, null, lastCreate.ids);
-        if (before.solutions) renderOutput('solutions', before.solutions, null, lastCreate.ids); else renderSolutionsOffer(lastCreate.ids);
+        if (before.solutions) renderOutput('solutions', before.solutions, null, lastCreate.ids); else renderSolutionsOffer();
       } else {
         $('bank-out-problems').hidden = true;
         $('bank-output').hidden = true;
@@ -1273,7 +1282,7 @@ async function onCreateSolutions() {
   let done = 'failed';
   try {
     done = await compileInto('solutions', ids, showMethods, 'The PDF with the solutions is ready.', mine.signal);
-    if (done === 'cancelled') renderSolutionsOffer(ids);        // the problems PDF is still there: offer again
+    if (done === 'cancelled') renderSolutionsOffer();        // the problems PDF is still there: offer again
   } finally {
     job = null;
     state.busy = false;
@@ -1297,7 +1306,14 @@ function prefetch() {             // after the next frame: the tick or the click
 function wire() {
   const input = $('bank-search');
   // what is typed filters the titles live; the list under the bar offers the tags those words could mean
-  input.addEventListener('input', () => { state.filters.text = input.value.trim(); state.list.open = true; state.list.active = -1; update(); });
+  input.addEventListener('input', () => {
+    const f = state.filters;
+    f.text = input.value.trim();
+    // a search lists what it finds: with nothing chosen in the tree, under All problems; its words erased, that list goes
+    if (S.normalize(f.text) && !state.all && !f.area.length) { state.all = true; state.searched = 'words'; tree.linked = true; tree.phoneOpen = false; }
+    else if (!S.normalize(f.text) && state.searched === 'words') { state.all = false; state.searched = false; }
+    state.list.open = true; state.list.active = -1; update();
+  });
   input.addEventListener('focus', () => { if (S.normalize(input.value) && !state.list.open) openList(); });
   input.addEventListener('keydown', e => {
     if (e.key === 'ArrowDown') { e.preventDefault(); if (!state.list.open) openList(); moveActive(1); }

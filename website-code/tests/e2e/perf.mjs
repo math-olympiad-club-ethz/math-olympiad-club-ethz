@@ -190,6 +190,14 @@ try {
     ['the menu closed (Escape)', step(p => p.keyboard.press('Escape'))],
     ['Select all', step(p => p.click('label[for="bank-select-all"]'), p => p.click('label[for="bank-select-all"]'))],
     ['Clear selection', step(p => p.click('#bank-clear-selection'))],
+    // what opens a list and what closes it: by hand, or by a search; a filter alone only brings the tree's numbers up to date
+    ['the tree brought back over the list again', step(p => p.click('#bank-topicline'))],
+    ['All problems clicked again: the list goes', step(p => p.click('#bank-tree-topics .tt-name[data-slug=""]'))],
+    ['a filter opened, no list', step(p => p.click('.bank-filter-word[data-filter="difficulty"]'), p => p.click('.bank-filter-word[data-filter="difficulty"]'))],
+    ['a choice made in it: the numbers of the tree only', step(p => p.click('#bank-menu .bank-option[data-opt="easy"]'), p => p.click('#bank-menu .bank-option[data-opt="easy"]'))],
+    ['the menu closed (Escape)', step(p => p.keyboard.press('Escape'))],
+    ['a word typed, no list before: the search lists what it finds', step(async p => { await p.click('#bank-search'); await p.keyboard.type('s'); })],
+    ['the word erased: the list it opened goes', step(p => p.keyboard.press('Backspace'))],
   ]);
 
   console.log('\n2b. a long scroll of the whole list, on the phone');

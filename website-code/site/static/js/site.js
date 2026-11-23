@@ -22,9 +22,9 @@
     root.setAttribute('data-theme', choice === 'dark' || choice === 'light' ? choice : (dark ? 'dark' : 'light'));
   }
   apply(savedChoice());
-  // Problems: a link that will show a list (the keys of bank-search.js::encodeState that make one) keeps the room for it, so that the
-  // footer does not jump when the list arrives (site.css)
-  if (/[?&](?:q|a|m|d|o|y|s)=[^&]/.test(location.search)) root.setAttribute('data-list', '');
+  // Problems: a link that will show a list (a topic or All problems, a=; or words, q=: bank-ui.js::loadFromUrl) keeps the
+  // room for it, so that the footer does not jump when the list arrives (site.css)
+  if (/[?&](?:q|a)=[^&]/.test(location.search)) root.setAttribute('data-list', '');
   // The web fonts' style sheet, put to use once the page has been painted: Safari paints nothing until the web fonts it
   // has been told about have arrived (1.4 s on a slow phone line, measured); the others swap them in anyway.  The
   // fallbacks take the same room (site.css), so the swap moves nothing.  On the next pages of a visit the fonts are in the

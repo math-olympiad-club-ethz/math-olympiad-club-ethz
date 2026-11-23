@@ -243,7 +243,7 @@ try {
   v = await view();
   check(v.n === total && v.count === `${total} problems` && v.all && same(v.lit, ['']) && v.head,
     `a click on All problems lists the whole bank on the right ("${v.count}"), the name lit, window.bank.state.all set`);
-  check((await address()) === '', 'All problems is not kept in the address');
+  check((await address()) === '?a=*', 'All problems is kept in the address (a=*): a link to it lists the whole bank');
   const cols = await page.evaluate(() => {
     const right = document.getElementById('bank-right'), panel = document.getElementById('bank-tree-panel'), list = document.getElementById('bank-results'), cs = getComputedStyle(panel);
     return { inside: panel.parentElement === right && panel.contains(list) && panel.contains(document.getElementById('bank-results-head')),
@@ -405,8 +405,8 @@ try {
       await page.click(TG(''));
       await folded();
       v = await view();
-      check(v.all && same(v.lit, ['']) && v.n === total && v.count === `${total} problems` && await page.locator(NAME('')).isVisible() && (await address()) === '',
-        `folding the whole tree away with ${deep.name} chosen hands the choice to All problems: the whole bank listed, nothing in the address`);
+      check(v.all && same(v.lit, ['']) && v.n === total && v.count === `${total} problems` && await page.locator(NAME('')).isVisible() && (await address()) === '?a=*',
+        `folding the whole tree away with ${deep.name} chosen hands the choice to All problems: the whole bank listed, the address says a=*`);
       await page.click(TG(''));
     } else check(true, 'no topic two levels down has problems (the fold rule not tested)');
     // + then − at once, and a click into a branch that is folding away (found by a tester, 2026-11-22)
@@ -429,10 +429,12 @@ try {
     check((await view()).n === 0, 'a second click on All problems: the calm page again');
   }
 
-  console.log('1d. the numbers of the tree follow the filters and the words; the tree is brought up to date where it is');
+  console.log('1d. a filter narrows what the tree counts, and opens nothing; what is lit is what is listed, and a click on it lets it go');
   {
     await page.evaluate(() => { document.querySelector('#bank-tree-topics .tt-root .tt-name').__kept = true; });
     const kept = () => page.evaluate(() => !!document.querySelector('#bank-tree-topics .tt-root .tt-name').__kept);
+    const branches = () => page.evaluate(() => [...document.querySelectorAll('#bank-tree-topics .tt-tg')].map(b => b.getAttribute('aria-expanded')).join());
+    const shut = await branches();
     const hardest = await page.evaluate(() => [...window.bank.cat.byType.difficulty.keys()].at(-1));
     await openMenu('difficulty');
     await page.click(OPT(hardest));
@@ -440,18 +442,29 @@ try {
     let ts = await treeNumbers();
     check(treeRight(ts) && ts.some(x => x.none), `a filter set (Difficulty: ${(await word('difficulty')).text}): every topic counts what it would list, and a topic with nothing left steps back (tt-none)`);
     v = await view();
-    check(v.n === ts.find(x => x.slug === '').want && same(v.lit, ['']) && !v.all, `a narrowing filter alone lists what it leaves of the whole bank (${v.n}), under All problems lit`);
-    check(await kept(), 'the tree is brought up to date in place, not drawn again');
+    check(v.n === 0 && !v.lit.length && !v.all && (await branches()) === shut && await kept() && !(await address()).includes('a='),
+      'and it opens nothing: no list, nothing lit, no branch unfolded, the tree brought up to date in place (the address says no a=)');
+    await page.click(NAME(''));
+    v = await view();
+    const want = ts.find(x => x.slug === '').want;
+    check(v.n === want && same(v.lit, ['']) && v.all && (await address()).includes('a=*'), `All problems chosen then: what the filter leaves of the whole bank (${v.n}), All problems lit, the address says a=*`);
+    await page.click(NAME(''));
+    v = await view();
+    ts = await treeNumbers();
+    check(v.n === 0 && !v.lit.length && !v.all && (await word('difficulty')).on && treeRight(ts) && !(await address()).includes('a='),
+      'All problems clicked again: the list goes, the filter stays set, the numbers still follow it');
     await page.click(CROSS('difficulty'));
     await page.fill('#bank-search', probe.word);
     ts = await treeNumbers();
     v = await view();
     check(treeRight(ts) && ts.some(x => x.none) && v.n === probe.n && same(v.lit, ['']) && await kept(),
-      `typed words too ("${probe.word}"): the numbers follow, the list holds the ${probe.n} problem(s) found, All problems lit, the tree still the same`);
+      `typed words are a search ("${probe.word}"): the numbers follow, and the ${probe.n} problem(s) found are listed under All problems lit, the tree still the same`);
     await page.fill('#bank-search', '');
     await page.keyboard.press('Escape');
     ts = await treeNumbers();
-    check(treeRight(ts) && !ts.some(x => x.none) && ts.find(x => x.slug === '').shown === total, 'nothing set: every topic has its full number again');
+    v = await view();
+    check(treeRight(ts) && !ts.some(x => x.none) && ts.find(x => x.slug === '').shown === total && v.n === 0 && !v.lit.length,
+      'the words erased: the list they opened goes, every topic has its full number again');
   }
 
   console.log('2. the bar searches titles; the list suggests the tags those words could mean');
@@ -638,6 +651,7 @@ try {
   await page.goto(`${base}/problems.html`);
   await page.waitForSelector('html[data-ready]');
   await unfoldTree(page);
+  await listAll();                                // a filter narrows a list: here the whole bank's
   const diffs = await page.evaluate(() => [...window.bank.cat.byType.difficulty.values()].map(t => ({ slug: t.slug, name: t.name })));
   const nDiff = slugs => page.evaluate(s => window.bank.problems.filter(p => !p.proposed && s.includes(p.difficulty)).length, slugs);
   const menuState = () => page.evaluate(() => {
@@ -721,6 +735,7 @@ try {
   ms = await menuState();
   check(!(await word('difficulty')).on && (await page.evaluate(() => window.bank.state.filters.difficulty.length)) === 0 && ms.focus === 'bank-filter-word:difficulty' && (await page.locator(CROSS('difficulty')).count()) === 0,
     'its cross clears the filter (here from the keyboard), and the keyboard is back on its word');
+  await listAll();                                // the topic let go: the origins narrow the whole bank's list
   await openMenu('origin');
   const om = await page.evaluate(() => {
     const { S, problems, cat } = window.bank, c = S.tagCounts(problems.filter(p => !p.proposed), cat);
@@ -856,6 +871,10 @@ try {
     `an old link with op=and and two topics lists the problems of either (${either.length}), both names lit`);
   check((await address()) === '?a=analysis,algebra', 'its op= is dropped from the address');
   await page.goto(`${base}/problems.html?d=${diffs[0].slug},${diffs[1].slug}&o=${om.slugs[0]}`);
+  await page.waitForSelector('html[data-ready]');
+  v = await view();
+  check(v.n === 0 && !v.lit.length && (await word('origin')).on, 'a link with filters alone lists nothing: they are set, and narrow the numbers of the tree');
+  await page.goto(`${base}/problems.html?a=*&d=${diffs[0].slug},${diffs[1].slug}&o=${om.slugs[0]}`);
   await page.waitForSelector(ROWS);
   const mixed = await page.evaluate(([d, o]) => window.bank.problems.filter(p => !p.proposed && d.includes(p.difficulty) && (p.origin === o || (p.alsoIn || []).includes(o))).map(p => p.id),
     [[diffs[0].slug, diffs[1].slug], om.slugs[0]]);

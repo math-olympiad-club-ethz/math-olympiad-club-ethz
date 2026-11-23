@@ -469,7 +469,7 @@ async function selection(ids, variant, { showMethods, signal }) {
    twins preview_head and preview_page): see pickPreview. */
 export const PREVIEW_MARGIN_PT = 2;
 const PREVIEW_TALL = '\\textheight=7000pt\\vsize=\\textheight\\csname @colht\\endcsname=\\textheight\\csname @colroom\\endcsname=\\textheight';
-export function previewHead(width = null) {
+function previewHead(width = null) {
   const m = `${PREVIEW_MARGIN_PT}pt`;
   const out = ['\\begin{document}', '\\pagestyle{empty}\\raggedbottom'];
   if (width > 0) out.push(`\\ifdim${width.toFixed(2)}pt<\\textwidth\\textwidth=${width.toFixed(2)}pt\\sloppy\\fi`);
@@ -479,7 +479,7 @@ export function previewHead(width = null) {
     '\\global\\pdfpagewidth=560pt', PREVIEW_TALL);
   return out;
 }
-export function previewPage(statement) {
+function previewPage(statement) {
   const m = `${PREVIEW_MARGIN_PT}pt`;
   return [`\\global\\pdfpageheight=\\dimexpr\\textheight+2\\dimexpr${m}\\relax\\relax`, '\\begin{problem}', statement, '\\end{problem}',
     `\\par\\ifdim\\pagegoal<\\maxdimen\\global\\pdfpageheight=\\dimexpr\\pagetotal+\\pagedepth+\\vsize-\\pagegoal+2\\dimexpr${m}\\relax\\relax\\fi`,

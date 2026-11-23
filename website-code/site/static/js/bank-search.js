@@ -299,10 +299,11 @@ function intOrNull(s) { return /^\d+$/.test(s || '') && Number.isSafeInteger(Num
 /* filters + selection (+ a hand-made PDF order) → query string (no leading '?').  Defaults are omitted so an empty
    filter gives ''.  With an order, sel lists the IDs in that order and ord=manual says so; without, sel is sorted
    and the PDF uses autoOrder(). */
-export function encodeState(filters, selection = [], order = null) {
+export function encodeState(filters, selection = [], order = null, all = false) {
   const f = { ...DEFAULT_FILTERS, ...filters };
   const p = new URLSearchParams();
   if (f.area.length) p.set('a', f.area.join(','));
+  else if (all) p.set('a', '*');                      // All problems chosen: the whole bank listed
   if (f.methods.length) p.set('m', f.methods.join(','));
   if (f.difficulty.length) p.set('d', f.difficulty.join(','));
   if (f.origin.length) p.set('o', f.origin.join(','));
@@ -317,14 +318,15 @@ export function encodeState(filters, selection = [], order = null) {
   return p.toString().replace(/%2C/g, ',').replace(/%2D/g, '-');
 }
 
-/* query string → {filters, selection, order}.  order = the hand-made PDF order (ord=manual), else null.
-   Tolerant: unknown slugs are dropped when a catalogue is given. */
+/* query string → {filters, selection, order, all}.  order = the hand-made PDF order (ord=manual), else null; all = All
+   problems chosen (a=*).  Tolerant: unknown slugs are dropped when a catalogue is given. */
 export function decodeState(qs, cat = null) {
   const p = new URLSearchParams(String(qs || '').replace(/^\?/, ''));
   const f = emptyFilters();
   const list = (key, type) => [...new Set((p.get(key) || '').split(',').map(s => s.trim()).filter(Boolean)
     .filter(s => !cat || cat.byType[type].has(s)))];
-  f.area = list('a', 'area');
+  const all = p.get('a') === '*';
+  f.area = all ? [] : list('a', 'area');
   f.methods = list('m', 'methods');
   f.difficulty = list('d', 'difficulty');
   f.origin = list('o', 'origin');
@@ -341,7 +343,7 @@ export function decodeState(qs, cat = null) {
   f.showProposed = p.get('pr') === '1';
   if (p.get('ord') === 'manual') {
     const order = parseIdList(p.get('sel'));
-    return { filters: f, selection: [...order].sort((a, b) => a - b), order: order.length ? order : null };
+    return { filters: f, selection: [...order].sort((a, b) => a - b), order: order.length ? order : null, all };
   }
-  return { filters: f, selection: parseRanges(p.get('sel')), order: null };
+  return { filters: f, selection: parseRanges(p.get('sel')), order: null, all };
 }

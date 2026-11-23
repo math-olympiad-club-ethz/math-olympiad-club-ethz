@@ -135,6 +135,16 @@ test('the search bar text matches titles only', () => {
   assert.ok(!S.matchesText(P(1, { title: 'Sums of two cubes' }), 'cubed'));      // not the other way round
 });
 
+test('All problems chosen is in the address (a=*), and a topic chosen says its topic instead', () => {
+  assert.equal(S.encodeState(f({ difficulty: ['hard'] }), [], null, true), 'a=*&d=hard');
+  assert.equal(S.encodeState(f({ area: ['series'] }), [], null, true), 'a=series', 'a topic is what is listed');
+  assert.equal(S.encodeState(f({ difficulty: ['hard'] }), [], null, false), 'd=hard', 'a filter alone: nothing listed');
+  const back = S.decodeState('?a=*&d=hard', cat);
+  assert.deepEqual([back.all, back.filters.area, back.filters.difficulty], [true, [], ['hard']]);
+  assert.equal(S.decodeState('?a=*', null).filters.area.length, 0, 'without a catalogue too, * is no topic');
+  assert.equal(S.decodeState('?d=hard', cat).all, false);
+});
+
 test('URL state round-trips and drops unknown slugs', () => {
   const filters = f({ area: ['series'], methods: ['induction'], difficulty: ['hard'], origin: ['putnam'], text: 'unit circle', showMethods: true, yearFrom: null, yearTo: 2000, solved: 'incomplete' });
   const sel = [3, 1, 2, 7, 9, 10, 11];
@@ -143,7 +153,7 @@ test('URL state round-trips and drops unknown slugs', () => {
   assert.deepEqual(back.filters, filters);
   assert.deepEqual(back.selection, [1, 2, 3, 7, 9, 10, 11]);
   assert.equal(S.encodeState(S.emptyFilters(), []), '');
-  assert.deepEqual(S.decodeState('?a=series,nope&d=hard&x=1&sel=abc,4', cat), { filters: f({ area: ['series'], difficulty: ['hard'] }), selection: [4], order: null });
+  assert.deepEqual(S.decodeState('?a=series,nope&d=hard&x=1&sel=abc,4', cat), { filters: f({ area: ['series'], difficulty: ['hard'] }), selection: [4], order: null, all: false });
   assert.deepEqual(S.decodeState('', cat).filters, S.emptyFilters());
 });
 
