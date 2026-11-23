@@ -82,7 +82,7 @@
               <input type="checkbox" id="bank-select-all">
               <label class="form-check-label" for="bank-select-all">Select all</label>
             </div>
-            <span class="bank-mine"><span id="bank-selected-count"></span><button id="bank-clear-selection" type="button" class="btn btn-link" hidden>Clear<span class="bank-wide"> selection</span></button></span>
+            <span class="bank-mine"><button id="bank-selected-count" type="button" class="bank-selected" aria-pressed="false" aria-controls="bank-results" hidden></button><button id="bank-clear-selection" type="button" class="btn btn-link" hidden>Clear<span class="bank-wide"> selection</span></button></span>
           </div>
         </div>
         <p id="bank-empty" class="bank-empty" hidden>No problem matches. <button id="bank-empty-clear" type="button" class="btn btn-link">Clear the filters</button></p>
@@ -94,11 +94,11 @@
   <!-- the two PDFs -->
   <section id="bank-output" class="bank-output mt-4" hidden aria-label="Generated PDFs">
     <div id="bank-out-problems" class="card" hidden>
-      <div class="card-header" tabindex="-1">Problem set</div>
+      <div class="card-header bank-out-head" tabindex="-1">Problem set<button type="button" class="bank-out-x" data-clear="problems" aria-label="Clear the problem set" hidden></button></div>
       <div class="card-body bank-out-body"></div>
     </div>
     <div id="bank-out-solutions" class="card" hidden>
-      <div class="card-header" tabindex="-1">Problem set with solutions</div>
+      <div class="card-header bank-out-head" tabindex="-1">Problem set with solutions<button type="button" class="bank-out-x" data-clear="solutions" aria-label="Clear the problem set with solutions" hidden></button></div>
       <div class="card-body bank-out-body"></div>
     </div>
     <p class="legal"><a href="{{ url_for('static', filename='busytex/NOTICE.txt') }}" target="_blank" rel="noopener">licences</a></p>

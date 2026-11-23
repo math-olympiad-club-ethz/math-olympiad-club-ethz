@@ -43,6 +43,7 @@ const state = {
   order: null,            // null = automatic PDF order (S.autoOrder); otherwise the IDs in the order chosen by hand
   results: [],
   all: false,             // All problems chosen in the tree, or by a search: the whole bank is listed (a link says a=*)
+  picked: null,           // "N selected" pressed: the selection listed (what was ticked then, a Set), over what the tree has chosen
   searched: false,        // that list was opened by the search bar: 'words' typed (erased, they take it away) or a 'tag' picked under it (Clear all takes either away)
   list: { open: false, items: [], active: -1 },      // the suggestions under the search bar
   menu: null,             // the filter whose menu is open (a key of FILTERS)
@@ -69,6 +70,7 @@ function loadFromUrl(first = false) {
   // what the link shows: its topic, All problems (a=*), or what its words find (a search, as when they are typed)
   state.all = !!all || (!state.filters.area.length && !!S.normalize(state.filters.text));
   state.searched = state.all && !all ? 'words' : false;
+  state.picked = null;
   for (const a of state.filters.area) reveal(a);        // the topic of a link can be seen in the tree
 }
 let urlTimer = null;
@@ -101,6 +103,7 @@ function tagBadge(type, slug, { clickable = false, typeLabel = S.TYPE_LABEL[type
 function pickTag(type, slug) {
   if (!S.getTag(cat, type, slug)) return;
   const f = state.filters;
+  state.picked = null;                      // what the tag finds is listed, not the selection
   if (type === 'area') { f.area = [slug]; state.all = false; state.searched = false; reveal(slug); tree.linked = true; tree.phoneOpen = false; }
   else {
     if (!f[type].includes(slug)) { f[type] = [...f[type], slug]; if (type === 'methods') f.showMethods = true; }
@@ -677,7 +680,7 @@ async function togglePreview(p, row, btn) {
    there: a topic, or All problems (a search with nothing chosen chooses All problems: typed words, a tag picked under
    the bar).  A filter only narrows: the numbers of the tree, and the list if one is there; it opens nothing.  What is
    lit in the tree is what is listed, and a click on it lets it go.  Ticked problems stay ticked while no list is shown. */
-function listShown() { return shownTotal() > 0 && (state.all || state.filters.area.length > 0); }
+function listShown() { return shownTotal() > 0 && (!!state.picked || state.all || state.filters.area.length > 0); }
 
 /* Every row is built once (in ID order, the order of the results) and afterwards only hidden or shown: typing, filtering
    and ticking do not rebuild the list, and focus stays where it was.  They are built ahead, a few at a time while the
@@ -743,11 +746,12 @@ function syncRow(id) {
 let shownKey = '';
 function renderResults() {
   const f = state.filters;
-  state.results = S.filterProblems(problems, f, cat);
+  // the selection listed: what was ticked, whatever the filters (unticked there, a problem stays until the list goes)
+  state.results = state.picked ? problems.filter(p => state.picked.has(p.id)) : S.filterProblems(problems, f, cat);
   const shown = listShown(), list = $('bank-results'), total = shownTotal(), n = state.results.length;
   if (shown && built < problems.length) buildRows();
   const visible = new Set(shown ? state.results.map(p => p.id) : []);
-  const key = shown ? `${f.area.join(',')}|${state.results.map(p => p.id).join(',')}` : '';
+  const key = shown ? `${state.picked ? '*' : f.area.join(',')}|${state.results.map(p => p.id).join(',')}` : '';
   if (key !== shownKey) {            // other problems: their list starts at the top (it scrolls in its own box on a computer)
     const moved = shown && shownKey.split('|')[0] !== key.split('|')[0];
     shownKey = key;
@@ -764,7 +768,7 @@ function renderResults() {
   for (const chip of list.querySelectorAll('.bank-chip-alsoin')) chip.hidden = !f.origin.includes(chip.dataset.slug);
   // the head of the list says what the list is; the line it hangs on takes the colour of its topic
   const where = tagNames('area', f.area);
-  const counted = `${n} problem${n === 1 ? '' : 's'}${where.length ? ` in ${where.join(' and ')}` : ''}`;
+  const counted = state.picked ? 'Your selection' : `${n} problem${n === 1 ? '' : 's'}${where.length ? ` in ${where.join(' and ')}` : ''}`;
   if ($('bank-count').textContent !== counted) $('bank-count').textContent = counted;      // (role=status: the same words are not read out again)
   $('bank-count').hidden = !shown;
   $('bank-select-all-wrap').hidden = !shown;
@@ -773,7 +777,7 @@ function renderResults() {
   $('bank-tree').hidden = total === 0;
   $('bank-tree').classList.toggle('has-list', shown);
   if (shown) prefetchDrawing();
-  const top = f.area.length === 1 ? (cat.ancestors.get(f.area[0]) || [])[0] || f.area[0] : null;
+  const top = !state.picked && f.area.length === 1 ? (cat.ancestors.get(f.area[0]) || [])[0] || f.area[0] : null;
   const line = $('bank-tree').querySelector('.bank-left');         // its right edge is the line the list hangs on (site.css)
   if (top) line.setAttribute('data-topic', top); else line.removeAttribute('data-topic');
   F.paint(line, top && cat.byType.area.get(top));
@@ -789,7 +793,11 @@ function renderSelectionState() {
   all.indeterminate = visibleSelected > 0 && visibleSelected < visible.length;
   all.disabled = visible.length === 0;
   $('bank-results-head').hidden = !listShown() && n === 0;
-  $('bank-selected-count').textContent = n ? `${n} selected` : '';
+  const picked = $('bank-selected-count');
+  picked.textContent = n || state.picked ? `${n} selected` : '';
+  picked.hidden = !n && !state.picked;
+  if (picked.getAttribute('aria-pressed') !== String(!!state.picked)) picked.setAttribute('aria-pressed', String(!!state.picked));
+  for (const x of document.querySelectorAll('.bank-out-x')) x.disabled = state.busy;          // while a PDF is made, Cancel
   $('bank-clear-selection').hidden = n === 0;
   // busy: aria-disabled, not disabled, so a keyboard user's focus stays on the button while the PDF is made
   const create = $('bank-create');
@@ -849,9 +857,10 @@ function reveal(slug) { for (const a of [...(cat.ancestors.get(slug) || []), ROO
 
 /* A click on a name. */
 function chooseTopic(slug) {
-  const f = state.filters;
-  if (slug) { f.area = f.area.length === 1 && f.area[0] === slug ? [] : [slug]; state.all = false; }
-  else { state.all = f.area.length > 0 || !state.all; f.area = []; }      // All problems lets go of the topic; clicked again, of itself
+  const f = state.filters, over = !!state.picked;     // the selection was listed over the tree's choice: a name now chooses
+  state.picked = null;
+  if (slug) { f.area = !over && f.area.length === 1 && f.area[0] === slug ? [] : [slug]; state.all = false; }
+  else { state.all = over || f.area.length > 0 || !state.all; f.area = []; }      // All problems lets go of the topic; clicked again, of itself
   state.searched = false;
   tree.linked = true;
   tree.phoneOpen = false;
@@ -872,7 +881,7 @@ function renderTopics() {
   const left = without({ area: [] });
   tree.counts = S.tagCounts(left, cat);
   tree.left = left.length;
-  tree.lit = new Set(shown ? (f.area.length ? f.area : [ROOT]) : []);        // what is listed is lit: a topic, or All problems
+  tree.lit = new Set(shown && !state.picked ? (f.area.length ? f.area : [ROOT]) : []);        // what is listed is lit: a topic, or All problems (the selection: its button)
   let again = null;
   if (tree.drawn !== drawnFor()) {
     const had = document.activeElement && box.contains(document.activeElement) ? document.activeElement : null;
@@ -892,7 +901,7 @@ function renderTopics() {
   const folded = PHONE.matches && shown && !tree.phoneOpen;
   box.hidden = folded;
   line.hidden = !folded;
-  if (folded) line.replaceChildren(el('span', { text: f.area.length ? f.area.map(s => S.areaPath(cat, s)).join(' and ') : 'All problems' }), el('span', {}, 'Topics', el('span', { class: 'chev', 'aria-hidden': 'true' })));
+  if (folded) line.replaceChildren(el('span', { text: state.picked ? 'Your selection' : f.area.length ? f.area.map(s => S.areaPath(cat, s)).join(' and ') : 'All problems' }), el('span', {}, 'Topics', el('span', { class: 'chev', 'aria-hidden': 'true' })));
   if (again && !folded) { const e = box.querySelector(again); if (e) e.focus({ preventScroll: true }); }
 }
 /* A name lit or not; one lit just now by a click draws its line to the list (site.css .is-new). */
@@ -1119,6 +1128,7 @@ function texFilename(ids, variant, ext) {
 function renderOutput(variant, res, err, idsForName) {
   const card = $(`bank-out-${variant}`);
   card.hidden = false;
+  card.querySelector('.bank-out-x').hidden = false;
   const body = card.querySelector('.bank-out-body');
   body.replaceChildren();
   for (const u of card._urls || []) URL.revokeObjectURL(u);
@@ -1139,6 +1149,28 @@ function renderOutput(variant, res, err, idsForName) {
   } else if (err) {
     body.append(el('div', { class: 'alert alert-danger small mb-0', role: 'alert' }, el('strong', { text: 'Could not build this PDF. ' }), err.message, resetLink(err)));
   }
+}
+
+/* A PDF's cross: it goes, with what was made from it.  The problem set takes its solutions with it (the place of the PDFs
+   is empty again); the solutions alone leave their offer, to be built again. */
+function clearOutput(variant) {
+  if (state.busy) return;
+  const a = document.activeElement, inside = !!a && $('bank-output').contains(a);
+  const drop = v => {
+    const card = $(`bank-out-${v}`);
+    for (const u of card._urls || []) URL.revokeObjectURL(u);
+    card._urls = [];
+    card.querySelector('.bank-out-body').replaceChildren();
+    card.querySelector('.bank-out-x').hidden = true;
+    card.hidden = true;
+    output[v] = null;
+  };
+  drop('solutions');
+  if (variant === 'problems') { drop('problems'); lastCreate = null; $('bank-output').hidden = true; }
+  else if (lastCreate) renderSolutionsOffer();
+  // the keyboard: back to what makes it again
+  const back = variant === 'problems' ? $('bank-create') : $('bank-make-solutions');
+  if (inside || lost()) (back && !back.disabled ? back : $('bank-search')).focus({ preventScroll: true });
 }
 
 /* After an engine or compile failure: start again from a fresh download of the engine (not for a cancel, nor when
@@ -1169,6 +1201,7 @@ async function onResetEngine() {
 function renderSolutionsOffer() {
   const card = $('bank-out-solutions');
   card.hidden = false;
+  card.querySelector('.bank-out-x').hidden = true;      // an offer, not a PDF: nothing to clear
   for (const u of card._urls || []) URL.revokeObjectURL(u);
   card._urls = [];
   card.querySelector('.bank-out-body').replaceChildren(
@@ -1214,6 +1247,7 @@ async function onCreate() {
   lastCreate = null;
   $('bank-output').hidden = false;
   $('bank-out-problems').hidden = false; $('bank-out-solutions').hidden = true;
+  for (const x of document.querySelectorAll('.bank-out-x')) x.hidden = true;
   $('bank-out-problems').querySelector('.bank-out-body').replaceChildren(el('div', { class: 'small text-muted', text: 'Compiling…' }));
   $('bank-output').scrollIntoView({ behavior: smooth(), block: 'start' });
   try {
@@ -1278,6 +1312,7 @@ async function onCreateSolutions() {
   const { ids, showMethods } = lastCreate;
   const card = $('bank-out-solutions');
   card.hidden = false;
+  card.querySelector('.bank-out-x').hidden = true;
   card.querySelector('.bank-out-body').replaceChildren(el('div', { class: 'small text-muted', text: 'Compiling…' }));
   let done = 'failed';
   try {
@@ -1309,6 +1344,7 @@ function wire() {
   input.addEventListener('input', () => {
     const f = state.filters;
     f.text = input.value.trim();
+    if (S.normalize(f.text)) state.picked = null;         // a search lists what it finds
     // a search lists what it finds: with nothing chosen in the tree, under All problems; its words erased, that list goes
     if (S.normalize(f.text) && !state.all && !f.area.length) { state.all = true; state.searched = 'words'; tree.linked = true; tree.phoneOpen = false; }
     else if (!S.normalize(f.text) && state.searched === 'words') { state.all = false; state.searched = false; }
@@ -1361,8 +1397,16 @@ function wire() {
     if (lit) { lit.focus({ preventScroll: true }); lit.scrollIntoView({ block: 'nearest' }); }
   });
   PHONE.addEventListener('change', () => renderTopics());
+  // "N selected": the selection listed, or no longer
+  $('bank-selected-count').addEventListener('click', () => {
+    state.picked = state.picked ? null : new Set(state.selection);
+    tree.phoneOpen = false;
+    update();
+  });
+  for (const x of document.querySelectorAll('.bank-out-x')) x.addEventListener('click', () => clearOutput(x.dataset.clear));
   $('bank-clear-selection').addEventListener('click', () => {
-    if (!state.busy) setStatus(''); state.selection.clear(); state.order = null; renderResults(); syncUrl();
+    if (!state.busy) setStatus(''); state.selection.clear(); state.order = null;
+    if (state.picked) { state.picked = null; update(); } else { renderResults(); syncUrl(); }
     if (lost() && !$('bank-select-all').closest('[hidden]')) $('bank-select-all').focus({ preventScroll: true });    // the button pressed has gone
   });
 

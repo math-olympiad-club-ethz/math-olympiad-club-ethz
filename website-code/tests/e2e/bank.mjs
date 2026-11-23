@@ -1049,6 +1049,19 @@ try {
   await page.uncheck('#bank-show-methods');
   await closeMenu();
 
+  // a PDF's cross: the solutions alone go back to their offer; the problem set goes with its solutions
+  await askSolutions();
+  check(await page.locator('#bank-out-problems .bank-out-x').isVisible() && await page.locator('#bank-out-solutions .bank-out-x').isVisible()
+    && (await page.textContent('#bank-out-problems .card-header')) === 'Problem set', 'each PDF has a cross after its name');
+  await page.click('#bank-out-solutions .bank-out-x');
+  check((await page.textContent('#bank-make-solutions')) === 'Build the PDF with the solutions' && await page.locator('#bank-out-solutions .bank-out-x').isHidden()
+    && !(await page.evaluate(() => !!window.bank.output.solutions)) && await page.locator('#bank-out-problems .bank-out-actions').isVisible(),
+    'the cross of the solutions clears them: their offer is back, the problem set stays');
+  await page.click('#bank-out-problems .bank-out-x');
+  check(await page.locator('#bank-output').isHidden() && !(await page.evaluate(() => !!window.bank.output.problems))
+    && (await page.evaluate(() => document.activeElement && document.activeElement.id)) === 'bank-create',
+    'the cross of the problem set clears it with its solutions: the place of the PDFs is empty, the keyboard on Create PDF');
+
   console.log('5b. the statement of one problem, drawn under its title');
   {
     // a phone on a first visit: the statement as the build typeset it, with neither the LaTeX engine (some 16 MB) nor the
@@ -1139,6 +1152,46 @@ try {
     && (await page.locator('#bank-results .bank-row-title[aria-expanded="true"]').count()) === 1,
     'five titles clicked in a row: only the last statement stays open');
   await page.click(`#bank-results li[data-id="${rowsIds[4]}"] .bank-row-title`);
+
+  console.log('5c. "N selected" lists the selection, whatever the filters; a name of the tree takes the list back');
+  {
+    const t = await context.newPage();
+    watch(t);
+    await t.goto(`${base}/problems.html`);
+    await t.waitForSelector('html[data-ready]');
+    await t.click(NAME(''));
+    await t.waitForSelector(ROWS);
+    const ids = await t.evaluate(() => [...document.querySelectorAll('#bank-results > li:not([hidden])')].slice(0, 3).map(li => Number(li.dataset.id)));
+    for (const id of ids) await t.click(`#bank-results li[data-id="${id}"] .bank-check`);
+    await t.click(NAME(''));
+    const SEL = '#bank-selected-count';
+    let w = await view(t);
+    check(w.n === 0 && (await t.textContent(SEL)) === '3 selected' && await t.isVisible(SEL) && (await t.getAttribute(SEL, 'aria-pressed')) === 'false',
+      'three problems ticked, nothing listed: "3 selected" stays in the head of the list');
+    const easy = await t.evaluate(() => [...window.bank.cat.byType.difficulty.keys()][0]);
+    await openMenu('difficulty', t);
+    await t.click(OPT(easy));
+    await closeMenu(t);
+    await t.click(SEL);
+    w = await view(t);
+    check(same(w.ids, ids) && !w.lit.length && (await t.getAttribute(SEL, 'aria-pressed')) === 'true' && (await t.textContent('#bank-count')) === 'Your selection',
+      '"3 selected" pressed: the three are listed ("Your selection") whatever the filters, nothing lit in the tree, the button lit');
+    await t.click(`#bank-results li[data-id="${ids[0]}"] .bank-check`);
+    w = await view(t);
+    check(same(w.ids, ids) && (await t.textContent(SEL)) === '2 selected', 'one unticked there stays listed, so that a slip can be undone ("2 selected")');
+    await t.click(SEL);
+    w = await view(t);
+    check(w.n === 0 && (await t.getAttribute(SEL, 'aria-pressed')) === 'false', 'pressed again: the list goes, back to what the tree has chosen (nothing)');
+    await t.click(CROSS('difficulty'));
+    await t.click(TG(''));
+    await t.click(NAME(withProblems[0]));
+    await t.click(SEL);
+    await t.click(NAME(withProblems[0]));
+    w = await view(t);
+    check(same(w.lit, [withProblems[0]]) && w.n > 0 && (await t.getAttribute(SEL, 'aria-pressed')) === 'false',
+      'listed over a topic chosen: a click on that topic takes the list back to it (it chooses again, it does not let go)');
+    await t.close();
+  }
 
   console.log('6. shareable URL restores filters and selection; the back button; second Create is served from cache');
   {
