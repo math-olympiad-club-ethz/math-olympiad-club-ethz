@@ -19,26 +19,30 @@ shared results of problem-bank/appendix/ (bodies.json "appendix"); make_main app
 The same module generates the stitched main.tex (make_main) that the browser compiles against the
 precompiled format club.fmt (the format already contains \\documentclass + the STITCHED preamble):
 
-    python3 -m bank.stitch build [--out site/static/bank] [--ids 1-20]
     python3 -m bank.stitch main --ids 1-20 --variant problems|solutions [--bodies site/static/bank/bodies.json]
     python3 -m bank.stitch main --ids 7,3,12 --variant problems           # the problems in exactly this order
     python3 -m bank.stitch main --ids all --variant solutions --standalone   # with \\documentclass+preamble (no .fmt)
+    python3 -m bank.stitch preview --id 7 [--width 200]                       # one statement's preview (makePreview)
+
+build_previews typesets every statement in advance for the Problems page's previews (make_previews).
 """
 import argparse
 import hashlib
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
+import time
 
 from bank import paths
 from bank import problems as P
 from bank import appendix as A
 from bank.bib import CITE_RE, DROP_RE, bib_block, format_entry, parse_bib, parse_bib_text
 
-CLUB_NAME = "Math Olympiad Club ETHZ"
+CLUB_NAME = "Math Olympiad Club at ETHZ"
 DOCUMENTCLASS = r"\documentclass[11pt]{article}"
 
 # ----------------------------------------------------------------------------------------------
@@ -250,7 +254,7 @@ def _local_pdflatex(doc, workdir, jobname):
         return f.read()
 
 
-def externalise_figures(tex, pid, fig_dir, cache_dir, counter, log):
+def externalise_figures(tex, pid, fig_dir, cache_dir, counter):
     """Replace every tikz block by \\includegraphics{fig<pid>-k.pdf} (figNNNN-k.pdf, or figa-<name>-k.pdf for a shared
     result); returns (tex, {name: info})."""
     figures = {}
@@ -276,11 +280,10 @@ def externalise_figures(tex, pid, fig_dir, cache_dir, counter, log):
             os.makedirs(cache_dir, exist_ok=True)
             with open(cached, "wb") as f:
                 f.write(pdf)
-            log(f"  externalised {name} ({len(pdf)} bytes)")
         os.makedirs(fig_dir, exist_ok=True)
         with open(os.path.join(fig_dir, name), "wb") as f:
             f.write(pdf)
-        figures[name] = {"bytes": len(pdf), "sha256": hashlib.sha256(pdf).hexdigest(), "url": "figures/" + name}
+        figures[name] = {"sha256": hashlib.sha256(pdf).hexdigest(), "url": "figures/" + name}
         out.append(tex[pos:s])
         out.append("\\includegraphics{%s}" % name)
         pos = e
@@ -290,11 +293,10 @@ def externalise_figures(tex, pid, fig_dir, cache_dir, counter, log):
 
 # ---- citations ----------------------------------------------------------------------------------
 # The BibTeX parser and the entry formatter live in bank/bib.py (shared with the validator).
-def resolve_citations(statement, solution, bib, log, pid):
+def resolve_citations(statement, solution, bib):
     """Replace \\cite{...} by [n] numbers; append problemreferences lists.  Numbers are shared between
     statement and solution (statement keys first)."""
     numbers = {}
-    missing = []
 
     def sub(m):
         pre, post, keys = m.group(1), m.group(2), m.group(3)
@@ -304,8 +306,6 @@ def resolve_citations(statement, solution, bib, log, pid):
         for k in [k.strip() for k in keys.split(",") if k.strip()]:
             if k not in numbers:
                 numbers[k] = len(numbers) + 1
-                if k not in bib:
-                    missing.append(k)
             nums.append(str(numbers[k]))
         txt = ", ".join(nums)
         if post:
@@ -318,8 +318,6 @@ def resolve_citations(statement, solution, bib, log, pid):
     if solution is not None:
         solution = DROP_RE.sub("", solution)
         solution = CITE_RE.sub(sub, solution)
-    for k in missing:
-        log(f"  {pid}: citation key '{k}' not in references.bib")
 
     def reflist(keys):
         items = "\n".join("\\refitem{%d} %s" % (numbers[k], format_entry(bib.get(k, {"title": k}))) for k in keys)
@@ -344,59 +342,43 @@ def bank_sources(problems, tags):
         statement, solution = split_body(p["body"])
         if P.BLOCK_RE.search(P.mask_comments(statement)):     # second barrier after the validator: never leak a solution
             raise ValueError(f"{p['file']}: a \\begin/\\end{{solution|bibentries|problem}} inside the problem block")
-        methods = [tags["methods"][m]["name"] for m in p["methods"] if m in tags["methods"]] if tags else list(p["methods"])
-        out.append({"id": f"{p['id']:04d}", "title": p["title"], "origin": P.origin_label(p, tags) if tags else _raw_origin(p),
+        methods = [tags["methods"][m]["name"] for m in p["methods"] if m in tags["methods"]]
+        out.append({"id": f"{p['id']:04d}", "title": p["title"], "origin": P.origin_label(p, tags),
                     "status": p["status"], "methods": methods, "statement": statement, "solution": solution,
                     "cites": A.cited_names(solution) if solution is not None else [],
                     "bibtex": bib_block(p["body"]), "source": p["file"]})
     return out
 
 
-def load_bank_problems(problems_dir, tags):
-    """Read problems_dir (new-*.tex files, which have no number yet, are skipped)."""
-    return bank_sources(P.load_problems(problems_dir), tags)
-
-
-def _raw_origin(p):
-    s = " ".join(x for x in (p["origin"], p["origin_date"][:4] if p["origin_date"] else "") if x)
-    if p["origin_number"]:
-        s += (", " if s else "") + p["origin_number"]
-    return s
-
-
-def build_bodies(source, out_dir, ids=None, log=print):
+def build_bodies(source, out_dir):
     bib = parse_bib(paths.BIB_FILE)
     fig_dir = os.path.join(out_dir, "figures")
     cache_dir = os.path.join(paths.CACHE_DIR, "figures")
-    bodies, stats = {}, {"problems": 0, "figures": 0, "citations": 0, "solutions": 0}
+    bodies, stats = {}, {"figures": 0, "citations": 0}
     for p in source:
-        if ids and int(p["id"]) not in ids:
-            continue
         pid, prefix = p["id"], "p" + p["id"]
         statement = namespace_labels(p["statement"], prefix)
         solution = namespace_labels(p["solution"], prefix) if p["solution"] is not None else None
         counter = [0]
         try:
-            statement, figs = externalise_figures(statement, pid, fig_dir, cache_dir, counter, log)
+            statement, figs = externalise_figures(statement, pid, fig_dir, cache_dir, counter)
             if solution is not None:
-                solution, figs2 = externalise_figures(solution, pid, fig_dir, cache_dir, counter, log)
+                solution, figs2 = externalise_figures(solution, pid, fig_dir, cache_dir, counter)
                 figs.update(figs2)
         except RuntimeError as err:          # name the file: the message alone only shows the standalone figure's log
             raise RuntimeError(f"{p.get('source', pid)}: a TikZ figure does not compile on its own "
                                f"(definitions it needs must come before it in the same block):\n{err}") from None
         own = parse_bib_text(p.get("bibtex") or "")        # the problem's own bibentries block wins for this problem
-        statement, solution, ncite = resolve_citations(statement, solution, {**bib, **own} if own else bib, log, pid)
+        statement, solution, ncite = resolve_citations(statement, solution, {**bib, **own} if own else bib)
         bodies[pid] = {"id": pid, "title": p["title"], "origin": p["origin"], "status": p["status"],
                        "methods": list(p.get("methods") or []),
                        "statement": statement, "solution": solution, "cites": list(p.get("cites") or []), "figures": figs}
-        stats["problems"] += 1
         stats["figures"] += len(figs)
         stats["citations"] += ncite
-        stats["solutions"] += solution is not None
     return bodies, stats
 
 
-def build_appendix(items, names, out_dir, log=print):
+def build_appendix(items, names, out_dir):
     """The shared results `names` (see bank/appendix.py) as the browser needs them: {name: {title, text, cites, figures}},
     sorted by name.  Like a problem body: its own labels namespaced as a-<name>:key (the global ones, appendix:<name>:key,
     stay as written), TikZ externalised to figures/figa-<name>-k.pdf, citations pre-resolved with a
@@ -410,12 +392,12 @@ def build_appendix(items, names, out_dir, log=print):
         it = by_name[name]
         text = namespace_labels(it["text"], A.LOCAL_PREFIX + name)
         try:
-            text, figs = externalise_figures(text, "a-" + name, fig_dir, cache_dir, [0], log)
+            text, figs = externalise_figures(text, "a-" + name, fig_dir, cache_dir, [0])
         except RuntimeError as err:
             raise RuntimeError(f"{it['file']}: a TikZ figure does not compile on its own "
                                f"(definitions it needs must come before it in the same block):\n{err}") from None
         own = parse_bib_text(it.get("bibtex") or "")
-        text, _, ncite = resolve_citations(text, None, {**bib, **own} if own else bib, log, name)
+        text, _, ncite = resolve_citations(text, None, {**bib, **own} if own else bib)
         out[name] = {"title": it["title"], "text": text, "cites": list(it["cites"]), "figures": figs}
         stats["results"] += 1
         stats["figures"] += len(figs)
@@ -427,7 +409,7 @@ def build_appendix(items, names, out_dir, log=print):
 # 2. stitched main.tex
 # ----------------------------------------------------------------------------------------------
 def tex_escape(s):
-    """Escape TeX specials in plain-text titles; already-escaped ones (legacy titles) are left alone."""
+    """Escape TeX specials in plain-text titles; an already-escaped one is left alone (mirrored in bank-compile.js)."""
     return re.sub(r"(?<!\\)([&%$#_])", r"\\\1", s)
 
 
@@ -477,6 +459,147 @@ def make_main(bodies, ids, variant="problems", filters="", standalone=False, sho
     return "\n".join(out) + "\n"
 
 
+# ---- the statements typeset in advance: the previews of the Problems page ---------------------------------------------
+# The page shows a statement under its title, typeset at the measure its panel holds (bank-ui.js::showStatement).  The
+# build typesets every statement at PREVIEW_MEASURES, 10 % apart: one PDF per measure, a statement per page, its fonts
+# once.  The page draws the page of the measure nearest its own, a little bigger or smaller to fill the panel (5 % at
+# most), and needs neither the LaTeX engine nor the problem texts for it.  Each page is the one the browser's
+# makePreview would typeset alone (bank-compile.js; make_preview is its twin, the parity test compares them).
+PREVIEW_MARGIN_PT = 2                    # bank-compile.js::PREVIEW_MARGIN_PT
+PREVIEW_LEAST_PT, SHEET_PT = 150, 426.79   # bank-ui.js::previewMeasure: the least, and the sheets' measure (A4, 3 cm margins)
+PREVIEW_MEASURES = [round(PREVIEW_LEAST_PT * (SHEET_PT / PREVIEW_LEAST_PT) ** (k / 11), 2) for k in range(12)]
+# A page as tall as any statement: one page each, never cut (its height is then set to where its text ends).  7000 pt
+# keeps \pagetotal + \vsize within TeX's largest dimension.
+PREVIEW_TALL = r"\textheight=7000pt\vsize=\textheight\csname @colht\endcsname=\textheight\csname @colroom\endcsname=\textheight"
+
+
+def preview_head(width=None):
+    """The lines before the first statement (bank-compile.js::previewHead).  width: the measure in pt, two decimals, or
+    None for the sheets' own."""
+    m = f"{PREVIEW_MARGIN_PT}pt"
+    out = [r"\begin{document}", r"\pagestyle{empty}\raggedbottom"]
+    if width:
+        out.append(r"\ifdim%.2fpt<\textwidth\textwidth=%.2fpt\sloppy\fi" % (width, width))
+    out += [r"\hsize=\textwidth\linewidth=\textwidth\columnwidth=\textwidth",
+            r"\hoffset=\dimexpr%s-1in-\oddsidemargin\relax" % m,
+            r"\voffset=\dimexpr%s-1in-\topmargin-\headheight-\headsep\relax" % m,
+            r"\global\pdfpagewidth=560pt", PREVIEW_TALL]
+    return out
+
+
+def preview_page(statement):
+    """One statement on a page of its own, as tall as its text (bank-compile.js::previewPage)."""
+    m = f"{PREVIEW_MARGIN_PT}pt"
+    return [r"\global\pdfpageheight=\dimexpr\textheight+2\dimexpr%s\relax\relax" % m, r"\begin{problem}", statement,
+            r"\end{problem}",
+            r"\par\ifdim\pagegoal<\maxdimen\global\pdfpageheight=\dimexpr\pagetotal+\pagedepth+\vsize-\pagegoal+2\dimexpr%s\relax\relax\fi" % m,
+            r"\penalty-10000"]
+
+
+def make_preview(bodies, pid, width=None):
+    """One statement's preview document, byte for byte bank-compile.js::makePreview."""
+    return "\n".join(preview_head(width) + preview_page(bodies[f"{pid:04d}"]["statement"]) + [r"\end{document}"]) + "\n"
+
+
+def make_previews(bodies, ids, width=None):
+    """Every statement of `ids`, in this order, each on a page of its own typeset as make_preview typesets it alone: the
+    counters start afresh on each (as under a \\bankproblem heading), and each page writes '<ID> <page>' to
+    <jobname>.pages when it is shipped out.  For plain pdflatex (the documentclass and the stitched preamble included)."""
+    out = [DOCUMENTCLASS, r"\def\BankStitched{}", r"\input{preamble}", r"\newwrite\bankpages",
+           r"\immediate\openout\bankpages=\jobname.pages"] + preview_head(width)
+    for pid in ids:
+        b = bodies[f"{pid:04d}"]
+        out += [r"\bankresetcounters", r"\write\bankpages{%s \the\value{page}}" % b["id"]] + preview_page(b["statement"])
+    return "\n".join(out + [r"\end{document}"]) + "\n"
+
+
+def _compile_previews(doc, fig_dir):
+    """pdflatex on a make_previews document, run again while LaTeX asks (cross-references).  Returns (pdf, pages): pages
+    = [(ID, page)] in the order shipped."""
+    env = tex_env()
+    env["TEXINPUTS"] = fig_dir + ":" + env["TEXINPUTS"]           # the drawings, \includegraphics{figNNNN-k.pdf}
+    with tempfile.TemporaryDirectory() as d:
+        with open(os.path.join(d, "previews.tex"), "w", encoding="utf-8") as f:
+            f.write(doc)
+        for _ in range(3):
+            try:
+                r = subprocess.run(PDFLATEX + ["previews.tex"], cwd=d, env=env, capture_output=True, text=True, errors="replace",
+                                   timeout=COMPILE_TIMEOUT)
+            except subprocess.TimeoutExpired:
+                raise RuntimeError(f"timed out after {COMPILE_TIMEOUT} s") from None
+            if r.returncode != 0 or not os.path.exists(os.path.join(d, "previews.pdf")):
+                err = [l for l in r.stdout.split("\n") if l.startswith("!") or l.startswith("l.")]
+                raise RuntimeError("\n".join(err[-8:]) or r.stdout[-1200:])
+            if "Rerun to get" not in r.stdout and "Label(s) may have changed" not in r.stdout:
+                break
+        with open(os.path.join(d, "previews.pdf"), "rb") as f:
+            pdf = f.read()
+        with open(os.path.join(d, "previews.pages"), encoding="utf-8") as f:
+            pages = [(a, int(b)) for a, b in (line.split() for line in f if line.strip())]
+    return pdf, pages
+
+
+def build_previews(bodies, out_dir, jobs=4):
+    """The previews of every statement in `bodies`, one PDF per measure of PREVIEW_MEASURES, written to
+    <out_dir>/previews/ under names that change with their content (GitHub Pages caches files for 10 minutes); cached by
+    content in .cache/previews/.  Returns ({"ids": [...], "measures": [{"pt", "url"}]}, messages): page k of each PDF is
+    the statement of ids[k-1].  A measure that cannot be made is left out, with a message: the page typesets the
+    statements of a missing measure in the browser, as before."""
+    from concurrent.futures import ThreadPoolExecutor
+    ids = sorted(int(k) for k in bodies)
+    fig_dir = os.path.join(out_dir, "figures")
+    target = os.path.join(out_dir, "previews")
+    if os.path.isdir(target):
+        shutil.rmtree(target)
+    os.makedirs(target)
+    cache_dir = os.path.join(paths.CACHE_DIR, "previews")
+    os.makedirs(cache_dir, exist_ok=True)
+    with open(paths.PREAMBLE_FILE, "rb") as f:
+        stamp = hashlib.sha256(f.read())
+    for name in sorted(os.listdir(fig_dir)) if os.path.isdir(fig_dir) else []:
+        with open(os.path.join(fig_dir, name), "rb") as f:
+            stamp.update(name.encode() + b"\0" + hashlib.sha256(f.read()).digest())
+
+    def one(pt):
+        doc = make_previews(bodies, ids, None if pt == SHEET_PT else pt)
+        key = hashlib.sha256(stamp.digest() + doc.encode("utf-8")).hexdigest()
+        cached = os.path.join(cache_dir, key)
+        if os.path.exists(cached + ".pdf") and os.path.exists(cached + ".json"):
+            with open(cached + ".pdf", "rb") as f:
+                pdf = f.read()
+            with open(cached + ".json", encoding="utf-8") as f:
+                pages = [tuple(x) for x in json.load(f)]
+            for ext in (".pdf", ".json"):
+                os.utime(cached + ext)                        # still in use: kept (see below)
+        else:
+            pdf, pages = _compile_previews(doc, fig_dir)
+            with open(cached + ".pdf", "wb") as f:
+                f.write(pdf)
+            with open(cached + ".json", "w", encoding="utf-8") as f:
+                json.dump(pages, f)
+        if pages != [(f"{i:04d}", k) for k, i in enumerate(ids, 1)]:
+            raise RuntimeError("a statement did not come out on exactly one page")
+        name = f"statements-{pt:g}pt-{hashlib.sha256(pdf).hexdigest()[:10]}.pdf"
+        with open(os.path.join(target, name), "wb") as f:
+            f.write(pdf)
+        return {"pt": pt, "url": "static/bank/previews/" + name}
+
+    def attempt(pt):
+        try:
+            return one(pt), None
+        except (RuntimeError, OSError) as e:                  # OSError: no pdflatex here
+            return None, f"{pt:g} pt: {e}"
+
+    with ThreadPoolExecutor(max_workers=max(1, jobs)) as pool:
+        done = list(pool.map(attempt, PREVIEW_MEASURES)) if ids else []
+    for name in os.listdir(cache_dir):                       # what no build has used for two weeks goes
+        path = os.path.join(cache_dir, name)
+        if os.path.getmtime(path) < time.time() - 14 * 86400:
+            os.remove(path)
+    measures = [m for m, _ in done if m]
+    return {"ids": ids, "measures": measures} if measures else None, [e for _, e in done if e]
+
+
 def parse_ids(spec, available=None):
     """'all' -> every available ID ascending; otherwise the IDs in the order written ('5,3,1-2' -> [5, 3, 1, 2];
     a range expands ascending; repeats are dropped)."""
@@ -493,21 +616,9 @@ def parse_ids(spec, available=None):
     return list(dict.fromkeys(ids))
 
 
-def _load_tags():
-    try:
-        from bank.tags import load_tags
-        return load_tags(paths.TAGS_FILE)
-    except Exception:
-        return None
-
-
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
-    b = sub.add_parser("build", help="write bodies.json + figures/")
-    b.add_argument("--problems-dir", default=paths.PROBLEMS_DIR)
-    b.add_argument("--out", default=paths.BANK_DATA_DIR)
-    b.add_argument("--ids", default="all")
     m = sub.add_parser("main", help="print a stitched main.tex")
     m.add_argument("--bodies", default=os.path.join(paths.BANK_DATA_DIR, "bodies.json"))
     m.add_argument("--ids", default="all", help="IDs in PDF order, e.g. 5,3,1-2 (default: all, ascending)")
@@ -515,25 +626,17 @@ def main(argv=None):
     m.add_argument("--filters", default="")
     m.add_argument("--standalone", action="store_true")
     m.add_argument("--show-methods", action="store_true", help="add the Methods line under each heading")
+    v = sub.add_parser("preview", help="print one statement's preview document (bank-compile.js::makePreview)")
+    v.add_argument("--bodies", default=os.path.join(paths.BANK_DATA_DIR, "bodies.json"))
+    v.add_argument("--id", type=int, required=True)
+    v.add_argument("--width", type=float, default=None, help="the measure in pt (default: the sheets')")
     a = ap.parse_args(argv)
-    if a.cmd == "build":
-        source = load_bank_problems(a.problems_dir, _load_tags())
-        ids = set(parse_ids(a.ids, [int(p["id"]) for p in source]))
-        bodies, stats = build_bodies(source, a.out, ids)
-        items = A.load_items()
-        cites = {it["name"]: it["cites"] for it in items if it["name"]}
-        appendix, astats = build_appendix(items, A.closure([n for b in bodies.values() for n in b["cites"]], cites), a.out)
-        os.makedirs(a.out, exist_ok=True)
-        payload = {"meta": {"count": len(bodies), "source": "problems/", **stats, "appendix": astats},
-                   "problems": bodies, "appendix": appendix}
-        path = os.path.join(a.out, "bodies.json")
-        with open(path, "w", encoding="utf-8") as f:
-            json.dump(payload, f, ensure_ascii=False, indent=0, sort_keys=True)
-        print(f"wrote {path}: {stats}, appendix {astats}")
-        return 0
     with open(a.bodies, encoding="utf-8") as f:
         data = json.load(f)
     bodies = data["problems"]
+    if a.cmd == "preview":
+        sys.stdout.write(make_preview(bodies, a.id, a.width))
+        return 0
     ids = parse_ids(a.ids, [int(k) for k in bodies])
     sys.stdout.write(make_main(bodies, ids, a.variant, a.filters, a.standalone, a.show_methods, data.get("appendix")))
     return 0

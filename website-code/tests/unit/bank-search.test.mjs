@@ -55,18 +55,19 @@ test('empty filter lists every problem, in ID order', () => {
   assert.deepEqual(S.sortProblems(shuffled).map(p => p.id), [1, 2, 3, 4]);
 });
 
-test('AND/OR applies to Area + Methods only', () => {
+test('inside one filter any of its choices will do; every filter set must hold', () => {
   assert.deepEqual(S.filterProblems(problems, f({ area: ['series'], methods: ['induction'] }), cat).map(p => p.id), [2]);
-  assert.deepEqual(S.filterProblems(problems, f({ area: ['series'], methods: ['induction'], op: 'or' }), cat).map(p => p.id), [1, 2]);
-  assert.deepEqual(S.filterProblems(problems, f({ area: ['sequences', 'series'] }), cat).map(p => p.id), []);        // AND across two areas
-  assert.deepEqual(S.filterProblems(problems, f({ area: ['sequences', 'series'], op: 'or' }), cat).map(p => p.id), [1, 2]);
+  assert.deepEqual(S.filterProblems(problems, f({ area: ['sequences', 'series'] }), cat).map(p => p.id), [1, 2]);          // either area
+  assert.deepEqual(S.filterProblems(problems, f({ methods: ['pigeonhole', 'am-gm'] }), cat).map(p => p.id), [2, 4]);       // either method
+  assert.deepEqual(S.filterProblems(problems, f({ area: ['series'], methods: ['pigeonhole', 'induction'], difficulty: ['easy'] }), cat).map(p => p.id), []);   // and each filter holds
+  assert.deepEqual(S.decodeState('?m=induction,pigeonhole&op=or', cat).filters, f({ methods: ['induction', 'pigeonhole'], showMethods: true }));   // an old link's op= is read as nothing
 });
 
 test('difficulty and origin are always "any of the selected", combined with AND to the rest', () => {
   assert.deepEqual(S.filterProblems(problems, f({ difficulty: ['easy', 'hard'] }), cat).map(p => p.id), [1, 2]);
   assert.deepEqual(S.filterProblems(problems, f({ origin: ['imo'] }), cat).map(p => p.id), [2, 4]);     // also-in counts
   assert.deepEqual(S.filterProblems(problems, f({ origin: ['imo'], difficulty: ['hard'] }), cat).map(p => p.id), [2]);
-  assert.deepEqual(S.filterProblems(problems, f({ area: ['analysis'], op: 'or', origin: ['imc'] }), cat).map(p => p.id), [1]);
+  assert.deepEqual(S.filterProblems(problems, f({ area: ['analysis'], origin: ['imc'] }), cat).map(p => p.id), [1]);
 });
 
 test('unrated problems match only when no difficulty is selected', () => {
@@ -76,19 +77,21 @@ test('unrated problems match only when no difficulty is selected', () => {
 
 test('origin-year range; an old link with an ID range (id=) is ignored', () => {
   assert.deepEqual(S.decodeState('id=2-3', cat).filters, S.emptyFilters());     // the ID means nothing to visitors
-  assert.deepEqual(S.filterProblems(problems, f({ yearFrom: 2000 }), cat).map(p => p.id), [1, 4]);
-  assert.deepEqual(S.filterProblems(problems, f({ yearFrom: 1980, yearTo: 1990 }), cat).map(p => p.id), [2]);
-  assert.ok(!S.matches(problems[2], f({ yearTo: 3000 }), cat), 'undated problem never matches a year range');
+  assert.deepEqual(S.filterProblems(problems, f({ yearFrom: 2000 }), cat).map(p => p.id), [1, 3, 4]);
+  assert.deepEqual(S.filterProblems(problems, f({ yearFrom: 1980, yearTo: 1990 }), cat).map(p => p.id), [2, 3]);
+  assert.ok(S.matches(problems[2], f({ yearFrom: 3000 }), cat), 'an undated problem always matches a year range');
 });
 
-test('solutions filter: full / partial / no solution / all (the words of the row markers)', () => {
+test('solutions filter: full / incomplete (a partial one, or none yet) / all, the words of the row markers; an old link with partial or none reads as incomplete', () => {
   assert.deepEqual(S.filterProblems(problems, f({ solved: 'full' }), cat).map(p => p.id), [1, 2]);
-  assert.deepEqual(S.filterProblems(problems, f({ solved: 'partial' }), cat).map(p => p.id), [3]);
-  assert.deepEqual(S.filterProblems(problems, f({ solved: 'none' }), cat).map(p => p.id), [4]);
+  assert.deepEqual(S.filterProblems(problems, f({ solved: 'incomplete' }), cat).map(p => p.id), [3, 4]);
   assert.deepEqual(S.filterProblems(problems, f({ solved: 'all' }), cat).length, 4);
+  assert.deepEqual(problems.map(S.isComplete), [true, true, false, false]);
+  for (const old of ['partial', 'none', 'incomplete']) assert.equal(S.decodeState(`s=${old}`, cat).filters.solved, 'incomplete');
+  assert.equal(S.decodeState('s=nope', cat).filters.solved, 'all');
 });
 
-test('proposed problems (not reviewed yet) are listed only with "Show proposed problems"; the URL says pr=1', () => {
+test('proposed problems (not reviewed yet) are listed only with "Show the proposed problems"; the URL says pr=1', () => {
   const withProposed = [...problems, P(5, { area: ['sequences'], review: 'none', proposed: true })];
   assert.deepEqual(S.filterProblems(withProposed, f({}), cat).map(p => p.id), [1, 2, 3, 4]);
   assert.deepEqual(S.filterProblems(withProposed, f({ area: ['sequences'] }), cat).map(p => p.id), [1]);
@@ -133,7 +136,7 @@ test('the search bar text matches titles only', () => {
 });
 
 test('URL state round-trips and drops unknown slugs', () => {
-  const filters = f({ area: ['series'], methods: ['induction'], difficulty: ['hard'], origin: ['putnam'], text: 'unit circle', op: 'or', showMethods: true, yearFrom: null, yearTo: 2000, solved: 'none' });
+  const filters = f({ area: ['series'], methods: ['induction'], difficulty: ['hard'], origin: ['putnam'], text: 'unit circle', showMethods: true, yearFrom: null, yearTo: 2000, solved: 'incomplete' });
   const sel = [3, 1, 2, 7, 9, 10, 11];
   const qs = S.encodeState(filters, sel);
   const back = S.decodeState(qs, cat);
@@ -223,7 +226,7 @@ test('symbols-only queries filter nothing and stay out of the URL; letters of an
 });
 
 test('year range: written backwards it still counts; a huge year in the URL is dropped', () => {
-  assert.deepEqual(S.filterProblems(problems, f({ yearFrom: 1990, yearTo: 1980 }), cat).map(p => p.id), [2]);
+  assert.deepEqual(S.filterProblems(problems, f({ yearFrom: 1990, yearTo: 1980 }), cat).map(p => p.id), [2, 3]);
   assert.deepEqual(S.decodeState('y=' + '9'.repeat(400) + '-2000', cat).filters.yearFrom, null);
   assert.equal(S.decodeState('y=' + '9'.repeat(400) + '-2000', cat).filters.yearTo, 2000);
 });
@@ -242,11 +245,6 @@ test('tag counts: areas count their descendants, origins count also-in', () => {
     const [type, slug] = key.split(':');
     if (type !== 'difficulty' || slug !== 'unrated') assert.equal(S.filterProblems(problems, f({ [type]: [slug] }), cat).length, n, key);
   }
-});
-
-test('GitHub edit link of a problem file', () => {
-  assert.equal(S.githubEditUrl({ repo: 'o/r', branch: 'main', problemsPath: 'problem-bank/problems' }, '0001-a b.tex'),
-    'https://github.com/o/r/edit/main/problem-bank/problems/0001-a%20b.tex');
 });
 
 test('the real tags.json catalogue from the build loads and is consistent', () => {

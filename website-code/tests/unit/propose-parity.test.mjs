@@ -26,7 +26,7 @@ out = {}
 out["kebab"] = [P.kebab(t) for t in req.get("kebab", [])]
 out["bib"] = [parse_bib_entries(t) for t in req.get("bib", [])]
 out["format"] = [format_entry(e) for e in req.get("format", [])]
-out["cite"] = [list(resolve_citations(s, sol, bib, lambda *a: None, "0")) for s, sol, bib in req.get("cite", [])]
+out["cite"] = [list(resolve_citations(s, sol, bib)) for s, sol, bib in req.get("cite", [])]
 out["unprintable"] = [P.unprintable(t) for t in req.get("unprintable", [])]
 out["mask"] = [P.mask_comments(t) for t in req.get("mask", [])]
 out["labels"] = [[label_refs(t)[0], [list(r) for r in label_refs(t)[1]]] for t in req.get("labels", [])]
@@ -146,13 +146,14 @@ test('files made by the page pass the Python validator with the same fields; inv
       solution: '\n\nBy induction \\cite[p.~2]{own}.\n\n  \n', area: ['primes', 'divisibility'], methods: ['induction', 'pigeonhole'], difficulty: 'medium',
       origin: 'putnam', originDate: '1989-12-02', originNumber: 'A3', references: 'https://example.org/a\nKalva, Putnam 1989', bibtex: '@article{own,\n  author = {Doe, Jane},\n  title = {Own},\n  year = {2020},\n}' },
     { ...base, title: 'Théorème de Fermat’s', originDate: '2001' },
+    { ...base, origin: 'imo', originDate: '1959', originNumber: '1' }, { ...base, origin: 'imo', originDate: '2001', originNumber: '1a' },   // a bare number: Problem 1
     { ...base, title: '  spaced    out  title ', statement: '  \n% a comment line first\n\\[ x \\]\n' },
     { ...base, title: 'Euler φ sums', originNumber: 'Day 2, Problem 6', statement: 'See \\cite{b1}.', bibtex: '@misc{b1, title = {On a theorem of {Euler}}, doi = {10.1/a_b}}' },
     { ...base, title: 'Straße, Œuvre, αβγ', statement: 'See \\cite{k}.', bibtex: '@misc{k\u001f, title={x}}' },
     { ...base, originDate: '0050-01-31', statement: 'See \\cite*{own} and \\cite [p.~3] {own}.\n% \\begin{tikzpicture}\n\\begin {align*} x \\end{align*}',
       bibtex: '@misc{own, title = {Own}}' },
     { ...base, statement: 'Show (\\ref{eq}).\\begin{equation}\\label{eq} x \\end{equation}', solution: 'By \\eqref{eq} and \\cref{l}. \\label{l}' },
-    { ...base, newArea: ['Graph colourings: proper ones'], newMethods: ['Zig-zag pairing', 'A % sign'] },   // a comment line for the board
+    { ...base, newArea: ['Graph colourings: proper ones'], newMethods: ['Zig-zag pairing', 'A % sign'] },   // a comment line for the reviewer
     { ...base, statement: 'It costs 5\\$, the sign \\( \\$ \\). % $x$ in a comment' },   // \$ is a dollar sign
   ];
   const bad = [

@@ -79,6 +79,8 @@ def mask_comments(tex):
     """`tex` with every % comment replaced by spaces: same length and newlines, so offsets found in it point into `tex`.
     Block markers, figures and definitions are looked for in what LaTeX reads, not in comments.
     Mirrored in site/static/js/bank-tex.js."""
+    if "%" not in tex:               # most texts have no comment: nothing to look for
+        return tex
     return _COMMENT_RE.sub(lambda m: m.group(1) + " " * (len(m.group(0)) - len(m.group(1))), tex)
 
 
@@ -158,7 +160,6 @@ def parse_problem_file(path):
     beg_s = next((b for b in p["blocks"] if b[:2] == ("begin", "solution")), None)
     p["solution_inside_problem"] = bool(beg_s and (not end_p or beg_s[2] < end_p[2]))
     p["has_solution"] = p["n_solution_blocks"] >= 1
-    p["solved"] = p["has_solution"] and p["status"] != "partial"
     p["difficulty_effective"] = p["difficulty"] or p["difficulty_ai"] or "unrated"
     p["bibtex"] = bib_block(body)
     p["bib_entries"] = parse_bib_entries(p["bibtex"])
@@ -445,7 +446,8 @@ def check_ids(problems):
 
 
 def origin_label(p, tags):
-    """Human-readable origin for PDF headings: 'Putnam 1989, A3' (empty if unknown)."""
+    """Human-readable origin for PDF headings: 'Putnam 1989, A3', 'IMO 1959, Problem 1' for a bare number (empty if
+    unknown).  Mirrored by bank-propose.js::originLabel."""
     if not p["origin"]:
         return ""
     name = tags["origin"][p["origin"]]["name"] if p["origin"] in tags["origin"] else p["origin"]
@@ -454,7 +456,8 @@ def origin_label(p, tags):
         parts.append(p["origin_date"][:4])
     s = " ".join(parts)
     if p["origin_number"]:
-        s += f", {p['origin_number']}"
+        number = p["origin_number"].strip()
+        s += f", Problem {number}" if re.fullmatch(r"[0-9]+", number) else f", {number}"
     return s
 
 

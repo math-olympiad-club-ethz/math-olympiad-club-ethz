@@ -133,13 +133,13 @@ def plan(jobs=None, problems_dir=None, compile=True):
         with tempfile.TemporaryDirectory() as d:  # the site's figures, as write_site_data makes them (cached by content)
             for p in rest_p:
                 try:
-                    stitch.build_bodies(stitch.bank_sources([p], tags), d, log=lambda *a: None)
+                    stitch.build_bodies(stitch.bank_sources([p], tags), d)
                 except (RuntimeError, ValueError) as e:
                     note(p["path"], None, str(e))
             for it in rest_i:
                 if it["name"]:
                     try:
-                        stitch.build_appendix(rest_i, [it["name"]], d, log=lambda *a: None)
+                        stitch.build_appendix(rest_i, [it["name"]], d)
                     except RuntimeError as e:
                         note(it["path"], None, str(e))
 

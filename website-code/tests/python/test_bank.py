@@ -2,6 +2,7 @@
 Run:  python3 -m unittest discover -s tests/python -v
 """
 import json
+import re
 import os
 import shutil
 import subprocess
@@ -49,7 +50,7 @@ class KebabAndFilename(unittest.TestCase):
         p = parse("0001-good-problem.tex")
         self.assertEqual(messages(p), [])
         self.assertEqual(p["id"], 1)
-        self.assertTrue(p["solved"])
+        self.assertTrue(p["has_solution"])
         self.assertEqual(p["difficulty_effective"], "easy")
 
     def test_filename_title_mismatch_prints_expected_name(self):
@@ -150,7 +151,7 @@ class Stitch(unittest.TestCase):
 
     def test_citations_are_resolved(self):
         bib = parse_bib(paths.BIB_FILE)
-        st, sol, n = resolve_citations("Text \\cite{solomon1967Hurwitz}.", "More \\cite{sato1972algebraic,solomon1967Hurwitz}.", bib, lambda *a: None, "0001")
+        st, sol, n = resolve_citations("Text \\cite{solomon1967Hurwitz}.", "More \\cite{sato1972algebraic,solomon1967Hurwitz}.", bib)
         self.assertEqual(n, 2)                      # distinct keys
         self.assertIn("[1]", st)
         self.assertIn("[2, 1]", sol)
@@ -340,7 +341,7 @@ class ProposedProblems(unittest.TestCase):
         p = parse("new-a-proposed-problem.tex", CONTRIB)
         number.assign_provisional_ids([p])
         with tempfile.TemporaryDirectory() as d:
-            bodies, _ = build_bodies(bank_sources([p], TAGS), d, log=lambda *a: None)
+            bodies, _ = build_bodies(bank_sources([p], TAGS), d)
         b = bodies["0001"]
         self.assertIn("Statement citing [1] and [2].", b["statement"])
         self.assertIn("Jane Doe, \\emph{Own Paper}", b["statement"])
@@ -502,7 +503,7 @@ class UnsafeTeX(unittest.TestCase):
 class CitationsAndLabels(unittest.TestCase):
     def test_starred_and_spaced_cite_are_resolved(self):
         bib = parse_bib(paths.BIB_FILE)
-        st, _, n = resolve_citations("A \\cite*{solomon1967Hurwitz}, B \\cite [p.~3] {sato1972algebraic}.", None, bib, lambda *a: None, "1")
+        st, _, n = resolve_citations("A \\cite*{solomon1967Hurwitz}, B \\cite [p.~3] {sato1972algebraic}.", None, bib)
         self.assertIn("A [1], B [2, p.~3].", st)
         self.assertEqual(n, 2)
 
@@ -587,6 +588,104 @@ class Tags(unittest.TestCase):
         self.assertIn("bad slug 'x\u00b2'", self.load(lambda raw: raw["area"].append({"slug": "x\u00b2", "name": "X"})))
         self.assertIn("(area/difficulty): ['easy']", self.load(lambda raw: raw["area"].append({"slug": "easy", "name": "Easy"})))
         self.assertIn("group name must be a non-empty string", self.load(lambda raw: raw["methods"][0].update(group="")))
+
+
+class TopicColours(unittest.TestCase):
+    """bank/colours.py: every first-level topic has a colour, and two topics next to each other keep the limits of the
+    dataviz palette validator, in both themes."""
+
+    @staticmethod
+    def tags(*tops):
+        return {"area": {slug: {"parent": None} for slug in tops}}
+
+    def test_the_topics_of_tags_yml(self):
+        from bank import colours as C
+        got, tops = C.topic_colours(TAGS), [s for s, t in TAGS["area"].items() if not t["parent"]]
+        self.assertEqual(list(got), tops, "every first-level topic has a colour (none is grey)")
+        for a, b in zip(tops, tops[1:]):
+            self.assertGreaterEqual(C.fit(got[a], got[b]), 1, f"{a} and {b} are next to each other and look too much alike")
+        for slug, pair in got.items():
+            for colour, bg in zip(pair, C.BACKGROUNDS):
+                self.assertGreaterEqual(C.contrast(colour, bg), C.CONTRAST_FLOOR, f"{slug} ({colour}) does not stand out from {bg}")
+        for slug, pair in C.COLOURS.items():
+            self.assertGreaterEqual(C.fit(C.SPARE, pair), 1, f"the spare colour is too close to {slug}'s")
+        for colour, bg in zip(C.SPARE, C.BACKGROUNDS):
+            self.assertGreaterEqual(C.contrast(colour, bg), C.CONTRAST_FLOOR)
+
+    def test_the_backgrounds_are_the_pages(self):
+        from bank import colours as C
+        with open(os.path.join(ROOT, "site", "static", "css", "site.css"), encoding="utf-8") as f:
+            self.assertEqual(tuple(re.findall(r"^  --bg: (#[0-9a-f]{6});", f.read(), re.M)), C.BACKGROUNDS)
+
+    def test_a_new_topic_gets_a_colour_by_itself(self):
+        from bank import colours as C
+        known = list(C.COLOURS)
+        self.assertEqual(C.topic_colours(self.tags(*known, "game-theory"))["game-theory"], C.SPARE)
+        self.assertEqual(C.topic_colours(self.tags("game-theory", *known))["game-theory"], C.SPARE)
+        got = C.topic_colours(self.tags(*known[:5], "game-theory", *known[5:], "set-theory"))
+        self.assertEqual(got["game-theory"], C.SPARE)
+        self.assertGreaterEqual(C.fit(got["set-theory"], got[known[-1]]), 1, "a second new topic: apart from the one next to it")
+        self.assertEqual({s: got[s] for s in known}, C.COLOURS, "the others keep theirs")
+        # a topic gone from tags.yml leaves its colour free
+        self.assertIn(C.topic_colours(self.tags(*known[1:], "a", "b"))["b"], (C.SPARE, C.COLOURS[known[0]]))
+
+
+class WebFonts(unittest.TestCase):
+    def test_the_ranges_of_the_fonts_are_those_of_fonts_css(self):
+        """tools/subset_fonts.py cuts the fonts, fonts.css tells the browser what is in each file: the same ranges, the
+        files it names there."""
+        import ast
+        from build import font_ranges
+        with open(os.path.join(ROOT, "tools", "subset_fonts.py"), encoding="utf-8") as f:
+            tree = ast.parse(f.read())
+        consts = {n.targets[0].id: ast.literal_eval(n.value) for n in tree.body
+                  if isinstance(n, ast.Assign) and isinstance(n.targets[0], ast.Name) and n.targets[0].id in ("RANGES", "VERSION")}
+        points = lambda r: {c for part in r.split(",") for lo, _, hi in [part.strip()[2:].partition("-")]
+                            for c in range(int(lo, 16), int(hi or lo, 16) + 1)}
+        self.assertEqual(font_ranges(), (points(consts["RANGES"][""]), points(consts["RANGES"]["-ext"])))
+        fonts = os.path.join(ROOT, "site", "static", "fonts")
+        with open(os.path.join(ROOT, "site", "static", "css", "fonts.css"), encoding="utf-8") as f:
+            named = re.findall(r'url\("\.\./fonts/([^"]+)"\)', f.read())
+        self.assertTrue(named and all(n.endswith(f"-v{consts['VERSION']}.woff2") and os.path.isfile(os.path.join(fonts, n)) for n in named))
+        self.assertEqual(sorted(n for n in os.listdir(fonts) if n.endswith(".woff2")), sorted(named), "no font file left over")
+
+
+class Previews(unittest.TestCase):
+    """bank/stitch.py::make_previews: every statement typeset in advance, one PDF per measure, a statement per page."""
+    BODIES = {"0001": {"id": "0001", "statement": r"Show \begin{equation}\label{p0001:e} x = 1 \end{equation} as (\ref{p0001:e}) says.\footnote{A note.}"},
+              "0002": {"id": "0002", "statement": " ".join(["A long statement, longer than a sheet at the least measure."] * 140)},
+              "0003": {"id": "0003", "statement": r"Again \begin{equation} y = 2 \end{equation} and a note.\footnote{Its own.}"}}
+
+    def test_the_measures(self):
+        from bank.stitch import PREVIEW_MEASURES as M, PREVIEW_LEAST_PT, SHEET_PT
+        self.assertEqual((len(M), M[0], M[-1]), (12, PREVIEW_LEAST_PT, SHEET_PT))
+        self.assertTrue(all(1 < b / a <= 1.1 for a, b in zip(M, M[1:])), "10 % apart at most: the page draws them within 5 % of its size")
+
+    def test_each_page_is_the_statement_alone(self):
+        from bank.stitch import make_preview, make_previews
+        doc = make_previews(self.BODIES, [1, 3], 200)
+        lines = doc.split("\n")
+        self.assertEqual(lines[:5], [r"\documentclass[11pt]{article}", r"\def\BankStitched{}", r"\input{preamble}", r"\newwrite\bankpages",
+                                     r"\immediate\openout\bankpages=\jobname.pages"])
+        kept = [l for l in lines[5:] if l != r"\bankresetcounters" and not l.startswith(r"\write\bankpages")]
+        one, three = (make_preview(self.BODIES, i, 200).split("\n") for i in (1, 3))
+        head = one[:one.index(r"\begin{problem}") - 1]
+        self.assertEqual(kept, one[:-2] + three[len(head):])            # the head once, then each statement as alone
+        self.assertEqual(doc.count(r"\write\bankpages{0001 \the\value{page}}"), 1)
+
+    def test_compiled_one_page_each_counters_afresh(self):
+        from pypdf import PdfReader
+        import io
+        from bank.stitch import _compile_previews, make_previews
+        with tempfile.TemporaryDirectory() as figs:
+            pdf, pages = _compile_previews(make_previews(self.BODIES, [1, 2, 3], 150), figs)
+        self.assertEqual(pages, [("0001", 1), ("0002", 2), ("0003", 3)], "a statement per page, the long one too")
+        texts = [p.extract_text() for p in PdfReader(io.BytesIO(pdf)).pages]
+        self.assertEqual(len(texts), 3)
+        self.assertIn("(1)", texts[0])
+        self.assertNotIn("??", texts[0], "the reference resolved (run again while LaTeX asks)")
+        self.assertIn("(1)", texts[2], "the equations of each statement number from 1")
+        self.assertNotIn("(2)", texts[2])
 
 
 class ProblemsFolder(unittest.TestCase):
@@ -819,7 +918,7 @@ class SharedResults(unittest.TestCase):
                                                          "\\eqref{appendix:alpha:eq2}, \\appendixref{beta}, \\cite{mckay1959cauchy}."),
                                   "beta.tex": RESULT % ("Beta", "y")})
         with tempfile.TemporaryDirectory() as out:
-            data, stats = build_appendix(list(items.values()), ["alpha"], out, log=lambda *a: None)
+            data, stats = build_appendix(list(items.values()), ["alpha"], out)
         a = data["alpha"]
         self.assertEqual(list(data), ["alpha"])
         self.assertIn("\\label{a-alpha:eq}", a["text"])                           # its own labels: a-<name>:
@@ -879,6 +978,21 @@ class PublicBuildCheck(unittest.TestCase):
             write(site, "static/busytex/busytex.wasm.gz", "12345")
             write(site, "static/busytex/manifest.json", {"version": "e1", "files": {"busytex.wasm.gz": {"bytes": 5}}})
             self.assertEqual(check_site(site, [good, other]), [])
+            # the statements typeset by the build: exactly the published ones, the files named and no other
+            page = lambda ids: ('<script>{"index":{"preview":false},"build":"b1","engine":"e1","previews":{"ids":%s,'
+                                '"measures":[{"pt":150,"url":"static/bank/previews/statements-150pt-a.pdf"}]}}</script>' % json.dumps(ids))
+            write(site, "problems.html", page([1, 2]))
+            os.makedirs(os.path.join(bank, "previews"))
+            write(site, "static/bank/previews/statements-150pt-a.pdf", "%PDF")
+            self.assertEqual(check_site(site, [good, other]), [])
+            write(site, "problems.html", page([1, 2, 3]))
+            self.assertIn("the previews hold the statements of [1, 2, 3], the published problems are [1, 2]", "\n".join(check_site(site, [good, other])))
+            write(site, "problems.html", page([1, 2]))
+            write(site, "static/bank/previews/statements-150pt-old.pdf", "%PDF")
+            self.assertIn("holds files the page does not name: ['statements-150pt-old.pdf']", "\n".join(check_site(site, [good, other])))
+            shutil.rmtree(os.path.join(site, "static", "bank", "previews"))
+            self.assertIn("misses ['statements-150pt-a.pdf']", "\n".join(check_site(site, [good, other])))
+            write(site, "problems.html", '<script>{"index":{"preview":false},"build":"b1","engine":"e1"}</script>')
             write(site, "static/bank/bodies.json", {"build": "b1", "problems": {"0001": {"figures": {"fig0001-1.pdf": {}}},
                                                                              "0002": {"figures": {}, "origin": "Proposed, not reviewed yet",
                                                                                       "solution": "A proof."}}})

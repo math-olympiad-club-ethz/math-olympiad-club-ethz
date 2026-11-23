@@ -1,7 +1,7 @@
 /* compile-worker.js — pdfTeX (BusyTeX / WebAssembly) in a Web Worker for the problem bank.
 
    Protocol (postMessage):
-     → {type:'init', base, force?}           load + cache the bundle, instantiate the engine (idempotent)
+     → {type:'init', base}                   load + cache the bundle, instantiate the engine (idempotent)
      ← {type:'progress', stage, loaded?, total?}   stage 'manifest' | 'download' (compressed bytes so far / expected,
                                              from manifest.json; only files not in the cache) | 'instantiate'
      ← {type:'ready'}
@@ -13,8 +13,8 @@
      ← {type:'error', id?, message}          message: a short sentence for the page (details go to the console)
 
    Assets (site/static/busytex/, built by tools/busytex_bundle.py): manifest.json, busytex.js.gz, busytex.wasm.gz,
-   club.fmt.gz, club-texlive.data.gz (+ club-texlive.json index).  Everything is gzip'd on disk and decompressed
-   here with DecompressionStream, so nothing depends on the server's Content-Encoding.  The compressed responses
+   club.fmt.gz, club-texlive.data.gz (+ club-texlive.json index, sent as it is).  The four big files are gzip'd on disk and
+   decompressed here with DecompressionStream, so nothing depends on the server's Content-Encoding.  The compressed responses
    are stored in the Cache API (one 'bank-engine' cache across versions); a second visit downloads only manifest.json.
    Every file is checked against its sha256 in manifest.json before it is used (from the network or from the cache):
    a damaged or stale copy is dropped and downloaded once more.
@@ -60,10 +60,9 @@ async function getManifest(base) {
 }
 
 /* The Cache API is optional: private windows (Firefox before 122) and blocked site data make it reject. */
-async function openCache(name, version, force) {
+async function openCache(name, version) {
   if (!self.caches) return null;
   try {
-    if (force) await caches.delete(name);
     const cache = await caches.open(name);
     for (const k of await caches.keys()) if (k.startsWith('bank-engine-')) await caches.delete(k);   // the earlier scheme: one cache per version
     // one cache across versions: a new version downloads only the files that changed (each is checked against manifest.json,
@@ -80,8 +79,10 @@ async function openCache(name, version, force) {
 async function download(ctx, name, again) {
   const url = ctx.url(name);
   let resp;
-  // a second try asks past every cache: a CDN edge that lags behind the deploy may still answer the plain URL
-  try { resp = await fetch(again ? url + '?v=' + encodeURIComponent(ctx.manifest.version) : url, { cache: 'no-store' }); }
+  // a second try asks past every cache: a CDN edge that lags behind the deploy may still answer the plain URL.
+  // The first one keeps out of the browser's HTTP cache, since the file goes into the Cache API; where that is not
+  // available (blocked site data), the HTTP cache is all there is: it may answer, after asking the server (an ETag).
+  try { resp = await fetch(again ? url + '?v=' + encodeURIComponent(ctx.manifest.version) : url, { cache: again || ctx.cache ? 'no-store' : 'no-cache' }); }
   catch (e) { throw userError(`Could not download the LaTeX engine (network error). ${RELOAD}`, e); }
   if (!resp.ok) throw userError(`Could not download the LaTeX engine (HTTP ${resp.status} for ${name}). ${RELOAD}`);
   // not awaited: the file is decompressed (and the wasm compiled) while it arrives, and progress is shown
@@ -135,12 +136,12 @@ async function loadFile(ctx, name) {
     : userError(`The LaTeX engine download was damaged. ${RELOAD}`);
 }
 
-async function init(base, force) {
+async function init(base) {
   post({ type: 'progress', stage: 'manifest' });
   const manifest = await getManifest(base);
-  const cache = await openCache('bank-engine', manifest.version, force);
+  const cache = await openCache('bank-engine', manifest.version);
   const size = n => (manifest.files[n] || {}).bytes || 0;
-  const ctx = { base, manifest, cache, cached: {}, puts: {}, url: n => new URL(base + n, self.location.href).href,
+  const ctx = { manifest, cache, cached: {}, puts: {}, url: n => new URL(base + n, self.location.href).href,
     loaded: 0, total: 0, lastPost: 0 };
   ctx.progress = n => {
     ctx.loaded += n;
@@ -165,7 +166,7 @@ async function init(base, force) {
 
   // 2. the Emscripten factory: busytex.js declares `var busytex = ...` and has a UMD tail that is inert in a worker.
   post({ type: 'progress', stage: 'instantiate' });
-  if (typeof self.busytex !== 'function' || force) (0, eval)(jsText);
+  if (typeof self.busytex !== 'function') (0, eval)(jsText);
   const factory = self.busytex;
   let stdout = '';
   let instantiateFailed;
@@ -179,7 +180,6 @@ async function init(base, force) {
     },
     printErr: () => {},
     setStatus: () => {},
-    locateFile: f => base + f,
     instantiateWasm(imports, done) { WebAssembly.instantiate(wasmModule, imports).then(inst => done(inst, wasmModule)).catch(instantiateFailed); return {}; },
     preRun: [M => {
       Object.assign(M.ENV, manifest.env);
@@ -274,20 +274,20 @@ function compile(id, mainTex, files) {
   post({ type: 'result', id, version: manifest.version, exit, pdf, log, passes, pages, errors }, pdf ? [pdf.buffer] : []);
 }
 
-function ensureInit(base, force) {
-  if (!initPromise || force) initPromise = init(base, force).catch(e => { initPromise = null; throw e; });
+function ensureInit(base) {
+  if (!initPromise) initPromise = init(base).catch(e => { initPromise = null; throw e; });
   return initPromise;
 }
 
 self.onmessage = async ({ data }) => {
   try {
     if (data.type === 'init') {
-      if (initPromise && !data.force) {          // already initialised (or in progress): answer once it is ready
+      if (initPromise) {                         // already initialised (or in progress): answer once it is ready
         await initPromise;
         post({ type: 'ready' });
         return;
       }
-      await ensureInit(data.base, data.force);    // init() posts 'ready' itself
+      await ensureInit(data.base);                // init() posts 'ready' itself
     } else if (data.type === 'compile') {
       if (!state) await ensureInit(data.base);
       compile(data.id, data.mainTex, data.files);

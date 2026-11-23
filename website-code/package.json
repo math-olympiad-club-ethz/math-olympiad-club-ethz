@@ -6,10 +6,11 @@
     "build": "python3 build.py",
     "build:preview": "python3 build.py --preview --no-compile --no-bundle",
     "serve": "python3 -m http.server 8000 --directory site",
-    "test": "npm run test:unit && npm run test:python && npm run build:preview && npm run test:e2e",
+    "test": "npm run build:preview && npm run test:unit && npm run test:python && npm run test:e2e",
     "test:unit": "node --test tests/unit/*.test.mjs",
     "test:python": "python3 -m unittest discover -s tests/python",
-    "test:e2e": "node tests/e2e/bank.mjs && node tests/e2e/propose.mjs && node tests/e2e/phone-and-chrome.mjs"
+    "test:e2e": "node tests/e2e/bank.mjs && node tests/e2e/propose.mjs && node tests/e2e/phone-and-chrome.mjs && node tests/e2e/pinch.mjs && node tests/e2e/perf.mjs",
+    "test:perf": "node tests/e2e/perf.mjs"
   },
   "repository": {
     "type": "git",

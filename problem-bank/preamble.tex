@@ -1,4 +1,4 @@
-% preamble.tex — shared LaTeX preamble of the Math Olympiad Club ETHZ problem bank.
+% preamble.tex — shared LaTeX preamble of the Math Olympiad Club at ETHZ problem bank.
 %
 % Used in two modes:
 %   * AUTHOR / CI mode (default): a single problem file is wrapped by problems/_preview.tex
@@ -104,7 +104,7 @@
 \newenvironment{problemreferences}
 {\par\medskip\noindent{\small\textbf{References}}\par\nopagebreak
     \begin{list}{}{\setlength{\leftmargin}{2em}\setlength{\itemsep}{0pt}\small}}
-        {\end{list}}
+{\end{list}}
 \newcommand{\refitem}[1]{\item[{[#1]}]}
 
 % ===== Colours =====
@@ -128,7 +128,7 @@
 % /ID to the MD5 of that text.  The browser worker additionally sets SOURCE_DATE_EPOCH=0.
 \ifdefined\pdfinfoomitdate
     \pdfinfoomitdate=1
-    \pdftrailerid{Math Olympiad Club ETHZ problem bank}
+    \pdftrailerid{Math Olympiad Club at ETHZ problem bank}
     \pdfsuppressptexinfo=-1
 \fi
 
@@ -142,20 +142,25 @@
 % means nothing to readers: the website's PDFs (stitched mode) never print it; local previews and the CI proofs
 % (author mode) show it as "Problem 3 (#0042). Title" so maintainers can find the file.
 \ifdefined\BankStitched\newcommand{\bankidtag}[1]{}\else\newcommand{\bankidtag}[1]{ (\##1)}\fi
-\newcommand{\bankproblem}[4]{%
-    \par\addvspace{1.5\baselineskip}\penalty-300%
+% What a problem or a shared result starts afresh: its equations, theorems, footnotes... number from 1 (under its heading,
+% and on its own page of the website's previews, website-code/bank/stitch.py::make_previews).
+\newcommand{\bankresetcounters}{%
     \setcounter{equation}{0}\setcounter{theorem}{0}\setcounter{lemma}{0}\setcounter{definition}{0}%
     \setcounter{figure}{0}\setcounter{table}{0}\setcounter{footnote}{0}%
-    \setcounter{section}{0}\setcounter{subsection}{0}\renewcommand{\thesection}{\arabic{section}}%
+    \setcounter{section}{0}\setcounter{subsection}{0}\renewcommand{\thesection}{\arabic{section}}}
+\newcommand{\bankproblem}[4]{%
+    \par\addvspace{1.5\baselineskip}\penalty-300%
+    \bankresetcounters
     \noindent{\Large\bfseries Problem #1\bankidtag{#4}.\ #2}\par\nopagebreak
     \ifx\relax#3\relax\else\noindent{\small\textcolor{gray}{#3}}\par\nopagebreak\fi
     \addvspace{0.5\baselineskip}}
 % Optional line under the heading when the user asked to show the methods (spoilers, off by default).
 \newcommand{\bankmethods}[1]{\noindent{\small\textcolor{gray}{Methods: #1}}\par\nopagebreak\addvspace{0.3\baselineskip}}
-% "Not solved yet." marker used by the solutions PDF for unsolved / partial problems.
-\newcommand{\banknosolution}{\par\medskip\noindent\textit{Not solved yet.}\par}
+% The solutions PDF's word for an incomplete solution: after a partial one, or alone when there is none yet (the site's
+% "Incomplete solution").
+\newcommand{\banknosolution}{\par\medskip\noindent\textit{No complete solution yet.}\par}
 % Printed by the website instead of the solution of a proposed problem (review: none): the solution is published
-% once a board member has reviewed it (website-code/bank/data.py::mask_solutions).
+% once it has been reviewed (website-code/bank/data.py::mask_solutions).
 \newcommand{\bankunderreview}{\noindent\textit{This solution is not published yet: it is waiting for its review.}}
 
 % ===== Theorem environments =====
@@ -192,9 +197,7 @@
 \makeatletter
 \newenvironment{appendixitem}[1]{%
     \par\addvspace{1.5\baselineskip}\penalty-300%
-    \setcounter{equation}{0}\setcounter{theorem}{0}\setcounter{lemma}{0}\setcounter{definition}{0}%
-    \setcounter{figure}{0}\setcounter{table}{0}\setcounter{footnote}{0}%
-    \setcounter{section}{0}\setcounter{subsection}{0}\renewcommand{\thesection}{\arabic{section}}%
+    \bankresetcounters
     \refstepcounter{bankappendixitem}\def\@currentlabelname{#1}\label{appendix:\bankappendixname}% (\nameref: the title)
     \noindent{\large\bfseries\thebankappendixitem\bankappendixtag{\bankappendixname}.\ #1}\par\nopagebreak
     \addvspace{0.5\baselineskip}\ignorespaces}
@@ -213,12 +216,12 @@
     % validated, opened in the local preview).
     \cs_new_protected:Npn \bankappendixneed #1
     {
-    \str_set:Nx \l_tmpa_str {#1}
-    \exp_args:NnV \regex_match:nnT { \A [a-z0-9]+ (\-[a-z0-9]+)* \Z } \l_tmpa_str
-    {
-        \seq_if_in:NVF \g__bank_appendix_seq \l_tmpa_str
-        { \seq_gput_right:NV \g__bank_appendix_seq \l_tmpa_str }
-    }
+        \str_set:Nx \l_tmpa_str {#1}
+        \exp_args:NnV \regex_match:nnT { \A [a-z0-9]+ (\-[a-z0-9]+)* \Z } \l_tmpa_str
+        {
+            \seq_if_in:NVF \g__bank_appendix_seq \l_tmpa_str
+            { \seq_gput_right:NV \g__bank_appendix_seq \l_tmpa_str }
+        }
     }
     \cs_new_protected:Npn \__bank_appendix_print:n #1
     { \bankappendixitem {#1} \input { appendix/#1 } }

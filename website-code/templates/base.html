@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en-GB" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <!-- What the pages may load (GitHub Pages cannot send headers): nothing from other sites. The engine worker is
@@ -11,15 +11,24 @@
     <meta property="og:type" content="website">
     <meta property="og:title" content="{% if page_title %}{{ page_title }} | {% endif %}Math Olympiad Club at ETHZ">
     <meta property="og:description" content="Weekly problem-solving sessions and a problem bank to make your own problem sets.">
-    <meta property="og:image" content="https://math-olympiad-club-ethz.github.io/math-olympiad-club-ethz/static/images/club_logo_preview_600.png">
+    <meta property="og:image" content="{{ site_url }}static/images/club_logo_preview_600.png">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}" media="(prefers-color-scheme: light)">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon_dark.png') }}" media="(prefers-color-scheme: dark)">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='images/apple-touch-icon.png') }}">
     {% set v = ('?v=' ~ asset_version) if asset_version else '' %}
     <link href="{{ url_for('static', filename='css/site.css') }}{{ v }}" rel="stylesheet">
-    {% block head %}{% endblock %}
-    <!-- theme (before the first paint), footer year. Last in the head: with a Content-Security-Policy in the page, the browser
-         fetches nothing that follows a blocking script until the script has run, so the stylesheet would lose a round trip. -->
+    <!-- the web fonts' style sheet: fetched now, put to use by site.js once the page has been painted (see there); as it is
+         without scripts.  The seal: a background in site.css, which the browser would find only after its first pass. -->
+    <link rel="preload" href="{{ url_for('static', filename='css/fonts.css') }}{{ v }}" as="style">
+    <noscript><link href="{{ url_for('static', filename='css/fonts.css') }}{{ v }}" rel="stylesheet"></noscript>
+    <link rel="preload" href="{{ url_for('static', filename='images/club_logo_light_176.webp') }}?v=2" as="image" media="(prefers-color-scheme: light)">
+    <link rel="preload" href="{{ url_for('static', filename='images/club_logo_dark_176.webp') }}?v=2" as="image" media="(prefers-color-scheme: dark)">
+    <!-- theme (before the first paint), footer year. After the stylesheet: with a Content-Security-Policy in the page, the
+         browser fetches nothing that follows a blocking script until the script has run, so the stylesheet would lose a round
+         trip. Before the page's own scripts (the block below): on a slow connection they would share the line with the
+         stylesheet and hold back the first paint; here they start once it has arrived, and are ready just as soon. -->
     <script src="{{ url_for('static', filename='js/site.js') }}{{ v }}"></script>
+    {% block head %}{% endblock %}
 </head>
 <body>
     <header class="site-head">
@@ -52,7 +61,7 @@
             <div class="frame">
                 <div class="foot-row">
                     <span>© <span id="current-year">{{ year }}</span> Math Olympiad Club at ETHZ</span>
-                    <a href="mailto:olympiadclub@math.ethz.ch">olympiadclub@math.ethz.ch</a>
+                    <a href="mailto:{{ club_email }}">{{ club_email }}</a>
                 </div>
             </div>
         </footer>

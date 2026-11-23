@@ -2,8 +2,11 @@
    problem-bank/problems/new-<title>.tex, is checked with the same rules as bank/problems.py::validate, and is turned
    into the document the live preview compiles.  Pure functions, no DOM (unit-tested with node:test).
 
-   draft = {title, statement, solution, area: [slugs], methods: [slugs], difficulty, origin, originDate, originNumber,
-            references, bibtex}          (strings; everything except statement + one area may be blank) */
+   draft = {title, statement, solution, area: [slugs], methods: [slugs], newArea: [names], newMethods: [names], difficulty,
+            origin, originDate, originNumber, references, bibtex}     (strings; all but statement + one area may be blank)
+   The page also keeps `from`, the one line "Where is it from?" (parseOrigin below), and `note`, why the proposer likes it
+   (a file of its own beside the problem file), which are not part of the file; and where new tags were put: newAreaUnder (name -> the slug of the
+   topic it hangs under), newMethodsUnder (name -> the group). */
 // The page loads the modules as <name>.js?v=<build>; a relative import does not inherit the query, so they are imported
 // with the same ?v= (one copy of each module, never a cached one of the last deploy next to new ones).
 const V = new URL(import.meta.url).search;
@@ -38,18 +41,22 @@ export function kebab(title) {
 const oneLine = s => String(s || '').replace(/\s+/g, ' ').trim();
 export const effectiveTitle = draft => oneLine(draft.title) || UNTITLED;
 export const fileName = draft => `new-${kebab(effectiveTitle(draft)) || 'untitled-problem'}.tex`;
+/* Its PDF and the proposer's note: the same name, without new- (a person opens these). */
+export const pdfName = draft => `${kebab(effectiveTitle(draft)) || 'untitled-problem'}.pdf`;
+export const noteName = draft => `${kebab(effectiveTitle(draft)) || 'untitled-problem'}-note.txt`;
 
 /* Text of a LaTeX box as it goes into the file: no leading blank lines, no trailing whitespace. */
 const block = s => String(s || '').replace(/\r\n?/g, '\n').replace(/^(?:[ \t]*\n)+/, '').replace(/\s+$/, '');
 /* References: one line in the header; the lines of the box are joined with "; ". */
 const refsLine = s => String(s || '').split(/\r?\n/).map(oneLine).filter(Boolean).join('; ');
 
-/* Human-readable origin, "Putnam 1989, A3".  Mirrors bank/problems.py::origin_label. */
+/* Human-readable origin, "Putnam 1989, A3"; a bare number reads as one, "IMO 1959, Problem 1".  Mirrors
+   bank/problems.py::origin_label. */
 export function originLabel(cat, origin, originDate, originNumber) {
   if (!origin) return '';
   const t = cat.byType.origin.get(origin);
   let s = [t ? t.name : origin, ...(originDate ? [originDate.slice(0, 4)] : [])].join(' ');
-  if (originNumber) s += `, ${originNumber}`;
+  if (originNumber) { const number = String(originNumber).trim(); s += /^[0-9]+$/.test(number) ? `, Problem ${number}` : `, ${number}`; }
   return s;
 }
 
@@ -59,13 +66,14 @@ const header = (key, value) => (value ? `% ${key}:`.padEnd(18) + value : `% ${ke
 
 /* Tags the proposer asks for that are not in tags.yml yet (newArea, newMethods: names as typed).  They go into the
    file as one plain comment line of the header, which the validator skips (it does not look like "% key:"), for the
-   board member who reviews the file and adds them to tags.yml. */
+   person who reviews the file and adds them to tags.yml. */
 export const MAX_NEW_TAG = 60;
 export const newTagName = s => oneLine(s).replace(/"/g, "'");
 function newTagsLine(draft) {
-  const d = { ...emptyDraft(), ...draft };
-  const parts = [...d.newArea.map(n => `area "${newTagName(n)}"`), ...d.newMethods.map(n => `method "${newTagName(n)}"`)];
-  return parts.length ? `% Proposed new tags, not in tags.yml yet (a board member adds them): ${parts.join('; ')}` : '';
+  const d = { ...emptyDraft(), ...draft }, under = d.newAreaUnder || {}, group = d.newMethodsUnder || {};
+  const parts = [...d.newArea.map(n => `area "${newTagName(n)}"${under[n] ? ` under ${under[n]}` : ''}`),
+    ...d.newMethods.map(n => `method "${newTagName(n)}"${group[n] ? ` in "${newTagName(group[n])}"` : ''}`)];
+  return parts.length ? `% Proposed new tags, not in tags.yml yet: ${parts.join('; ')}` : '';
 }
 
 /* The problem file, in the layout of problems/_template.tex.  Blank fields stay blank; no solution = no block. */
@@ -171,6 +179,29 @@ const dollarAt = text => {
   const m = DOLLAR.exec(maskComments(text).replace(VERBATIM, s => s.replace(/[^\n]/g, ' ')));
   return m ? m.index + m[0].length - 1 : -1;
 };
+
+/* $ … $ and $$ … $$ as the bank writes them, \( … \) and \[ … \]: what a proposer types either way is sent the bank's
+   way.  \$ (a dollar sign), comments and verbatim text stay as they are; dollars that do not pair up ($$ closed by $, one
+   left over) leave the text as it is, for the check above to point at.  Lines stay where they were. */
+export function bankDelimiters(text) {
+  const src = String(text || ''), masked = maskComments(src).replace(VERBATIM, s => s.replace(/[^\n]/g, ' '));
+  const at = [];
+  for (let i = 0; i < masked.length; i++) {
+    if (masked[i] !== '$') continue;
+    let k = 0;
+    while (i - 1 - k >= 0 && masked[i - 1 - k] === '\\') k++;
+    if (k % 2) continue;                                // \$: a dollar sign
+    if (masked[i + 1] === '$') { at.push([i, 2]); i++; } else at.push([i, 1]);
+  }
+  if (!at.length || at.length % 2) return src;
+  for (let j = 0; j < at.length; j += 2) if (at[j][1] !== at[j + 1][1]) return src;
+  let out = src;
+  for (let j = at.length - 1; j >= 0; j--) {
+    const [i, n] = at[j], open = j % 2 === 0;
+    out = out.slice(0, i) + (n === 2 ? (open ? '\\[' : '\\]') : (open ? '\\(' : '\\)')) + out.slice(i + n);
+  }
+  return out;
+}
 const lineOf = (text, i) => text.slice(0, i).split('\n').length;
 
 /* The rules of bank/problems.py that apply to every text box (statement, solution and the Bibliography box: its fields
@@ -209,7 +240,7 @@ function appendixErrors(text, where, cites, cat, labels) {
     else if (inFigure(i)) out.push(`${where(i)}: a drawing is made on its own: cite the shared result next to it, not inside it.`);
     else if (cat !== null && !Object.prototype.hasOwnProperty.call(cat, name) && !unknown.has(name)) {
       unknown.add(name);
-      out.push(`${where(i)}: unknown shared result "${name}" (the list is in the writing rules).`);
+      out.push(`${where(i)}: unknown shared result "${name}" (the list is in LaTeX help).`);
     }
   }
   const { targets, refs } = labelRefs(masked);
@@ -250,9 +281,9 @@ export function validateDraft(draft, cat, bibKeys = null, appendix = null) {
 
   const title = effectiveTitle(d);
   let bad = unprintable(title);
-  if (bad.length) err('title', `The title cannot contain ${bad.join(' ')}: keep it plain text (write math symbols in words).`);
+  if (bad.length) err('title', `The title cannot contain ${bad.join(' ')}: keep it plain text (write maths symbols in words).`);
   const words = title.split(' ').length;
-  if (words > MAX_TITLE_WORDS) err('title', `The title has ${words} words; keep it to ${MAX_TITLE_WORDS} or fewer.`);
+  if (words > MAX_TITLE_WORDS) err('title', `The title is too long: keep it to ${MAX_TITLE_WORDS} words or fewer.`);
   if (!kebab(title)) err('title', 'The title needs at least one Latin letter or digit.');
 
   if (!block(d.statement)) err('statement', 'Write the problem statement (required).');
@@ -263,7 +294,7 @@ export function validateDraft(draft, cat, bibKeys = null, appendix = null) {
     if (m) err(field, `${where(m.index)}: remove ${m[0]}; the page adds the problem / solution / bibliography blocks itself.`);
     for (const [rx, label] of FORBIDDEN_TEX) {
       m = rx.exec(text);
-      if (m) err(field, `${where(m.index)}: ${label} cannot be used; only the club's LaTeX is available (see "Show available LaTeX").`);
+      if (m) err(field, `${where(m.index)}: ${label} cannot be used; only the club's LaTeX is available (see LaTeX help).`);
     }
     m = BIB_COMMANDS.exec(text);
     if (m) err(field, `${where(m.index)}: remove \\${m[1]}; citations are resolved automatically (put the entries in the Bibliography box).`);
@@ -357,8 +388,10 @@ const keepLines = t => t.replace(DROP_RE, m => (m.endsWith('\n') ? '%\n' : '%'))
    that box; lead = blank lines dropped at the top of the box; end = the page's own \end{problem} / \end{solution} line),
    lines.refs = [[first, last], …] (reference lists made from the Bibliography box and references.bib).
    `appendix`: the catalogue of shared results [{name, title, cites}]; the ones the solution cites get a heading at the
-   end (their text is not on this page), so \appendixref prints its number as in the bank's PDFs. */
-export function previewMain(draft, cat, globalBib = {}, appendix = []) {
+   end (their text is not on this page), so \appendixref prints its number as in the bank's PDFs.
+   `width` (pt): a narrower measure, for a screen narrower than the sheet (a phone; \sloppy then, as on the Problems page);
+   the page stays an A4 sheet, its text block only narrower. */
+export function previewMain(draft, cat, globalBib = {}, appendix = [], { width = null } = {}) {
   const d = { ...emptyDraft(), ...draft };
   const bib = Object.assign(Object.create(null), globalBib, parseBibText(d.bibtex));      // the draft's own entries win
   const stFigs = placeholderFigures(block(d.statement));
@@ -368,7 +401,9 @@ export function previewMain(draft, cat, globalBib = {}, appendix = []) {
   const r = resolveCitations(st, so, bib);
   const title = effectiveTitle(d).replace(/[\\{}~^]/g, '');
   const methods = d.methods.map(m => (cat.byType.methods.get(m) || { name: m }).name);
-  const out = ['\\begin{document}', `\\bankproblem{1}{${texEscape(title)}}{${texEscape(originLabel(cat, d.origin, oneLine(d.originDate), oneLine(d.originNumber)))}}{new}`];
+  const out = ['\\begin{document}'];
+  if (width > 0) out.push(`\\ifdim${width.toFixed(2)}pt<\\textwidth\\textwidth=${width.toFixed(2)}pt\\sloppy\\fi\\hsize=\\textwidth\\linewidth=\\textwidth\\columnwidth=\\textwidth`);
+  out.push(`\\bankproblem{1}{${texEscape(title)}}{${texEscape(originLabel(cat, d.origin, oneLine(d.originDate), oneLine(d.originNumber)))}}{new}`);
   if (methods.length) out.push(`\\bankmethods{${texEscape(methods.join(', '))}}`);
   const lines = { statement: null, solution: null, refs: [] };
   const push = (key, text, own, lead) => {
@@ -438,9 +473,67 @@ export function explainLog(log, lines, draft = null) {
   return { message, box, line, source, unclosed };
 }
 
-/* ------------------------------------------------------------------ GitHub link (the Edit links: bank-search.js::githubEditUrl) */
+/* ------------------------------------------------------------------ "Where is it from?" in one line */
 
-/* gh = {repo: 'owner/name', branch: 'main', problemsPath: 'problem-bank/problems'} (written by build.py). */
-export function githubNewFileUrl(gh, name) {
-  return `https://github.com/${gh.repo}/new/${gh.branch}/${gh.problemsPath}?filename=${encodeURIComponent(name)}`;
+/* "IMC 2012, Day 2, Problem 6" -> {origin: 'imc', originDate: '2012', originNumber: 'Day 2, Problem 6', known: true}.
+   A competition is recognised by its name, its slug or one of its aliases (tags.yml), as whole words, accents and case
+   aside; the longest one found wins.  The date is the first year in the text (or YYYY-MM, YYYY-MM-DD); what is left,
+   without the separators round it, is the problem number, as written ("P3", "#3" or "No. 3" become "Problem 3": a # could
+   not be printed).  Competitions are recognised, and, when no competition is named, a problem of one's own ("my own",
+   "own problem": Original) or a folklore one; a book, a paper or a course stays as written (known: false), and the page
+   keeps it as a reference. */
+const COMPETITION_KINDS = new Set(['university', 'high-school']), OTHER_KINDS = new Set(['original', 'folklore']);
+const OWN = { original: ['my own', 'mine', 'made it up', 'i made it', 'my problem'] };   // said by a proposer, on top of the aliases of tags.yml
+const fold = s => String(s || '').normalize('NFKD').replace(/\p{M}/gu, '').toLowerCase();
+const wordsOf = s => [...fold(s).matchAll(/[\p{L}\p{N}]+/gu)].map(m => m[0]);
+export function parseOrigin(text, cat) {
+  const none = { origin: '', originDate: '', originNumber: '', known: false };
+  const raw = oneLine(text);
+  if (!raw) return none;
+  const cut = [];                                              // [start, end) of the raw text taken by the date and the name
+  let originDate = '';
+  // (no lookbehind: Safari before 16.4 could not read this file at all)
+  const dm = /(^|[^\p{L}\p{N}])((?:1[5-9]|20)\d\d)(?:-(\d\d)(?:-(\d\d))?)?(?![\p{L}\p{N}])/u.exec(raw);
+  if (dm) {
+    const full = [dm[2], dm[3], dm[4]].filter(Boolean).join('-');
+    originDate = validDate(full) ? full : dm[2];
+    cut.push([dm.index + dm[1].length, dm.index + dm[0].length]);
+  }
+  const tokens = [...raw.matchAll(/[\p{L}\p{N}]+/gu)].map(m => ({ w: fold(m[0]), start: m.index, end: m.index + m[0].length }))
+    .filter(t => !cut.some(([a, b]) => t.start >= a && t.end <= b));
+  const find = kinds => {
+    let best = null;
+    for (const t of cat.byType.origin.values()) {
+      if (!kinds.has(t.kind)) continue;
+      for (const phrase of [t.name, t.slug.replace(/-/g, ' '), ...(t.aliases || []), ...(OWN[t.kind] || [])]) {
+        const ws = wordsOf(phrase);
+        if (!ws.length) continue;
+        for (let i = 0; i + ws.length <= tokens.length; i++) {
+          if (!ws.every((w, k) => tokens[i + k].w === w)) continue;
+          const len = ws.join(' ').length;
+          if (!best || len > best.len) best = { slug: t.slug, kind: t.kind, len, start: tokens[i].start, end: tokens[i + ws.length - 1].end };
+        }
+      }
+    }
+    return best;
+  };
+  const best = find(COMPETITION_KINDS) || find(OTHER_KINDS);
+  if (!best) return none;
+  cut.push([best.start, best.end]);
+  let rest = raw;
+  for (const [a, b] of cut.sort((x, y) => y[0] - x[0])) rest = rest.slice(0, a) + ' ' + rest.slice(b);
+  rest = oneLine(rest).replace(/\s+([,;:.])/g, '$1').replace(/([,;:])(?:\s*[,;:])+/g, '$1')
+    .replace(/^[\s,;:.()\-–—/]+|[\s,;:()\-–—/]+$/g, '');
+  const p = /^(?:p|pb|prob|problem|no|nr|#)\.?\s*(\d+)$/i.exec(rest);
+  // one's own problem or a folklore one has no number: the words left ("my") are not one
+  return { origin: best.slug, originDate, originNumber: OTHER_KINDS.has(best.kind) ? '' : p ? `Problem ${p[1]}` : rest, known: true };
+}
+
+/* ------------------------------------------------------------------ the email */
+
+/* The email the Send button prepares (Antoine, 2026-11-23: "no bullshit"): its subject, and one line, the problem's title;
+   the files say the rest (the PDF, the problem file, the note). */
+export function emailMessage(draft) {
+  const title = effectiveTitle(draft || {});
+  return { subject: `Problem proposal: ${title}`, body: `Problem: ${title}\n` };
 }

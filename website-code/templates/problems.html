@@ -6,6 +6,7 @@
     <link rel="modulepreload" href="{{ url_for('static', filename='js/bank-ui.js') }}{{ v }}">
     <link rel="modulepreload" href="{{ url_for('static', filename='js/bank-search.js') }}{{ v }}">
     <link rel="modulepreload" href="{{ url_for('static', filename='js/bank-compile.js') }}{{ v }}">
+    <link rel="modulepreload" href="{{ url_for('static', filename='js/tree-fold.js') }}{{ v }}">
     <script src="{{ url_for('static', filename='js/tips.js') }}{{ v }}" async></script>
 {% endblock %}
 
@@ -15,13 +16,7 @@
   <div class="bank-head">
     <h1 class="node lit">Problems</h1>
   </div>
-  <p class="bank-lede">Search the club's problem bank, tick the problems you want and create your own PDF.</p>
-
-  {% if preview %}
-  <div class="alert alert-warning small" role="status">
-    <strong>Preview build.</strong> Includes unreviewed problems; the public site marks them “Proposed” and lists them only when a visitor asks for them in Filters.
-  </div>
-  {% endif %}
+  <p class="bank-lede">Search the club's problem bank or browse its tree of topics, tick the problems you want and create your own PDF.</p>
 
   <noscript><div class="alert alert-warning small">The problem search needs JavaScript.</div></noscript>
   <div class="alert alert-danger small" role="alert" data-load-error hidden>The problem search could not load. Reload the page.</div>
@@ -30,96 +25,26 @@
     This browser cannot run the LaTeX engine (it needs Web Workers, WebAssembly and DecompressionStream). You can still search and download the <code>.tex</code> files.
   </div>
 
-  <!-- [> search bar] [filters] / [chosen tags] -->
+  <!-- the search: what is typed filters the titles; under the bar, the tags the words could mean -->
   <div class="bank-toolbar">
     <div id="bank-searchbox" class="bank-searchbox">
-      <input id="bank-search" type="text" class="bank-search" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="bank-listbox" aria-haspopup="listbox" aria-label="Search titles, or pick a tag" autocomplete="off" autocorrect="off" autocapitalize="off" enterkeyhint="search" spellcheck="false" placeholder="Search a title, or pick a tag">
+      <input id="bank-search" type="text" class="bank-search" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="bank-listbox" aria-haspopup="listbox" aria-label="Search titles, topics and origins" autocomplete="off" autocorrect="off" autocapitalize="off" enterkeyhint="search" spellcheck="false" placeholder="Search a title, a topic or an origin">
     </div>
-    <button id="bank-filter-btn" type="button" class="btn bank-filter-btn" aria-expanded="false" aria-controls="bank-advanced" title="Advanced filters">
-      Filters <span id="bank-filter-count" class="bank-filter-count" hidden></span><span class="chev" aria-hidden="true"></span>
-    </button>
-    <div id="bank-chips" class="bank-chips" role="group" aria-label="Selected tags" hidden></div>
   </div>
-  <div id="bank-listbox" class="bank-listbox" role="listbox" aria-label="Tags" aria-multiselectable="true" tabindex="-1" hidden></div>
+  <div id="bank-listbox" class="bank-listbox" role="listbox" aria-label="Tags" tabindex="-1" hidden></div>
 
-  <!-- advanced menu (Filters) -->
-  <div id="bank-advanced" class="card bank-advanced" hidden>
-    <div class="card-body">
-      <div class="row g-3 align-items-start">
-        <!-- every group: a title, its controls below -->
-        <div role="group" aria-labelledby="bank-methods-label">
-          <div class="bank-advanced-title"><span id="bank-methods-label">Methods</span> <button type="button" class="tip-btn" aria-label="About Methods" data-tip="Spoilers, hidden by default. Shown, they are in the list and the search; in the PDFs only if you ask.">*</button></div>
-          <div class="bank-switches">
-            <div class="form-check form-switch">
-              <input type="checkbox" role="switch" id="bank-show-methods">
-              <label class="form-check-label" for="bank-show-methods">Show <span class="text-muted small">(spoilers)</span></label>
-            </div>
-            <!-- comes and goes with Show, unfolding beside it (bank-ui.js setMethodsPdf) -->
-            <div class="form-check form-switch bank-fold" id="bank-methods-pdf-option" hidden>
-              <input type="checkbox" role="switch" id="bank-methods-pdf">
-              <label class="form-check-label" for="bank-methods-pdf">In the PDFs</label>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6 col-lg-3">
-          <div class="bank-advanced-title"><span id="bank-op-label">Several tags</span> <button type="button" class="tip-btn" aria-label="About Several tags" data-tip-from="bank-op-help">*</button></div>
-          <div class="btn-group" role="group" aria-labelledby="bank-op-label">
-            <input type="radio" class="btn-check" name="bank-op" id="bank-op-and" value="and" checked><label class="btn btn-sm" for="bank-op-and">AND</label>
-            <input type="radio" class="btn-check" name="bank-op" id="bank-op-or" value="or"><label class="btn btn-sm" for="bank-op-or">OR</label>
-          </div>
-          <span id="bank-op-help" hidden>Problems with all the tags.</span>
-        </div>
-      </div>
-      <!-- a second row of its own: what unfolds above never moves it -->
-      <div class="row g-3 align-items-start">
-        <div id="bank-proposed-option" role="group" aria-labelledby="bank-proposed-label" hidden>
-          <div class="bank-advanced-title"><span id="bank-proposed-label">Proposed problems</span> <button type="button" class="tip-btn" aria-label="About Proposed problems" data-tip="Sent by members and not reviewed yet: they may contain mistakes.">*</button></div>
-          <div class="form-check form-switch">
-            <input type="checkbox" role="switch" id="bank-show-proposed">
-            <label class="form-check-label" for="bank-show-proposed">Show</label>
-          </div>
-        </div>
-        <div class="col-lg-6">
-          <div class="bank-advanced-title" id="bank-solved-label">Solutions</div>
-          <div class="btn-group" role="group" aria-labelledby="bank-solved-label">
-            <input type="radio" class="btn-check" name="bank-solved" id="bank-solved-all" value="all" checked><label class="btn btn-sm" for="bank-solved-all">All</label>
-            <input type="radio" class="btn-check" name="bank-solved" id="bank-solved-full" value="full"><label class="btn btn-sm" for="bank-solved-full">Full solution</label>
-            <input type="radio" class="btn-check" name="bank-solved" id="bank-solved-partial" value="partial"><label class="btn btn-sm" for="bank-solved-partial">Partial solution</label>
-            <input type="radio" class="btn-check" name="bank-solved" id="bank-solved-none" value="none"><label class="btn btn-sm" for="bank-solved-none">No solution</label>
-          </div>
-        </div>
-        <div class="col-lg-6" id="bank-year-box">
-          <div class="bank-advanced-title">Origin year <span id="bank-year-label" class="fw-normal text-muted"></span> <button type="button" class="tip-btn" aria-label="About Origin year" data-tip="Problems without a year show only when the whole range is selected.">*</button></div>
-          <div class="bank-range">
-            <div class="bank-range-track"><div class="bank-range-fill"></div></div>
-            <input type="range" class="bank-range-input" id="bank-year-lo" min="0" max="0" step="1" value="0" aria-label="Origin year from">
-            <input type="range" class="bank-range-input" id="bank-year-hi" min="0" max="0" step="1" value="0" aria-label="Origin year to">
-          </div>
-        </div>
-      </div>
-      <div class="mt-3"><button id="bank-reset" type="button" class="btn btn-sm btn-outline-danger">Reset all filters</button></div>
+  <!-- the filters, a word each with its menu under it (bank-ui.js FILTERS), and what is done with the ticks.  The row is
+       there from the start and stays on screen (see .bank-tools in site.css): nothing comes later and pushes the tree down. -->
+  <div id="bank-tools" class="bank-tools">
+    <div id="bank-filters" class="bank-filters" role="group" aria-label="Filters"><span class="bank-filter"><button type="button" class="bank-filter-word" aria-expanded="false">Difficulty<span class="chev" aria-hidden="true"></span></button></span><span class="bank-filter"><button type="button" class="bank-filter-word" aria-expanded="false">Origin<span class="chev" aria-hidden="true"></span></button></span><span class="bank-filter"><button type="button" class="bank-filter-word" aria-expanded="false">Solution<span class="chev" aria-hidden="true"></span></button></span><span class="bank-filter"><button type="button" class="bank-filter-word" aria-expanded="false">Years<span class="chev" aria-hidden="true"></span></button></span><span class="bank-filter"><button type="button" class="bank-filter-word" aria-expanded="false">Methods<span class="chev" aria-hidden="true"></span></button></span>{% if bank_proposed %}<span class="bank-filter"><button type="button" class="bank-filter-word" aria-expanded="false">Proposed<span class="chev" aria-hidden="true"></span></button></span>{% endif %}<button type="button" id="bank-reset" class="btn btn-link bank-filters-clear is-idle" tabindex="-1" aria-hidden="true">Clear all</button></div>
+    <div id="bank-actions" class="bank-actions">
+      <button id="bank-order-btn" type="button" class="btn btn-sm is-idle" aria-expanded="false" aria-controls="bank-order" disabled title="See or change the order of the problems in the PDF">PDF order</button>
+      <button id="bank-cancel" type="button" class="btn btn-sm" hidden>Cancel</button>
+      <button id="bank-create" type="button" class="btn btn-sm btn-primary" disabled>Create PDF</button>
     </div>
+    <div id="bank-menu" class="bank-menu" role="group" hidden></div>
   </div>
-
-  <!-- results: the bar stays on screen while the list scrolls (see .bank-bar in site.css) -->
-  <div class="bank-bar">
-    <div id="bank-results-head" class="bank-results-head" hidden>
-      <div id="bank-select-all-wrap" class="form-check">
-        <input type="checkbox" id="bank-select-all">
-        <label class="form-check-label" for="bank-select-all">Select all</label>
-      </div>
-      <span id="bank-count"></span>
-      <button id="bank-hide-all" type="button" class="btn btn-sm" hidden>Hide all</button>
-      <span id="bank-selected-count"></span>
-      <button id="bank-clear-selection" type="button" class="btn btn-link">Clear selection</button>
-    </div>
-    <div class="bank-actions">
-      <button id="bank-order-btn" type="button" class="btn" aria-expanded="false" aria-controls="bank-order" disabled title="See or change the order of the problems in the PDF">PDF order: automatic</button>
-      <button id="bank-create" type="button" class="btn btn-primary" disabled>Create PDF</button>
-      <button id="bank-cancel" type="button" class="btn" hidden>Cancel</button>
-    </div>
-  </div>
-  <div id="bank-status" class="bank-status small text-muted" role="status" aria-live="polite"></div>
+  <div id="bank-status" class="bank-status small text-muted" aria-live="off"></div>
   <div id="bank-announce" class="visually-hidden" role="status" aria-live="polite"></div>
 
   <!-- order of the ticked problems in the PDF: automatic, or dragged by hand (kept in the URL) -->
@@ -135,10 +60,36 @@
       <ol id="bank-order-list" class="list-group bank-order-list" aria-label="Ticked problems in PDF order"></ol>
     </div>
   </section>
-  <p id="bank-idle" class="text-muted my-4" hidden><span id="bank-idle-count"></span> Search a title or pick a tag, or <button id="bank-show-all" type="button" class="btn btn-sm align-baseline">Show all</button></p>
-  <p id="bank-empty" class="text-muted my-4" hidden>No problem matches these filters.</p>
   <p id="bank-none-published" class="text-muted my-4" hidden>No problem has been published yet.</p>
-  <ol id="bank-results" class="list-group bank-results" aria-label="Matching problems"></ol>
+
+  <!-- the tree of topics on the left; on the right, tied to the topic chosen, the list of its problems (never the tree
+       again).  The tree starts folded: its root, All problems, is written here (build.py tree_top), so that nothing jumps
+       when bank-ui.js arrives and draws the same row; its + brings the topics. -->
+  <section id="bank-tree" class="bank-tree" aria-label="Topics and problems"{% if not bank_topics %} hidden{% endif %}>
+    <div class="bank-left">
+      <button id="bank-topicline" type="button" class="bank-topicline" aria-expanded="false" aria-controls="bank-tree-topics" hidden></button>
+      <ul id="bank-tree-topics" class="tt">
+        <li class="tt-root"><div class="tt-row"><button type="button" class="tt-tg" data-for="" aria-expanded="false" aria-label="Unfold the tree">+</button><button type="button" class="tt-name" data-slug="" aria-controls="bank-tree-panel">All problems<span class="visually-hidden">, </span><span class="tt-count">{{ bank_total }}</span></button></div></li>
+      </ul>
+    </div>
+    <div id="bank-right" class="bank-right">
+      <div id="bank-tree-panel" class="tt-panel">
+        <!-- the head of the list: what it is, then Select all and the ticks.  Two lines whatever is ticked: a tick never moves the list -->
+        <div id="bank-results-head" class="bank-results-head" hidden>
+          <p id="bank-count" class="bank-count" role="status"></p>
+          <div class="bank-head-row">
+            <div id="bank-select-all-wrap" class="form-check">
+              <input type="checkbox" id="bank-select-all">
+              <label class="form-check-label" for="bank-select-all">Select all</label>
+            </div>
+            <span class="bank-mine"><span id="bank-selected-count"></span><button id="bank-clear-selection" type="button" class="btn btn-link" hidden>Clear<span class="bank-wide"> selection</span></button></span>
+          </div>
+        </div>
+        <p id="bank-empty" class="bank-empty" hidden>No problem matches. <button id="bank-empty-clear" type="button" class="btn btn-link">Clear the filters</button></p>
+        <ol id="bank-results" class="list-group bank-results" aria-label="Problems"></ol>
+      </div>
+    </div>
+  </section>
 
   <!-- the two PDFs -->
   <section id="bank-output" class="bank-output mt-4" hidden aria-label="Generated PDFs">

@@ -6,6 +6,7 @@
     <link rel="modulepreload" href="{{ url_for('static', filename='js/bank-propose-ui.js') }}{{ v }}">
     <link rel="modulepreload" href="{{ url_for('static', filename='js/bank-search.js') }}{{ v }}">
     <link rel="modulepreload" href="{{ url_for('static', filename='js/bank-compile.js') }}{{ v }}">
+    <link rel="modulepreload" href="{{ url_for('static', filename='js/tree-fold.js') }}{{ v }}">
     <link rel="modulepreload" href="{{ url_for('static', filename='js/bank-tex.js') }}{{ v }}">
     <link rel="modulepreload" href="{{ url_for('static', filename='js/bank-propose.js') }}{{ v }}">
 {% endblock %}
@@ -15,147 +16,154 @@
 <div>
   <div class="bank-head">
     <h1 class="node lit">Propose a problem</h1>
-    <button id="pp-clear" type="button" class="btn btn-sm" hidden>Clear the form</button>
   </div>
-  <p class="bank-lede">Write your problem, check the preview and send it. A board member reviews it before it joins the <a href="{{ url_for('problems') }}">problem bank</a>. Only the statement and one area are required; the rest can be added later, by you or the board.</p>
+  <p class="bank-lede">Write your problem, see it typeset and send it to the club. We read every proposal and answer you by email.</p>
 
-  <noscript><div class="alert alert-warning small">The form needs JavaScript. You can send your problem to olympiadclub@math.ethz.ch instead.</div></noscript>
+  <noscript><div class="alert alert-warning small">The form needs JavaScript. You can send your problem to {{ club_email }} instead.</div></noscript>
   <div class="alert alert-danger small" role="alert" data-load-error hidden>The form could not load. Reload the page.</div>
 
-  <div id="pp-draft-note" class="alert alert-info small" role="status" hidden>Your draft was restored from this browser.</div>
-  <div id="pp-other-tab" class="alert alert-warning small" role="status" hidden>Another tab changed the draft saved in this browser. Type here to save this one again.</div>
-
-  <form id="pp-form" novalidate>
-    <div class="mb-3">
-      <label for="pp-title" class="form-label">Title <span class="text-muted fw-normal small">(optional)</span></label>
-      <input id="pp-title" class="form-control" type="text" maxlength="120" autocomplete="off">
-    </div>
-
-    <div class="row g-3 mb-3">
-      <div class="col-lg-6">
-        <label for="pp-statement" class="form-label">Statement <span class="text-danger" aria-hidden="true">*</span><span class="visually-hidden">(required)</span></label>
-        <textarea id="pp-statement" class="form-control pp-tex" rows="14" spellcheck="false" autocorrect="off" autocapitalize="off" aria-required="true"></textarea>
+  <!-- A desk and a sheet: what is written on the left, the same typeset on the right (on a phone, under it).  Everything
+       but the statement waits behind a line of its own, opened when wanted (bank-propose-ui.js). -->
+  <form id="pp-form" class="pp-desk" novalidate>
+    <div class="pp-write">
+      <div class="pp-topline">
+        <span id="pp-saved" class="pp-saved" role="status" aria-live="polite"></span>
+        <button id="pp-clear" type="button" class="btn btn-link pp-clear" hidden aria-haspopup="dialog" aria-controls="pp-confirm">Start again</button>
       </div>
-      <div class="col-lg-6">
-        <label for="pp-solution" class="form-label">Solution <span class="text-muted fw-normal small">(optional)</span></label>
-        <textarea id="pp-solution" class="form-control pp-tex" rows="14" spellcheck="false" autocorrect="off" autocapitalize="off"></textarea>
-      </div>
-    </div>
-    <details class="pp-rules small text-muted mb-4">
-      <summary><span>Writing rules</span></summary>
-      <ul class="mt-2 mb-0">
-      <li>Only the club's LaTeX (below): no <code>\usepackage</code>, no <code>\input</code>, no images.</li>
-      <li>Drawings: TikZ inside <code>\begin{tikzpicture}</code> … <code>\end{tikzpicture}</code>. The preview shows a box; the website draws the real picture.</li>
-      <li>Your own macros: <code>\newcommand</code> (not <code>\def</code>).</li>
-      <li>No date or time (<code>\today</code>).</li>
-      <li>Citations: <code>\cite{key}</code>, with the entry in the Bibliography box below.</li>
-      <li>Shared results (a theorem with its proof, kept in the bank's appendix): cite one in the solution with <code>Appendix~\appendixref{name}</code>; <code>\appendixref</code> prints its number (A.1) and the PDF adds the result at the end. New shared results are added by the board.{% if appendix_results %} Available:
-        {% for r in appendix_results %}<code>{{ r.name|e }}</code> ({{ r.title|e }}){% if not loop.last %}, {% endif %}{% endfor %}.{% endif %}</li>
-      </ul>
-      <button id="pp-show-latex" type="button" class="btn btn-sm mt-2" aria-haspopup="dialog" aria-controls="pp-latex">Show available LaTeX</button>
-    </details>
+      <p id="pp-other-tab" class="pp-other-tab small" role="status" hidden>Another tab changed the draft saved on this device. Type here to save this one again.</p>
 
-    <section class="card mb-4" aria-labelledby="pp-preview-title">
-      <div class="card-header d-flex flex-wrap align-items-center gap-2">
-        <strong id="pp-preview-title">Preview</strong>
-        <span id="pp-preview-status" class="small text-muted" role="status" aria-live="polite"></span>
-        <span class="flex-grow-1"></span>
-        <div class="form-check form-switch m-0">
-          <input type="checkbox" role="switch" id="pp-auto" checked>
-          <label class="form-check-label small" for="pp-auto">Update while typing</label>
+      <label for="pp-title" class="visually-hidden">Title (optional)</label>
+      <input id="pp-title" class="pp-title-input" type="text" maxlength="120" autocomplete="off" placeholder="Title">
+
+      <div class="pp-label-row">
+        <label for="pp-statement" class="form-label">Statement</label>
+        <button id="pp-show-latex" type="button" class="btn btn-link pp-help-btn" aria-haspopup="dialog" aria-controls="pp-latex">LaTeX help</button>
+      </div>
+      <textarea id="pp-statement" class="form-control pp-tex pp-grow" rows="5" aria-describedby="pp-statement-error" spellcheck="false" autocorrect="off" autocapitalize="off" aria-required="true"
+        placeholder="Write here"></textarea>
+      <div id="pp-statement-error" class="pp-field-error" role="alert" hidden></div>
+
+      <div class="pp-part">
+        <button id="pp-add-about" type="button" class="pp-add" aria-expanded="false" aria-controls="pp-about-box"><span class="pp-add-label">What is it about?</span><span class="pp-add-sum" id="pp-about-sum"></span></button>
+        <div id="pp-about-box" class="pp-part-box" hidden>
+          <ul id="pp-tree" class="tt pp-tree" aria-label="Topics"></ul>
         </div>
-        <button id="pp-refresh" type="button" class="btn btn-sm btn-outline-primary">Update now</button>
       </div>
-      <div class="card-body">
-        <div id="pp-preview-error" class="alert alert-danger small" role="alert" hidden></div>
-        <iframe id="pp-pdf" class="bank-pdf" aria-label="Preview of the problem as a PDF" hidden></iframe>
-        <p id="pp-pdf-links" class="mt-2 mb-0" hidden><a id="pp-pdf-open" class="btn btn-sm btn-outline-primary me-2" href="#" target="_blank" rel="noopener">Open PDF</a><a id="pp-pdf-download" class="btn btn-sm" href="#" download="preview.pdf">Download PDF</a></p>
-        <p class="legal"><a href="{{ url_for('static', filename='busytex/NOTICE.txt') }}" target="_blank" rel="noopener">licences</a></p>
+
+      <div class="pp-part">
+        <button id="pp-add-solution" type="button" class="pp-add" aria-expanded="false" aria-controls="pp-solution-box"><span class="pp-add-label">Add a solution</span></button>
+        <div id="pp-solution-box" class="pp-part-box" hidden>
+          <label for="pp-solution" class="visually-hidden">Solution</label>
+          <textarea id="pp-solution" class="form-control pp-tex pp-grow" rows="5" aria-describedby="pp-solution-error" spellcheck="false" autocorrect="off" autocapitalize="off"></textarea>
+          <div id="pp-solution-error" class="pp-field-error" role="alert" hidden></div>
+        </div>
       </div>
+
+      <div class="pp-part">
+        <button id="pp-add-from" type="button" class="pp-add" aria-expanded="false" aria-controls="pp-from-box"><span class="pp-add-label">Where is it from?</span><span class="pp-add-sum" id="pp-from-sum"></span></button>
+        <div id="pp-from-box" class="pp-part-box" hidden>
+          <label for="pp-from" class="visually-hidden">Where is it from?</label>
+          <div class="pp-from-wrap">
+            <input id="pp-from" class="form-control" type="text" autocomplete="off" placeholder="For example: IMC 2012, Problem 3" aria-describedby="pp-from-read"
+              role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="pp-from-list">
+            <div id="pp-from-list" class="bank-listbox pp-from-list" role="listbox" aria-label="Competitions" hidden></div>
+          </div>
+          <p id="pp-from-read" class="form-text"></p>
+        </div>
+      </div>
+
+      <div class="pp-part">
+        <button id="pp-add-note" type="button" class="pp-add" aria-expanded="false" aria-controls="pp-note-box"><span class="pp-add-label">Why do you like it?</span><span class="pp-add-sum" id="pp-note-sum"></span></button>
+        <div id="pp-note-box" class="pp-part-box" hidden>
+          <label for="pp-note" class="visually-hidden">Why do you like it?</label>
+          <textarea id="pp-note" class="form-control pp-note pp-grow" rows="3" placeholder="What makes it nice: the idea, the surprise, where you met it."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <section class="pp-sheet-col" aria-labelledby="pp-preview-title">
+      <h2 id="pp-preview-title" class="visually-hidden">Typeset</h2>
+      <div id="pp-sheet" class="pp-sheet">
+        <p id="pp-sheet-empty" class="pp-sheet-empty">Your problem appears here.</p>
+        <div id="pp-pages" class="pp-pages" hidden></div>
+      </div>
+      <!-- on a line of its own, its room kept (site.css .pp-status): a new message never moves the sheet -->
+      <p id="pp-preview-status" class="pp-status small text-muted" role="status" aria-live="polite"></p>
+      <p id="pp-typeset-line" class="small text-muted" hidden><button id="pp-typeset" type="button" class="btn btn-sm">Show it typeset</button> a one-time download of about {{ engine_mb or 16 }} MB</p>
+      <div id="pp-preview-error" class="alert alert-danger small" role="alert" hidden></div>
+      <p class="legal"><a href="{{ url_for('static', filename='busytex/NOTICE.txt') }}" target="_blank" rel="noopener">licences</a></p>
     </section>
 
-    <fieldset class="mb-4">
-      <legend class="node">Tags</legend>
-      <div class="row g-3">
-        <div class="col-lg-6">
-          <label class="form-label" for="pp-area-input">Area <span class="text-danger" aria-hidden="true">*</span><span class="visually-hidden">(required)</span> <span class="text-muted fw-normal small">(what the problem is about)</span></label>
-          <div class="pp-picker" id="pp-area"></div>
+    <details id="pp-details" class="pp-details">
+      <summary><span>More details</span> <span class="pp-details-hint">methods, difficulty, references, bibliography</span></summary>
+      <div class="pp-details-body">
+        <div class="pp-field">
+          <p class="form-label" id="pp-methods-label">Methods <span class="text-muted fw-normal small">(what the solution uses)</span></p>
+          <ul id="pp-methods" class="tt pp-tree" aria-labelledby="pp-methods-label" tabindex="-1"></ul>
         </div>
-        <div class="col-lg-6">
-          <label class="form-label" for="pp-methods-input">Methods <span class="text-muted fw-normal small">(optional: what the solution uses)</span></label>
-          <div class="pp-picker" id="pp-methods"></div>
-        </div>
-        <div class="col-md-6 col-lg-4">
-          <label class="form-label" for="pp-difficulty">Difficulty <span class="text-muted fw-normal small">(optional, your estimate)</span></label>
-          <select id="pp-difficulty" class="form-select"></select>
+        <div class="pp-field">
+          <p class="form-label" id="pp-difficulty-label">Difficulty <span class="text-muted fw-normal small">(your estimate)</span></p>
+          <div id="pp-difficulty" class="pp-choices" role="group" aria-labelledby="pp-difficulty-label" tabindex="-1"></div>
           <div class="form-text" id="pp-difficulty-help"></div>
         </div>
-      </div>
-      <p class="form-text mt-2 mb-0">No fitting tag? Type its name and choose “Propose … as a new tag”: a board member adds it.</p>
-    </fieldset>
-
-    <fieldset class="mb-4">
-      <legend class="node">Where it comes from <span class="fw-normal small">(optional)</span></legend>
-      <div class="row g-3">
-        <div class="col-md-4">
-          <label class="form-label" for="pp-origin">Competition or source</label>
-          <select id="pp-origin" class="form-select" aria-describedby="pp-origin-help"></select>
-          <div class="form-text" id="pp-origin-help">Not in the list? Write it in References.</div>
+        <div class="pp-field">
+          <label class="form-label" for="pp-references">References <span class="text-muted fw-normal small">(sources or links, one per line)</span></label>
+          <textarea id="pp-references" class="form-control pp-grow" rows="2"></textarea>
         </div>
-        <div class="col-6 col-md-4">
-          <label class="form-label" for="pp-origin-date">Date</label>
-          <input id="pp-origin-date" class="form-control" type="text" inputmode="numeric" autocomplete="off" aria-describedby="pp-origin-date-help">
-          <div class="form-text" id="pp-origin-date-help">E.g. 1989 or 1989-12-02.</div>
-        </div>
-        <div class="col-6 col-md-4">
-          <label class="form-label" for="pp-origin-number">Problem number</label>
-          <input id="pp-origin-number" class="form-control" type="text" autocomplete="off" aria-describedby="pp-origin-number-help">
-          <div class="form-text" id="pp-origin-number-help">E.g. A3 or Problem 6.</div>
-        </div>
-        <div>
-          <label class="form-label" for="pp-references">References</label>
-          <textarea id="pp-references" class="form-control" rows="2" placeholder="Sources or links, one per line"></textarea>
+        <div class="pp-field">
+          <label for="pp-bibtex" class="form-label">Bibliography <span class="text-muted fw-normal small">(BibTeX, for <code>\cite{key}</code> in the text)</span></label>
+          <textarea id="pp-bibtex" class="form-control pp-tex pp-grow" rows="5" aria-describedby="pp-bib-keys pp-bibtex-error" spellcheck="false" autocorrect="off" autocapitalize="off" placeholder="@article{hurwitz1967,&#10;  author  = {Solomon Hurwitz},&#10;  title   = {On the Rational Solutions of $m^n = n^m$},&#10;  journal = {The American Mathematical Monthly},&#10;  year    = {1967},&#10;}"></textarea>
+          <div class="form-text" id="pp-bib-keys"></div>
+          <div id="pp-bibtex-error" class="pp-field-error" role="alert" hidden></div>
         </div>
       </div>
-    </fieldset>
+    </details>
 
-    <div class="mb-4">
-      <label for="pp-bibtex" class="form-label">Bibliography <span class="text-muted fw-normal small">(optional, BibTeX; only for <code>\cite{key}</code> in the text)</span></label>
-      <textarea id="pp-bibtex" class="form-control pp-tex" rows="5" spellcheck="false" autocorrect="off" autocapitalize="off" placeholder="@article{hurwitz1967,&#10;  author  = {Solomon Hurwitz},&#10;  title   = {On the Rational Solutions of $m^n = n^m$},&#10;  journal = {The American Mathematical Monthly},&#10;  year    = {1967},&#10;}"></textarea>
-      <div class="form-text" id="pp-bib-keys"></div>
-    </div>
-  </form>
-
-  <section class="card mb-4" aria-labelledby="pp-send-title">
-    <div class="card-header"><strong id="pp-send-title">Send your problem</strong></div>
-    <div class="card-body">
+    <section class="pp-send" aria-labelledby="pp-send-title">
+      <h2 id="pp-send-title" class="visually-hidden">Send it</h2>
       <div id="pp-errors" class="alert alert-warning small" role="alert" hidden></div>
-      <ol class="pp-steps small mb-3">
-        <li>Click <strong>Copy file and open GitHub</strong>. GitHub opens a new file, <code id="pp-filename">new-untitled-problem.tex</code>. Sign in, or create a free account, if GitHub asks.</li>
-        <li>Paste the file (<kbd>Ctrl</kbd>+<kbd>V</kbd>, on a Mac <kbd>Cmd</kbd>+<kbd>V</kbd>; on a phone, touch and hold, then Paste).</li>
-        <li>Click <strong>Propose new file</strong> (or <strong>Commit changes…</strong>), then <strong>Create pull request</strong>. A board member checks it, may add tags or a solution, then adds it to the bank. You can follow the review on GitHub.</li>
-      </ol>
-      <div class="d-flex flex-wrap gap-2 align-items-center">
-        <button id="pp-submit" type="button" class="btn btn-primary">Copy file and open GitHub</button>
-        <a id="pp-download" class="btn" href="#" download="problem.tex">Download .tex</a>
-        <button id="pp-show-file" type="button" class="btn" aria-expanded="false" aria-controls="pp-file">Show the file</button>
+      <div class="pp-send-row">
+        <button id="pp-submit" type="button" class="btn btn-primary" data-address="{{ club_email }}">Send to the club</button>
         <span id="pp-submit-status" class="small" role="status" aria-live="polite"></span>
       </div>
-      <p class="small text-muted mt-2 mb-0">Your proposal is public on GitHub as soon as you send it.</p>
-      <p id="pp-open-fallback" class="small mt-2 mb-0" hidden>GitHub did not open? <a id="pp-github-link" href="#" target="_blank" rel="noopener">Open the new-file page</a> and paste the file there.</p>
-      <textarea id="pp-file" class="form-control pp-tex mt-2" rows="14" readonly hidden aria-label="The problem file"></textarea>
-      <p class="small text-muted mt-3 mb-0">No GitHub account? Send your problem to <a href="mailto:olympiadclub@math.ethz.ch">olympiadclub@math.ethz.ch</a>, with the downloaded .tex file attached.</p>
-    </div>
-  </section>
+      <p id="pp-mail-help" class="pp-send-note small text-muted" hidden>Nothing opened? Send the files to {{ club_email }}.</p>
+    </section>
+  </form>
 
   <dialog id="pp-latex" class="pp-dialog" aria-labelledby="pp-latex-title">
     <div class="d-flex align-items-center gap-2 mb-2">
-      <h2 id="pp-latex-title" class="h5 m-0">Available LaTeX</h2>
+      <h2 id="pp-latex-title" class="h5 m-0">LaTeX help</h2>
       <span class="flex-grow-1"></span>
       <button type="button" class="btn-close" aria-label="Close" data-close></button>
     </div>
-    <p class="small text-muted mb-3">Statements and solutions can use everything this preamble (<code>problem-bank/preamble.tex</code>) loads or defines, and nothing else: packages cannot be added. Something missing? Ask the board.</p>
-    <pre id="pp-preamble" class="pp-preamble" tabindex="0">Loading…</pre>
+    <div class="pp-help">
+      <ul class="pp-rules">
+        <li>Write as in any LaTeX document: maths in <code>\( … \)</code> or <code>$ … $</code>, displays in <code>\[ … \]</code> or <code>$$ … $$</code>, your own <code>\newcommand</code> (not <code>\def</code>).</li>
+        <li>Drawings: TikZ in <code>\begin{tikzpicture}</code> … <code>\end{tikzpicture}</code>. The sheet here shows a box; the website draws the picture.</li>
+        <li>Citations: <code>\cite{key}</code>, with the entry under More details, Bibliography.</li>
+        <li>Not here: <code>\usepackage</code>, <code>\input</code>, images, the date (<code>\today</code>).</li>
+      </ul>
+{%- if appendix_results %}
+      <h3 class="pp-help-h">Shared results</h3>
+      <p class="pp-help-p">Theorems kept with their proofs in the bank's appendix. Cite one in a solution with <code>Appendix~\appendixref{name}</code>: the PDF prints its number and adds it at the end.</p>
+      <dl class="pp-results">
+        {%- for r in appendix_results %}
+        <dt><code>{{ r.name|e }}</code></dt><dd>{{ r.title|e }}</dd>
+        {%- endfor %}
+      </dl>
+{%- endif %}
+      <h3 class="pp-help-h">Everything the club's LaTeX has</h3>
+      <p class="pp-help-p">Statements and solutions can use what this preamble (<code>problem-bank/preamble.tex</code>) loads or defines, and nothing else. Something missing? Ask us.</p>
+      <pre id="pp-preamble" class="pp-preamble" tabindex="0">Loading…</pre>
+    </div>
+  </dialog>
+
+  <dialog id="pp-confirm" class="pp-dialog pp-confirm" aria-labelledby="pp-confirm-text">
+    <p id="pp-confirm-text" class="pp-confirm-text">Start again? This empties the form and deletes the draft saved on this device.</p>
+    <div class="pp-confirm-row">
+      <button type="button" class="btn" data-close autofocus>Cancel</button>
+      <button id="pp-confirm-yes" type="button" class="btn btn-primary">Start again</button>
+    </div>
   </dialog>
 
   <script type="application/json" id="propose-data">{{ propose_data_json }}</script>

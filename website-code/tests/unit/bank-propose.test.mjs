@@ -32,11 +32,11 @@ test('the file: header in the layout of _template.tex, blank fields blank, no so
   assert.ok(!P.problemFile(draft({ solution: '  \n ' })).includes('solution'));
 });
 
-test('proposed new tags: one plain comment line after the methods, for the board member who adds them', () => {
+test('proposed new tags: one plain comment line after the methods, for the person who adds them', () => {
   const file = P.problemFile(draft({ methods: ['induction'], newArea: ['Graph  colourings'], newMethods: ['Double "counting"'] }));
   const lines = file.split('\n');
   assert.equal(lines[2], '% methods:        induction');
-  assert.equal(lines[3], `% Proposed new tags, not in tags.yml yet (a board member adds them): area "Graph colourings"; method "Double 'counting'"`);
+  assert.equal(lines[3], `% Proposed new tags, not in tags.yml yet: area "Graph colourings"; method "Double 'counting'"`);
   assert.equal(lines[4], '% difficulty:');
   assert.ok(!/Proposed new tags/.test(P.problemFile(draft())), 'no line without proposed tags');
   assert.ok(!/^%\s*[A-Za-z][A-Za-z-]*\s*:/.test(lines[3]), 'the validator sees a comment, not a header field');
@@ -153,10 +153,57 @@ test('an unclosed $, { or environment points at its box, not at the page\'s own 
   assert.equal(P.explainLog('! Font lmbsy10 at 657 not found.\n', lines, d).box, null, 'other errors without a line: no guess');
 });
 
-test('GitHub new-file link (the Edit links are bank-search.js::githubEditUrl)', () => {
-  const gh = { repo: 'math-olympiad-club-ethz/math-olympiad-club-ethz', branch: 'main', problemsPath: 'problem-bank/problems' };
-  assert.equal(P.githubNewFileUrl(gh, 'new-sum-of-two-cubes.tex'),
-    'https://github.com/math-olympiad-club-ethz/math-olympiad-club-ethz/new/main/problem-bank/problems?filename=new-sum-of-two-cubes.tex');
+test('"Where is it from?" in one line: a competition, its year, its number; one\'s own, folklore; anything else as written', () => {
+  const c = S.buildCatalogue({ area: [], methods: [], difficulty: [], origin: [
+    { slug: 'imc', name: 'IMC', description: '', aliases: ['international mathematics competition'], kind: 'university' },
+    { slug: 'putnam', name: 'Putnam', description: '', aliases: [], kind: 'university' },
+    { slug: 'book', name: 'Book', description: '', aliases: [], kind: 'book' },
+    { slug: 'folklore', name: 'Folklore', description: '', aliases: ['classic'], kind: 'folklore' },
+    { slug: 'original', name: 'Original', description: '', aliases: ['own problem'], kind: 'original' }] });
+  const read = t => { const r = P.parseOrigin(t, c); return [r.origin, r.originDate, r.originNumber, r.known].join('|'); };
+  assert.equal(read('IMC 2012, Day 2, Problem 6'), 'imc|2012|Day 2, Problem 6|true');
+  assert.equal(read('Putnam 1989 A3'), 'putnam|1989|A3|true');
+  assert.equal(read('International Mathematics Competition 2012 P3'), 'imc|2012|Problem 3|true', 'an alias; P3 written out');
+  assert.equal(read('2012 IMC #7'), 'imc|2012|Problem 7|true', 'a # could not be printed');
+  assert.equal(read('Putnam 1989-12 B4'), 'putnam|1989-12|B4|true');
+  assert.equal(read('Putnam 1989-13 B4'), 'putnam|1989|B4|true', 'not a month: the year alone');
+  assert.equal(read('my own'), 'original|||true', "one's own problem");
+  assert.equal(read('My own problem, 2019'), 'original|2019||true', 'no number for it: the words left are not one');
+  assert.equal(read('I made it up'), 'original|||true');
+  assert.equal(P.parseOrigin('A classic, IMC 2001', c).origin, 'imc', 'a competition named wins over folklore');
+  assert.equal(read('classic'), 'folklore|||true');
+  assert.equal(read('Problems from the Book, p. 12'), '|||false', 'a book stays as written');
+  assert.equal(read('Kalva archive'), '|||false');
+  assert.equal(read('  '), '|||false');
+  // the headings: a bare number reads as one (Antoine, 2026-11-23)
+  assert.equal(P.originLabel(c, 'imc', '2012', '3'), 'IMC 2012, Problem 3');
+  assert.equal(P.originLabel(c, 'imc', '2012', ' 12 '), 'IMC 2012, Problem 12');
+  assert.equal(P.originLabel(c, 'putnam', '1989', 'A3'), 'Putnam 1989, A3');
+  assert.equal(P.originLabel(c, 'imc', '2012', 'Day 2, Problem 6'), 'IMC 2012, Day 2, Problem 6');
+  assert.equal(P.originLabel(c, 'imc', '2012', ''), 'IMC 2012');
+});
+
+test('the email: its subject and one line, the title; the files say the rest', () => {
+  assert.deepEqual(P.emailMessage({ title: '  Sum   of two cubes ', note: 'A cute idea.' }), { subject: 'Problem proposal: Sum of two cubes', body: 'Problem: Sum of two cubes\n' });
+  assert.deepEqual(P.emailMessage({ title: '' }), { subject: 'Problem proposal: Untitled problem', body: 'Problem: Untitled problem\n' });
+  assert.equal(P.pdfName({ title: '' }), 'untitled-problem.pdf');
+  assert.equal(P.noteName({ title: 'Sum of two cubes' }), 'sum-of-two-cubes-note.txt');
+});
+
+test('$ … $ and $$ … $$ are sent the bank\'s way; a dollar sign, comments, verbatim and unpaired dollars stay', () => {
+  assert.equal(P.bankDelimiters('Prove $\\sqrt 2$ is irrational.'), 'Prove \\(\\sqrt 2\\) is irrational.');
+  assert.equal(P.bankDelimiters('Then $$x^2$$ and \\$5 and % a $ in a comment\n$y$'), 'Then \\[x^2\\] and \\$5 and % a $ in a comment\n\\(y\\)');
+  assert.equal(P.bankDelimiters('\\verb|$| and $a$'), '\\verb|$| and \\(a\\)');
+  assert.equal(P.bankDelimiters('odd $x'), 'odd $x', 'one left over: as it is, for the check to point at');
+  assert.equal(P.bankDelimiters('mixed $$x$'), 'mixed $$x$');
+  assert.equal(P.bankDelimiters('a\n$b\nc$\nd').split('\n').length, 4, 'lines stay where they were');
+  const fixed = P.bankDelimiters('Let $n$ be odd.');
+  assert.deepEqual(P.validateDraft(draft({ statement: fixed }), cat).map(e => e.field), [], 'and the check is then happy');
+});
+
+test('new tags keep where they were put: under a topic, in a group of methods', () => {
+  const line = P.problemFile(draft({ newArea: ['Zig-zag sums'], newAreaUnder: { 'Zig-zag sums': 'number-theory' }, newMethods: ['Pairing', 'Loose'], newMethodsUnder: { Pairing: 'Proof strategies' } })).split('\n')[3];
+  assert.equal(line, '% Proposed new tags, not in tags.yml yet: area "Zig-zag sums" under number-theory; method "Pairing" in "Proof strategies"; method "Loose"');
 });
 
 test('figures: top-level tikzpicture / tikzcd spans, nested ones inside', () => {

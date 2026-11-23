@@ -16,7 +16,7 @@
 //
 // It (1) mounts the LZ4 data packages exactly like busytex_pipeline.js, (2) injects the local files into a
 // second texmf tree with an ls-R, (3) builds club.fmt with `pdftex -ini &pdflatex club.ini -recorder`,
-// (4) compiles every doc against club.fmt with -recorder (rerun once if LaTeX asks), (5) unions all recorded
+// (4) compiles every doc against club.fmt with -recorder (again while LaTeX asks, at most 3 passes), (5) unions all recorded
 // INPUT files, applies the completion policy (all .tfm of the used font families, .pfb of the used shapes at
 // every size, .fd / mt-*.cfg / lstlang*.sty siblings), and (6) writes the selected files, club.fmt, a trimmed
 // pdftex.map, texmf.cnf and files.json / report.json into <out>.  Paths of both trees are merged into one

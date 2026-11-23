@@ -6,7 +6,7 @@ import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'no
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
-import { appendixOrder, makeMain } from '../../site/static/js/bank-compile.js';
+import { appendixOrder, makeMain, makePreview, pickPreview } from '../../site/static/js/bank-compile.js';
 
 const ROOT = new URL('../../', import.meta.url).pathname;
 const BODIES = ROOT + 'site/static/bank/bodies.json';
@@ -60,4 +60,32 @@ test('JS makeMain == Python make_main with shared results (order, closure, cycle
     assert.equal(makeMain(bodies, [1, 3], 'problems', { appendix }), makeMain(bodies, [1, 3], 'problems'));
     assert.equal(makeMain(bodies, [2, 4], 'solutions', { appendix }), makeMain(bodies, [2, 4], 'solutions'));
   } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+
+// The Problems page's previews: one statement's document in the browser (makePreview), the same from the build's twin
+// (make_preview); the build typesets every statement in advance from the same head and page (make_previews).
+test('JS makePreview == Python make_preview (the sheets\' measure and narrower ones)', (t) => {
+  if (!existsSync(BODIES)) { t.skip('site/static/bank/bodies.json not built'); return; }
+  const bodies = JSON.parse(readFileSync(BODIES, 'utf8')).problems;
+  const ids = Object.keys(bodies).map(Number).sort((a, b) => a - b);
+  const withFigure = ids.find(i => Object.keys(bodies[String(i).padStart(4, '0')].figures || {}).length);
+  for (const [id, width] of [[ids[0], null], [ids[1], 200], [ids[ids.length - 1], 150], [withFigure, 241.27]]) {
+    if (id === undefined) continue;
+    const args = ['-m', 'bank.stitch', 'preview', '--bodies', BODIES, '--id', String(id), ...(width ? ['--width', String(width)] : [])];
+    const py = spawnSync('python3', args, { cwd: ROOT, encoding: 'utf8' });
+    assert.equal(py.status, 0, py.stderr);
+    assert.equal(makePreview(bodies, id, { width }), py.stdout, `problem ${id} at ${width || 'the sheets\''} measure`);
+  }
+});
+
+test('pickPreview: the measure nearest in proportion, the statement\'s page, how much to fill', () => {
+  const previews = { ids: [1, 4, 9], measures: [150, 165, 181.5, 426.79].map(pt => ({ pt, url: `p${pt}.pdf` })) };
+  assert.deepEqual(pickPreview(previews, 4, 160), { url: 'p165.pdf', page: 2, pt: 165, fill: 160 / 165 });
+  assert.deepEqual(pickPreview(previews, '9', 426.79), { url: 'p426.79.pdf', page: 3, pt: 426.79, fill: 1 });
+  assert.equal(pickPreview(previews, 1, 152).pt, 150);
+  assert.equal(pickPreview(previews, 1, 250).pt, 181.5, 'nearest in proportion: 250 / 181.5 < 426.79 / 250');
+  assert.equal(pickPreview(previews, 1, 300).pt, 426.79, '426.79 / 300 < 300 / 181.5');
+  assert.equal(pickPreview(previews, 2, 200), null, 'a statement the build left out: typeset in the browser');
+  assert.equal(pickPreview(null, 1, 200), null);
+  assert.equal(pickPreview({ ids: [1], measures: [] }, 1, 200), null);
 });

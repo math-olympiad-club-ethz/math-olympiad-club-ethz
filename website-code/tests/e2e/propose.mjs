@@ -1,8 +1,9 @@
 // End-to-end test of the "Propose a problem" page in headless Chromium (Playwright library, no test runner):
-// required fields, tag pickers, live preview (PDF content checked with pypdf), error location, a stuck compile,
-// Copy + open GitHub (clipboard + URL), the generated file passing `python3 -m bank.validate --compile`,
-// "Show available LaTeX", Download, the draft kept in the browser (two tabs), and the PDF links used when the browser
-// has no built-in PDF viewer (headless Chromium, like Chrome for Android).
+// what is required, the lines that open in place (what it is about: the tree of topics; a solution; where it is from,
+// with the competitions the bank knows; why the proposer likes it), the methods tree, the sheet typeset by the in-browser
+// pdfTeX (PDF content checked with pypdf), LaTeX errors under their box, a stuck compile, sending (the mail app opened
+// with the message, the file and a link), the link opening the proposal for the club (its .tex and its PDF), the file
+// passing `python3 -m bank.validate --compile`, LaTeX help, and the draft kept on this device (two tabs).
 // Needs a built site (python3 build.py --preview) and the engine bundle in site/static/busytex/.
 //   node tests/e2e/propose.mjs            exit 0 = pass
 import { chromium } from 'playwright';
@@ -21,7 +22,7 @@ if (!existsSync(join(SITE, 'static', 'busytex', 'manifest.json')) || !existsSync
 const failures = [];
 const check = (cond, msg) => { if (!cond) { failures.push(msg); console.log('  ✗ ' + msg); } else console.log('  ✓ ' + msg); };
 const pdfText = (bytes) => {
-  const f = join(mkdtempSync(join(tmpdir(), 'propose-e2e-')), 'preview.pdf');
+  const f = join(mkdtempSync(join(tmpdir(), 'propose-e2e-')), 'sheet.pdf');
   writeFileSync(f, Buffer.from(bytes));
   const py = spawnSync('python3', ['-c', 'import sys, pypdf; print("\\n".join(p.extract_text() or "" for p in pypdf.PdfReader(sys.argv[1]).pages))', f], { encoding: 'utf8' });
   return py.stdout || '';
@@ -30,176 +31,238 @@ const pdfText = (bytes) => {
 const server = await startServer(SITE);
 const base = `http://127.0.0.1:${server.port}`;
 const browser = await chromium.launch();
-const context = await browser.newContext({ permissions: ['clipboard-read', 'clipboard-write'], acceptDownloads: true });
+const context = await browser.newContext({ permissions: ['clipboard-read', 'clipboard-write'], acceptDownloads: true, viewport: { width: 1280, height: 900 } });
 const page = await context.newPage();
 const consoleErrors = [];
 page.on('console', m => { if (m.type() === 'error') consoleErrors.push(m.text()); });
 page.on('pageerror', e => consoleErrors.push('pageerror: ' + e.message));
-await page.addInitScript(() => { window.__opened = []; window.open = (url) => { window.__opened.push(url); return {}; }; });
+// window.open and the mail app are recorded, not opened
+await page.addInitScript(() => {
+  window.__opened = []; window.open = (url) => { window.__opened.push(url); return {}; };
+  window.__mailto = [];
+  // no share menu unless a test gives one (headless browsers differ): Firefox's case
+  Object.defineProperty(Navigator.prototype, 'share', { configurable: true, value: undefined });
+  Object.defineProperty(Navigator.prototype, 'canShare', { configurable: true, value: undefined });
+  const click = HTMLAnchorElement.prototype.click;
+  HTMLAnchorElement.prototype.click = function () { if (/^mailto:/.test(this.href)) { window.__mailto.push(this.href); return; } return click.call(this); };
+});
 const downloads = [];
-page.on('download', d => downloads.push(d.suggestedFilename()));
+page.on('download', d => downloads.push(d));
 const cspViolations = [];                                   // base.html's Content-Security-Policy: nothing may be blocked
 await context.exposeFunction('__cspViolation', s => cspViolations.push(s));
 await context.addInitScript(() => document.addEventListener('securitypolicyviolation', e => window.__cspViolation(`${e.effectiveDirective} ${e.blockedURI} ${e.sourceFile}:${e.lineNumber}`)));
 const engineRequests = [];
 page.on('request', r => { if (r.url().includes('/static/busytex/')) engineRequests.push(r.url()); });
-const previewUrl = (p = page) => p.evaluate(() => window.propose.state.preview.url);
-const previewBytes = () => page.evaluate(async () => Array.from(new Uint8Array(await (await fetch(window.propose.state.preview.url)).arrayBuffer())));
-const waitPreview = async (what) => {
-  try { await page.waitForFunction(() => /Updated|LaTeX error/.test(document.getElementById('pp-preview-status').textContent), null, { timeout: 240000 }); }
-  catch (e) { throw new Error(`preview (${what}) never finished: "${await page.textContent('#pp-preview-status')}"`); }
+const sheetBytes = () => page.evaluate(() => Array.from(window.propose.state.preview.pdf || []));
+const status = () => page.textContent('#pp-preview-status');
+// the sheet shows the text now in the form (typeset, or its LaTeX error)
+const waitSheet = async (what, p = page) => {
+  try { await p.waitForFunction(() => window.propose.upToDate() && ['ok', 'error', 'failed'].includes(document.getElementById('pp-preview-status').dataset.state), null, { timeout: 240000 }); }
+  catch (e) { throw new Error(`the sheet (${what}) never followed the text: "${await p.textContent('#pp-preview-status')}"`); }
+  return p.evaluate(() => document.getElementById('pp-preview-status').dataset.state);
 };
+// the share menu as Chrome has it: canShare says yes to everything, share() refuses a .tex file (as Chrome 153 does, the
+// tap spent); what it takes is recorded.  noShareSheet: none again (Firefox)
+const shareSheet = () => page.evaluate(() => {
+  window.__shared = [];
+  Object.defineProperty(navigator, 'canShare', { configurable: true, value: () => true });
+  Object.defineProperty(navigator, 'share', { configurable: true, value: async d => {
+    if (d.files.some(f => /\.tex$/.test(f.name))) throw new DOMException('Permission denied', 'NotAllowedError');
+    window.__shared.push({ title: d.title, text: d.text, files: await Promise.all(d.files.map(async f => ({ name: f.name, head: await f.slice(0, 5).text(),
+      text: /\.(tex|txt)$/.test(f.name) ? await f.text() : '', bytes: /\.pdf$/.test(f.name) ? Array.from(new Uint8Array(await f.arrayBuffer())) : null }))) });
+  } });
+});
+const noShareSheet = () => page.evaluate(() => { delete navigator.share; delete navigator.canShare; });
+// what the mail app was given: the last mailto link clicked, read back
+const lastMail = async () => { const u = new URL(await page.evaluate(() => window.__mailto[window.__mailto.length - 1])); return { to: u.pathname, subject: u.searchParams.get('subject'), body: u.searchParams.get('body') }; };
 
 try {
-  console.log('1. from the Problems page, the header link opens the propose page; the email fallback is always shown');
+  console.log('1. from the Problems page, the header link opens the propose page; the club\'s address is shown');
   await page.goto(`${base}/problems.html`);
   await page.click('#site-nav a[href="propose.html"]');
-  await page.waitForSelector('#pp-area-input');
+  await page.waitForFunction(() => document.documentElement.hasAttribute('data-ready'));
   check(page.url().endsWith('/propose.html'), 'the header link "Propose a problem" opens propose.html');
-  check((await page.locator('a[href="mailto:olympiadclub@math.ethz.ch"]').count()) >= 1 && /No GitHub account\?/.test(await page.textContent('body')),
-    '"No GitHub account? Send your problem to olympiadclub@math.ethz.ch" is shown');
+  check((await page.getAttribute('#pp-submit', 'data-address')) === 'olympiadclub@math.ethz.ch', 'Send knows the club\'s address (olympiadclub@math.ethz.ch)');
+  check(await page.locator('.pp-send button:visible').count() === 1 && await page.locator('.pp-send a').count() === 0 && !/GitHub/.test(await page.textContent('.pp-send')),
+    'one way to send: Send to the club, nothing else');
   const modules = await page.evaluate(() => performance.getEntriesByType('resource').map(e => e.name).filter(n => /\/static\/js\/bank-[a-z-]+\.js/.test(n)));
   const query = new Set(modules.map(n => new URL(n).search));
   check(modules.some(n => n.includes('bank-compile.js')) && query.size === 1 && /^\?v=\w+$/.test([...query][0]),
     `every page module is loaded with the same ?v= (one copy of each, ${[...query]})`);
+  check(await page.locator('#pp-solution').isHidden() && await page.locator('#pp-from').isHidden() && await page.locator('#pp-tree').isHidden() && await page.locator('#pp-note').isHidden() && !(await page.evaluate(() => document.getElementById('pp-details').open)),
+    'only the title and the statement show at first: the rest waits behind its line, or under More details');
+  check(!(await page.locator('select').count()), 'no menu of the browser\'s own anywhere on the page');
   await page.click('#pp-title'); await page.keyboard.press('a'); await page.keyboard.press('Backspace');
   await page.mouse.wheel(0, 400); await page.mouse.wheel(0, -400);
   check(engineRequests.length === 0, `clicking, typing a title and scrolling do not download the LaTeX engine (${engineRequests.length} requests)`);
 
-  console.log('2. only the statement and one area are required');
+  console.log('2. only the statement and what it is about are required');
   await page.click('#pp-submit');
   const errs = await page.textContent('#pp-errors');
-  check(/statement/i.test(errs) && /area/i.test(errs), 'sending an empty form lists the statement and the area as missing');
-  check((await page.evaluate(() => window.__opened.length)) === 0, 'nothing is opened while something required is missing');
-  check(await page.locator('#pp-statement.is-invalid').count() === 1, 'the statement box is marked');
+  check(/statement/i.test(errs) && /about/i.test(errs), `sending an empty form says what is missing (${errs.replace(/\s+/g, ' ').trim()})`);
+  check((await page.evaluate(() => window.__opened.length + window.__mailto.length)) === 0 && downloads.length === 0, 'nothing is sent while something required is missing');
+  check(await page.locator('#pp-statement.is-invalid').count() === 1 && await page.locator('#pp-add-about.is-invalid').count() === 1, 'the statement box and the line "What is it about?" are marked');
   check(engineRequests.length === 0, 'still no engine download');
   const described = await page.evaluate(() => { const t = document.getElementById('pp-statement');
     return [t.getAttribute('aria-invalid'), (t.getAttribute('aria-describedby') || '').split(' ').map(id => (document.getElementById(id) || {}).textContent).join()]; });
   check(described[0] === 'true' && /statement/i.test(described[1]), `and told to screen readers: aria-invalid + aria-describedby (${described})`);
+  await page.locator('#pp-errors a', { hasText: /about/ }).click();
+  check(await page.locator('#pp-tree').isVisible() && (await page.evaluate(() => document.activeElement.id)) === 'pp-add-about', 'its message opens "What is it about?"');
+  const tints = await page.evaluate(() => {
+    const tags = JSON.parse(document.getElementById('propose-data').textContent).tags.area.filter(t => !t.parent);
+    const dark = document.documentElement.dataset.theme === 'dark';
+    return tags.map(t => { const li = document.querySelector(`#pp-tree [data-topic="${t.slug}"]`);
+      return [t.slug, li && getComputedStyle(li).getPropertyValue('--c').trim(), t.colour && t.colour[dark ? 1 : 0]]; });
+  });
+  check(tints.length > 1 && tints.every(([, got, want]) => want && got === want), `its first-level topics in their colours, as on the Problems page (${tints.filter(([, g, w]) => g !== w).map(([s]) => s).join(', ') || 'all'})`);
 
-  console.log('3. fill the form: title, statement with a drawing and citations, solution, tags, history, bibliography');
+  console.log('3. writing: title, statement with a drawing and citations, a solution, the topics, where it is from, More details');
   await page.fill('#pp-title', 'Sum of two cubes');
-  check((await page.textContent('#pp-filename')) === 'new-sum-of-two-cubes.tex', 'the file name follows the title');
   await page.fill('#pp-statement', 'Show that \\( n^3+m^3 \\) is special \\cite{solomon1967Hurwitz}, see also \\cite{own2020}.\n\\begin{tikzpicture}\n\\draw (0,0) -- (1,1);\n\\end{tikzpicture}\nThat is all.');
+  await page.click('#pp-add-solution');
+  check(await page.locator('#pp-solution').isVisible() && (await page.evaluate(() => document.activeElement.id)) === 'pp-solution', '"Add a solution" opens the solution box, the cursor in it');
   await page.fill('#pp-solution', 'By induction.\nAnd that is the end.');
+  check((await page.textContent('#pp-add-solution')).trim() === 'Solution', 'its line then says "Solution"');
+  const tall = await page.evaluate(() => { const t = document.getElementById('pp-statement'), h = t.offsetHeight; t.value += '\n'.repeat(12) + 'More.'; t.dispatchEvent(new Event('input', { bubbles: true })); return [h, t.offsetHeight]; });
+  check(tall[1] > tall[0] + 100, `the statement box grows with its text (${tall[0]} → ${tall[1]} px)`);
+  await page.fill('#pp-statement', 'Show that \\( n^3+m^3 \\) is special \\cite{solomon1967Hurwitz}, see also \\cite{own2020}.\n\\begin{tikzpicture}\n\\draw (0,0) -- (1,1);\n\\end{tikzpicture}\nThat is all.');
+  // what it is about: the tree
+  const tg = slug => `#pp-tree .tt-tg[data-for="${slug}"]`, nm = slug => `#pp-tree .tt-name[data-slug="${slug}"]`;
+  check(await page.locator(nm('primes')).count() === 0 && await page.locator(nm('number-theory')).count() === 1, 'the tree opens folded: the main topics only');
+  await page.click(tg('number-theory'));
+  await page.click(nm('primes'));
+  await page.click(nm('divisibility'));
+  check(JSON.stringify(await page.evaluate(() => window.propose.readDraft().area)) === '["primes","divisibility"]' && (await page.getAttribute(nm('primes'), 'aria-pressed')) === 'true',
+    'a click on a name chooses it (several may be)');
+  await page.click(tg('analysis'));
+  await page.click(tg('real-analysis'));
+  await page.click(nm('series'));
+  await page.click(nm('series'));
+  check(JSON.stringify(await page.evaluate(() => window.propose.readDraft().area)) === '["primes","divisibility"]', 'a second click lets it go');
+  await page.click(tg('analysis'));
+  await page.waitForTimeout(400);
+  check(await page.locator(nm('real-analysis')).count() === 0, 'its round button folds a topic');
+  await page.click(tg('analysis'));
+  check(await page.locator(nm('real-analysis')).count() === 1 && await page.locator(nm('series')).count() === 0, 'unfolded again, one level shows: folding closed every branch under it');
+  check((await page.textContent('#pp-about-sum')) === 'Primes, Divisibility & gcd', `the line says what is chosen (${await page.textContent('#pp-about-sum')})`);
+  const addHere = under => `#pp-tree .tt-add[data-under="${under}"] .tt-add-btn`;
+  await page.click(addHere('number-theory'));                     // (Number theory is open since its topics were chosen)
+  await page.keyboard.type('Zig-zag sums');
+  await page.keyboard.press('Enter');
+  const added = await page.evaluate(() => { const d = window.propose.readDraft(); return [d.newArea, d.newAreaUnder]; });
+  check(JSON.stringify(added) === '[["Zig-zag sums"],{"Zig-zag sums":"number-theory"}]' && await page.locator('#pp-tree .tt-new', { hasText: 'Zig-zag sums' }).count() === 1,
+    '"New topic here", at the end of an open branch, names a topic the tree lacks: it hangs there, marked new');
+  check(/area "Zig-zag sums" under number-theory/.test(await page.evaluate(() => window.propose.P.problemFile(window.propose.fileDraft(window.propose.readDraft())))),
+    'and the file tells the reviewer where it goes');
+  await page.click(addHere('number-theory'));
+  await page.keyboard.type('primes');
+  await page.keyboard.press('Enter');
+  check(JSON.stringify(await page.evaluate(() => window.propose.readDraft().newArea)) === '["Zig-zag sums"]', 'a name the tree has is not added as new');
+  await page.click('#pp-tree .tt-new .tt-new-x');
+  check(JSON.stringify(await page.evaluate(() => window.propose.readDraft().newArea)) === '[]', 'its × takes it away again');
+  await page.click(tg('number-theory'));
+  // where it is from
+  await page.click('#pp-add-from');
+  await page.fill('#pp-from', 'im');
+  const imc = await page.evaluate(() => { const f = JSON.parse(document.getElementById('propose-data').textContent).originForms.imc; return `IMC ${f.date}, ${f.number}`; });
+  const opts = await page.evaluate(() => [...document.querySelectorAll('#pp-from-list [role=option]')].map(o => o.textContent));
+  check(opts.length >= 2 && opts[0] === `IMC${imc}` && await page.getAttribute('#pp-from', 'aria-expanded') === 'true',
+    `typing "im" lists the competitions the bank knows, the one it has most problems from first, with its usual form (${opts.slice(0, 2).join(' | ')})`);
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('Enter');
+  check((await page.inputValue('#pp-from')) === 'IMC ' && (await page.textContent('#pp-from-read')) === `Then the year and the problem, as in ${imc}.` && await page.locator('#pp-from-list').isHidden(),
+    `picked with the keyboard, it writes its name and says what follows (${await page.textContent('#pp-from-read')})`);
+  await page.fill('#pp-from', 'my');                              // ("mine" alone is read at once: no list)
+  await page.locator('#pp-from-list [role=option]', { hasText: 'My own problem' }).click();
+  check((await page.inputValue('#pp-from')) === 'My own problem' && (await page.evaluate(() => window.propose.readDraft().origin)) === 'original', 'one\'s own problem is in the list too');
+  await page.fill('#pp-from', 'Putnam 1989, A3');
+  check((await page.textContent('#pp-from-read')) === 'Read as Putnam 1989, A3.', `"Where is it from?" says what it read (${await page.textContent('#pp-from-read')})`);
+  check(JSON.stringify(await page.evaluate(() => { const d = window.propose.readDraft(); return [d.origin, d.originDate, d.originNumber]; })) === '["putnam","1989","A3"]',
+    'and fills the competition, the date and the number under More details');
+  await page.fill('#pp-from', 'Kalva archive');
+  check(/kept as written/.test(await page.textContent('#pp-from-read')) && (await page.evaluate(() => window.propose.readDraft().origin)) === ''
+    && /% references:     Kalva archive/.test(await page.evaluate(() => window.propose.P.problemFile(window.propose.fileDraft(window.propose.readDraft())))),
+    'something it does not know is kept as written, as a reference');
+  await page.fill('#pp-from', 'Putnam 1989, A3');
+  check((await page.textContent('#pp-from-read')) === 'Read as Putnam 1989, A3.', 'read again');
+  await page.fill('#pp-from', 'my own problem');
+  check(JSON.stringify(await page.evaluate(() => { const d = window.propose.readDraft(); return [d.origin, d.originNumber]; })) === '["original",""]', `"my own problem" is read as Original (${await page.textContent('#pp-from-read')})`);
+  await page.fill('#pp-from', 'Putnam 1989, A3');
+  // why the proposer likes it
+  await page.click('#pp-add-note');
+  await page.fill('#pp-note', 'A cute identity hides behind it.');
+  check((await page.textContent('#pp-note-sum')) === 'A cute identity hides behind it.' && !/cute identity/.test(await page.evaluate(() => window.propose.P.problemFile(window.propose.readDraft()))),
+    '"Why do you like it?" keeps a note for the club, not in the file');
+  // More details
+  await page.click('#pp-details > summary');
   await page.fill('#pp-bibtex', '@article{own2020,\n  author = {Doe, Jane},\n  title = {An Own Reference},\n  journal = {J. Test},\n  year = {2020},\n}');
   check(/own2020/.test(await page.textContent('#pp-bib-keys')), 'the bibliography box lists its keys');
-  await page.fill('#pp-area-input', 'primes');
-  await page.waitForSelector('#pp-area-list [role=option]');
+  const mtg = key => `#pp-methods .tt-tg[data-for="${key}"]`, mnm = slug => `#pp-methods .tt-name[data-slug="${slug}"]`;
+  const groups = await page.locator('#pp-methods > li > .tt-row > .tt-tg').count();
+  check(groups > 3 && await page.locator('#pp-methods button.tt-name[data-slug]').count() === 0, `the methods come in their ${groups} groups, folded`);
+  await page.click('#pp-methods .tt-group >> nth=0');
+  check(await page.locator('#pp-methods button.tt-name[data-slug]').count() > 0, 'a group\'s name unfolds it too');
+  await page.click(mnm('induction'));
+  check(JSON.stringify(await page.evaluate(() => window.propose.readDraft().methods)) === '["induction"]', 'a method chosen with a click');
+  await page.click('#pp-methods .tt-add[data-under="g:Proof strategies"] .tt-add-btn');
+  await page.keyboard.type('Zig-zag pairing');
   await page.keyboard.press('Enter');
-  await page.fill('#pp-area-input', '');
-  await page.click('#pp-area-input');
-  check((await page.locator('#pp-area-list .bank-option', { hasText: 'Divisibility & gcd' }).count()) === 0, 'the area list opens folded (sub-areas hidden)');
-  await page.locator('#pp-area-list .bank-option', { has: page.locator('.bank-option-label', { hasText: /^Number theory$/ }) }).locator('.bank-toggle').click();
-  await page.locator('#pp-area-list [role=option]', { hasText: 'Divisibility & gcd' }).click();
-  await page.keyboard.press('Escape');
-  check(JSON.stringify(await page.evaluate(() => window.propose.readDraft().area)) === '["primes","divisibility"]', 'areas picked by search + Enter and from the browse list');
-  check(engineRequests.length > 0, 'writing a statement fetches the engine ahead of the first preview');
-  await page.fill('#pp-area-input', 'real analysis');              // a third area, removed again with the chips' ×
-  await page.waitForSelector('#pp-area-list [role=option]');
-  await page.keyboard.press('Enter');
-  await page.keyboard.press('Escape');
-  await page.click('#pp-area .bank-chip-x >> nth=1');
-  const afterRemove = await page.evaluate(() => [window.propose.readDraft().area.join(), document.activeElement.getAttribute('aria-label')]);
-  check(afterRemove[0] === 'primes,real-analysis' && afterRemove[1] === 'Remove Real analysis', `removing a chip moves the focus to the next chip (${afterRemove})`);
-  await page.click('#pp-area .bank-chip-x >> nth=1');
-  check((await page.evaluate(() => document.activeElement.id)) === 'pp-area-input', 'removing the last chip moves it to the search box');
-  await page.fill('#pp-area-input', 'divisibility');
-  await page.waitForSelector('#pp-area-list [role=option]');
-  await page.locator('#pp-area-list [role=option]', { hasText: 'Divisibility & gcd' }).click();
-  await page.keyboard.press('Escape');
-  check(JSON.stringify(await page.evaluate(() => window.propose.readDraft().area)) === '["primes","divisibility"]', 'areas back to primes, divisibility');
-  await page.fill('#pp-methods-input', '');
-  await page.click('#pp-methods-input');
-  const nHeads = await page.locator('#pp-methods-list .bank-list-section').count();
-  check(nHeads > 3 && (await page.locator('#pp-methods-list .bank-option').count()) === 0, `the methods list opens with its ${nHeads} groups closed`);
-  await page.locator('#pp-methods-list .bank-list-section').first().click();
-  check((await page.locator('#pp-methods-list .bank-option').count()) > 0, 'clicking a group shows its methods');
-  await page.keyboard.press('Escape');
-  await page.fill('#pp-methods-input', 'induction');
-  await page.waitForSelector('#pp-methods-list [role=option]');
-  await page.keyboard.press('ArrowDown'); await page.keyboard.press('Enter');
-  check(JSON.stringify(await page.evaluate(() => window.propose.readDraft().methods)) === '["induction"]', 'a method picked with the keyboard');
-  await page.fill('#pp-methods-input', 'Zig-zag pairing');
-  await page.waitForSelector('#pp-methods-list .bank-option-propose');
-  check((await page.textContent('#pp-methods-list .bank-option-propose')) === 'Propose “Zig-zag pairing” as a new method', 'a method that is not in the list can be proposed');
-  await page.click('#pp-methods-list .bank-option-propose');
   check(JSON.stringify(await page.evaluate(() => { const d = window.propose.readDraft(); return [d.methods, d.newMethods]; })) === '[["induction"],["Zig-zag pairing"]]'
-    && (await page.locator('#pp-methods .bank-chip-new').count()) === 1, 'the proposed method shows as a chip marked new');
-  await page.fill('#pp-methods-input', 'induction');
-  await page.waitForSelector('#pp-methods-list [role=option]');
-  check((await page.locator('#pp-methods-list .bank-option-propose').count()) === 0, 'an existing tag is never offered as a new one');
-  await page.fill('#pp-methods-input', '');
-  await page.keyboard.press('Escape');
-  check(/% Proposed new tags, not in tags\.yml yet \(a board member adds them\): method "Zig-zag pairing"\n/.test(await page.evaluate(() => window.propose.P.problemFile(window.propose.readDraft()))),
-    'the file carries the proposed method as a comment line for the board');
-  await page.selectOption('#pp-difficulty', 'medium');
-  await page.selectOption('#pp-origin', 'putnam');
-  await page.fill('#pp-origin-date', '1989-13');
-  check(/YYYY/.test(await page.textContent('#pp-errors')), 'a bad date is reported while typing');
-  await page.fill('#pp-origin-date', '1989-12');
-  await page.fill('#pp-origin-number', 'A3');
+    && /% Proposed new tags, not in tags\.yml yet: method "Zig-zag pairing" in "Proof strategies"\n/.test(await page.evaluate(() => window.propose.P.problemFile(window.propose.readDraft()))),
+    '"New method here" names a method in its group, and the file says so');
+  await page.click(mtg('g:Proof strategies'));
+  await page.click('#pp-difficulty .pp-choice[data-value="medium"]');
+  check((await page.evaluate(() => window.propose.readDraft().difficulty)) === 'medium' && (await page.textContent('#pp-difficulty-help')).length > 0, 'difficulty: four words, one chosen, its meaning under them');
+  await page.click('#pp-difficulty .pp-choice[data-value="medium"]');
+  check((await page.evaluate(() => window.propose.readDraft().difficulty)) === '', 'chosen again, none: not rated');
+  await page.click('#pp-difficulty .pp-choice[data-value="medium"]');
   await page.fill('#pp-references', 'https://example.org/source\nKalva archive');
   check(await page.locator('#pp-errors').isHidden(), 'no error left');
 
-  console.log('4. live preview (in-browser pdfTeX): heading, drawing box, citations, solution');
-  await page.click('#pp-refresh');
-  await waitPreview('first');
-  check(/Updated/.test(await page.textContent('#pp-preview-status')), `the preview compiles (${await page.textContent('#pp-preview-status')})`);
-  const text = pdfText(await previewBytes());
-  check(/Problem\s*1\.\s*Sum of two cubes/.test(text) && !/\(#/.test(text), 'preview heading "Problem 1. Sum of two cubes", no number');
+  console.log('4. the sheet: the problem typeset in the page (in-browser pdfTeX, drawn with PDF.js)');
+  check((await waitSheet('first')) === 'ok', `it typesets (${await status()})`);
+  const canvases = await page.evaluate(() => [...document.querySelectorAll('#pp-pages canvas')].map(c => [c.width, c.height]));
+  check(canvases.length >= 1 && canvases.every(([w, h]) => w > 100 && h > 20) && await page.locator('#pp-sheet-empty').isHidden(), `drawn on the sheet (${JSON.stringify(canvases)})`);
+  const text = pdfText(await sheetBytes());
+  check(/Problem\s*1\.\s*Sum of two cubes/.test(text) && !/\(#/.test(text), 'heading "Problem 1. Sum of two cubes", no number');
   check(/Putnam 1989, A3/.test(text), 'origin line "Putnam 1989, A3"');
-  check(/TikZ drawing/.test(text), 'the drawing is a placeholder box');
+  check(/TikZ drawing/.test(text) && /boxes here/.test(await status()), 'the drawing is a box, and the sheet says so');
   check(/special\s*\[1\],\s*see\s*also\s*\[2\]/.test(text) && /An Own Reference/.test(text) && /Solomon Hurwitz/.test(text), 'citations resolved from references.bib and the own entry');
-  check(/Solution\.\s*By induction/.test(text), 'the solution follows');
-  const noViewer = await page.evaluate(() => navigator.pdfViewerEnabled === false);
-  if (noViewer) {
-    check(await page.locator('#pp-pdf').isHidden() && !(await page.getAttribute('#pp-pdf', 'src')), 'no built-in PDF viewer: no PDF frame (it would download the PDF)');
-    check((await page.getAttribute('#pp-pdf-open', 'href')) === await previewUrl() && (await page.getAttribute('#pp-pdf-download', 'download')) === 'sum-of-two-cubes.pdf',
-      'but Open PDF / Download PDF links to the preview');
-  } else check(await page.locator('#pp-pdf').isVisible(), 'the PDF is shown in the page');
+  check(/Solution\.\s*By\s*induction/.test(text), 'the solution follows');
+  const width = await page.evaluate(() => window.propose.state.preview.width);
+  check(width === null || (width > 150 && width < 426.79), `typeset at the sheet's own measure, its text at the page's size (${width} pt)`);
 
-  console.log('5. a LaTeX error is located in the form; the last good PDF stays');
-  const goodSrc = await previewUrl();
+  console.log('5. a LaTeX error shows under its box; the last sheet that typeset stays, greyed');
   await page.fill('#pp-solution', 'By induction.\nAnd \\notacommand{} end.');
-  await page.click('#pp-refresh');
-  await page.waitForFunction(() => /LaTeX error/.test(document.getElementById('pp-preview-status').textContent), null, { timeout: 60000 });
-  const errText = await page.textContent('#pp-preview-error');
-  check(/Solution, line 2: Undefined control sequence/.test(errText), `the error says where: ${errText.slice(0, 80)}`);
-  check((await previewUrl()) === goodSrc, 'the last good PDF stays visible');
-  const dialogs = [];
-  page.once('dialog', d => { dialogs.push(d.message()); d.dismiss(); });
+  check((await waitSheet('error')) === 'error', 'the sheet notices the error');
+  const errText = await page.textContent('#pp-solution-error');
+  check(/Line 2: Undefined control sequence/.test(errText) && await page.locator('#pp-solution-error').isVisible(), `the error is under the solution, with its line: ${errText.slice(0, 80)}`);
+  check(await page.locator('#pp-pages.is-stale').count() === 1 && await page.locator('#pp-pages canvas').count() >= 1 && /the solution/.test(await status()), 'the last sheet stays, greyed, and the status says where to look');
   await page.click('#pp-submit');
-  check(/LaTeX error\. Send anyway\?/.test(dialogs[0] || '') && (await page.evaluate(() => window.__opened.length)) === 0,
-    `sending a draft whose preview has a LaTeX error asks first; Cancel sends nothing (${dialogs[0]})`);
+  await page.waitForFunction(() => document.getElementById('pp-submit-status').dataset.kind === 'latex', null, { timeout: 60000 });
+  check((await page.evaluate(() => window.__mailto.length)) === 0 && /error.*again to send it as it is/.test(await page.textContent('#pp-submit-status')),
+    `sending it says its LaTeX has an error, and sends nothing yet (${await page.textContent('#pp-submit-status')})`);
+  downloads.length = 0;
+  await page.click('#pp-submit');
+  await page.waitForFunction(() => window.__mailto.length === 1, null, { timeout: 10000 });
+  await page.waitForTimeout(300);
+  check((await lastMail()).body === 'Problem: Sum of two cubes\n' && JSON.stringify(downloads.map(x => x.suggestedFilename())) === '["new-sum-of-two-cubes.tex","sum-of-two-cubes-note.txt"]',
+    `pressed again, it goes without a PDF (${downloads.map(x => x.suggestedFilename())})`);
   await page.fill('#pp-solution', 'By induction.\nAnd that is the end.');
-  await page.click('#pp-refresh');
-  await waitPreview('fixed');
-  check(await page.locator('#pp-preview-error').isHidden(), 'fixing it clears the error');
-  const mistakes = [['$', 'statement', 'x $a', /Statement: something opened here is never closed.*Missing \$ inserted/],
-    ['{', 'solution', 'By \\textbf{induction.', /Solution: something opened here is never closed.*File ended while scanning use of \\textbf/],
-    ['\\begin{itemize}', 'statement', 'A list\n\\begin{itemize}\n\\item one', /Statement, line 2: something opened here is never closed.*\\begin\{itemize\} ended by \\end\{problem\}/]];
+  check((await waitSheet('fixed')) === 'ok' && await page.locator('#pp-solution-error').isHidden() && await page.locator('#pp-pages.is-stale').count() === 0, 'fixing it clears the error');
+  const mistakes = [['$', 'statement', 'x $a', /Something opened here is never closed.*Missing \$ inserted/],
+    ['{', 'solution', 'By \\textbf{induction.', /Something opened here is never closed.*File ended while scanning use of \\textbf/],
+    ['\\begin{itemize}', 'statement', 'A list\n\\begin{itemize}\n\\item one', /Line 2: something opened here is never closed.*\\begin\{itemize\} ended by \\end\{problem\}/]];
   for (const [what, box, bad, want] of mistakes) {
     const before = await page.inputValue(`#pp-${box}`);
     await page.fill(`#pp-${box}`, bad);
-    await page.click('#pp-refresh');
-    await page.waitForFunction(() => /LaTeX error/.test(document.getElementById('pp-preview-status').textContent), null, { timeout: 60000 });
-    const t = await page.textContent('#pp-preview-error');
-    check(want.test(t) && !/null/.test(t) && !(await page.locator('#pp-preview-error code', { hasText: /^\\end\{(problem|solution)\}$/ }).count()),
-      `an unclosed ${what} is shown in its box, not at the page's own \\end{…} (${t.slice(0, 110)})`);
+    await waitSheet(what);
+    const t = await page.textContent(`#pp-${box}-error`);
+    check(want.test(t) && !/null/.test(t) && !(await page.locator(`#pp-${box}-error code`, { hasText: /^\\end\{(problem|solution)\}$/ }).count()),
+      `an unclosed ${what} is shown under its box, not at the page's own \\end{…} (${t.slice(0, 110)})`);
     await page.fill(`#pp-${box}`, before);
   }
-  await page.click('#pp-refresh');
-  await waitPreview('mistakes fixed');
-
-  console.log('5b. "Update while typing" off: the status says when the PDF is out of date');
-  await page.uncheck('#pp-auto');
-  await page.fill('#pp-solution', 'By induction.\nAnd that is the end. \\undefinedQ');
-  await page.waitForTimeout(1200);
-  check(/Out of date: click Update now/.test(await page.textContent('#pp-preview-status')), `out of date after typing (${await page.textContent('#pp-preview-status')})`);
-  await page.fill('#pp-solution', 'By induction.\nAnd that is the end.');
-  check(/Updated/.test(await page.textContent('#pp-preview-status')), 'back to "Updated" when the text is what the PDF shows');
-  await page.check('#pp-auto');
+  await waitSheet('mistakes fixed');
 
   console.log('6. a compile that never ends is stopped and the engine restarts');
   const stuck = await page.evaluate(async () => {
@@ -212,109 +275,120 @@ try {
   });
   check(/too long/.test(stuck.message) && stuck.ok, `endless loop stopped after the timeout, next compile works (${Math.round(stuck.ms)} ms)`);
 
-  console.log('6b. a looping preview that is then fixed recovers; display-math diagrams, Greek, DOIs with _');
+  console.log('6b. a looping text that is then fixed recovers; display-math diagrams, Greek, DOIs with _');
   const saved = await page.evaluate(() => window.propose.readDraft());
   await page.evaluate(() => { window.propose.state.preview.timeoutMs = 4000; });
   await page.fill('#pp-statement', 'Loop \\def\\x{\\x}\\x');
-  await page.click('#pp-refresh');
-  await page.waitForFunction(() => /Compiling/.test(document.getElementById('pp-preview-status').textContent), null, { timeout: 10000 });
+  await page.waitForFunction(() => document.getElementById('pp-preview-status').dataset.state === 'running', null, { timeout: 10000 });
   await page.fill('#pp-statement', 'Fixed. Consider\n\\[\n\\begin{tikzcd}\nA \\arrow[r] & B\n\\end{tikzcd}\n\\]\nwith φ and \\cite{sp}.');
   await page.fill('#pp-bibtex', '@incollection{sp, author = {A. Author}, title = {Chapter}, year = {2010}, doi = {10.1007/978-3-642-15546-8_7}}');
-  await page.waitForFunction(() => /Updated|error|failed|Not updated/i.test(document.getElementById('pp-preview-status').textContent), null, { timeout: 60000 });
-  const after = await page.textContent('#pp-preview-status');
-  check(/Updated/.test(after) && await page.locator('#pp-preview-error').isHidden(), `after a stuck compile the fixed text is previewed, not reported as a loop (${after})`);
-  check(/Chapter/.test(pdfText(await previewBytes())), 'a diagram in \\[ … \\], a Greek letter and a DOI with _ compile in the preview');
+  const after = await waitSheet('after a loop');
+  check(after === 'ok' && await page.locator('#pp-statement-error').isHidden(), `after a stuck compile the fixed text is typeset, not reported as a loop (${after}: ${await status()})`);
+  check(/Chapter/.test(pdfText(await sheetBytes())), 'a diagram in \\[ … \\], a Greek letter and a DOI with _ compile on the sheet');
   await page.evaluate(() => { window.propose.state.preview.timeoutMs = 0; });
   await page.fill('#pp-title', '√2 is irrational');
   check(/cannot contain √/.test(await page.textContent('#pp-errors')), 'a title with √ is refused before sending (CI could not print it)');
   await page.evaluate(d => window.propose.setDraft(d), saved);
   await page.fill('#pp-title', saved.title);                        // typed: the autosave keeps this draft
-  await page.click('#pp-refresh');
-  await waitPreview('restored');
+  await waitSheet('restored');
 
-  console.log('7. Copy file and open GitHub');
-  await page.evaluate(() => { window.__opened = []; });
-  page.once('dialog', d => { dialogs.push('unexpected: ' + d.message()); d.dismiss(); });
+  console.log('7. Send to the club: the share menu with the PDF and the .tex, the address copied');
+  await shareSheet();
   await page.click('#pp-submit');
-  await page.waitForFunction(() => /Copied/.test(document.getElementById('pp-submit-status').textContent), null, { timeout: 5000 });
-  const opened = await page.evaluate(() => window.__opened);
-  check(opened.length === 1 && opened[0] === 'https://github.com/math-olympiad-club-ethz/math-olympiad-club-ethz/new/main/problem-bank/problems?filename=new-sum-of-two-cubes.tex',
-    `GitHub's new-file page opens with the file name (${opened[0]})`);
-  const clip = await page.evaluate(() => navigator.clipboard.readText());
-  const expected = await page.evaluate(() => window.propose.P.problemFile(window.propose.readDraft()));
-  check(clip === expected && clip.startsWith('% title:          Sum of two cubes\n% area:           primes, divisibility\n'), 'the clipboard holds the problem file');
-  check(/\\begin\{bibentries\}\n@article\{own2020,/.test(clip) && /% references:     https:\/\/example.org\/source; Kalva archive/.test(clip), 'bibliography block and references line');
-  check(!(await page.locator('#pp-open-fallback').isHidden()), 'a direct link is offered in case GitHub did not open');
-  check(!dialogs.some(m => m.startsWith('unexpected')), 'no question when the preview of this text compiled');
-  page.removeAllListeners('dialog');
-  check(/Your proposal is public on GitHub/.test(await page.textContent('body')), 'the page says a proposal is public once sent');
+  await page.waitForFunction(() => window.__shared.length === 1, null, { timeout: 120000 });
+  const shared = await page.evaluate(() => window.__shared[0]);
+  const expected = await page.evaluate(() => window.propose.P.problemFile(window.propose.fileDraft(window.propose.readDraft())));
+  check(JSON.stringify(shared.files.map(f => f.name)) === '["sum-of-two-cubes.pdf","new-sum-of-two-cubes.tex.txt","sum-of-two-cubes-note.txt"]' && shared.files[0].head === '%PDF-'
+    && shared.files[1].text === expected && shared.files[2].text === 'A cute identity hides behind it.\n',
+    `the menu gets the three files: the PDF, the problem file (as .tex.txt: Chrome's menu refuses .tex), the note (${shared.files.map(f => f.name)})`);
+  check(/Problem\s*1\.\s*Sum of two cubes/.test(pdfText(shared.files[0].bytes)) && /Putnam 1989, A3/.test(pdfText(shared.files[0].bytes)), 'the PDF is the problem as the bank prints it');
+  check(shared.title === 'Problem proposal: Sum of two cubes' && shared.text === 'Problem: Sum of two cubes\n', `and one line: "${shared.text.trim()}"`);
+  check((await page.evaluate(() => navigator.clipboard.readText())) === 'olympiadclub@math.ethz.ch' && /Thank you\. We read every proposal/.test(await page.textContent('#pp-submit-status')),
+    'the club\'s address was copied for To, and the page thanks the sender once it is sent');
+
+  console.log('7b. without a share menu (Firefox): the files saved, the mail app opened with the message and a link');
+  await noShareSheet();
+  await page.evaluate(() => { window.__mailto = []; });
+  downloads.length = 0;
+  await page.click('#pp-submit');
+  await page.waitForFunction(() => window.__mailto.length === 1, null, { timeout: 120000 });
+  await page.waitForTimeout(300);
+  const mail = await lastMail();
+  const got = downloads.map(x => x.suggestedFilename());
+  check(JSON.stringify(got) === '["sum-of-two-cubes.pdf","new-sum-of-two-cubes.tex","sum-of-two-cubes-note.txt"]' && readFileSync(await downloads[1].path(), 'utf8') === expected,
+    `the three files are saved (${got})`);
+  check(mail.to === 'olympiadclub@math.ethz.ch' && mail.subject === 'Problem proposal: Sum of two cubes' && mail.body === 'Problem: Sum of two cubes\n',
+    `the mail app opens addressed to the club, with its subject and the one line (${mail.subject})`);
+  check(/Drag the three files just saved \(sum-of-two-cubes\.pdf, new-sum-of-two-cubes\.tex and sum-of-two-cubes-note\.txt\) into it, then press Send\./.test(await page.textContent('#pp-submit-status'))
+    && await page.locator('#pp-mail-help').isVisible(), 'the page says to drag the three files in, and what to do if nothing opened');
   const dir = mkdtempSync(join(tmpdir(), 'propose-file-'));
   const file = join(dir, 'new-sum-of-two-cubes.tex');
-  writeFileSync(file, clip);
+  writeFileSync(file, expected);
   const val = spawnSync('python3', ['-m', 'bank.validate', '--compile', file], { cwd: ROOT, encoding: 'utf8' });
   console.log('   ' + (val.stdout || val.stderr).trim().split('\n').join('\n   '));
   check(val.status === 0, 'the file passes the CI validator and compiles with pdflatex (author mode, real TikZ)');
 
-  console.log('8. Show the file, Download .tex, Show available LaTeX');
-  await page.click('#pp-show-file');
-  check((await page.inputValue('#pp-file')) === expected, '"Show the file" shows the same file');
-  const [download] = await Promise.all([page.waitForEvent('download'), page.click('#pp-download')]);
-  check(download.suggestedFilename() === 'new-sum-of-two-cubes.tex' && readFileSync(await download.path(), 'utf8') === expected, 'Download .tex gives the file');
-  check(await page.locator('#pp-show-latex').isHidden(), '"Show available LaTeX" sits inside the closed Writing rules');
-  await page.click('.pp-rules summary');
+  console.log('9. LaTeX help');
+  check(await page.locator('#pp-show-latex').isVisible() && await page.locator('.pp-label-row #pp-show-latex').count() === 1, '"LaTeX help" sits beside the statement');
   await page.click('#pp-show-latex');
   await page.waitForFunction(() => document.getElementById('pp-preamble').dataset.loaded === '1', null, { timeout: 10000 });
-  check(await page.locator('#pp-latex').isVisible() && (await page.textContent('#pp-preamble')).includes('\\newcommand{\\bankproblem}'), '"Show available LaTeX" shows preamble.tex');
+  const help = await page.textContent('#pp-latex');
+  check(await page.locator('#pp-latex').isVisible() && /\\cite\{key\}/.test(help) && /Shared results/.test(help) && (await page.textContent('#pp-preamble')).includes('\\newcommand{\\bankproblem}'),
+    'it holds the few rules, the shared results and what the club\'s LaTeX has (preamble.tex)');
+  const results = await page.evaluate(() => [JSON.parse(document.getElementById('propose-data').textContent).appendix.map(a => a.name).sort(),
+    [...document.querySelectorAll('#pp-latex .pp-results dt')].map(d => d.textContent).sort(), (document.querySelector('#pp-latex .pp-results') || {}).childElementCount]);
+  check(results[0].length > 0 && JSON.stringify(results[0]) === JSON.stringify(results[1]),
+    `the shared results it lists are the bank's own, all ${results[0].length} of them (made at each build from problem-bank/appendix/: a new one shows by itself)`);
+  const sizeNote = await page.textContent('#pp-typeset-line');
+  check(/about \d+ MB/.test(sizeNote), `the engine's download size comes from its manifest (${sizeNote.trim().replace(/\s+/g, ' ')})`);
   await page.click('#pp-latex [data-close]');
   check(await page.locator('#pp-latex').isHidden(), 'the dialog closes');
 
-  check(downloads.length === 1 && downloads[0].endsWith('.tex'), `no stray PDF download while the preview updated (${downloads})`);
-
-  console.log('9. the draft stays in this browser (also right after typing); a second tab is noticed; Clear the form');
+  console.log('10. the draft stays on this device (also right after typing); a second tab is noticed; Start again');
   await page.reload();
-  await page.waitForSelector('#pp-area-input');
+  await page.waitForFunction(() => document.documentElement.hasAttribute('data-ready'));
   const restored = await page.evaluate(() => window.propose.readDraft());
-  check(restored.title === 'Sum of two cubes' && restored.area.join() === 'primes,divisibility' && restored.bibtex.includes('own2020'), 'reloading restores the draft');
-  check(/already sent or downloaded/.test(await page.textContent('#pp-draft-note')) && await page.locator('#pp-draft-note').isVisible(),
-    'with a note that it was already sent');
+  check(restored.title === 'Sum of two cubes' && restored.area.join() === 'primes,divisibility' && restored.from === 'Putnam 1989, A3' && /sp|own2020/.test(restored.bibtex), 'reloading restores the draft');
+  check(await page.locator('#pp-solution').isVisible() && await page.locator('#pp-note').isVisible() && (await page.textContent('#pp-from-sum')) === 'Putnam 1989, A3' && (await page.textContent('#pp-about-sum')) === 'Primes, Divisibility & gcd'
+    && (await page.inputValue('#pp-note')) === 'A cute identity hides behind it.', 'with its solution and its note open, and its lines saying what they hold');
+  check(/Sent already\?/.test(await page.textContent('#pp-saved')), `and a word that it may have been sent (${await page.textContent('#pp-saved')})`);
+  check(JSON.stringify(await page.evaluate(() => { const d = window.propose.readDraft(); return [d.methods, d.newMethods, d.newMethodsUnder, d.difficulty]; })) === '[["induction"],["Zig-zag pairing"],{"Zig-zag pairing":"Proof strategies"},"medium"]',
+    'methods, a new one in its group, and the difficulty come back too');
   await page.fill('#pp-title', 'Changed just before reload');
   await page.reload();
-  await page.waitForSelector('#pp-area-input');
+  await page.waitForFunction(() => document.documentElement.hasAttribute('data-ready'));
   check((await page.inputValue('#pp-title')) === 'Changed just before reload', 'an edit made just before a reload is kept (saved when the page is left)');
-  check(/restored/.test(await page.textContent('#pp-draft-note')), 'edited after sending: a normal restored draft again');
+  check(/draft is back/.test(await page.textContent('#pp-saved')), 'edited after sending: a draft again');
+  await page.fill('#pp-title', 'Changed again');
+  await page.waitForFunction(() => /Saved on this device/.test(document.getElementById('pp-saved').textContent), null, { timeout: 5000 });
+  check(true, '"Saved on this device" after typing');
   const tabB = await context.newPage();
   await tabB.goto(`${base}/propose.html`);
-  await tabB.waitForSelector('#pp-area-input');
+  await tabB.waitForFunction(() => document.documentElement.hasAttribute('data-ready'));
   await tabB.fill('#pp-title', 'Problem from tab B');
   await page.waitForFunction(() => !document.getElementById('pp-other-tab').hidden, null, { timeout: 5000 }).catch(() => {});
-  check(await page.locator('#pp-other-tab').isVisible() && (await page.inputValue('#pp-title')) === 'Changed just before reload',
+  check(await page.locator('#pp-other-tab').isVisible() && (await page.inputValue('#pp-title')) === 'Changed again',
     'tab A is told that tab B changed the saved draft, and keeps its own text');
   await page.fill('#pp-title', 'Sum of two cubes');
   await tabB.waitForFunction(() => !document.getElementById('pp-other-tab').hidden, null, { timeout: 5000 }).catch(() => {});
   check(await page.locator('#pp-other-tab').isHidden() && await tabB.locator('#pp-other-tab').isVisible(), 'typing in tab A saves it again, and tab B is told');
   await tabB.close();
-  check((await page.textContent('#pp-clear')) === 'Clear the form' && await page.locator('#pp-clear').isVisible(), '"Clear the form" is shown when something is written');
-  page.once('dialog', d => d.accept());
+  check((await page.textContent('#pp-clear')) === 'Start again' && await page.locator('#pp-clear').isVisible(), '"Start again" is there when something is written');
   await page.click('#pp-clear');
+  check(await page.locator('#pp-confirm').isVisible() && (await page.evaluate(() => document.activeElement.textContent)) === 'Cancel', '"Start again" asks first, in a box of the page\'s own, Cancel ready');
+  await page.keyboard.press('Escape');
+  check(await page.locator('#pp-confirm').isHidden() && (await page.evaluate(() => window.propose.readDraft().title)) === 'Sum of two cubes', 'Escape: nothing erased');
+  await page.click('#pp-clear');
+  await page.click('#pp-confirm [data-close]');
+  check((await page.evaluate(() => window.propose.readDraft().title)) === 'Sum of two cubes', 'Cancel: nothing erased');
+  await page.click('#pp-clear');
+  await page.click('#pp-confirm-yes');
   const cleared = await page.evaluate(() => window.propose.readDraft());
-  check(!cleared.title && !cleared.statement && !cleared.area.length, '"Clear the form" empties the form');
-  check(await page.locator('#pp-clear').isHidden(), 'and hides itself on the empty form');
+  check(!cleared.title && !cleared.statement && !cleared.area.length && !cleared.from && await page.locator('#pp-confirm').isHidden(), 'confirmed, the form is emptied');
+  check(await page.locator('#pp-clear').isHidden() && await page.locator('#pp-solution').isHidden() && await page.locator('#pp-sheet-empty').isVisible(), 'its lines closed, the sheet empty, and "Start again" hidden');
   await page.reload();
-  await page.waitForSelector('#pp-area-input');
+  await page.waitForFunction(() => document.documentElement.hasAttribute('data-ready'));
   check(!(await page.evaluate(() => window.propose.readDraft().statement)), 'and the draft is gone after a reload');
-
-  console.log('10. with a built-in PDF viewer, the preview is shown in the page');
-  const viewer = await context.newPage();
-  await viewer.addInitScript(() => Object.defineProperty(Navigator.prototype, 'pdfViewerEnabled', { get: () => true }));
-  viewer.on('download', () => {});
-  await viewer.goto(`${base}/propose.html`);
-  await viewer.waitForSelector('#pp-area-input');
-  await viewer.fill('#pp-statement', 'Shown inline.');
-  await viewer.click('#pp-refresh');
-  await viewer.waitForFunction(() => /Updated/.test(document.getElementById('pp-preview-status').textContent), null, { timeout: 60000 });
-  check(await viewer.locator('#pp-pdf').isVisible() && (await viewer.getAttribute('#pp-pdf', 'src')) === await previewUrl(viewer)
-    && await viewer.locator('#pp-pdf-links').isHidden(), 'the PDF frame is used, no extra links');
-  await viewer.close();
 
   check(consoleErrors.length === 0, 'no console errors' + (consoleErrors.length ? ': ' + consoleErrors.slice(0, 3).join(' | ') : ''));
   check(cspViolations.length === 0, 'no Content-Security-Policy violation in any of the above' + (cspViolations.length ? ': ' + cspViolations.slice(0, 3).join(' | ') : ''));

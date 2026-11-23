@@ -7,11 +7,13 @@ Exit 1 with one line per problem if the site holds more (or less) than the rule 
 the ones without review: human marked proposed" allows (bank/data.py): index.json, bodies.json and figures/ must hold
 exactly those problems and the shared results that the solutions of the reviewed ones cite (bank/appendix.py), the
 proposed ones marked as such in the index and in their PDF origin line and without their solution (bank/data.py::
-mask_solutions), the pages must embed the public index, and the engine bundle must be complete.
+mask_solutions), the pages must embed the public index, the statements typeset in advance (static/bank/previews/,
+bank/stitch.py::build_previews) must be those of the published problems, and the engine bundle must be complete.
 """
 import argparse
 import json
 import os
+import re
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))   # website-code/
@@ -94,6 +96,24 @@ def check(site_dir, problems, items=()):
             errors.append(f"static/bank/figures/ holds figures of no published problem or shared result: {sorted(present - used)}")
         if used - present:
             errors.append(f"static/bank/figures/ misses {sorted(used - present)}")
+    # the statements typeset by the build: those of the published problems, the files the page names and no other
+    m = re.search(r"<script[^>]*>(\{.*?\})</script>", html, re.S)
+    try:
+        previews = json.loads(m.group(1)).get("previews") if m else None
+    except ValueError:
+        previews = None
+    pv_dir = os.path.join(bank, "previews")
+    present = set(os.listdir(pv_dir)) if os.path.isdir(pv_dir) else set()
+    if previews:
+        if previews.get("ids") != want:
+            errors.append(f"problems.html: the previews hold the statements of {previews.get('ids')}, the published problems are {want}")
+        named = {os.path.basename(x.get("url", "")) for x in previews.get("measures", [])}
+        if named - present:
+            errors.append(f"static/bank/previews/ misses {sorted(named - present)}")
+        if present - named:
+            errors.append(f"static/bank/previews/ holds files the page does not name: {sorted(present - named)}")
+    elif present:
+        errors.append(f"static/bank/previews/ holds {sorted(present)}, but problems.html names no previews")
     for name in ("tags.json", "preamble.tex", "references.bib"):
         if not os.path.isfile(os.path.join(bank, name)):
             errors.append(f"static/bank/{name} is missing")

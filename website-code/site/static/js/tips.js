@@ -1,14 +1,13 @@
 /* tips.js: the bubbles of the Problems page. One bubble for the whole page, moved to whatever asks for it: an element
-   with data-tip="its text", or data-tip-from="the id of the element that holds its text".
+   with data-tip="its text" (a tag, a review mark).
    - With a mouse it shows while the pointer is on the element or on the bubble.
-   - The keyboard shows it on the focus of a .tip-btn.
    - A click or a tap keeps it open until the next click or tap, or Escape.  A tap is read from the pointer events, because
-     iOS sends no click for a tap on something without a handler of its own.  A tag that acts when pressed (it filters, or
-     removes itself) gives no bubble then.
+     iOS sends no click for a tap on something without a handler of its own.  A tag that acts when pressed (it filters)
+     gives no bubble then.
    It stays inside the window: under its element if it fits there, else above it. */
 (function () {
   'use strict';
-  var SEL = '[data-tip]:not([data-tip=""]), [data-tip-from]';
+  var SEL = '[data-tip]:not([data-tip=""])';
   var box = null, owner = null, kept = false, timer = 0;
 
   function place() {
@@ -27,8 +26,7 @@
     }
     if (owner && owner !== el) owner.removeAttribute('aria-describedby');
     owner = el; kept = !!keep;
-    var from = el.getAttribute('data-tip-from'), src = from && document.getElementById(from);
-    box.textContent = src ? src.textContent : el.getAttribute('data-tip');
+    box.textContent = el.getAttribute('data-tip');
     box.hidden = false;
     el.setAttribute('aria-describedby', 'tip');
     place();
@@ -47,16 +45,13 @@
     if (el) { if (el === owner) clearTimeout(timer); else show(el); }
     else if (owner) { clearTimeout(timer); timer = setTimeout(hide, 150); }
   });
-  document.addEventListener('focusin', function (e) {
-    if (!kept && e.target.matches && e.target.matches('.tip-btn:focus-visible')) show(e.target);
-  });
   document.addEventListener('focusout', function (e) {
     if (!kept && e.target === owner) hide();
   });
   function pressed(target) {
     if (!target.closest || (box && box.contains(target))) return;
     var el = target.closest(SEL);
-    if (el && target.closest('.bank-chip-x, .bank-chip-clickable')) el = null;
+    if (el && target.closest('.bank-chip-clickable')) el = null;
     if (el && !(kept && el === owner)) show(el, true);
     else if (owner) hide();
   }

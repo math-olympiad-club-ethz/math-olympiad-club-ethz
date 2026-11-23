@@ -22,8 +22,5 @@ BUSYTEX_DIR = os.path.join(STATIC_DIR, "busytex")
 TEMPLATES_DIR = os.path.join(WEBSITE, "templates")
 CACHE_DIR = os.path.join(WEBSITE, ".cache")
 
-# Where the repository lives on GitHub: the site's "Edit" links and the "Propose a problem" page open
-# github.com/<GITHUB_REPO>/edit|new/<GITHUB_BRANCH>/<PROBLEMS_REPO_PATH>/...
+# Where the repository lives on GitHub (the site is served at /<its name>/; the engine's notice links to it)
 GITHUB_REPO = "math-olympiad-club-ethz/math-olympiad-club-ethz"
-GITHUB_BRANCH = "main"
-PROBLEMS_REPO_PATH = os.path.relpath(PROBLEMS_DIR, REPO).replace(os.sep, "/")

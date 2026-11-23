@@ -10,16 +10,18 @@
 */
 
 export const TAG_TYPES = ['area', 'methods', 'difficulty', 'origin'];
-export const TYPE_LABEL = { area: 'Area', methods: 'Methods', difficulty: 'Difficulty', origin: 'Origin' };
+export const TYPE_LABEL = { area: 'Topic', methods: 'Methods', difficulty: 'Difficulty', origin: 'Origin' };     // (an area of tags.yml is a topic on the pages)
+/* The kinds of origin (tags.yml), as the pages name them: the Origin filter and the Propose page group the origins by kind. */
+export const ORIGIN_KIND = { university: 'University competitions', 'high-school': 'Olympiads (high school)', book: 'Books', journal: 'Journals & papers',
+  exam: 'Exams', course: 'Courses', folklore: 'Folklore', original: 'Original', interview: 'Interviews' };
 
 const DEFAULT_FILTERS = Object.freeze({
-  area: [], methods: [], difficulty: [], origin: [],
+  area: [], methods: [], difficulty: [], origin: [],   // area: the topic chosen in the tree (one from the page; a link may name several)
   text: '',             // what is typed in the search bar: matches the title
-  op: 'and',            // AND/OR — applies to Area + Methods only
   showMethods: false,   // methods are spoilers: hidden by default in the list and the search
   methodsInPdf: false,  // and in the PDFs unless asked (only with showMethods): a teacher may search by method and hand out sheets without them
   yearFrom: null, yearTo: null,   // origin-date range (years)
-  solved: 'all',        // 'all' | 'full' | 'partial' | 'none' (solution), the words of the row markers
+  solved: 'all',        // 'all' | 'full' | 'incomplete' (a partial solution, or none yet), the words of the row markers
   showProposed: false,  // proposed problems (no review yet, bank/data.py) are listed only when the visitor asks
 });
 
@@ -93,33 +95,32 @@ export function matchesText(problem, query) {
   return q.split(' ').filter(Boolean).every(w => title.some(t => t.startsWith(w)));
 }
 
-/* match = [title text] ∧ [Area+Methods: AND → every selected tag | OR → at least one]
-         ∧ [difficulty ∈ selected, or any if none] ∧ [origin ∈ selected (origin or also-in), or any if none]
-         ∧ [origin-year range] ∧ [full / partial / no solution / all] ∧ [not proposed, unless "Show proposed problems"] */
+/* One rule: inside one filter, any of its choices will do; every filter set must hold.  So
+   match = [title text] ∧ [under one of the selected areas] ∧ [uses one of the selected methods]
+         ∧ [difficulty ∈ selected] ∧ [origin ∈ selected (origin or also-in)] ∧ [origin-year range]
+         ∧ [full / incomplete / all] ∧ [not proposed, unless "Show the proposed problems"],
+   a filter with nothing selected letting every problem through. */
+/* A whole solution in the bank; incomplete otherwise (a partial one, or none yet: the site's one word for both). */
+export const isComplete = problem => !!problem.hasSolution && !problem.partial;
+
 export function matches(problem, filters, cat) {
   const f = { ...DEFAULT_FILTERS, ...filters };
   if (problem.proposed && !f.showProposed) return false;
   if (!matchesText(problem, f.text)) return false;
-  const sel = [...f.area.map(s => ['area', s]), ...f.methods.map(s => ['methods', s])];
-  if (sel.length) {
-    const hits = sel.map(([type, slug]) => problemHasTag(problem, type, slug, cat));
-    if (f.op === 'or' ? !hits.some(Boolean) : !hits.every(Boolean)) return false;
-  }
+  if (f.area.length && !f.area.some(slug => problemHasTag(problem, 'area', slug, cat))) return false;
+  if (f.methods.length && !f.methods.some(slug => problemHasTag(problem, 'methods', slug, cat))) return false;
   if (f.difficulty.length && !f.difficulty.includes(problem.difficulty)) return false;   // unrated never matches a selection
   if (f.origin.length) {
     const ok = f.origin.includes(problem.origin) || (problem.alsoIn || []).some(o => f.origin.includes(o));
     if (!ok) return false;
   }
-  if (f.yearFrom != null || f.yearTo != null) {
+  if ((f.yearFrom != null || f.yearTo != null) && problem.originYear != null) {   // undated problems always match
     const y = problem.originYear;
-    if (y == null) return false;                       // undated problems match only when no year range is set
     const [from, to] = f.yearFrom != null && f.yearTo != null && f.yearFrom > f.yearTo ? [f.yearTo, f.yearFrom] : [f.yearFrom, f.yearTo];
     if (from != null && y < from) return false;
     if (to != null && y > to) return false;
   }
-  if (f.solved === 'full' && !(problem.hasSolution && !problem.partial)) return false;
-  if (f.solved === 'partial' && !(problem.hasSolution && problem.partial)) return false;
-  if (f.solved === 'none' && problem.hasSolution) return false;
+  if (f.solved !== 'all' && (f.solved === 'full') !== isComplete(problem)) return false;
   return true;
 }
 
@@ -193,7 +194,7 @@ export function suggest(cat, query, filters = DEFAULT_FILTERS, limit = 12, types
     if (score > 0) out.push({ tag, score });
   }
   out.sort((a, b) => b.score - a.score || TYPE_RANK[a.tag.type] - TYPE_RANK[b.tag.type]
-    || (a.tag.depth || 0) - (b.tag.depth || 0) || a.tag.name.localeCompare(b.tag.name));
+    || (a.tag.depth || 0) - (b.tag.depth || 0) || (a.tag.searchText.name < b.tag.searchText.name ? -1 : a.tag.searchText.name > b.tag.searchText.name ? 1 : 0));
   return out.slice(0, limit);
 }
 
@@ -211,11 +212,6 @@ export function tagCounts(problems, cat) {
     for (const o of new Set([p.origin, ...(p.alsoIn || [])].filter(Boolean))) add('origin:' + o);
   }
   return counts;
-}
-
-/* The GitHub page that edits a problem file (the Edit link of each row). */
-export function githubEditUrl(gh, file) {
-  return `https://github.com/${gh.repo}/edit/${gh.branch}/${gh.problemsPath}/${encodeURIComponent(file)}`;
 }
 
 /* ------------------------------------------------------------------ selection helpers */
@@ -311,7 +307,6 @@ export function encodeState(filters, selection = [], order = null) {
   if (f.difficulty.length) p.set('d', f.difficulty.join(','));
   if (f.origin.length) p.set('o', f.origin.join(','));
   if (normalize(f.text)) p.set('q', f.text);          // symbols only search nothing: not worth a URL
-  if (f.op === 'or') p.set('op', 'or');
   if (f.showMethods) p.set('sm', '1');
   if (f.showMethods && f.methodsInPdf) p.set('mp', '1');
   if (f.yearFrom != null || f.yearTo != null) p.set('y', `${f.yearFrom ?? ''}-${f.yearTo ?? ''}`);
@@ -334,7 +329,6 @@ export function decodeState(qs, cat = null) {
   f.difficulty = list('d', 'difficulty');
   f.origin = list('o', 'origin');
   f.text = String(p.get('q') || '').slice(0, 120);        // a crafted link cannot carry an endless query
-  f.op = p.get('op') === 'or' ? 'or' : 'and';
   f.showMethods = p.get('sm') === '1' || f.methods.length > 0;   // methods filter only while shown: an older link with m= still gives its problems
   f.methodsInPdf = f.showMethods && p.get('mp') === '1';
   const range = (key) => {
@@ -342,7 +336,8 @@ export function decodeState(qs, cat = null) {
     return m ? [intOrNull(m[1]), intOrNull(m[2])] : [null, null];
   };
   [f.yearFrom, f.yearTo] = range('y');
-  f.solved = ['full', 'partial', 'none'].includes(p.get('s')) ? p.get('s') : 'all';
+  const s = p.get('s');                 // (a link made before "incomplete": partial and none are that now)
+  f.solved = s === 'full' ? 'full' : ['incomplete', 'partial', 'none'].includes(s) ? 'incomplete' : 'all';
   f.showProposed = p.get('pr') === '1';
   if (p.get('ord') === 'manual') {
     const order = parseIdList(p.get('sel'));

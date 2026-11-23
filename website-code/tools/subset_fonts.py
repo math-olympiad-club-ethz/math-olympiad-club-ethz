@@ -7,16 +7,20 @@
 
 The site's text is set in CMU Serif and its labels in CMU Typewriter Text, the face LaTeX's \\texttt uses (the problem
 PDFs use Latin Modern, the same design). The full files are about 200 KB each. Each weight is cut in two: the basic
-Latin characters every page uses, and the rest (Latin Extended-A such as ě ă ț, accents, Greek such as the φ σ τ of a tag name), which a browser downloads
-only for a page that shows one of them: site.css gives both files the same family with their unicode-range, so the
-ranges below and the ones in site.css must stay the same. The fonts have no glyph for symbols such as ≡ ≠ ✓ or emoji:
-the browser draws those in a fallback font, so the site avoids them.
+Latin characters every page uses, with the few others the site's own text shows (the ě ă ț of competitions, the φ σ τ of
+a topic), and the rest (Latin Extended-A, accents, Greek), which a browser downloads only for a page that shows one of
+them, such as a proposal typed on the Propose page. fonts.css gives both files the same family with their
+unicode-range, so the ranges below and the ones in fonts.css must stay the same (tests/python checks it). build.py says
+when a tag or a title brings a character outside the basic files: add it to them here, then cut the fonts again. The
+fonts have no glyph for symbols such as ≡ ≠ ✓ or emoji: the browser draws those in a fallback font, so the site avoids
+them.
 
 The SIL Open Font License reserves the name "Computer Modern Unicode" for unmodified fonts, and a subset is a modified
 font: the subsets are renamed "MOC Serif" and "MOC Typewriter". The copyright (name 0) and licence records (13, 14) are kept, and OFL.txt
 ships next to the fonts.
 
-GitHub Pages caches the fonts for 10 minutes and their URLs carry no version: give a regenerated font a new file name.
+GitHub Pages caches the fonts for 10 minutes and their URLs carry no version: raise VERSION, in the file names, with
+every change.
 """
 import sys
 from pathlib import Path
@@ -25,17 +29,19 @@ from fontTools import subset
 from fontTools.ttLib import TTFont
 
 RANGES = {
-    # Basic Latin, Latin-1, ı, Œ œ, general punctuation, euro, trademark, arrows, minus, f-ligatures
-    "": "U+0020-007E,U+00A0-00FF,U+0131,U+0152-0153,U+2000-206F,U+20AC,U+2122,U+2190-2199,U+2212,U+FB00-FB06",
-    # Latin Extended-A, Romanian comma letters, spacing and combining accents, Greek
-    "-ext": "U+0100-0130,U+0132-0151,U+0154-017F,U+0218-021B,U+02BC,U+02C6-02C7,U+02D8-02DD,U+0300-030C,U+0326-0328,"
-            "U+0370-03FF",
+    # Basic Latin, Latin-1, ı, Œ œ, general punctuation, euro, trademark, arrows, minus, f-ligatures, and what the site's
+    # own text shows besides: ă ț (Romanian), ě (Jarník's competition), σ τ φ (a topic's name)
+    "": "U+0020-007E,U+00A0-00FF,U+0103,U+011B,U+0131,U+0152-0153,U+021B,U+03C3-03C4,U+03C6,U+2000-206F,U+20AC,U+2122,"
+        "U+2190-2199,U+2212,U+FB00-FB06",
+    # the rest of Latin Extended-A, the Romanian comma letters, spacing and combining accents, Greek
+    "-ext": "U+0100-0102,U+0104-011A,U+011C-0130,U+0132-0151,U+0154-017F,U+0218-021A,U+02BC,U+02C6-02C7,U+02D8-02DD,"
+            "U+0300-030C,U+0326-0328,U+0370-03C2,U+03C5,U+03C7-03FF",
 }
+VERSION = 2
 FACES = [  # CMU file, family, style, output file stem
     ("cmu-serif-500-roman", "MOC Serif", "Regular", "moc-serif-400"),
     ("cmu-serif-700-roman", "MOC Serif", "Bold", "moc-serif-700"),
     ("cmu-typewriter-text-500-roman", "MOC Typewriter", "Regular", "moc-typewriter-400"),
-    ("cmu-typewriter-text-700-roman", "MOC Typewriter", "Bold", "moc-typewriter-700"),
 ]
 
 
@@ -63,7 +69,7 @@ def main(src, out):
             sub.populate(unicodes=subset.parse_unicodes(unicodes))
             sub.subset(font)
             rename(font, family, style, source)
-            path = Path(out) / f"{stem}{suffix}.woff2"
+            path = Path(out) / f"{stem}{suffix}-v{VERSION}.woff2"
             font.flavor = "woff2"
             font.save(path)
             print(f"{path}: {path.stat().st_size} bytes, {len(font.getBestCmap())} characters, from {source}")

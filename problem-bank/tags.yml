@@ -1,4 +1,4 @@
-# tags.yml — the ONLY list of allowed tags of the Math Olympiad Club ETHZ problem bank.
+# tags.yml — the ONLY list of allowed tags of the Math Olympiad Club at ETHZ problem bank.
 #
 # Adding a tag or an origin = one entry here (slug + name is enough; description and aliases are
 # optional). Slugs are lowercase ASCII with hyphens and must be unique within their type.
@@ -170,8 +170,8 @@ area:
             description: Free groups, words, relations and commutator identities.
             aliases: [free group, commutator, word problem, generators and relations, presentation]
           - slug: group-center
-            name: Center & Centralizers
-            description: Group center, centralizers, normalizers, and the class equation.
+            name: Centre & Centralisers
+            description: Group centre, centralisers, normalisers, and the class equation.
             aliases: [center, centralizer, normalizer, z(g), class equation, conjugacy class]
       - slug: rings-fields
         name: Rings & fields
@@ -518,7 +518,7 @@ area:
         description: Light, lenses, interference and wave phenomena.
         aliases: [optics, light, lens, wave, interference, diffraction, refraction, reflection]
       - slug: physical-proofs
-        name: Math proofs via physics
+        name: Mathematical proofs via physics
         description: Mathematical statements proved with physical reasoning such as equilibrium, energy or centre of mass.
         aliases: [physical proof, physics argument, center of mass argument, centre of mass, mathematical mechanic, equilibrium argument]
 
@@ -889,7 +889,7 @@ methods:
 difficulty:
   - slug: easy
     name: Easy
-    description: IMC P1–2, Putnam A1/B1, early national-MO problems; at most 30 minutes for an ETH student.
+    description: IMC P1–2, Putnam A1/B1, early national-MO problems.
     aliases: [beginner, simple, warm-up, warmup, quick]
   - slug: medium
     name: Medium

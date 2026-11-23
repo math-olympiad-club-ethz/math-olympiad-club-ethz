@@ -28,7 +28,7 @@ def _check_tag(t, where, errors):
         return False
     if not isinstance(t.get("name"), str) or not t["name"].strip():
         errors.append(f"{where}: tag {slug!r} needs a display name")
-    elif unprintable(t["name"], forbidden=set("\\{}~^")):         # names are printed on the PDF cover (filters)
+    elif unprintable(t["name"], forbidden=set("\\{}~^")):         # names are printed in the PDFs (the methods of a problem)
         errors.append(f"{where}: tag {slug!r}: the name contains characters the PDFs cannot print: {' '.join(unprintable(t['name'], forbidden=set(chr(92) + '{}~^')))}")
     if "description" in t and t["description"] is not None and not isinstance(t["description"], str):
         errors.append(f"{where}: tag {slug!r}: description must be a string")

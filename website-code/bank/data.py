@@ -2,12 +2,14 @@
 
 Visibility rule: every problem with a final number is published.  The ones without `review: human` are proposed
 (is_proposed): their index row says so, the origin line of their PDF heading ends with PROPOSED_NOTE, and the Problems
-page lists them only behind its "Show proposed problems" switch.  Their solutions are masked (mask_solutions): the site
-shows their statements only, the solution stays in the .tex file until a board member reviews it.  In preview mode
+page lists them only behind the switch of its Proposed filter ("Show the proposed problems").  Their solutions are masked (mask_solutions): the site
+shows their statements only, the solution stays in the .tex file until it is reviewed.  In preview mode
 (build.py --preview) every problem is included with its solution and carries its review status so the maintainer can
 review in the real UI (nothing is marked proposed there); new-*.tex files appear under their provisional number.
 """
 import re
+
+from .colours import topic_colours
 
 
 PROPOSED_NOTE = "proposed, not reviewed yet"
@@ -86,11 +88,14 @@ def _tag_public(t):
 
 
 def build_tag_catalogue(tags):
-    """tags.json: the four tag types as the browser needs them (area keeps parent/children)."""
-    area = []
+    """tags.json: the four tag types as the browser needs them (area keeps parent/children, and a first-level topic
+    its colours, light and dark: colours.py)."""
+    area, colours = [], topic_colours(tags)
     for slug, t in tags["area"].items():
         e = _tag_public(t)
         e.update(parent=t["parent"], children=list(t["children"]), depth=t["depth"])
+        if slug in colours:
+            e["colour"] = list(colours[slug])
         area.append(e)
     methods = [dict(_tag_public(t), group=t["group"]) for t in tags["methods"].values()]
     difficulty = [_tag_public(t) for t in tags["difficulty"].values()]

@@ -1,11 +1,12 @@
 /* bank-compile.js — compiles a selection of problems to PDF in the browser (pdfTeX in WebAssembly,
-   see compile-worker.js).  ES module used by bank-ui.js; makeMain() mirrors bank/stitch.py::make_main
+   see compile-worker.js).  ES module used by bank-ui.js and by the Propose page (bank-propose-ui.js, bank-propose.js);
+   makeMain() mirrors bank/stitch.py::make_main
    byte for byte (the Python side is what CI tests; tests compare the two).
 
    Paths are relative to the page (site/problems.html): static/js/compile-worker.js, static/busytex/,
    static/bank/bodies.json, static/bank/figures/.  No PDF is stored anywhere except the browser's caches. */
 
-const CLUB_NAME = 'Math Olympiad Club ETHZ';
+const CLUB_NAME = 'Math Olympiad Club at ETHZ';
 
 // absolute URL for the engine: the worker resolves relative paths against its own location (static/js/), not the page's
 const PATHS = { worker: 'static/js/compile-worker.js', bodies: 'static/bank/bodies.json', figures: 'static/bank/', preamble: 'static/bank/preamble.tex',
@@ -56,21 +57,21 @@ function ensureWorker() {
     if (w !== state.worker) return;
     const job = state.running && data.id === state.running.id ? state.running : null;
     if (data.type === 'progress') {
-      emit({ kind: 'progress', stage: data.stage, text: engineText(data) });
+      emit({ stage: data.stage, text: engineText(data) });
     } else if (data.type === 'ready') {
       state._resolveReady && state._resolveReady();
     } else if (data.type === 'started') {
       if (!job) return;
       job.timer = setTimeout(() => timedOut(job), job.timeoutMs);
-      emit({ kind: 'progress', stage: 'compile', job: job.kind, text: 'Compiling…' });
+      emit({ stage: 'compile', job: job.kind, text: 'Compiling…' });
     } else if (data.type === 'marker') {
       if (!job || !job.order) return;
       const k = job.order.indexOf(data.pid);
       if (k < 0) return;
       job.pid = data.pid;
       const problems = job.order.filter(p => !isResultMarker(p)).length;
-      if (isResultMarker(data.pid)) emit({ kind: 'progress', stage: 'compile', job: job.kind, text: 'Compiling… appendix' });
-      else if (problems > 1) emit({ kind: 'progress', stage: 'compile', job: job.kind, text: `Compiling… ${k + 1} / ${problems}` });
+      if (isResultMarker(data.pid)) emit({ stage: 'compile', job: job.kind, text: 'Compiling… appendix' });
+      else if (problems > 1) emit({ stage: 'compile', job: job.kind, text: `Compiling… ${k + 1} / ${problems}` });
     } else if (data.type === 'result') {
       if (job) finish(job, null, data);
     } else if (data.type === 'error') {
@@ -102,21 +103,21 @@ function stopWorker({ keepInit = false, reason = null } = {}) {
 }
 
 /* Load (or reuse from the Cache API) the engine; idempotent.  Rejects with a readable message. */
-function initEngine({ force = false } = {}) {
-  if (state.ready && !force) return state.ready;
+function initEngine() {
+  if (state.ready) return state.ready;
   if (!engineSupported()) return Promise.reject(new Error(UNSUPPORTED));
   const w = ensureWorker();
   state.ready = new Promise((resolve, reject) => { state._resolveReady = resolve; state._rejectReady = reject; });
   state.initWaiting = true;
-  w.postMessage({ type: 'init', base: PATHS.engine, force: !!force });
+  w.postMessage({ type: 'init', base: PATHS.engine });
   const ready = state.ready = state.ready.then(
     () => { if (state.ready === ready) state.initWaiting = false; armIdleStop(); },
     err => { if (state.ready === ready) { state.ready = null; state.initWaiting = false; } throw err; });
   return ready;
 }
 
-/* Whether the engine (about 17 MB) may be fetched ahead, before anyone has asked for a PDF: not on data saver, on a slow
-   connection or on a touch screen, where a tick must not start a download that size. Create and Update now always start it. */
+/* Whether the engine (some 16 MB: build.py engine_download_mb) may be fetched ahead, before anyone has asked for a PDF: not on data saver, on a slow
+   connection or on a touch screen, where a tick must not start a download that size. Create PDF, and the Propose page's sheet, start it. */
 export function mayPrefetchEngine() {
   try {
     const c = navigator.connection;
@@ -145,7 +146,7 @@ export function prefetchEngine() {
   else engineStored().then(stored => { if (stored) start(); });
 }
 
-/* The problem texts too (bodies.json, about 90 KB compressed), so the first Create waits for neither.  Same rules:
+/* The problem texts too (bodies.json, about 160 KB compressed), so the first Create waits for neither.  Same rules:
    skipped on data-saver connections, never throws (a failed download is retried and reported by the Create). */
 export function prefetchBodies() {
   try { if (navigator.connection && navigator.connection.saveData) return; } catch (e) { /* ignore */ }
@@ -153,7 +154,7 @@ export function prefetchBodies() {
 }
 
 /* Queue a compile.  Options: timeoutMs (counted from the moment pdfTeX starts on it), signal (AbortSignal: a waiting
-   job is dropped, a running one stops the worker; rejects with name 'AbortError'), order + names (the problem IDs in
+   job is dropped, a running one stops the worker, except a preview, see cancelJob; rejects with name 'AbortError'), order + names (the problem IDs in
    the document and their titles, to name the problem a stuck compile is in), label (what else to name), kind. */
 function compileRaw(mainTex, files, { timeoutMs = COMPILE_TIMEOUT_MS, signal = null, order = null, names = null, label = '', kind = 'tex' } = {}) {
   return new Promise((resolve, reject) => {
@@ -196,9 +197,19 @@ function finish(job, err, value) {
   pump();
 }
 
+/* A running PDF can only be stopped with its worker.  A running preview is one short statement: its caller is told at
+   once, but the engine finishes it (its result is dropped, its timeout still guards it), so that closing a preview or
+   opening the next one does not cost an engine start. */
 function cancelJob(job) {
   if (job.done) return;
-  if (state.running === job) stopWorker({ keepInit: true });
+  if (state.running === job) {
+    if (job.kind === 'preview') {
+      if (job.signal) job.signal.removeEventListener('abort', job.onAbort);
+      job.reject(abortError());
+      return;
+    }
+    stopWorker({ keepInit: true });
+  }
   finish(job, abortError());
 }
 
@@ -231,7 +242,7 @@ function checkEngine(r) {
 
 function compileError(r, mainTex) {
   const err = new Error('The LaTeX compile failed.\n' + (r.errors || []).join('\n'));
-  err.log = r.log; err.mainTex = mainTex;
+  err.mainTex = mainTex;
   return err;
 }
 
@@ -367,7 +378,7 @@ const isResultMarker = pid => String(pid).startsWith('a-');
 /* ------------------------------------------------------------------ finished-PDF cache (by selection hash) */
 
 async function pdfCache() { try { return await caches.open('bank-pdfs'); } catch (e) { return null; } }
-/* The engine bundle version (format file + preamble) is part of the PDF cache key: a new bundle must not
+/* The engine bundle version (a hash of its five files) is part of the PDF cache key: a new bundle must not
    serve PDFs made by the old one.  The page knows it (expectBuild), which saves a round trip before each first Create;
    else it is read from manifest.json (tiny).  A PDF is stored only if the engine that compiled it has this version. */
 let versionPromise = null;
@@ -386,6 +397,27 @@ async function selectionKey(version, variant, mainTex, figures = '') {
   const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(version + '|' + variant + '|' + mainTex + '|' + figures));
   return `/bank/pdf/${hex(digest).slice(0, 32)}.pdf`;
 }
+const figureStamp = entries => entries.flatMap(b => Object.entries(b.figures || {}).map(([n, f]) => `${n}:${f.sha256}`)).sort().join(',');
+/* The PDF stored under `key` (null: none, or no cache here), and storing one: the browser keeps the last PDFS_KEPT
+   (problem sets and previewed statements alike), the oldest going first. */
+const PDFS_KEPT = 60;
+async function storedPdf(key) {
+  if (!key) return null;
+  const cache = await pdfCache();
+  const hit = cache ? await cache.match(key).catch(() => null) : null;
+  const pdf = hit ? new Uint8Array(await hit.arrayBuffer()) : null;
+  return pdf && pdf.length ? pdf : null;
+}
+async function storePdf(key, pdf) {
+  if (!key) return;
+  const cache = await pdfCache();            // opened now: starting the engine may have deleted 'bank-pdfs' meanwhile
+  if (!cache) return;
+  try {
+    await cache.put(key, new Response(pdf, { headers: { 'Content-Type': 'application/pdf' } }));
+    const keys = await cache.keys();         // in the order they were stored
+    for (const k of keys.slice(0, Math.max(0, keys.length - PDFS_KEPT))) await cache.delete(k);
+  } catch (e) { /* quota */ }
+}
 
 /* Compile one variant for a list of IDs, in the order given (the page decides it: bank-search.js::autoOrder or
    the hand-made order).  Resolves {ids, variant, pdf, mainTex, pages, passes, fromCache, ms}.
@@ -398,7 +430,7 @@ async function selection(ids, variant, { showMethods, signal }) {
   const t0 = performance.now();
   if (!engineSupported()) throw new Error(UNSUPPORTED);
   const bodies = await loadBodies();
-  const sorted = [...new Set(ids.map(Number))];
+  const sorted = [...new Set(ids.map(Number))];      // the order given, each ID once
   const sel = sorted.map(i => bodies[pad4(i)]);
   if (sel.some(b => !b)) throw staleError();        // listed on this page but not in bodies.json: the page is older than the data
   const appendix = loadedAppendix();
@@ -408,75 +440,94 @@ async function selection(ids, variant, { showMethods, signal }) {
   const mainTex = makeMain(bodies, sorted, variant, { showMethods, appendix });
   const resultNames = variant === 'solutions' ? appendixOrder(sel, appendix) : [];
   const results = resultNames.map(n => appendix[n]);
-  const figures = [...sel, ...results].flatMap(b => Object.entries(b.figures || {}).map(([n, f]) => `${n}:${f.sha256}`)).sort().join(',');
   const version = await engineVersion();
-  const key = await selectionKey(version, variant, mainTex, figures);
-  if (key) {
-    const cache = await pdfCache();
-    const hit = cache ? await cache.match(key).catch(() => null) : null;
-    const pdf = hit ? new Uint8Array(await hit.arrayBuffer()) : null;
-    if (pdf && pdf.length) return { ids: sorted, variant, pdf, mainTex, fromCache: true, passes: [], pages: null, ms: Math.round(performance.now() - t0) };
-  }
+  const key = await selectionKey(version, variant, mainTex, figureStamp([...sel, ...results]));
+  const stored = await storedPdf(key);
+  if (stored) return { ids: sorted, pdf: stored, mainTex, fromCache: true, passes: [], pages: null, ms: Math.round(performance.now() - t0) };
   if (signal && signal.aborted) throw abortError();
-  await initEngine();
-  const { files, verified } = await figureFiles([...sel, ...results]);
+  const [{ files, verified }] = await Promise.all([figureFiles([...sel, ...results]), initEngine()]);     // the drawings arrive while the engine starts
   // the timeout counts the shared results too (each is a page or two of text)
   const r = await compileRaw(withMarkers(mainTex), files, { timeoutMs: selectionTimeout(sorted.length + results.length), signal, kind: 'selection',
     order: [...sel.map(b => b.id), ...resultNames.map(n => `a-${n}`)],
     names: Object.fromEntries([...sel.map(b => [b.id, b.title]), ...resultNames.map(n => [`a-${n}`, appendix[n].title])]) });
   checkEngine(r);
   if (r.exit !== 0 || !r.pdf || !r.pdf.length) throw compileError(r, mainTex);
-  if (key && verified && r.version === version) {
-    const cache = await pdfCache();          // opened now: starting the engine may have deleted 'bank-pdfs' meanwhile
-    if (cache) { try { await cache.put(key, new Response(r.pdf, { headers: { 'Content-Type': 'application/pdf' } })); } catch (e) { /* quota */ } }
-  }
-  return { ids: sorted, variant, pdf: r.pdf, mainTex, fromCache: false, passes: r.passes, pages: r.pages, ms: Math.round(performance.now() - t0) };
+  if (verified && r.version === version) await storePdf(key, r.pdf);
+  return { ids: sorted, pdf: r.pdf, mainTex, fromCache: false, passes: r.passes, pages: r.pages, ms: Math.round(performance.now() - t0) };
 }
 
 /* One problem on its own, for the "Preview" button in the results list: the statement only — a preview never shows a
    solution, and its row already shows the title and the origin.  Not part of the stitched document, so makeMain (and its
    Python twin) stay untouched.
-   bank-ui.js draws it into the page, so the page is the text with 2 pt round it, not an A4 sheet.  `width` (pt) is the
-   measure when the screen is narrower than the sheets (a phone; \sloppy then, against lines that stick out); otherwise
-   the lines break as in a problem set.  The page is wider than the measure, for a formula that sticks out all the same:
-   bank-ui.js draws only as far as the text goes.  A full page is the text height; the last one ends where its text ends,
-   footnotes included: with \raggedbottom they come right below the text, as long as the page ends on a bare \penalty
-   (\end{document}'s \newpage adds a \vfil that pushes them down). */
+   bank-ui.js draws it into the page, so the page is the text with 2 pt round it, not an A4 sheet.  `width` (pt, two
+   decimals) is the measure when the screen is narrower than the sheets (a phone; \sloppy then, against lines that stick
+   out); otherwise the lines break as in a problem set.  The page is wider than the measure, for a formula that sticks
+   out all the same: bank-ui.js draws only as far as the text goes.  It is as tall as any statement (PREVIEW_TALL: one
+   page, never cut), and ends where its text ends, footnotes included: with \raggedbottom they come right below the
+   text, as long as the page ends on a bare \penalty (\end{document}'s \newpage adds a \vfil that pushes them down).
+   The build typesets every statement so in advance (bank/stitch.py::make_previews, from the same head and page, its
+   twins preview_head and preview_page): see pickPreview. */
 export const PREVIEW_MARGIN_PT = 2;
-export function makePreview(bodies, id, { width = null } = {}) {
-  const b = bodies[pad4(id)];
-  if (!b) throw staleError();                      // listed on the page but not in bodies.json
+const PREVIEW_TALL = '\\textheight=7000pt\\vsize=\\textheight\\csname @colht\\endcsname=\\textheight\\csname @colroom\\endcsname=\\textheight';
+export function previewHead(width = null) {
   const m = `${PREVIEW_MARGIN_PT}pt`;
   const out = ['\\begin{document}', '\\pagestyle{empty}\\raggedbottom'];
   if (width > 0) out.push(`\\ifdim${width.toFixed(2)}pt<\\textwidth\\textwidth=${width.toFixed(2)}pt\\sloppy\\fi`);
   out.push('\\hsize=\\textwidth\\linewidth=\\textwidth\\columnwidth=\\textwidth',
     `\\hoffset=\\dimexpr${m}-1in-\\oddsidemargin\\relax`,
     `\\voffset=\\dimexpr${m}-1in-\\topmargin-\\headheight-\\headsep\\relax`,
-    '\\global\\pdfpagewidth=560pt',
-    `\\global\\pdfpageheight=\\dimexpr\\textheight+2\\dimexpr${m}\\relax\\relax`,
-    '\\begin{problem}', b.statement, '\\end{problem}',
+    '\\global\\pdfpagewidth=560pt', PREVIEW_TALL);
+  return out;
+}
+export function previewPage(statement) {
+  const m = `${PREVIEW_MARGIN_PT}pt`;
+  return [`\\global\\pdfpageheight=\\dimexpr\\textheight+2\\dimexpr${m}\\relax\\relax`, '\\begin{problem}', statement, '\\end{problem}',
     `\\par\\ifdim\\pagegoal<\\maxdimen\\global\\pdfpageheight=\\dimexpr\\pagetotal+\\pagedepth+\\vsize-\\pagegoal+2\\dimexpr${m}\\relax\\relax\\fi`,
-    '\\penalty-10000', '\\end{document}');
-  return out.join('\n') + '\n';
+    '\\penalty-10000'];
+}
+export function makePreview(bodies, id, { width = null } = {}) {
+  const b = bodies[pad4(id)];
+  if (!b) throw staleError();                      // listed on the page but not in bodies.json
+  return [...previewHead(width), ...previewPage(b.statement), '\\end{document}'].join('\n') + '\n';
 }
 
-/* Compile that one-problem document.  Resolves {pdf, mainTex}.  signal: as for compileSelection; width: as for
-   makePreview. */
+/* The statement of problem `id` as the build typeset it (the page's data "previews", bank/stitch.py::build_previews:
+   one PDF per measure, 10 % apart, page k the statement of ids[k-1]), at the measure nearest to `measure` (in proportion):
+   {url, page, pt, fill}, fill being how much bigger (or smaller) to draw it to fill that measure.  null when there is
+   none: the page then typesets it itself (compilePreview). */
+export function pickPreview(previews, id, measure) {
+  const k = previews && previews.ids ? previews.ids.indexOf(Number(id)) : -1;
+  if (k < 0 || !previews.measures.length || !(measure > 0)) return null;
+  let best = null;
+  for (const m of previews.measures) if (!best || Math.abs(Math.log(m.pt / measure)) < Math.abs(Math.log(best.pt / measure))) best = m;
+  return { url: best.url, page: k + 1, pt: best.pt, fill: measure / best.pt };
+}
+
+/* Compile that one-problem document.  Resolves {pdf}.  signal: as for compileSelection; width: as for makePreview.
+   A statement already typeset at this measure (in this visit or an earlier one) comes from the PDF cache: reopening a
+   preview starts no engine and waits for nothing. */
 export function compilePreview(id, { signal = null, width = null } = {}) {
   return untilAborted(preview(Number(id), signal, width), signal);
 }
 
 async function preview(id, signal, width) {
   if (!engineSupported()) throw new Error(UNSUPPORTED);
+  // not stored yet (a first statement: some 16 MB), the engine is fetched with the problem texts, not after them; stored,
+  // it waits (the statement may come from the PDF cache, with no engine to start)
+  engineStored().then(stored => { if (!stored && !(signal && signal.aborted)) initEngine().catch(() => {}); });
   const bodies = await loadBodies();
-  const mainTex = makePreview(bodies, id, { width });
+  const mainTex = makePreview(bodies, id, { width }), body = bodies[pad4(id)];
+  const version = await engineVersion();
+  const key = await selectionKey(version, 'preview', mainTex, figureStamp([body]));
+  const stored = await storedPdf(key);
+  if (stored) return { pdf: stored };
   if (signal && signal.aborted) throw abortError();
-  await initEngine();
-  const { files } = await figureFiles([bodies[pad4(id)]]);
-  const r = await compileRaw(mainTex, files, { timeoutMs: PREVIEW_TIMEOUT_MS, signal, kind: 'preview', label: bodies[pad4(id)].title });
+  const [{ files, verified }] = await Promise.all([figureFiles([body]), initEngine()]);
+  const r = await compileRaw(mainTex, files, { timeoutMs: PREVIEW_TIMEOUT_MS, signal, kind: 'preview', label: body.title });
   checkEngine(r);
   if (r.exit !== 0 || !r.pdf || !r.pdf.length) throw compileError(r, mainTex);
-  return { pdf: r.pdf, mainTex };
+  if (verified && r.version === version) await storePdf(key, r.pdf);
+  return { pdf: r.pdf };
 }
 
 /* Compile any document against the club format (the propose page's live preview).  No PDF cache.
@@ -499,7 +550,7 @@ export async function resetEngine() {
   } catch (e) { /* Cache API refused: nothing stored */ }
   state.figures.clear();
   versionPromise = null;
-  return initEngine({ force: true });
+  return initEngine();
 }
 
 /* exposed for the browser tests */

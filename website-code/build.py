@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-Static site generator for the Math Olympiad Club ETHZ website and problem bank.
+Static site generator for the Math Olympiad Club at ETHZ website and problem bank.
 
     python3 build.py                 # full build: validate + compile every problem, site data, bundle, HTML
     python3 build.py --preview       # include unreviewed problems (with a review badge) — local review
     python3 build.py --no-compile    # skip the per-problem pdflatex proofs (fast local iteration)
     python3 build.py --no-bundle     # skip the in-browser engine bundle (site/static/busytex/ kept as is; built if
                                      # missing or made from an older preamble.tex)
-    python3 build.py --assets DIR    # texlyre-busytex assets (default .cache/busytex-assets; downloaded if absent)
+    python3 build.py --assets DIR    # texlyre-busytex assets (default .cache/busytex-assets/busytex; downloaded if absent)
 
 Steps (any failure stops the build — nothing deploys):
   1. tags.yml is loaded and checked.
@@ -19,7 +19,10 @@ Steps (any failure stops the build — nothing deploys):
      everything that goes in, so an unchanged problem is not compiled again).
   4. site data: site/static/bank/{tags.json,index.json,bodies.json,figures/} (every numbered problem, the unreviewed
      ones marked proposed, see bank/data.py; or all with --preview, where new-title.tex files appear under their provisional number, see bank/number.py).  bodies.json carries the CI-side transforms (namespaced labels, externalised
-     TikZ figures, pre-resolved citations) and the shared results those problems cite ("appendix").
+     TikZ figures, pre-resolved citations) and the shared results those problems cite ("appendix").  Then every
+     statement typeset in advance for the Problems page's previews, site/static/bank/previews/ (bank/stitch.py::
+     build_previews, cached in .cache/previews/): a measure that fails is left out with a warning (the page typesets
+     those statements in the browser).
   5. the in-browser engine bundle site/static/busytex/ (trimmed TeX Live + format file), unless --no-bundle and
      the bundle exists and was made from the current preamble.tex.  The texlyre-busytex assets are checked against
      tools/busytex-assets.sha256 first.
@@ -33,8 +36,10 @@ import argparse
 import datetime
 import glob
 import hashlib
+import html
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -93,7 +98,7 @@ def compile_all(probs, items, tags, jobs):
     print(f"{n_compiles} standalone compiles OK")
 
 
-def write_site_data(probs, items, tags, preview):
+def write_site_data(probs, items, tags, preview, jobs=4):
     os.makedirs(BANK_DATA_DIR, exist_ok=True)
     visible = visible_problems(probs, preview)
     index = build_index(probs, preview)
@@ -118,8 +123,8 @@ def write_site_data(probs, items, tags, preview):
     cites_of = {it["name"]: it["cites"] for it in items if it["name"]}
     wanted = A.closure([n for s in source for n in s["cites"]], cites_of)
     try:
-        bodies, stats = stitch.build_bodies(source, BANK_DATA_DIR, log=lambda *a: None)
-        appendix, astats = stitch.build_appendix(items, wanted, BANK_DATA_DIR, log=lambda *a: None)
+        bodies, stats = stitch.build_bodies(source, BANK_DATA_DIR)
+        appendix, astats = stitch.build_appendix(items, wanted, BANK_DATA_DIR)
     except RuntimeError as e:
         fail(str(e))
     # "build" = a hash of the texts; the page carries the same value and refuses texts of another deploy
@@ -140,7 +145,14 @@ def write_site_data(probs, items, tags, preview):
           f"{astats['results']} shared result(s) cited, "
           f"{stats['figures'] + astats['figures']} figure(s), {stats['citations'] + astats['citations']} citation(s), "
           f"{len(catalogue['area'])} area / {len(catalogue['methods'])} methods tags")
-    return index, catalogue, build
+    # every statement typeset in advance, for the Problems page's previews (bank/stitch.py::build_previews)
+    previews, missing = stitch.build_previews(bodies, BANK_DATA_DIR, jobs)
+    for m in missing:
+        print(f"⚠️  previews, {m}: the page typesets these statements in the browser")
+    if previews:
+        sizes = [os.path.getsize(os.path.join(OUTPUT_DIR, m["url"])) for m in previews["measures"]]
+        print(f"previews: {len(previews['ids'])} statements at {len(sizes)} measures, {sum(sizes) / 1e6:.1f} MB in all")
+    return index, catalogue, build, previews
 
 
 def ensure_assets(assets_dir):
@@ -185,6 +197,21 @@ def engine_version():
         return None
 
 
+def engine_download_mb():
+    """What the in-browser engine downloads the first time, in MB, from its manifest (the Propose page says it where a
+    visitor saving data is asked first); None without a bundle."""
+    try:
+        with open(os.path.join(paths.BUSYTEX_DIR, "manifest.json"), encoding="utf-8") as f:
+            return max(1, round(sum(f["bytes"] for f in json.load(f)["files"].values()) / 1e6))
+    except (OSError, ValueError, KeyError, TypeError, AttributeError):
+        return None
+
+
+# The club's address: the foot of every page, and where the Propose page sends a proposal
+CLUB_EMAIL = "olympiadclub@math.ethz.ch"
+# Where the site is served (GitHub Pages of the repository): the social preview's image needs a whole address
+SITE_URL = "https://{}.github.io/{}/".format(*paths.GITHUB_REPO.split("/"))
+
 PDFJS_PACKAGE = os.path.join(ROOT, "node_modules", "pdfjs-dist")
 
 
@@ -215,7 +242,81 @@ def asset_version():
     return h.hexdigest()[:10]
 
 
-def render_pages(index, catalogue, preview, build=None, items=(), pdfjs=None):
+def tree_top(index):
+    """The root of the Problems page's tree of topics, written into the page so that nothing jumps when its script
+    arrives (the tree starts folded; bank-ui.js draws the same row): the number of problems a visitor sees first (the
+    reviewed ones), whether they have topics at all (no topic: no tree), and whether some problems are proposed (their
+    filter word is written in the page too)."""
+    shown = [p for p in index["problems"] if not p.get("proposed")]
+    return {"bank_topics": any(p["area"] for p in shown), "bank_total": len(shown), "bank_proposed": len(shown) < len(index["problems"])}
+
+
+def origin_forms(probs):
+    """How the bank numbers each source's problems, for "Where is it from?" on the Propose page (bank-propose-ui.js lists the
+    sources the bank has most problems from first and, once one is chosen, shows its form): {slug: {"n": its problems,
+    "date": a year, "number": its most common form of problem number, as one of its problems has it}}."""
+    shape = lambda s: re.sub(r"\d+", "#", s)
+    seen = {}
+    for p in probs:
+        if not p.get("origin"):
+            continue
+        o = seen.setdefault(p["origin"], {"n": 0, "forms": {}, "ex": {}})
+        o["n"] += 1
+        num = (p.get("origin_number") or "").strip()
+        if num:
+            k, year = shape(num), (p.get("origin_date") or "")[:4]
+            o["forms"][k] = o["forms"].get(k, 0) + 1
+            if year >= o["ex"].get(k, ("", ""))[0]:
+                o["ex"][k] = (year, num)          # the latest problem of that form
+    out = {}
+    for slug, o in seen.items():
+        out[slug] = {"n": o["n"]}
+        if o["forms"]:
+            k = max(o["forms"], key=lambda f: (o["forms"][f], f))
+            out[slug]["date"], out[slug]["number"] = o["ex"][k]
+    return out
+
+
+def font_ranges(css_path=os.path.join(paths.SITE_DIR, "static", "css", "fonts.css")):
+    """The code points of the web fonts' basic files and of their second files, from the unicode-ranges of fonts.css
+    (those of tools/subset_fonts.py)."""
+    with open(css_path, encoding="utf-8") as f:
+        css = f.read()
+    basic, more = set(), set()
+    for url, ranges in re.findall(r'src: url\("([^"]+)"\)[^}]*?unicode-range: ([^;]+);', css):
+        for part in ranges.split(","):
+            lo, _, hi = part.strip()[2:].partition("-")
+            (more if "-ext" in url else basic).update(range(int(lo, 16), int(hi or lo, 16) + 1))
+    return basic, more
+
+
+def check_fonts(catalogue, index, pages=()):
+    """The web fonts' basic files hold every character the site's own text shows (tools/subset_fonts.py): say which
+    tag, title or page brings one they lack, as its pages would download a second font file for it (or draw it in
+    another font, when the fonts have no glyph for it)."""
+    basic, more = font_ranges()
+    texts = [(t[k], t["name"] if k == "name" else f"the description of {t['slug']}") for tags in catalogue.values()
+             for t in tags for k in ("name", "description") if t.get(k)]
+    texts += [(p["title"], p["title"]) for p in index["problems"]]
+    for name in pages:
+        with open(os.path.join(OUTPUT_DIR, name), encoding="utf-8") as f:
+            page = re.sub(r"<(script|style)\b.*?</\1>", " ", f.read(), flags=re.S)
+        texts.append((html.unescape(re.sub(r"<[^>]+>", " ", page)), name))
+    second, none = {}, {}
+    for text, where in texts:
+        for ch in text:
+            if ord(ch) not in basic and ch.isprintable():
+                (second if ord(ch) in more else none).setdefault(ch, where)
+    if second:
+        print("⚠️  web fonts: " + ", ".join(f"{ch} ({w})" for ch, w in second.items()) + " not in their basic files: a page "
+              "that shows one downloads one more font file (about 30 KB). Add it to RANGES in tools/subset_fonts.py and "
+              "to fonts.css, and cut the fonts again.")
+    if none:
+        print("ℹ️  web fonts: no glyph for " + ", ".join(f"{ch} ({w})" for ch, w in none.items()) + ": the browser draws "
+              f"{'it' if len(none) == 1 else 'them'} in another font.")
+
+
+def render_pages(index, catalogue, build=None, items=(), pdfjs=None, forms=None, previews=None):
     env = Environment(loader=FileSystemLoader(TEMPLATES_DIR), autoescape=False)
 
     def url_for(endpoint, **kw):
@@ -223,30 +324,35 @@ def render_pages(index, catalogue, preview, build=None, items=(), pdfjs=None):
             return f"static/{kw['filename']}"
         return "index.html" if endpoint == "home" else f"{endpoint}.html"
 
-    github = {"repo": paths.GITHUB_REPO, "branch": paths.GITHUB_BRANCH, "problemsPath": paths.PROBLEMS_REPO_PATH}
-
     def inline_json(obj):
         return json.dumps(obj, ensure_ascii=False, separators=(",", ":")).replace("<", "\\u003c")   # no "</script" or "<!--" inside
 
     # build / engine: the problem texts and the LaTeX engine this page was built with (bank-compile.js::expectBuild);
-    # pdfjs: the version of site/static/pdfjs/ (bank-ui.js draws the previews with it)
-    bank_data = inline_json({"tags": catalogue, "index": index, "github": github, "build": build, "engine": engine_version(),
-                             "pdfjs": pdfjs})
+    # pdfjs: the version of site/static/pdfjs/ (bank-ui.js draws the previews with it); previews: the statements as the
+    # build typeset them (bank-compile.js::pickPreview)
+    bank_data = inline_json({"tags": catalogue, "index": index, "build": build, "engine": engine_version(),
+                             "pdfjs": pdfjs, "previews": previews})
     # the shared results a proposed solution may cite with \appendixref{name}: names, titles, the results they cite and
     # the labels a solution may refer to (texts are not needed); the page lists them in its writing rules
     results = [{"name": it["name"], "title": it["title"], "cites": list(it["cites"]), "labels": sorted(A.global_labels(it))}
                for it in items if it["name"]]
-    propose_data = inline_json({"tags": catalogue, "github": github, "appendix": results})
+    # pdfjs: the Propose page draws its sheet with it too
+    # what the Propose page reads of tags.yml: names and the trees, the origins' aliases (where it is from), the difficulty
+    # levels' descriptions; not the topics' and methods' descriptions and aliases (half the page)
+    slim = lambda tags, drop: [{k: v for k, v in t.items() if k not in drop} for t in tags]
+    propose_tags = {"area": slim(catalogue["area"], {"description", "aliases"}), "methods": slim(catalogue["methods"], {"description", "aliases"}),
+                    "difficulty": catalogue["difficulty"], "origin": slim(catalogue["origin"], {"description"})}
+    propose_data = inline_json({"tags": propose_tags, "appendix": results, "pdfjs": pdfjs, "originForms": forms or {}})
     pages = [("index.html", {"page": "home"}),
-             ("problems.html", {"page": "problems", "page_title": "Problems", "bank_data_json": bank_data, "preview": preview}),
+             ("problems.html", {"page": "problems", "page_title": "Problems", "bank_data_json": bank_data, **tree_top(index)}),
              ("propose.html", {"page": "propose", "page_title": "Propose a problem", "propose_data_json": propose_data,
-                               "appendix_results": results})]
+                               "appendix_results": results, "engine_mb": engine_download_mb()})]
     version = asset_version()
     for name in os.listdir(OUTPUT_DIR):
         if name.endswith(".html"):
             os.remove(os.path.join(OUTPUT_DIR, name))
     for template_name, context in pages:
-        html = env.get_template(template_name).render(url_for=url_for, asset_version=version,
+        html = env.get_template(template_name).render(url_for=url_for, asset_version=version, club_email=CLUB_EMAIL, site_url=SITE_URL,
                                                       year=datetime.date.today().year, **context)   # site.js updates the year
         with open(os.path.join(OUTPUT_DIR, template_name), "w", encoding="utf-8") as f:
             f.write(html)
@@ -254,7 +360,7 @@ def render_pages(index, catalogue, preview, build=None, items=(), pdfjs=None):
     # GitHub Pages serves this for a wrong address, at any depth: so its links are absolute (and the CSP has base-uri 'none')
     root = "/" + paths.GITHUB_REPO.split("/")[1] + "/"
     html = env.get_template("404.html").render(url_for=lambda endpoint, **kw: root + url_for(endpoint, **kw), asset_version=version,
-                                               year=datetime.date.today().year, page="404", page_title="Page not found")
+                                               club_email=CLUB_EMAIL, site_url=SITE_URL, year=datetime.date.today().year, page="404", page_title="Page not found")
     with open(os.path.join(OUTPUT_DIR, "404.html"), "w", encoding="utf-8") as f:
         f.write(html)
     print("built site/404.html")
@@ -286,7 +392,7 @@ def main(argv=None):
         compile_all(probs, items, tags, a.jobs)
 
     step("site data")
-    index, catalogue, build = write_site_data(probs, items, tags, a.preview)
+    index, catalogue, build, previews = write_site_data(probs, items, tags, a.preview, a.jobs)
 
     # a fresh clone has no bundle, and one made from an older preamble.tex lacks its new macros: Create / Preview and
     # the browser tests need a current one
@@ -301,7 +407,8 @@ def main(argv=None):
     print(f"pdfjs-dist {pdfjs} → site/static/pdfjs/")
 
     step("HTML pages")
-    render_pages(index, catalogue, a.preview, build, items, pdfjs)
+    render_pages(index, catalogue, build, items, pdfjs, origin_forms(probs), previews)
+    check_fonts(catalogue, index, ("index.html", "problems.html", "propose.html", "404.html"))
     print(f"\n🎉 Site built in 'website-code/site/'{' (preview)' if a.preview else ''}. Serve it with: python3 -m http.server 8000 --directory website-code/site")
 
 

@@ -1,4 +1,4 @@
-// End-to-end test of what the sticky header and bar, the bubbles and a phone ask of the site, in headless Chromium (mobile
+// End-to-end test of what the sticky header and row of filters, the bubbles and a phone ask of the site, in headless Chromium (mobile
 // emulation for the phone): no download the visitor did not ask for, nothing hidden under what is stuck, no stray bubble,
 // no page wider than a phone, a trackpad pinch that leaves the header alone, a theme fade that swallows no click.
 // Needs a built site (python3 build.py --preview) and the engine bundle in site/static/busytex/.
@@ -30,8 +30,11 @@ const watch = (page) => {
 };
 const engineFiles = /\/static\/busytex\/(busytex|club)/;
 const phone = () => browser.newContext({ ...devices['iPhone 14'] });      // touch, a coarse pointer, 390 px wide
-const showAll = async (p) => { const b = p.locator('#bank-show-all'); if (await b.isVisible()) await b.click(); await p.waitForSelector('#bank-results > li:not([hidden])'); };
+const ROWS = '#bank-results > li:not([hidden])';
+// the whole bank listed: a click on All problems, the first line of the tree (unless a list is there already)
+const showAll = async (p) => { await p.waitForSelector('html[data-ready]'); if (!(await p.locator(ROWS).count())) await p.locator('#bank-tree-topics .tt-name[data-slug=""]').click(); await p.waitForSelector(ROWS); };
 const longTag = 'arithmetic-functions';
+const innerHeightOf = p => p.viewportSize().height;
 
 try {
   console.log('1. the engine is downloaded only when asked for');
@@ -45,14 +48,19 @@ try {
     await p.locator('#bank-results > li:not([hidden]) .bank-check').first().check();
     await p.waitForTimeout(800);
     check(asked.length === 0, `on a phone, a tick starts no download of the engine (${asked.length} requests)`);
-    await p.goto(`${base}/propose.html`);
-    await p.waitForFunction(() => document.documentElement.hasAttribute('data-ready'));
-    await p.waitForTimeout(100);
-    check(!(await p.isChecked('#pp-auto')), 'on a phone with no stored engine, "Update while typing" starts off, and the switch is there');
-    await p.fill('#pp-statement', 'A statement.');
-    await p.waitForTimeout(1200);
-    check(asked.length === 0, `on a phone, typing starts no download either (${asked.length} requests)`);
-    check((await p.textContent('#pp-preview-status')).trim() === 'Update now shows the PDF.', 'before any PDF, the status says what Update now does (not "out of date")');
+    // the Propose page: sending needs the engine (the PDF), so the sheet follows the text on a phone too; only where the
+    // visitor saves data does it wait for "Show it typeset"
+    const saving = watch(await c.newPage());
+    await saving.addInitScript(() => Object.defineProperty(Navigator.prototype, 'connection', { get: () => ({ saveData: true, effectiveType: '4g' }) }));
+    saving.on('request', r => { if (engineFiles.test(r.url())) asked.push(r.url()); });
+    await saving.goto(`${base}/propose.html`);
+    await saving.waitForFunction(() => document.documentElement.hasAttribute('data-ready'));
+    await saving.waitForTimeout(100);
+    await saving.fill('#pp-statement', 'A statement.');
+    await saving.waitForTimeout(1200);
+    check(asked.length === 0 && await saving.locator('#pp-typeset').isVisible(),
+      `on a phone that saves data, typing starts no download (${asked.length} requests): the sheet offers "Show it typeset"`);
+    await saving.close();
 
     // Create does download it; then, on the next visit, a tick starts the stored engine at once: no download, no wait at Create
     await p.goto(`${base}/problems.html?sel=${IDS[0]}`);
@@ -84,12 +92,12 @@ try {
   {
     const c = await browser.newContext({ viewport: { width: 1280, height: 800 } });
     const p = watch(await c.newPage());
-    await p.goto(`${base}/problems.html?a=algebra,analysis`);
-    await p.waitForSelector('#bank-chips .bank-chip-x');
-    await p.locator('#bank-chips .bank-chip-x').first().click();
+    await p.goto(`${base}/problems.html?a=analysis&s=full`);
+    await p.waitForSelector('.bank-filter-x[data-filter="solved"]');
+    await p.locator('.bank-filter-x[data-filter="solved"]').click();
     await p.mouse.move(640, 700);
     await p.waitForTimeout(250);
-    check(!(await p.locator('.tip').isVisible().catch(() => false)), 'removing a tag with its × opens no bubble');
+    check(!(await p.locator('.tip').isVisible().catch(() => false)) && !(await p.locator('.bank-filter.is-on').count()), 'clearing a filter with its × opens no bubble');
     const chip = p.locator('#bank-results > li:not([hidden]) .bank-chip-unrated').first();
     if (await chip.count()) {
       await chip.click();
@@ -98,7 +106,7 @@ try {
       await p.waitForTimeout(150);
       const r = await p.evaluate(() => { const t = document.querySelector('.tip'); return t && !t.hidden ? t.getBoundingClientRect().top : null; });
       check(r === null, 'a bubble whose row is filtered away by typing goes at once');
-    } else check(true, 'no unrated problem in Algebra or Analysis (the bubble of a plain tag not tested)');
+    } else check(true, 'no unrated problem in Analysis (the bubble of a plain tag not tested)');
     await c.close();
   }
 
@@ -108,20 +116,25 @@ try {
     const p = watch(await c.newPage());
     await p.goto(`${base}/problems.html?sel=${IDS[0]}-${IDS[4]}`);
     await showAll(p);
-    await p.evaluate(() => window.scrollTo(0, 3000));
-    await p.waitForFunction(() => document.querySelector('.bank-bar').classList.contains('is-stuck'), null, { timeout: 3000 }).catch(() => {});
+    // the whole tree unfolded makes the page long enough to scroll
+    for (let i = 0; i < 4; i++) await p.evaluate(() => document.querySelectorAll('#bank-tree-topics .tt-tg[aria-expanded="false"]').forEach(b => b.click()));
+    await p.waitForTimeout(350);
+    await p.evaluate(() => window.scrollTo(0, 1200));          // well inside the tree: at the very end of the page the list leaves with it
+    await p.waitForFunction(() => document.getElementById('bank-tools').classList.contains('is-stuck'), null, { timeout: 3000 }).catch(() => {});
     const stuck = await p.evaluate(() => {
-      const b = document.querySelector('.bank-bar').getBoundingClientRect(), h = document.querySelector('.site-head').getBoundingClientRect();
-      return { barTop: b.top, headBottom: h.bottom, cls: document.querySelector('.bank-bar').className };
+      const b = document.getElementById('bank-tools').getBoundingClientRect(), h = document.querySelector('.site-head').getBoundingClientRect();
+      const panel = document.getElementById('bank-tree-panel').getBoundingClientRect();
+      return { barTop: b.top, barBottom: b.bottom, headBottom: h.bottom, cls: document.getElementById('bank-tools').className, panelTop: panel.top, scrolled: scrollY };
     });
-    check(Math.abs(stuck.barTop - stuck.headBottom) < 1 && /is-stuck/.test(stuck.cls), 'scrolled down, the bar sticks right under the header, and knows it');
+    check(stuck.scrolled > 500 && Math.abs(stuck.barTop - stuck.headBottom) < 1 && /is-stuck/.test(stuck.cls), 'scrolled down, the row of filters sticks right under the header, and knows it');
+    check(stuck.panelTop >= stuck.barBottom - 1 && stuck.panelTop < innerHeightOf(p), `and the list stays in sight under it (its top at ${Math.round(stuck.panelTop)}, the row ends at ${Math.round(stuck.barBottom)})`);
     await p.click('#bank-order-btn');
     await p.waitForFunction(() => { const t = document.getElementById('bank-order').getBoundingClientRect().top; return t >= 0 && t < innerHeight; }, null, { timeout: 3000 }).catch(() => {});
     const order = await p.evaluate(() => { const r = document.getElementById('bank-order').getBoundingClientRect(); return { top: r.top, bottom: r.bottom, h: innerHeight }; });
-    check(order.top >= 0 && order.top < order.h, `PDF order pressed in the stuck bar brings its panel into view (top ${Math.round(order.top)})`);
+    check(order.top >= 0 && order.top < order.h, `PDF order pressed in the stuck row brings its panel into view (top ${Math.round(order.top)})`);
     await p.click('#bank-order-btn');
 
-    // while a PDF is on its way (the texts are held back), Cancel makes the bar wrap: the status stays readable under it
+    // while a PDF is on its way (the texts are held back), in a narrower window: the status stays readable under the row
     await c.route(/bodies\.json/, async r => { await new Promise(res => setTimeout(res, 2500)); await r.continue(); });
     await p.setViewportSize({ width: 1000, height: 800 });
     await p.evaluate(() => window.scrollTo(0, 2000));
@@ -135,7 +148,7 @@ try {
       const hit = document.elementFromPoint(r.left + 20, r.top + r.height / 2);
       return { text: s.textContent, onTop: !!hit && (hit === s || s.contains(hit)) };
     });
-    check(seen.onTop, `the status can be read under the bar while a PDF is made ("${seen.text}")`);
+    check(seen.onTop, `the status can be read under the row while a PDF is made ("${seen.text}")`);
     await p.click('#bank-cancel');
     await p.waitForFunction(() => document.getElementById('bank-status').textContent === 'Cancelled.', null, { timeout: 1000 }).catch(() => {});
     check(await p.evaluate(() => document.getElementById('bank-status').textContent === 'Cancelled.'), 'Cancel works at once, even while the texts are loading');
@@ -161,15 +174,14 @@ try {
     const small = await browser.newContext({ viewport: { width: 1280, height: 560 } });
     const q = watch(await small.newPage());
     await q.goto(`${base}/problems.html`);
-    await q.click('#bank-filter-btn');
     await showAll(q);
     await q.waitForTimeout(150);
     const blocked = await q.evaluate(() => {
-      const r = document.getElementById('bank-reset').getBoundingClientRect();
+      const box = document.getElementById('bank-search'), r = box.getBoundingClientRect();
       const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
-      return { covered: r.top > 0 && r.bottom < innerHeight && hit !== document.getElementById('bank-reset'), stuck: document.querySelector('.bank-bar').classList.contains('is-stuck') };
+      return { covered: r.top > 0 && r.bottom < innerHeight && hit !== box, stuck: document.getElementById('bank-tools').classList.contains('is-stuck') };
     });
-    check(!blocked.covered && !blocked.stuck, 'a bar that has not stuck yet covers nothing above it');
+    check(!blocked.covered && !blocked.stuck, 'a row that has not stuck yet covers nothing above it: the search bar can be clicked');
     await small.close();
   }
 
@@ -178,12 +190,15 @@ try {
     const c = await phone();
     const p = watch(await c.newPage());
     await p.goto(`${base}/problems.html?a=${longTag}`);
-    await p.waitForSelector('#bank-chips .bank-chip-x');
+    await p.waitForSelector('#bank-topicline:not([hidden])');
     const w = await p.evaluate(() => {
-      const x = document.querySelector('#bank-chips .bank-chip-x').getBoundingClientRect();
-      return { sw: document.documentElement.scrollWidth, cw: document.documentElement.clientWidth, xRight: x.right, win: innerWidth };
+      const x = document.getElementById('bank-topicline').getBoundingClientRect();
+      return { sw: document.documentElement.scrollWidth, cw: document.documentElement.clientWidth, xRight: x.right, win: innerWidth, tree: document.getElementById('bank-tree-topics').hidden, rows: document.querySelectorAll('#bank-results > li:not([hidden])').length };
     });
-    check(w.sw <= w.cw && w.xRight <= w.win, `a long tag wraps: the page stays ${w.cw} px wide, and its × is on screen (at ${Math.round(w.xRight)})`);
+    check(w.sw <= w.cw && w.xRight <= w.win && w.tree && w.rows > 0, `a link to a topic with a long name: the tree is folded into one line that wraps, its list under it, and the page stays ${w.cw} px wide`);
+    await p.locator('#bank-results > li:not([hidden]) .bank-check').first().check();
+    const bar = await p.evaluate(() => { const r = document.getElementById('bank-actions').getBoundingClientRect(); return { bottom: r.bottom, h: innerHeight, pos: getComputedStyle(document.getElementById('bank-actions')).position }; });
+    check(bar.pos === 'fixed' && Math.abs(bar.bottom - bar.h) < 1 && await p.locator('#bank-create').isVisible(), 'once a problem is ticked, Create PDF waits at the bottom of the screen');
     await p.goto(`${base}/propose.html`);
     const sizes = await p.evaluate(() => [...document.querySelectorAll('input:not([type=checkbox]):not([type=radio]):not([type=range]), select, textarea')].filter(e => e.offsetParent && parseFloat(getComputedStyle(e).fontSize) < 16).map(e => e.id));
     check(sizes.length === 0, `no field under 16 px, which would make an iPhone zoom${sizes.length ? ': ' + sizes.join(', ') : ''}`);
@@ -206,11 +221,22 @@ try {
   for (const [path, most] of [['problems.html', 0.02], ['problems.html?a=analysis', 0.05], ['index.html', 0.02], ['propose.html', 0.02]]) {
     const c = await phone();
     const p = watch(await c.newPage());
-    await p.addInitScript(() => { window.__cls = 0; new PerformanceObserver(l => { for (const e of l.getEntries()) window.__cls += e.value; }).observe({ type: 'layout-shift', buffered: true }); });
+    // each shift with what moved (its id, class or tag, and from where to where), so that a failure names the element
+    await p.addInitScript(() => {
+      window.__cls = 0; window.__moved = [];
+      const name = n => !n ? '?' : n.nodeType !== 1 ? `text in ${name(n.parentElement)}` : n.id ? '#' + n.id : n.className && typeof n.className === 'string' ? '.' + n.className.trim().split(/\s+/).join('.') : n.nodeName.toLowerCase();
+      new PerformanceObserver(l => {
+        for (const e of l.getEntries()) {
+          window.__cls += e.value;
+          window.__moved.push(`${e.value.toFixed(4)} at ${Math.round(e.startTime)} ms: ` + (e.sources || []).slice(0, 3)
+            .map(s => `${name(s.node)} y ${Math.round(s.previousRect.y)}→${Math.round(s.currentRect.y)}, h ${Math.round(s.previousRect.height)}→${Math.round(s.currentRect.height)}`).join('; '));
+        }
+      }).observe({ type: 'layout-shift', buffered: true });
+    });
     await p.goto(`${base}/${path}`);
     await p.waitForTimeout(1200);
-    const cls = await p.evaluate(() => window.__cls);
-    check(cls < most, `${path} on a phone: layout shift ${cls.toFixed(4)} (under ${most})`);
+    const { cls, moved } = await p.evaluate(() => ({ cls: window.__cls, moved: window.__moved }));
+    check(cls < most, `${path} on a phone: layout shift ${cls.toFixed(4)} (under ${most})` + (cls < most ? '' : ` [${moved.join(' | ')}]`));
     await c.close();
   }
 
@@ -248,21 +274,21 @@ try {
     await c.close();
   }
 
-  console.log('6. the live preview');
+  console.log('6. the sheet of the propose page');
   {
     const c = await browser.newContext({ viewport: { width: 1280, height: 800 } });
     const p = watch(await c.newPage());
-    await p.addInitScript(() => { Object.defineProperty(navigator, 'pdfViewerEnabled', { get: () => true }); });
     await p.goto(`${base}/index.html`);
     await p.click('#site-nav a[href="propose.html"]');
     await p.waitForFunction(() => document.documentElement.hasAttribute('data-ready'));
     const length0 = await p.evaluate(() => history.length);
+    const typeset = () => p.waitForFunction(() => window.propose.upToDate() && document.getElementById('pp-preview-status').dataset.state === 'ok', null, { timeout: 120000 });
     await p.fill('#pp-statement', 'First statement.');
-    await p.waitForFunction(() => /^Updated/.test(document.getElementById('pp-preview-status').textContent), null, { timeout: 120000 });
+    await typeset();
     await p.fill('#pp-statement', 'Second statement.');
-    await p.waitForFunction(() => /Second/.test(document.getElementById('pp-statement').value) && /^Updated/.test(document.getElementById('pp-preview-status').textContent) && document.getElementById('pp-pdf').src, null, { timeout: 60000 });
+    await typeset();
     await p.waitForTimeout(1500);
-    check((await p.evaluate(() => history.length)) === length0, 'previews add nothing to the history of the tab: one Back leaves the page');
+    check((await p.evaluate(() => history.length)) === length0 && await p.locator('#pp-pages canvas').count() >= 1, 'the sheet follows the text and adds nothing to the history of the tab: one Back leaves the page');
     await c.close();
   }
 
