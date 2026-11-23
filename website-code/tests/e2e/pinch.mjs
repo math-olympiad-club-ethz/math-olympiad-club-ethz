@@ -25,7 +25,10 @@ const check = (cond, msg) => { if (!cond) { failures.push(msg); console.log('  â
 
 const server = await startServer(SITE);
 const base = `http://127.0.0.1:${server.port}`;
-const browser = await (engine === 'webkit' ? webkit : chromium).launch();
+// Chromium stands in for Safari here.  On Linux (CI) it rounds the width of every letter to whole pixels at each size
+// (font hinting): a line laid out twice as big is then not quite twice as wide, and may break a word earlier, every box
+// under it a line down (23 to 33 px, measured on CI).  Without hinting its letters scale as Safari's do.
+const browser = await (engine === 'webkit' ? webkit : chromium).launch(engine === 'webkit' ? {} : { args: ['--font-render-hinting=none'] });
 const errors = [];
 const AT = { x: 900, y: 500 };          // where the pointer is during the pinches: on the right, to see the zoom go there
 // How far a box may be from where the transform alone had put it, once the page is laid out twice as big.  In WebKit that
