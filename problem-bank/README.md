@@ -1,7 +1,6 @@
 # Problem bank
 
-One LaTeX file per problem in `problems/`, the list of allowed tags in `tags.yml`, the shared `preamble.tex`
-and `references.bib`. The website (`../website-code/`) reads this folder; nothing here depends on the website.
+One LaTeX file per problem in `problems/`, the list of allowed tags in `tags.yml`, the shared `preamble.tex` and `references.bib`. The website (`../website-code/`) reads this folder; nothing here depends on the website.
 
 ```
 problems/NNNN-short-title.tex   ← one problem (header in % comments, \begin{problem}, optional \begin{solution})
@@ -24,39 +23,16 @@ inspiration/                    ← personal reference material, git-ignored
 
 ## Add a problem
 
-**From the website (no git):** Problems page → **+ Propose a problem**. Write the statement (and, if you have
-one, the solution), pick at least one area, check the live preview, then **Copy file and open GitHub**: paste the
-file into GitHub's editor and click *Propose new file* → *Create pull request*. A free GitHub account is needed;
-without one, email the file to olympiadclub@math.ethz.ch. The pull request, solution included, is public as soon as
-it is opened and stays in the history, even if it is not merged.
+**From the website (no git):** **Propose a problem**, in the site's header. Write the statement (and, if you have one, the solution), say what it is about, check the sheet that typesets it, then **Send to the club**: the share menu opens with the PDF, `new-<title>.tex` and the proposer's note (.txt); a click on Mail gives the email with them attached and one line, "Problem: <title>", and the address olympiadclub@math.ethz.ch is copied to paste in To. Without a share menu (Firefox) the files are saved and the mail app opens. Whoever reads it adds the .tex to `problems/` (by hand, as below, or with GitHub's *Add file*); the numbering Action does the rest.
 
 **By hand:**
 
-1. Copy `problems/_template.tex` to `problems/new-short-title.tex`, `short-title` = your title in kebab-case
-   (lowercase ASCII, hyphens). Don't pick a number: after the merge, the GitHub Action
-   `number-new-problems.yml` renames the file to the next free `NNNN-short-title.tex` (the number never changes
-   afterwards). Renaming the title later = renaming the file.
-2. Fill the header (`_template.tex` explains every field): at least one `area` slug from `tags.yml`; everything
-   else is optional and may stay empty
-   (a blank `title` means "Untitled problem", file `new-untitled-problem.tex`). `title` and `origin-number` are
-   printed in the PDF headings, so they are plain text: letters (accents and Greek are fine), digits, punctuation;
-   math symbols in words (not √ or ≤).
-   Write the statement inside `\begin{problem}…\end{problem}` and, if you have one, the solution inside
-   `\begin{solution}…\end{solution}` (after the problem block, not inside it; nothing outside the blocks but `%`
-   comments). TikZ (inside `tikzpicture` / `tikzcd` environments, not inline `\tikz`) and `\cite` work as usual.
-   Define macros with `\newcommand` inside the block. A PDF from the website holds many problems in one document, and
-   CI compiles every file, so the validator rejects what could reach beyond the problem: `\def`, `\let`, `\global`,
-   `\catcode`, `\csname`, `\makeatletter`, `\input`, `\includegraphics`, `\newtheorem`, `\today`, … (it names the
-   command and the line).
-3. Preview: save the file in VS Code (LaTeX Workshop runs `.vscode/bank-preview.sh`, which builds it through
-   `_preview.tex`; open the PDF next to the file once from the Explorer, it refreshes on every save), or run
-   `cd website-code && python3 -m bank.validate --compile ../problem-bank/problems/new-*.tex`.
-4. Open a pull request. CI validates the file, compiles it (also in the website's engine, under its future
-   number) and prints exactly what is wrong (`file:line: message`).
+1. Copy `problems/_template.tex` to `problems/new-short-title.tex`, `short-title` = your title in kebab-case (lowercase ASCII, hyphens). Don't pick a number: after the merge, the GitHub Action `number-new-problems.yml` renames the file to the next free `NNNN-short-title.tex` (the number never changes afterwards). Renaming the title later = renaming the file.
+2. Fill the header (`_template.tex` explains every field): at least one `area` slug from `tags.yml`; everything else is optional and may stay empty (a blank `title` means "Untitled problem", file `new-untitled-problem.tex`). `title` and `origin-number` are printed in the PDF headings, so they are plain text: letters (accents and Greek are fine), digits, punctuation; math symbols in words (not √ or ≤). Write the statement inside `\begin{problem}…\end{problem}` and, if you have one, the solution inside `\begin{solution}…\end{solution}` (after the problem block, not inside it; nothing outside the blocks but `%` comments). TikZ (inside `tikzpicture` / `tikzcd` environments, not inline `\tikz`) and `\cite` work as usual. Define macros with `\newcommand` inside the block. A PDF from the website holds many problems in one document, and CI compiles every file, so the validator rejects what could reach beyond the problem: `\def`, `\let`, `\global`, `\catcode`, `\csname`, `\makeatletter`, `\input`, `\includegraphics`, `\newtheorem`, `\today`, … (it names the command and the line).
+3. Preview: save the file in VS Code (LaTeX Workshop runs `.vscode/bank-preview.sh`, which builds it through `_preview.tex`; open the PDF next to the file once from the Explorer, it refreshes on every save), or run `cd website-code && python3 -m bank.validate --compile ../problem-bank/problems/new-*.tex`.
+4. Open a pull request. CI validates the file, compiles it (also in the website's engine, under its future number) and prints exactly what is wrong (`file:line: message`).
 
-**Bibliography:** `\cite{key}` needs `key` in `references.bib` or in an optional block at the end of the file,
-used by that problem only (LaTeX skips it; the website turns citations into a numbered reference list; no
-`\bibliography` / `\addbibresource` lines):
+**Bibliography:** `\cite{key}` needs `key` in `references.bib` or in an optional block at the end of the file, used by that problem only (LaTeX skips it; the website turns citations into a numbered reference list; no `\bibliography` / `\addbibresource` lines):
 
 ```latex
 \begin{bibentries}
@@ -68,11 +44,7 @@ New tag or origin = one entry in `tags.yml` (slug, name, optional description an
 
 ## Shared results (the appendix)
 
-A result that several solutions use (a theorem with its proof: Cauchy's theorem, the Spectral Mapping Theorem,
-Capelli's lemma, …) is written once, in `appendix/<name>.tex`, and a solution cites it with `\appendixref{<name>}`.
-Every PDF whose solutions cite results ends with an **Appendix** holding each of them once, and the results they
-cite in turn, numbered A.1, A.2, … in order of first citation; `\appendixref{<name>}` prints that number (e.g. `A.2`)
-as a link, so write it as you would write a number: `see Appendix~\appendixref{cauchy-group-theorem}`.
+A result that several solutions use (a theorem with its proof: Cauchy's theorem, the Spectral Mapping Theorem, Capelli's lemma, …) is written once, in `appendix/<name>.tex`, and a solution cites it with `\appendixref{<name>}`. Every PDF whose solutions cite results ends with an **Appendix** holding each of them once, and the results they cite in turn, numbered A.1, A.2, … in order of first citation; `\appendixref{<name>}` prints that number (e.g. `A.2`) as a link, so write it as you would write a number: `see Appendix~\appendixref{cauchy-group-theorem}`.
 
 ```latex
 % appendix/cauchy-group-theorem.tex   (the file name is the citation key: lowercase kebab-case, never rename it)
@@ -82,56 +54,27 @@ as a link, so write it as you would write a number: `see Appendix~\appendixref{c
 \end{appendixitem}
 ```
 
-- One `appendixitem` block per file, with the title (plain text) as its argument; `%` comments outside it (source,
-  notes), and optionally a `bibentries` block after it. The same LaTeX rules as problems; TikZ and `\cite` work.
-- A result may cite other results with `\appendixref`; they are added too (results citing each other in a circle
-  are an error).
-- Labels inside a result are its own. When a solution refers to an equation or a lemma inside a result, give that
-  label the full name `appendix:<name>:<key>` (both at `\label` and at `\ref`), e.g. `\eqref{appendix:field-norm:A.2.3}`,
-  and cite the result with `\appendixref{<name>}` in the same solution: only `\appendixref` makes a PDF print the
-  result (the validator checks both). `appendix:<name>` is the label of the result's heading. In the local preview
-  and the CI proofs a problem and the results it cites share one set of labels, so do not reuse, in a solution, a
-  label name that a cited result sets (the website keeps them apart).
-- Only solutions cite results (a problems-only PDF has no appendix); `\appendix` is not used in problem files any
-  more.
-- Preview: saving `appendix/<name>.tex` in VS Code shows that result (followed by the results it cites); saving a
-  problem shows it followed by the results its solution cites. Local previews and CI proofs print the result's name
-  next to its number, `A.1 (cauchy-group-theorem)`; the website's PDFs do not. Terminal:
-  `cd website-code && python3 -m bank.validate --compile ../problem-bank/appendix/<name>.tex`.
-- Results have no header and no `review` field: the website publishes a result when a published solution cites it
-  (or a result cited by one), so a result is reviewed together with the first problem that cites it. The propose page
-  lists every result of the folder (name and title) for proposers to cite.
+- One `appendixitem` block per file, with the title (plain text) as its argument; `%` comments outside it (source, notes), and optionally a `bibentries` block after it. The same LaTeX rules as problems; TikZ and `\cite` work.
+- A result may cite other results with `\appendixref`; they are added too (results citing each other in a circle are an error).
+- Labels inside a result are its own. When a solution refers to an equation or a lemma inside a result, give that label the full name `appendix:<name>:<key>` (both at `\label` and at `\ref`), e.g. `\eqref{appendix:field-norm:A.2.3}`, and cite the result with `\appendixref{<name>}` in the same solution: only `\appendixref` makes a PDF print the result (the validator checks both). `appendix:<name>` is the label of the result's heading. In the local preview and the CI proofs a problem and the results it cites share one set of labels, so do not reuse, in a solution, a label name that a cited result sets (the website keeps them apart).
+- Only solutions cite results (a problems-only PDF has no appendix); `\appendix` is not used in problem files any more.
+- Preview: saving `appendix/<name>.tex` in VS Code shows that result (followed by the results it cites); saving a problem shows it followed by the results its solution cites. Local previews and CI proofs print the result's name next to its number, `A.1 (cauchy-group-theorem)`; the website's PDFs do not. Terminal: `cd website-code && python3 -m bank.validate --compile ../problem-bank/appendix/<name>.tex`.
+- Results have no header and no `review` field: the website publishes a result when a published solution cites it (or a result cited by one), so a result is reviewed together with the first problem that cites it. The propose page lists every result of the folder (name and title) for proposers to cite.
 
 ## Improve a problem, review
 
-- To change a problem, edit its file on GitHub (`problem-bank/problems/`); saving proposes the change as a pull
-  request (an extra tag, a second solution, a fix).
-- Only people with write access to the repository merge. Merging = approved, not finished: tags, solutions and
-  history can be added later by anyone, through another pull request.
-- `review: human` publishes the problem on the website as reviewed; without it, the problem is listed as "proposed",
-  only behind the Problems page's "Show proposed problems" switch, with its statement but not its solution (the
-  solution stays in the file; the site prints "This solution is not published yet").
+- To change a problem, edit its file on GitHub (`problem-bank/problems/`); saving proposes the change as a pull request (an extra tag, a second solution, a fix).
+- Only people with write access to the repository merge. Merging = approved, not finished: tags, solutions and history can be added later by anyone, through another pull request.
+- `review: human` publishes the problem on the website as reviewed; without it, the problem is listed as "proposed", only once the visitor turns on "Show the proposed problems" (the Proposed filter of the Problems page), with its statement but not its solution (the solution stays in the file; the site prints "This solution is not published yet").
 - Two independent fields say who checked what:
-  - `review` — the problem itself (statement, solution, tags): `none` nobody yet, `ai` a tool looked at it,
-    `human` a board member accepted it → published.
-  - `history` — only the history fields (`origin`, `origin-date`, `origin-number`, `also-in`,
-    `references`): `none` nobody looked, `ai` filled by an AI pass from sources it found (what it changed and how
-    sure it was: [`history-review.md`](history-review.md)), `human` checked by a person against the source.
-    `history` never decides whether a problem is published.
-  - The history fields record the earliest source known to us, never a final truth: when an earlier source turns
-    up, they change. For that reason every `references` field starts with "Earliest known appearance (to the best
-    of our knowledge):" ("none found." when no source of the problem is known).
+  - `review` — the problem itself (statement, solution, tags): `none` nobody yet, `ai` a tool looked at it, `human` the club accepted it → published.
+  - `history` — only the history fields (`origin`, `origin-date`, `origin-number`, `also-in`, `references`): `none` nobody looked, `ai` filled by an AI pass from sources it found (what it changed and how sure it was: [`history-review.md`](history-review.md)), `human` checked by a person against the source. `history` never decides whether a problem is published.
+  - The history fields record the earliest source known to us, never a final truth: when an earlier source turns up, they change. For that reason every `references` field starts with "Earliest known appearance (to the best of our knowledge):" ("none found." when no source of the problem is known).
 
 ## Rules
 
-- Statements and solutions are written by humans. Tools may only fill header fields. (Exception, decided by Antoine
-  on 2026-09-29: statements, and solutions when he asks for them, may be written by AI; such files say so in a
-  `% AI-WRITTEN, NEEDS HUMAN REVIEW` comment under the header and keep `review: none` until a person has checked them.
-  A shared result has no header: the comment is at the top of its file, and the result is checked before any problem
-  citing it gets `review: human`.)
+- Statements and solutions are written by humans. Tools may only fill header fields. (Exception, decided by Antoine on 2026-09-29: statements, and solutions when he asks for them, may be written by AI; such files say so in a `% AI-WRITTEN, NEEDS HUMAN REVIEW` comment under the header and keep `review: none` until a person has checked them. A shared result has no header: the comment is at the top of its file, and the result is checked before any problem citing it gets `review: human`.)
 - IDs are sequential integers without meaning, given automatically after the merge; they never change and are never reused.
 - Every header field except `area` may be empty; an empty field never breaks anything.
-- Only `review: human` problems appear on the website as reviewed (the others only as "proposed", behind a switch, statement only).
-  The repository itself is public: every file here (unreviewed
-  problems and their solutions, `known-errors.md`, `history-review.md`) can be read on GitHub, and stays in the history.
+- Only `review: human` problems appear on the website as reviewed (the others only as "proposed", behind a switch, statement only). The repository itself is public: every file here (unreviewed problems and their solutions, `known-errors.md`, `history-review.md`) can be read on GitHub, and stays in the history.
 - The ID never appears on the website (list, search, PDFs); it only names the file.

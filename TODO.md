@@ -1,198 +1,132 @@
-# TODO — Math Olympiad Club ETHZ
+# TODO — Math Olympiad Club at ETHZ
 
 Open work across the repository. Tick items off (`- [x]`) or delete them when done.
 
 ## Problem bank — publish
 
-- [ ] Review the 87 problems and set `review: human` on each one you accept (67 done in the last commit, 2026-10-06).
-      Until then a problem shows on the site only as "proposed", behind its switch.
+- [ ] Review the 87 problems and set `review: human` on each one you accept (67 done in the last commit, 2026-10-06). Until then a problem shows on the site only as "proposed", behind its switch.
 - [ ] **Back to `review: none` on 2026-10-17** (checklist pass; they show as proposed until fixed and reviewed again):
       - Antoine's 10 under review: 0003, 0011, 0023, 0030, 0032, 0033, 0040, 0054, 0061, 0072.
-      - Unfinished or left-over text: 0012 ("for the same reason as the previous problem", there is none in the
-        bank), 0031 (the AIME 1998 part stops before the answer, the BMO 2005 part has no solution), 0038 and 0039
-        ("This solution needs to be written more formally"), 0050 (a sentence ends in "and then ."), 0063 and 0064
-        ("to finish" in red), 0069 (the three limits and the final value are missing). The shared result
-        `gelfond-schneider-theorem` has no proof yet ("Proof not yet written"); shared results have no review field.
+      - Unfinished or left-over text: 0012 ("for the same reason as the previous problem", there is none in the bank), 0031 (the AIME 1998 part stops before the answer, the BMO 2005 part has no solution), 0038 and 0039 ("This solution needs to be written more formally"), 0050 (a sentence ends in "and then ."), 0063 and 0064 ("to finish" in red), 0069 (the three limits and the final value are missing). The shared result `gelfond-schneider-theorem` has no proof yet ("Proof not yet written"); shared results have no review field.
       - The fixes listed below under "LaTeX fixes": 0045, 0049, 0056, 0057.
-      - 0037 (2026-10-20): the official solution of IMC 1997, Day 2, Problem 5 is appended word for word as Solution 2
-        (a second, lighter solution), with its typo "coinside" and the IMC's names (X, g_1, g_2): review it.
-      - 2026-10-22: solutions from the seminar repository (compmath) with another idea than ours, appended word for
-        word after ours, each with a `%` line giving its source; only the math delimiters and the source file's own
-        macros changed. Students' solutions: 0004 (Solution 2: Jacobson's lemma; its (a) repeats ours), 0099
-        (Solution 3), 0101 (Solution 2: its first proof of (b)), 0102, 0103, 0112 (Solution 2); the probability
-        collection's probabilistic solution: 0082 (Solution 2). Review them (checklist, writing style).
+      - 0037 (2026-10-20): the official solution of IMC 1997, Day 2, Problem 5 is appended word for word as Solution 2 (a second, lighter solution), with its typo "coinside" and the IMC's names (X, g_1, g_2): review it.
+      - 2026-10-25: 0010, its Solution 2 (the tangent inequality) cites the shared result `convex-tangent-inequality`, moved to `problem-bank/appendix/` on 2026-11-11 with Antoine's approval, so 0010 can now be committed; and the checklist rule "a plugged value is written with `:=`" (item 10) changed 0002, 0006, 0008, 0025, 0027, 0046, 0047, 0048 and 0070 (only `=` turned into `:=`, and in 0008 "set \( k := s+2 \), so that \( s = -2+k \)"). Review them again.
+      - 2026-10-22: solutions from the seminar repository (compmath) with another idea than ours, appended word for word after ours, each with a `%` line giving its source; only the math delimiters and the source file's own macros changed. Students' solutions: 0004 (Solution 2: Jacobson's lemma; its (a) repeats ours), 0099 (Solution 3), 0101 (Solution 2: its first proof of (b)), 0102, 0103, 0112 (Solution 2); the probability collection's probabilistic solution: 0082 (Solution 2). Review them (checklist, writing style).
+      - 2026-11-11: British spelling, always (`writing-style.md`, section 8, "Spelling"): only American spellings changed, word for word ("factorization" to "factorisation", "center" to "centre", "color" to "colour"). Back from `human`: 0005, 0009, 0014, 0020, 0022, 0024, 0051, 0066, 0074, 0089; already `none`: 0023, 0025, 0033, 0039, 0046, 0049, 0050, 0070, 0101. Review them again.
 - [ ] **History check**: check the problems with `history: ai` and set `history: human` (42 on 2026-10-19: 0013, 0030–0031, 0052, 0056, 0062, 0081–0116).
-- [ ] 0081–0087 (VJIMC 2002–2014, added 2026-09-29/30): statement **and** solution written by AI at Antoine's request
-      (see the `% AI-WRITTEN` comment in each file); review them like the others before `review: human`. Review
-      `problem-bank/appendix/cauchy-group-theorem.tex` (also AI-written) with 0085 and 0087: it is published with the first of
-      them to get `review: human`.
+- [ ] 0081–0087 (VJIMC 2002–2014, added 2026-09-29/30): statement **and** solution written by AI at Antoine's request (see the `% AI-WRITTEN` comment in each file); review them like the others before `review: human`. Review `problem-bank/appendix/cauchy-group-theorem.tex` (also AI-written) with 0085 and 0087: it is published with the first of them to get `review: human`.
 
 ## Problem bank — decisions from the history pass (2026-09-22)
 
 Details, sources and the full change table: [`problem-bank/history-review.md`](problem-bank/history-review.md).
 
-- [ ] **Titles**: apply which established names? (title line + rename the file, number kept) — 0005 Baum–Sweet
-      sequence, 0018 Sutner's theorem, 0030 Minkowski's lemma, 0032 Jacobson's lemma, 0036 5/8 theorem,
-      0052 Darboux-Picard theorem, 0055 100 prisoners and a light bulb, 0066 Fermat point, 0070 Perplexing polynomial puzzle.
-- [ ] **Origin rule**: first appearance of the *result* (research paper) or first time *posed as a problem*
-      (competition)? Affects 0005, 0016, 0018, 0030, 0036, 0080, and 0081, 0085, 0087 (added 2026-09-30). For 0087
-      also: the full statement first appears in Alon-Bourgain's preprint (Nov 2013), but Legendre (1825, §23) already
-      proves the case of subgroups of odd prime index with the same argument. 0087 follows 0081 (origin = first paper
-      with the full statement; earlier special cases in references); 0030 took Minkowski's special case instead.
+- [ ] **Titles**: apply which established names? (title line + rename the file, number kept) — 0005 Baum–Sweet sequence, 0018 Sutner's theorem, 0030 Minkowski's lemma, 0032 Jacobson's lemma, 0036 5/8 theorem, 0052 Darboux-Picard theorem, 0055 100 prisoners and a light bulb, 0066 Fermat point, 0070 Perplexing polynomial puzzle.
+- [ ] **Origin rule**: first appearance of the *result* (research paper) or first time *posed as a problem* (competition)? Affects 0005, 0016, 0018, 0030, 0036, 0080, and 0081, 0085, 0087 (added 2026-09-30). For 0087 also: the full statement first appears in Alon-Bourgain's preprint (Nov 2013), but Legendre (1825, §23) already proves the case of subgroups of odd prime index with the same argument. 0087 follows 0081 (origin = first paper with the full statement; earlier special cases in references); 0030 took Minkowski's special case instead.
 - [ ] **New origin slugs** `paper` and `historical`: keep, or widen `journal` / use `book` instead?
 - [ ] **Folklore or first verified source**: 0045, 0048, 0053, 0055.
 - [ ] **0019**: the earliest record is Antoine's MSE post (2025) — ask the friend where the problem came from.
 - [ ] **0031** (collection): origin = first part (AMC 12B 2007) or oldest part (AIME 1998)?
 - [ ] **0010**: RMT year 1989 may be a misprint for 1987 — check a copy of Revista Matematică Timișoara.
 - [ ] **0020**: origin = Cover 1987 ("Pick the largest number") or the older envelope paradox (Kraitchik 1953)?
-- [ ] **Older-source searches**: re-run a search-only pass for the 63 problems listed in history-review.md
-      (the web-search quota ran out during the checks).
+- [ ] **Older-source searches**: re-run a search-only pass for the 63 problems listed in history-review.md (the web-search quota ran out during the checks).
 - [ ] **0025**: split into two problems (IMO 1988 P6 and IMO 2007 P5)?
 
 ## Problem bank — LaTeX fixes (humans only)
 
-- [ ] The 87 errors that need a mathematical fix, each with an AI **Proposal**, in
-      [`problem-bank/known-errors.md`](problem-bank/known-errors.md). Plan (decided 2026-09-23, for later):
+- [ ] The 87 errors that need a mathematical fix, each with an AI **Proposal**, in [`problem-bank/known-errors.md`](problem-bank/known-errors.md). Plan (decided 2026-09-23, for later):
       - 13 are only cosmetic (unusual notation, compiles fine): delete those entries.
-      - 6 need real missing maths (0014, 0033, 0034, 0038, 0039, 0056): mark the problems `status: partial`, drop the
-        entries; 0069's entry too (already partial).
+      - 6 need real missing maths (0014, 0033, 0034, 0038, 0039, 0056): mark the problems `status: partial`, drop the entries; 0069's entry too (already partial).
       - 68 concrete corrections in 34 problems: apply them all and read the diff, or go through them one by one.
-- [ ] **0030, Antoine himself**: merge the two versions by hand, taking the best of each. Since the merge of GitHub
-      main (2026-10-02), the file holds Antoine's full solution, then Spas and Ana's solutions appended as they are
-      (after the comment `% ---- Solutions by Spas and Ana ...`: a Setup, Solutions 1–4, Counterexamples for m = 2). The
-      file has duplicate solutions until then. Their `difficulty: hard` was taken; their `review: human` was not
-      (`review: none` until the review is done).
+- [ ] **0030, Antoine himself**: merge the two versions by hand, taking the best of each. Since the merge of GitHub main (2026-10-02), the file holds Antoine's full solution, then Spas and Ana's solutions appended as they are (after the comment `% ---- Solutions by Spas and Ana ...`: a Setup, Solutions 1–4, Counterexamples for m = 2). The file has duplicate solutions until then. Their `difficulty: hard` was taken; their `review: human` was not (`review: none` until the review is done).
 - [ ] Missing solutions: 0052, 0060–0062, 0065–0068, 0071–0080.
 - [ ] Partial solutions: 0019, 0031, 0034, 0038–0040, 0049, 0063, 0064, 0069.
 - [ ] 0003 solution 2 seems not to follow the writing style: to be done by an agent and then put to be reviewed by human (the solution 2 only)
-- [ ] **0056**: the solution is in French: translate it into English, keeping its parts (a) and (b). At its end, a
-      French note to self ("Penser à peut-être faire une version du prophet inequality problem", and 3 links) is not
-      solution text: move it out of the file. (Checklist pass, 2026-10-17.)
-- [ ] **0049** (published): a note to Spas is left in a lemma environment ("Spas ? it would be nice if you could make
-      a lemma where such a g exists ..."): remove it. The file also writes intervals both ways (`(a, b)`,
-      `[0, +\infty)` and the French `]0;1[`) and still has a `\textit{Remark:}` label. (Checklist pass, 2026-10-17.)
-- [ ] **0045**: a closing parenthesis is missing in the associativity formula (`\cdot((a,\cdot((b,c)))` should end
-      with four); the conditions are a hand-made list ("-$...$" lines with `$$` displays); grammar slips ("i.e"
-      without its dot, "each element have"). (Checklist pass, 2026-10-17.)
-- [ ] **0057**: one parenthesis too many in `=(((n+2)^{\alpha}-(n+1)^{\alpha})-...`; typos "Cotninuing",
-      "succesor", "balading n to infinity" (letting n tend to infinity); in the informal discussion, a sentence stops
-      in the middle ("if 1<α<2 then 1^α=1 and") and there are many grammar slips.
-      (Checklist pass, 2026-10-17.)
-- [ ] **Left from the checklist pass on the reviewed problems** (2026-10-17 to 2026-10-19, steps 1-9 done): what
-      touches the mathematics or the author's wording.
-      - Math typos: 0009, line 45: "To have \(3^n + n > 6\)" covers a = 2 and a = 3, so \(a^n\)?; 0035, line 44: the
-        right side of the ⇔ repeats the primed left side (drop its primes?), and lines 206-208: \(\Gamma_{A,n}\) for the
-        \(\Gamma_{A_n,+}\) defined above?; 0037, line 199: \(f^{m+1}(\dots) = f(f^{-m}(\dots))\), so \(f^{m}\)?; 0055,
-        line 69: \(100 \cdot \ln(99) + \gamma\) lacks its brackets, \(100 \cdot (\ln(99) + \gamma)\).
-      - Wording: 0010 "the second derivative is positive" (nonnegative, as in the statement?); 0020 "we may tune";
-        0024 "the corresponding logarithmic matrix satisfies" (matrices satisfy?); 0034 "in the hyperlink" and "For
-        now, ... has been active"; 0035 "then, as we saw"; 0037 a clause without a verb (line 130); 0041 a run-on
-        sentence (line 55); 0044 a sentence without its verbs, where N₂ is never introduced (lines 91-93);
-        `capelli-lemma` "because then they are" and `field-norm` "multiplicities of each root" (agreement).
+- [ ] **0056**: the solution is in French: translate it into English, keeping its parts (a) and (b). At its end, a French note to self ("Penser à peut-être faire une version du prophet inequality problem", and 3 links) is not solution text: move it out of the file. (Checklist pass, 2026-10-17.)
+- [ ] **0049** (published): a note to Spas is left in a lemma environment ("Spas ? it would be nice if you could make a lemma where such a g exists ..."): remove it. The file also writes intervals both ways (`(a, b)`, `[0, +\infty)` and the French `]0;1[`) and still has a `\textit{Remark:}` label. (Checklist pass, 2026-10-17.)
+- [ ] **0045**: a closing parenthesis is missing in the associativity formula (`\cdot((a,\cdot((b,c)))` should end with four); the conditions are a hand-made list ("-$...$" lines with `$$` displays); grammar slips ("i.e" without its dot, "each element have"). (Checklist pass, 2026-10-17.)
+- [ ] **0057**: one parenthesis too many in `=(((n+2)^{\alpha}-(n+1)^{\alpha})-...`; typos "Cotninuing", "succesor", "balading n to infinity" (letting n tend to infinity); in the informal discussion, a sentence stops in the middle ("if 1<α<2 then 1^α=1 and") and there are many grammar slips. (Checklist pass, 2026-10-17.)
+- [ ] **Left from the checklist pass on the reviewed problems** (2026-10-17 to 2026-10-19, steps 1-9 done): what touches the mathematics or the author's wording.
+      - Math typos: 0009, line 45: "To have \(3^n + n > 6\)" covers a = 2 and a = 3, so \(a^n\)?; 0035, line 44: the right side of the ⇔ repeats the primed left side (drop its primes?), and lines 206-208: \(\Gamma_{A,n}\) for the \(\Gamma_{A_n,+}\) defined above?; 0037, line 199: \(f^{m+1}(\dots) = f(f^{-m}(\dots))\), so \(f^{m}\)?; 0055, line 69: \(100 \cdot \ln(99) + \gamma\) lacks its brackets, \(100 \cdot (\ln(99) + \gamma)\).
+      - Wording: 0010 "the second derivative is positive" (nonnegative, as in the statement?); 0020 "we may tune"; 0024 "the corresponding logarithmic matrix satisfies" (matrices satisfy?); 0034 "in the hyperlink" and "For now, ... has been active"; 0035 "then, as we saw"; 0037 a clause without a verb (line 130); 0041 a run-on sentence (line 55); 0044 a sentence without its verbs, where N₂ is never introduced (lines 91-93); `capelli-lemma` "because then they are" and `field-norm` "multiplicities of each root" (agreement).
       - 0044 still labels a theorem and its proof `\textit{Theorem:}` and `\textit{Proof:}`.
       - 0014: a footnote ending on a display runs 4 pt into the margin (splitting the display changed nothing).
-      - Uniformity: statements label their parts as "(a)" paragraphs (0002, 0004, 0044, 0048, 0051, 0084) or as
-        `\item[(a)]` (0025, 0101, 0102, 0104, 0105). Keep both, or choose one?
-      - The problems with `review: none`: their entries of the checklist report wait for their review
-        (`problem-bank/seminar_antoine_problems_solutions/bank-checklist-report.md`, local).
+      - Uniformity: statements label their parts as "(a)" paragraphs (0002, 0004, 0044, 0048, 0051, 0084) or as `\item[(a)]` (0025, 0101, 0102, 0104, 0105). Keep both, or choose one?
+      - The problems with `review: none`: their entries of the checklist report wait for their review (`problem-bank/seminar_antoine_problems_solutions/bank-checklist-report.md`, local).
+
+## Problem bank — 0019's open bonus (f' = f/(f∘f) with no fixed point)
+
+What is open: 0019 asks for every differentiable f: (0, ∞) → (0, ∞) with f' = f/(f∘f). With a fixed point, f = id (proved in the file). Without one, the solutions are not classified yet. Expected answer: f(x) = a·φ(x/a) for some a > 0 and one fixed function φ (strongly supported by numerics, not proved). Sources: Mathematics Stack Exchange question 5051989 (answers by piggy, Christophe Boilley, LegionMammal978 and Spas Dimitrov) and the local, git-ignored draft `problem-bank/work-in-progress/a-faire/0019-bonus-no-fixed-point/0019-bonus-no-fixed-point.tex`, which already has the backward operator L, an error bound, a uniqueness proof and an existence proof.
+
+How to read this list: one idea per step, in order. Each step has a nickname, what it means in formulas, and when it counts as done. Steps 1 to 5 are done; the work left is in steps 6 to 10, mostly checking the draft and closing its gaps.
+
+- [x] **1. Smoothness for free (a regularity bootstrap).** f differentiable ⇒ f' = f/(f∘f) is continuous ⇒ f is C¹ ⇒ f' is C¹ ⇒ … ⇒ f is C^∞.
+- [x] **2. The clock (a conserved quantity).** With F(x) = ∫₀ˣ f(t) dt, the number C = F(f(x)) − F(x) = ∫ₓ^{f(x)} f(t) dt does not depend on x, because (F∘f)' = f(f(x))·f'(x) = f(x) = F'(x). In the clock coordinate u = F(x), f is the translation u ↦ u + C: f is a translation in disguise.
+- [x] **3. Above the diagonal.** C = 0 ⇔ f has a fixed point ⇔ f = id. C < 0 is impossible: then f(x) < x and |C| ≤ x², let x → 0⁺. So, with no fixed point, C > 0 and f(x) > x for every x.
+- [x] **4. The future decides the present (an advanced delay equation).** The scaling f ↦ a·f(x/a) multiplies C by a², so take C = 1. Then g = F⁻¹ satisfies g(0) = 0 and g'(u) = 1/g(u + 1): the slope now is set by the value one unit later. Conversely, every increasing g: [0, ∞) → [0, ∞) with g(0) = 0 and this equation gives the solution f(x) = g(g⁻¹(x) + 1). So the task is to classify these g.
+- [x] **5. The shape at infinity.** √(2u + 2) − √2 ≤ g(u) ≤ √(2u), from (g²)' ≤ 2 and g'(u) ≥ 1/√(2u + 2). So g = √(2u) up to a bounded error.
+- [ ] **6. Forward is forbidden, backward is free.** Forward, each unit step costs a derivative: g(u + 1) = 1/g'(u), so k steps forward need k derivatives to match at the junctions (ill-posed, like running the heat equation backwards in time). Backward, it is an ordinary initial value problem: g(v) = g(u) − ∫ᵥᵘ ds/g(s + 1). The draft writes one backward step as an operator L on functions on [0, 1]. Done when: L and its bounds are stated correctly. The draft's line "a − 1/b ≤ L(f(x)) ≤ a − 1/a" is garbled (as written, the upper bound is below the lower one); for a ≤ f ≤ b it should read f(0) − (1 − x)/a ≤ L(f)(x) ≤ f(0) − (1 − x)/b.
+- [ ] **7. The past forgets (the key lemma: backward stability).** Draft: if two solutions take values above n on a unit window and differ there by at most a < 1, one step back they differ by at most a·(1 + 1/(n − 1)²); going down from level n to level 10, the error is at most a·∏ᵢ₌₁₁ⁿ (1 + 1/(i − 1)²)^{i+1} ≤ a·n/5. To check: the product bound is true (about 0.13·n numerically) but has no proof in the draft. It takes two lines: log ∏ ≤ Σ (i + 1)/(i − 1)² = Σ [1/(i − 1) + 2/(i − 1)²] ≤ ln(n/9) + 2/9, so ∏ ≤ 0.14·n. Also check the bookkeeping: why both functions reach the next level within n + 1 steps, and why the error stays below 1 all the way down (the one-step bound assumes a < 1). Why it should be true: linearised, e'(u) = −e(u + 1)/g(u + 1)²; the modes e^{zu} solve z = −ε·e^z with ε ≈ 1/(2u); one slow real mode z ≈ −ε is the translation (e ≈ g'), and every other mode has Re z ≈ ln(|z|/ε) > 0, so it grows forward and dies backward. The past forgets everything except the phase. Done when: the lemma is stated and proved with explicit constants.
+- [ ] **8. Rigidity: infinity remembers only the phase (uniqueness).** Draft: align two global solutions where both equal N; on that window they differ by at most 1/N (slopes at most 1/N); one step back the error is at most 1/(N(N − 1)²), because the starting values agree; step 7 then gives at most 1/(5(N − 1)²) down to level 10; let N → ∞. To check: the draft compares the functions aligned at the value N but concludes for the functions aligned at the value 10; write out this re-alignment (if two increasing functions with slopes at least s differ by at most ε, their inverses differ by at most ε/s). Done when: every global solution is a translate of one g, hence equal to it, since g(0) = 0.
+- [ ] **9. Shooting from infinity (existence).** The only boundary condition sits at u = ∞ (the solution must live forever), so put it at a finite place and let that place run away: start from the constant m on a unit window, extend backwards until the value 0, translate so that the zero is at 0; call the result f^m (draft). Steps 7 and 8 make (f^m) a Cauchy sequence on every [10, N]; the derivatives converge too, since g'(u) = 1/g(u + 1). To check: the stretch from the value 10 down to the zero (finitely many unit steps, where g(u + 1) ≥ g(1) ≈ 0.87 keeps every bound finite), and that the limit solves g(v) = g(u) − ∫ᵥᵘ ds/g(s + 1) on all of [0, ∞). Done when: one global solution exists.
+- [ ] **10. Back to f.** Conclusion, to write into 0019 by a human: f = id, or f(x) = a·φ(x/a) with a > 0 and φ(x) = g(g⁻¹(x) + 1) for the unique g. As f(0⁺) = a·g(1) ≈ 0.868·a, the solutions with no fixed point are indexed by their limit at 0⁺. Done when: 0019's solution is complete and its `status` is no longer `partial`.
+- Numbers to check against (2026-11-16): shooting backwards from N = 20, 80 and 320, with seeds 10 to 30% off, gives the same g on [0, 10] to about 10⁻⁸, with g(1) = 0.86803 (LegionMammal978's constant). Asymptotics (LegionMammal978): g(u)/√(2u) = 1 − ((ln u)/4 + c)/u + … with c ≈ 0.33988, and f(x) = x + a²/x − (3/2)·a⁴/x³ + ….
+- Side doors, if the main road is blocked:
+  - **Fabius function.** f'(x) = 2f(2x) is another advanced equation whose solution is pinned down by its ends; compare how its existence and uniqueness are proved.
+  - **Renormalise.** Write g(u) = √(2u)·(1 + r(u)) with r → 0: far out, the delay of 1 becomes small next to u, so steps 7 to 9 might become a single contraction on tails [N, ∞) modulo translation (a Banach fixed point).
+  - **Is φ analytic?** The Fabius function is C^∞ but nowhere analytic. Is φ? Not needed for the classification, just curious.
+  - **Bootstrapped asymptotics.** LegionMammal978's expansion has exactly one free constant, c, the translation, which matches step 8.
+- [ ] **A solvable spin-off, already proved.** The clock (step 2) alone answers a competition-sized question about every solution, without the classification. Statement and solution: `problem-bank/work-in-progress/a-faire/0019-bonus-no-fixed-point/0019-asymptotic-spin-off.tex` (git-ignored on purpose: keep it out of this public repository for now). Review it, then decide where it goes.
 
 ## Seminar rewrites (local, `problem-bank/seminar_antoine_problems_solutions/`)
 
-- [ ] Mean value theorem: finished on 2026-10-19 (bank problems 0107-0116). Differential inequalities and integral
-      inequalities are rewritten (agent runs of 2026-10-19), waiting for Antoine's review; integral inequalities still
-      needs its overseer pass and its REPORT.md. Then the other sheets: matrix algebra, determinant and trace,
-      eigenvalues, rank, polynomials, permutations, mock competition, Series 7, 14 and 19, and the group theory bonus.
-- [ ] **Bank duplicates in the notebook**: merge each into its bank problem when its sheet is rewritten (as Telescoping 3
-      went into 0007): Determinant and trace 6 = 0029, 7 = 0012; Eigenvalues 4 = 0011; Integral inequalities 7 = 0064;
-      Matrix algebra 10 and 11 near 0004 (details: `seminar_antoine_problems_solutions/HEADERS-REVIEW.md`, "Open").
+- [ ] Mean value theorem: finished on 2026-10-19 (bank problems 0107-0116). Differential inequalities (Problems 1 to 4 approved, in `problems/`; 5 to 11 wait for Antoine's review) and integral inequalities (waiting for his review) have their REPORT.md. Matrix algebra was rewritten on 2026-10-26 (agent run, `matrix-algebra_bis/`); its REPORT.md is still to write. The other sheets (determinant and trace, eigenvalues, rank, polynomials, permutations, mock competition, Series 7, 14 and 19, the group theory bonus) were launched in parallel on 2026-10-26 and paused by Antoine before any rewrite was finished: how to continue is in `problem-bank/seminar_antoine_problems_solutions/.workflows/README.md`.
+- [ ] **Later: a mechanical check for the `:=` rule** (checklist item 10): a warning in `rewrite_check.py` (and the bank checker) when "take", "with", "let", "plug in" and the like are followed by `=`; it has false positives, so a warning only, run once over all files (Antoine, 2026-10-26: later).
+- [ ] **Bank duplicates in the notebook**: merge each into its bank problem when its sheet is rewritten (as Telescoping 3 went into 0007): Determinant and trace 6 = 0029, 7 = 0012; Eigenvalues 4 = 0011; Integral inequalities 7 = 0064; Matrix algebra 10 and 11 near 0004 (details: `seminar_antoine_problems_solutions/HEADERS-REVIEW.md`, "Open").
 - [ ] **Seminar repository import** (`problem-bank/topics-in-competition-seminar/`, local; see its `context.md`):
-      - Students' solutions with another idea than Antoine's, appended to notebook files on 2026-10-22: differential
-        inequalities 2, determinant and trace 4 and 5, matrix algebra 6 (Solutions 2 and 3) and 7, polynomials 3, 6
-        and 10, rank 2, 3 and 5, mock competition 6: review them with their sheets (bank ones: under "Back to
-        `review: none`" above). Only partly new, so cut the part that repeats Antoine's argument: determinant and
-        trace 5, matrix algebra 6 Solution 3, and in the bank 0004 and 0101.
-      - `weird/`: decide what to do with Georg's presentation of Jacobson's lemma (it repeats the arguments of
-        matrix algebra 11-13) and the 4 facts files (determinant and trace, differential inequalities, integral
-        inequalities, mean value theorem).
-- [ ] **Constant functions, one notation everywhere** (later): `\underline{1}` (0108; polynomials 3, mock competition 2)
-      or `cte_1` (MVT 5, differential inequalities 2, 4, 5, 7, integral inequalities 6, 8, mock competition 6), and the
-      same for `\underline{k}` or `cte_k`. Choose one for all the sheets and the bank; until then the rewrites keep
-      the notebook's notation.
-- [ ] Guide proposals waiting for Antoine's answer: "Checking an example" (announce the hypotheses being checked,
-      "First, ... Second, ...", and tie the example back to the claim; Continuity 7); the sin² + cos² shortcut as an
-      example under "Look for the shortest argument" (Continuity 7); "Shorten the detours, not the author's chain"
-      (Continuity 9); the formatter adding the spaces inside `\( \)` on every Cmd+S.
+      - Students' solutions with another idea than Antoine's, appended to notebook files on 2026-10-22: differential inequalities 2, determinant and trace 4 and 5, matrix algebra 6 (Solutions 2 and 3) and 7, polynomials 3, 6 and 10, rank 2, 3 and 5, mock competition 6: review them with their sheets (bank ones: under "Back to `review: none`" above). Only partly new, so cut the part that repeats Antoine's argument: determinant and trace 5, matrix algebra 6 Solution 3, and in the bank 0004 and 0101.
+      - `weird/`: decide what to do with Georg's presentation of Jacobson's lemma (it repeats the arguments of matrix algebra 11-13) and the 4 facts files (determinant and trace, differential inequalities, integral inequalities, mean value theorem).
+- [ ] **Constant functions, one notation everywhere** (later): `\underline{1}` (0107, 0108, where the notebook had `cte_1`; polynomials 3, mock competition 2) or `\mathrm{cte}_1` (0111; differential inequalities 1 to 7, integral inequalities 6 and 8, mock competition 6, the shared result `convex-tangent-inequality`), and the same for `\underline{k}` or `\mathrm{cte}_k`. Choose one for all the sheets and the bank; until then the rewrites keep the notebook's notation. The choice then goes into `writing-style.md` (section 6, "Special functions") with a check in `checklist.md`, and is applied everywhere at once.
+- [ ] Guide proposals waiting for Antoine's answer: "Checking an example" (announce the hypotheses being checked, "First, ... Second, ...", and tie the example back to the claim; Continuity 7); the sin² + cos² shortcut as an example under "Look for the shortest argument" (Continuity 7); "Shorten the detours, not the author's chain" (Continuity 9); the formatter adding the spaces inside `\( \)` on every Cmd+S.
 
 ## Problem bank — tags (minor, ideas 2026-10-06)
 
-- [ ] **Areas vs methods**: there are too many areas (themes), and some area tags are really methods. Go through the
-      `area` tree of `problem-bank/tags.yml`, move those tags to `methods` and update the problems that use them.
-- [ ] **Aliases that should be tags of their own**: e.g. the Euclidean algorithm (gcd) and Bézout's lemma must stay
-      separate. The methods `gcd` and `bezout` already exist, but the area "Divisibility & gcd" also lists `gcd`,
-      `euclidean algorithm` and `bezout` among its aliases. Check whether other aliases hide a separate tag
-      (hopefully an isolated case).
+- [ ] **Areas vs methods**: there are too many areas (themes), and some area tags are really methods. Go through the `area` tree of `problem-bank/tags.yml`, move those tags to `methods` and update the problems that use them.
+- [ ] **Aliases that should be tags of their own**: e.g. the Euclidean algorithm (gcd) and Bézout's lemma must stay separate. The methods `gcd` and `bezout` already exist, but the area "Divisibility & gcd" also lists `gcd`, `euclidean algorithm` and `bezout` among its aliases. Check whether other aliases hide a separate tag (hopefully an isolated case).
 
 ## Problem bank — later
 
-- [ ] To be done by Antoine: must review all current problems and solutions and precisely identify the partial one, the ai one and the unsolved one. Be sure that fully solved one together with their statement really are good. This cannot be done by an AI. THen Anotine must provide/finish the partial solution/empty solutions. 
+- [ ] To be done by Antoine: must review all current problems and solutions and precisely identify the partial one, the ai one and the unsolved one. Be sure that fully solved one together with their statement really are good. This cannot be done by an AI. THen Anotine must provide/finish the partial solution/empty solutions.
 - [ ] Magic problems (hat problems, picture hanging) in `problem-bank/work-in-progress/magic/`: separate category, not migrated yet.
-- [ ] Later (Antoine, 2026-10-07): stress-test the website with several agents (bugs, speed, …). The numbering Action
-      `number-new-problems.yml` has never run yet: the first real proposal merged into `main` is its first test.
-- [ ] Idea (Antoine, 2026-09-22), not now: review problems **from the website** — an administrator mode behind a
-      password where a board member sets `review: human`, edits tags or fixes a statement without going through
-      GitHub. Needs thought: a static GitHub Pages site has no server and no safe place for a password.
-      With it comes back the **Edit** link next to each problem (removed from the Problems page on 2026-09-23 until then).
+- [ ] Later (Antoine, 2026-10-07): stress-test the website with several agents (bugs, speed, …). The numbering Action `number-new-problems.yml` has never run yet: the first real proposal merged into `main` is its first test.
+- [ ] Idea (Antoine, 2026-09-22), not now: review problems **from the website** — an administrator mode behind a password where a board member sets `review: human`, edits tags or fixes a statement without going through GitHub. Needs thought: a static GitHub Pages site has no server and no safe place for a password. With it comes back the **Edit** link next to each problem (removed from the Problems page on 2026-09-23 until then).
 - [ ] Later: CI posts the compiled PDF of a proposed problem on its pull request.
-- [x] Idea (Antoine, 2026-09-23): a **"proposed"** tag. Done 2026-10-07: the public build publishes
-      every numbered problem; the ones without `review: human` carry a "proposed" badge, are listed only behind the
-      "Show proposed problems" switch of the Filters menu (off by default, in the link as `pr=1`, turned on by a link
-      that ticks one), and their PDF heading says "proposed, not reviewed yet". To show them to everyone instead:
-      `showProposed: true` in `bank-search.js::DEFAULT_FILTERS`.
-- [x] Raised by Spas (2026-09-28), again on 2026-10-06: **one broken problem blocked the whole site.** Done
-      2026-10-06. On `main`, CI first runs `python3 -m bank.leave_out --delete`: the build's own checks
-      (validation, pdflatex, TikZ figures), then every broken problem file or shared result is deleted from the CI
-      checkout, with the problems that cite a broken result. The build, the tests and the deploy run on the rest; the
-      job "left-out" then turns the run red, and the build job's summary names each file and its error. Nothing
-      deploys, as before, when more than 5 problems break at once or the cause is tags.yml, references.bib or
-      `_last-id.txt`. Pull requests stay strict. Locally, `python3 -m bank.leave_out` lists what a deploy would leave
-      out. The browser test no longer uses fixed problem numbers.
+- [x] Idea (Antoine, 2026-09-23): a **"proposed"** tag. Done 2026-10-07: the public build publishes every numbered problem; the ones without `review: human` carry a "proposed" badge, are listed only behind the "Show proposed problems" switch of the Filters menu (off by default, in the link as `pr=1`, turned on by a link that ticks one), and their PDF heading says "proposed, not reviewed yet". To show them to everyone instead: `showProposed: true` in `bank-search.js::DEFAULT_FILTERS`.
+- [x] Raised by Spas (2026-09-28), again on 2026-10-06: **one broken problem blocked the whole site.** Done 2026-10-06. On `main`, CI first runs `python3 -m bank.leave_out --delete`: the build's own checks (validation, pdflatex, TikZ figures), then every broken problem file or shared result is deleted from the CI checkout, with the problems that cite a broken result. The build, the tests and the deploy run on the rest; the job "left-out" then turns the run red, and the build job's summary names each file and its error. Nothing deploys, as before, when more than 5 problems break at once or the cause is tags.yml, references.bib or `_last-id.txt`. Pull requests stay strict. Locally, `python3 -m bank.leave_out` lists what a deploy would leave out. The browser test no longer uses fixed problem numbers.
 - Shared **appendix of reusable results** (`problem-bank/appendix/`, see problem-bank/README.md, "Shared results"), follow-ups:
-  - [ ] Gauss's Lemma (I, II, III) is cited by name in 0035 and 0041 but never stated or proved anywhere: a candidate
-        result for the library (a human writes it).
-  - [ ] Candidates found inside solutions (could become shared results): 0049 (injective continuous => monotone;
-        periodic point => fixed point; iterative square roots), 0030's footnote on Legendre's formula, the two
-        footnotes of `appendix/unipotent-finite-order.tex` (commuting nilpotents; unit + nilpotent), 0070 (uniqueness
-        of base-b expansion; evaluation at a transcendental is injective on N[X]), 0034 (definitions of real powers),
-        0031 (Simon's factoring identity).
-  - [ ] Two results have no proof: `appendix/spectral-mapping-theorem.tex` recalls the theorem without one, and
-        `appendix/gelfond-schneider-theorem.tex` says "Proof not yet written" (0034's known error). Write the proofs,
-        or cite a reference instead.
+  - [ ] Gauss's Lemma (I, II, III) is cited by name in 0035 and 0041 but never stated or proved anywhere: a candidate result for the library (a human writes it).
+  - [ ] Candidates found inside solutions (could become shared results): 0049 (injective continuous => monotone; periodic point => fixed point; iterative square roots), 0030's footnote on Legendre's formula, the two footnotes of `appendix/unipotent-finite-order.tex` (commuting nilpotents; unit + nilpotent), 0070 (uniqueness of base-b expansion; evaluation at a transcendental is injective on N[X]), 0034 (definitions of real powers), 0031 (Simon's factoring identity).
+  - [ ] Two results have no proof: `appendix/spectral-mapping-theorem.tex` recalls the theorem without one, and `appendix/gelfond-schneider-theorem.tex` says "Proof not yet written" (0034's known error). Write the proofs, or cite a reference instead.
 
 ## Website — Propose page (ideas, 2026-10-06)
 
-- [x] **Origin fields** (done 2026-10-06): "Competition or source", "Date" (e.g. 1989 or 1989-12-02)
-      and "Problem number" (e.g. A3 or Problem 6), each with its example under the field.
-- [x] **Propose a tag** (done 2026-10-06): typing a name that is no tag offers "Propose “…” as a new
-      area" (or method); it shows as a chip marked "new" and goes into the file as one comment line of the header,
-      `% Proposed new tags, not in tags.yml yet (a board member adds them): …`, which the validator skips. The reviewer
-      adds the tag to `tags.yml` and to the problem. An existing tag is never offered as new.
+- [x] **Origin fields** (done 2026-10-06): "Competition or source", "Date" (e.g. 1989 or 1989-12-02) and "Problem number" (e.g. A3 or Problem 6), each with its example under the field.
+- [x] **Propose a tag** (done 2026-10-06): typing a name that is no tag offers "Propose “…” as a new area" (or method); it shows as a chip marked "new" and goes into the file as one comment line of the header, `% Proposed new tags, not in tags.yml yet (a board member adds them): …`, which the validator skips. The reviewer adds the tag to `tags.yml` and to the problem. An existing tag is never offered as new.
 
 ## Website — later
 
-- [ ] Idea (Antoine, 2026-09-22), not now: a **track record** page listing what club members achieved in
-      competitions (IMC, ICMC, …). The 2025 lines about IMC and ICMC were removed from the home page for that reason.
+- [ ] Idea (Antoine, 2026-09-22), not now: a **track record** page listing what club members achieved in competitions (IMC, ICMC, …). The 2025 lines about IMC and ICMC were removed from the home page for that reason.
 
 - [ ] look at the picture image.png stored in the repo (only on Antoine local machine), it contains some task tod o given by Georg.
 
 - Website speed pass (2026-10-02), follow-ups:
-  - [x] Logos (2026-10-07): the 1024 px club logo originals, light and dark, moved to
-        `association-documents/logo/` (kept for events, never deployed); the site keeps only what it uses, made from
-        them at a size sharp on every screen: header logo 176 px WebP (was 96), sponsor logo 512 px WebP (was 400),
-        link preview 600 px on the site's background (was a transparent 280). Unused copies deleted (git history keeps
-        them, and Jane Street's official 2968 px logo files: `static/images/LOGO_stacked_w_registration_*`).
+  - [x] Logos (2026-10-07): the 1024 px club logo originals, light and dark, moved to `association-documents/logo/` (kept for events, never deployed); the site keeps only what it uses, made from them at a size sharp on every screen: header logo 176 px WebP (was 96), sponsor logo 512 px WebP (was 400), link preview 600 px on the site's background (was a transparent 280). Unused copies deleted (git history keeps them, and Jane Street's official 2968 px logo files: `static/images/LOGO_stacked_w_registration_*`).
+
+- [ ] **PDF title and author** (Antoine, 2026-11-23: later). The PDFs made on the site have an empty Title and Author, so
+  one opened in a new tab shows a meaningless id: set them (`\hypersetup{pdftitle=…, pdfauthor=Math Olympiad Club at ETHZ}`) in
+  `bank-compile.js::makeMain`, its twin `bank/stitch.py::make_main` (the parity test compares them) and `bank-propose.js::previewMain`.
+
+- [ ] **Move the site's Python to uv** (Antoine, 2026-11-15), later. CI builds with Python 3.12 (`setup-python` in `deploy.yml`) and Antoine's Mac with Python 3.15 from `website-code/.venv`, so the two can differ. To do: replace `website-code/requirements.txt` with `pyproject.toml` + `uv.lock` (Python version pinned), run the `package.json` scripts through `uv run`, make `deploy.yml` and `number-new-problems.yml` install uv and run `uv sync --locked` in place of `pip install -r requirements.txt`, update "Run locally" in `README.md`. One commit of its own: a failed run deploys nothing, and a pull request runs the build and the tests without deploying. uv is already on the Mac (Homebrew). Until then, on the Mac: `source .venv/bin/activate` in `website-code/` before `python3 build.py` or `npm test`.
 
 ## Repository
 
-- [ ] Local `inspiration/` folder (each member's own, git-ignored), later: are the two images of the Bernoulli 2026 P5
-      solution the same write-up; have the problems in `proposals/` been added to the bank; is
-      `competitions/putnam/Very Nice Putnam problem.png` in the bank; clean the old 2025 notes in `problem_collection.tex`.
+- [ ] Local `inspiration/` folder (each member's own, git-ignored), later: are the two images of the Bernoulli 2026 P5 solution the same write-up; have the problems in `proposals/` been added to the bank; is `competitions/putnam/Very Nice Putnam problem.png` in the bank; clean the old 2025 notes in `problem_collection.tex`.
