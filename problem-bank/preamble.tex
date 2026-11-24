@@ -138,9 +138,10 @@
 \newenvironment{problem}{\par\noindent\ignorespaces}{\par}
 \newenvironment{solution}{\par\medskip\noindent\textbf{Solution.}\enspace\ignorespaces}{\par}
 % Heading printed by the wrappers:  \bankproblem{<number in this PDF>}{<title>}{<origin, may be empty>}{<ID>}
-% gives "Problem 3. Title" and, if known, the origin in grey below.  The ID (order of arrival in the repository)
-% means nothing to readers: the website's PDFs (stitched mode) never print it; local previews and the CI proofs
-% (author mode) show it as "Problem 3 (#0042). Title" so maintainers can find the file.
+% gives "Problem 3. Title" and, if known, the origin in grey below: the whole line is grey, the link to the source too
+% (the wrappers write the origin as an \href), so it stays quieter than the links of the text.  The ID (order of arrival
+% in the repository) means nothing to readers: the website's PDFs (stitched mode) never print it; local previews and the
+% CI proofs (author mode) show it as "Problem 3 (#0042). Title" so maintainers can find the file.
 \ifdefined\BankStitched\newcommand{\bankidtag}[1]{}\else\newcommand{\bankidtag}[1]{ (\##1)}\fi
 % What a problem or a shared result starts afresh: its equations, theorems, footnotes... number from 1 (under its heading,
 % and on its own page of the website's previews, website-code/bank/stitch.py::make_previews).
@@ -152,7 +153,7 @@
     \par\addvspace{1.5\baselineskip}\penalty-300%
     \bankresetcounters
     \noindent{\Large\bfseries Problem #1\bankidtag{#4}.\ #2}\par\nopagebreak
-    \ifx\relax#3\relax\else\noindent{\small\textcolor{gray}{#3}}\par\nopagebreak\fi
+    \ifx\relax#3\relax\else\noindent{\small\hypersetup{urlcolor=gray}\textcolor{gray}{#3}}\par\nopagebreak\fi
     \addvspace{0.5\baselineskip}}
 % Optional line under the heading when the user asked to show the methods (spoilers, off by default).
 \newcommand{\bankmethods}[1]{\noindent{\small\textcolor{gray}{Methods: #1}}\par\nopagebreak\addvspace{0.3\baselineskip}}

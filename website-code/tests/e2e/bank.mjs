@@ -1262,7 +1262,7 @@ try {
     writeFileSync(f, Buffer.from(made.bytes));
     const py = spawnSync('python3', [CHECK_PDF, f, String(ids.length), '0', ...made.links], { encoding: 'utf8' });
     console.log('   ' + (py.stdout || py.stderr).trim());
-    check(py.status === 0, `the engine typesets every one of them, and the PDF's links lead where the page's do (${made.links.length} links)`);
+    check(py.status === 0, `the engine typesets every one of them, and the PDF's links lead where the page's do, in the grey of their line (${made.links.length} links)`);
     rmSync(dir, { recursive: true, force: true });
     await t.close();
   }
