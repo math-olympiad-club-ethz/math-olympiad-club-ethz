@@ -626,6 +626,14 @@ html[data-list]:not([data-ready]) .bank { min-height: 100vh; }     /* a link tha
    no background: softened, it is the page's ink; turned over, the dark theme's. */
 .bank-preview-panel { grid-column: 2 / -1; margin-top: 2px; padding: 6px 0 6px 16px; border-left: 1px solid var(--accent-dim); overflow: hidden; }
 @media (max-width: 40rem) { .bank-preview-panel { grid-column: 1 / -1; padding-left: 12px; } }     /* a phone: every pixel of the row */
+/* under the statement, where it comes from: the source by name, in small print, a link when it can be read online
+   (bank-ui.js sourceLine).  It starts where the statement's lines start (the drawing keeps 2 pt on its left) and is never
+   bigger than them: --k is how much smaller than the page's text a phone draws a wide statement (bank-ui.js).  A long
+   citation is several lines: their underline stays faint until the pointer is on it. */
+.bank-source { --k: 1; margin: 8px 0 0 3px; max-width: 42em; font-size: min(var(--fs-note), calc(var(--fs) * var(--k))); line-height: 1.5625; color: var(--ink-dim); overflow-wrap: anywhere; text-wrap: pretty; }
+.bank-source-range { white-space: nowrap; }
+.bank-source a { text-decoration-color: var(--accent-dim); }
+@media (hover: hover) { .bank-source a:hover { text-decoration-color: var(--accent); } }
 /* the head of the list: what the list is, then Select all (over the boxes of the rows) and the ticks.  Two lines whatever
    is ticked, so that a tick never moves the list; on a computer it stays while the list scrolls. */
 .bank-results-head { padding-top: 7px; border-bottom: 1px solid var(--edge); font-size: var(--fs-sm); line-height: var(--lh-sm); }

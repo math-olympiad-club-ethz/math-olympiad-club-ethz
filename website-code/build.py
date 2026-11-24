@@ -49,9 +49,11 @@ from jinja2 import Environment, FileSystemLoader
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from bank import appendix as A  # noqa: E402
 from bank import paths  # noqa: E402
+from bank import problems as P  # noqa: E402
+from bank import sources  # noqa: E402
 from bank import stitch  # noqa: E402
 from bank.number import assign_provisional_ids, read_last_id  # noqa: E402
-from bank.data import build_index, build_tag_catalogue, is_proposed, mask_solutions, proposed_origin, visible_problems  # noqa: E402
+from bank.data import PROPOSED_NOTE, build_index, build_tag_catalogue, is_proposed, mask_solutions, visible_problems  # noqa: E402
 from bank.tags import TagError, load_tags  # noqa: E402
 from bank.validate import PROOF_CACHE, check_bank, compile_failures  # noqa: E402
 
@@ -98,10 +100,23 @@ def compile_all(probs, items, tags, jobs):
     print(f"{n_compiles} standalone compiles OK")
 
 
+def report_sources(problems, tags):
+    """Say which problems the site cannot name by their source (bank/sources.py): a paper, a journal, a book or a
+    historical text whose `references` line does not start with it as one would cite it (or cites it with a character
+    a PDF heading cannot print).  Their heading keeps the origin label, "Research paper 1976"."""
+    unnamed = []
+    for p in problems:
+        if (tags["origin"].get(p["origin"]) or {}).get("kind") in sources.PUBLICATIONS and not sources.source(p, tags)["cited"]:
+            unnamed.append(f"{p['file']} ({P.origin_label(p, tags)})")
+    if unnamed:
+        print(f"ℹ️  sources: {len(unnamed)} problem(s) from a publication that the site cannot name, since their references line "
+              "does not start with its citation (problem-bank/README.md says how to write it): " + ", ".join(unnamed))
+
+
 def write_site_data(probs, items, tags, preview, jobs=4):
     os.makedirs(BANK_DATA_DIR, exist_ok=True)
     visible = visible_problems(probs, preview)
-    index = build_index(probs, preview)
+    index = build_index(probs, preview, tags)
     catalogue = build_tag_catalogue(tags)
     with open(os.path.join(BANK_DATA_DIR, "tags.json"), "w", encoding="utf-8") as f:
         json.dump(catalogue, f, ensure_ascii=False, separators=(",", ":"))
@@ -117,8 +132,9 @@ def write_site_data(probs, items, tags, preview, jobs=4):
         proposed = {f"{p['id']:04d}" for p in visible if is_proposed(p)}
         for s in source:
             if s["id"] in proposed:
-                s["origin"] = proposed_origin(s["origin"])
+                s["note"] = PROPOSED_NOTE
         mask_solutions(source, proposed)  # their statements only: the solutions stay in the .tex files
+    report_sources(visible, tags)
     # the shared results these problems cite, and the ones those cite (bank/appendix.py): only those are published
     cites_of = {it["name"]: it["cites"] for it in items if it["name"]}
     wanted = A.closure([n for s in source for n in s["cites"]], cites_of)
@@ -293,20 +309,28 @@ def font_ranges(css_path=os.path.join(paths.SITE_DIR, "static", "css", "fonts.cs
 def check_fonts(catalogue, index, pages=()):
     """The web fonts' basic files hold every character the site's own text shows (tools/subset_fonts.py): say which
     tag, title or page brings one they lack, as its pages would download a second font file for it (or draw it in
-    another font, when the fonts have no glyph for it)."""
+    another font, when the fonts have no glyph for it).  The name of a source, shown under an opened statement, is not
+    the site's own text: the letters of its authors are what the second files are for, and only one that no file
+    holds is reported."""
     basic, more = font_ranges()
     texts = [(t[k], t["name"] if k == "name" else f"the description of {t['slug']}") for tags in catalogue.values()
              for t in tags for k in ("name", "description") if t.get(k)]
     texts += [(p["title"], p["title"]) for p in index["problems"]]
+    cited = [(p["source"], f"the source of {p['title']}") for p in index["problems"] if p.get("source")]
     for name in pages:
         with open(os.path.join(OUTPUT_DIR, name), encoding="utf-8") as f:
             page = re.sub(r"<(script|style)\b.*?</\1>", " ", f.read(), flags=re.S)
         texts.append((html.unescape(re.sub(r"<[^>]+>", " ", page)), name))
     second, none = {}, {}
-    for text, where in texts:
-        for ch in text:
-            if ord(ch) not in basic and ch.isprintable():
-                (second if ord(ch) in more else none).setdefault(ch, where)
+    for own, some in ((True, texts), (False, cited)):
+        for text, where in some:
+            for ch in text:
+                if ord(ch) in basic or not ch.isprintable():
+                    continue
+                if ord(ch) not in more:
+                    none.setdefault(ch, where)
+                elif own:
+                    second.setdefault(ch, where)
     if second:
         print("⚠️  web fonts: " + ", ".join(f"{ch} ({w})" for ch, w in second.items()) + " not in their basic files: a page "
               "that shows one downloads one more font file (about 30 KB). Add it to RANGES in tools/subset_fonts.py and "

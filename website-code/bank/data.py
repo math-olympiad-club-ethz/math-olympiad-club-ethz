@@ -1,8 +1,9 @@
 """Site data for the problem bank: the problem index and the tag catalogue as JSON.
 
 Visibility rule: every problem with a final number is published.  The ones without `review: human` are proposed
-(is_proposed): their index row says so, the origin line of their PDF heading ends with PROPOSED_NOTE, and the Problems
-page lists them only behind the switch of its Proposed filter ("Show the proposed problems").  Their solutions are masked (mask_solutions): the site
+(is_proposed): their index row says so, the origin line of their PDF heading ends with PROPOSED_NOTE (the `note` of
+their stitch source, stitch.origin_line), and the Problems page lists them only behind the switch of its Proposed
+filter ("Show the proposed problems").  Their solutions are masked (mask_solutions): the site
 shows their statements only, the solution stays in the .tex file until it is reviewed.  In preview mode
 (build.py --preview) every problem is included with its solution and carries its review status so the maintainer can
 review in the real UI (nothing is marked proposed there); new-*.tex files appear under their provisional number.
@@ -10,6 +11,7 @@ review in the real UI (nothing is marked proposed there); new-*.tex files appear
 import re
 
 from .colours import topic_colours
+from .sources import source
 
 
 PROPOSED_NOTE = "proposed, not reviewed yet"
@@ -20,11 +22,6 @@ MASKED_SOLUTION = r"\bankunderreview"
 def is_proposed(p):
     """A published problem that nobody has reviewed yet: no `review: human` (unknown values count as unreviewed)."""
     return p.get("review") != "human"
-
-
-def proposed_origin(origin):
-    """The origin line of a proposed problem's PDF heading: its origin, then PROPOSED_NOTE."""
-    return f"{origin}; {PROPOSED_NOTE}" if origin else PROPOSED_NOTE[0].upper() + PROPOSED_NOTE[1:]
 
 
 def mask_solutions(source, proposed_ids):
@@ -52,8 +49,11 @@ def origin_year(p):
     return int(m.group(1)) if m else None
 
 
-def index_entry(p):
-    """One row of index.json.  Derived fields are computed here, never typed by hand."""
+def index_entry(p, tags=None):
+    """One row of index.json.  Derived fields are computed here, never typed by hand.  tags (bank/tags.py): with them
+    the row says where the problem comes from, `source`, and where that can be read, `link` (bank/sources.py); the
+    Problems page prints it under the statement."""
+    src = source(p, tags) if tags else {"label": "", "url": None}
     return {
         "id": p["id"],
         "title": p["title"],
@@ -64,6 +64,8 @@ def index_entry(p):
         "origin": p["origin"] or "",
         "alsoIn": list(p["also_in"]),
         "originYear": origin_year(p),
+        "source": src["label"],
+        "link": src["url"],
         "hasSolution": bool(p["has_solution"]),
         "partial": p["status"] == "partial",
         "review": p["review"],
@@ -71,10 +73,10 @@ def index_entry(p):
     }
 
 
-def build_index(problems, preview=False):
+def build_index(problems, preview=False, tags=None):
     rows = []
     for p in visible_problems(problems, preview):
-        row = dict(index_entry(p), proposed=not preview and is_proposed(p), solutionMasked=False)
+        row = dict(index_entry(p, tags), proposed=not preview and is_proposed(p), solutionMasked=False)
         if row["proposed"] and row["hasSolution"]:            # the site has no solution to show: see mask_solutions
             row.update(hasSolution=False, partial=False, solutionMasked=True)
         rows.append(row)

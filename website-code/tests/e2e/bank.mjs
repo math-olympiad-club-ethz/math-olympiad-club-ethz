@@ -11,7 +11,7 @@
 //   node tests/e2e/bank.mjs            exit 0 = pass
 //   E2E_SHOTS=<dir> node tests/e2e/bank.mjs   also saves screenshots (360 px, dark mode) into <dir>
 import { chromium } from 'playwright';
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
@@ -1129,11 +1129,12 @@ try {
     for (let i = 3; i < px.length; i += 4) if (px[i]) ink++;
     const text = panel.querySelector('.textLayer').textContent;
     return { ink, words: text.trim().length, text, hidden: c.getAttribute('aria-hidden'),
-      chrome: panel.querySelectorAll('a, iframe, button').length, tex: window.bank.C.makePreview(await window.bank.C.loadBodies(), window.bank.state.results[0].id),
+      chrome: panel.querySelectorAll('.bank-out-actions, iframe, button').length + panel.querySelectorAll('a:not(.bank-source a)').length,
+      tex: window.bank.C.makePreview(await window.bank.C.loadBodies(), window.bank.state.results[0].id),
       name: btn.textContent.trim(), tip: btn.title, inRow: !!panel && panel.parentElement === btn.closest('li') };
   });
   check(prev.ink > 1000 && prev.words > 10 && prev.hidden === 'true' && prev.chrome === 0,
-    `the statement is drawn into the page (${prev.ink} inked pixels; its ${prev.words} characters selectable and read aloud from the text layer): no frame, no link, no button`);
+    `the statement is drawn into the page (${prev.ink} inked pixels; its ${prev.words} characters selectable and read aloud from the text layer): no frame, no button, no link but its source's`);
   check(prev.tex.includes('\\begin{problem}') && !prev.tex.includes('\\begin{solution}') && !prev.tex.includes('\\Large'),
     'the preview document has the statement only: no solution, no title (its row shows it)');
   check(prev.name === firstTitle && prev.inRow && (await page.locator('#bank-results > li').count()) === nLi,
@@ -1190,6 +1191,79 @@ try {
     w = await view(t);
     check(same(w.lit, [withProblems[0]]) && w.n > 0 && (await t.getAttribute(SEL, 'aria-pressed')) === 'false',
       'listed over a topic chosen: a click on that topic takes the list back to it (it chooses again, it does not let go)');
+    await t.close();
+  }
+
+  console.log('5d. where a problem comes from: its source under the statement, a link to it there and in the PDFs');
+  {
+    const t = await context.newPage();
+    watch(t);
+    await t.goto(`${base}/problems.html`);
+    await listAll(t);
+    const d = await t.evaluate(() => {
+      const { problems, cat } = window.bank;
+      const tag = p => cat.byType.origin.get(p.origin) || {}, isPub = p => ['book', 'journal'].includes(tag(p).kind);
+      const slim = p => p && { id: p.id, source: p.source, link: p.link };
+      const pubs = problems.filter(isPub);
+      return { n: problems.length, unnamed: problems.filter(p => p.origin && !p.source).map(p => p.id), linked: problems.filter(p => p.link).length,
+        bad: problems.filter(p => p.link && !/^https?:\/\/\S+$/.test(p.link)).map(p => p.id), spilt: problems.filter(p => /https?:|www\./.test(p.source || '')).map(p => p.id),
+        pubs: pubs.length, cited: pubs.filter(p => !p.source.startsWith(tag(p).name)).map(slim),
+        event: slim(problems.find(p => p.link && !isPub(p))), plain: slim(problems.find(p => p.source && !p.link)), unknown: slim(problems.find(p => !p.origin)) };
+    });
+    check(d.unnamed.length === 0 && d.bad.length === 0 && d.spilt.length === 0 && d.linked > 0,
+      `every problem of known origin says its source (${d.linked} of ${d.n} with a link: one http(s) address, never written out in the name)`);
+    check(d.pubs === 0 || d.cited.length > 0, `a paper, a journal or a book is named as one cites it, not "Research paper 1976" (${d.cited.length} of ${d.pubs})`);
+    const open = async (id) => {
+      await t.click(`#bank-results li[data-id="${id}"] .bank-row-title`);
+      await t.waitForSelector(`#bank-results li[data-id="${id}"] .bank-preview-panel .bank-sheet canvas`, { timeout: 240000 });
+      await t.waitForFunction(() => document.querySelector('.bank-preview-panel').getAnimations().length === 0, null, { timeout: 5000 }).catch(() => {});   // opened
+      const got = await t.evaluate((id) => {
+        const panel = document.querySelector(`#bank-results li[data-id="${id}"] .bank-preview-panel`), lines = panel.querySelectorAll('.bank-source'), line = lines[0], a = line && line.querySelector('a');
+        const sheet = panel.querySelector('.bank-sheet').getBoundingClientRect(), r = line && line.getBoundingClientRect(), cs = line && getComputedStyle(line);
+        return { n: lines.length, text: line ? line.textContent : null, href: a ? a.getAttribute('href') : null, target: a && a.target, rel: a ? a.rel.split(' ').sort().join(' ') : null,
+          under: !!r && r.top >= sheet.bottom - 1 && r.bottom <= panel.getBoundingClientRect().bottom + 1, size: cs ? parseFloat(cs.fontSize) : 0,
+          page: parseFloat(getComputedStyle(document.body).fontSize), dim: !!cs && cs.color !== getComputedStyle(document.body).color };
+      }, id);
+      await t.click(`#bank-results li[data-id="${id}"] .bank-row-title`);
+      await t.waitForFunction(() => !document.querySelector('.bank-preview-panel'), null, { timeout: 5000 });
+      return got;
+    };
+    let g = await open(d.event.id);
+    check(g.n === 1 && g.text === 'Source: ' + d.event.source && g.href === d.event.link && g.target === '_blank' && g.rel === 'noopener noreferrer',
+      `under the statement, its source by name, a link to where it can be read, opened beside the page and told nothing of it ("${d.event.source}" → ${g.href})`);
+    check(g.under && g.size < g.page && g.dim, `the source is small print under the statement (${g.size}px, the page's text ${g.page}px, dimmer)`);
+    if (d.cited.length) {
+      const c = d.cited.find(x => x.link) || d.cited[0];
+      g = await open(c.id);
+      check(g.text === 'Source: ' + c.source && g.href === (c.link || null), `a publication is named by its citation ("${c.source.slice(0, 60)}…")`);
+      const tips = await t.evaluate((id) => [...document.querySelectorAll(`#bank-results li[data-id="${id}"] .bank-chip-origin:not(.bank-chip-alsoin)`)].map(e => e.dataset.tip), c.id);
+      check(same(tips, [c.source]) && (await t.evaluate((id) => document.querySelector(`#bank-results li[data-id="${id}"] .bank-chip-origin`).dataset.tip, d.event.id)) !== d.event.source,
+        'in its row, the bubble of its Origin tag names it too (a competition\'s says what the competition is)');
+    }
+    if (d.plain) {
+      g = await open(d.plain.id);
+      check(g.n === 1 && g.text === 'Source: ' + d.plain.source && g.href === null, `a source that is nowhere online is named without a link ("${d.plain.source.slice(0, 60)}")`);
+    }
+    if (d.unknown) check((await open(d.unknown.id)).n === 0, 'a problem of unknown origin says nothing under its statement');
+    // the same in a PDF, made by the engine: every citation printed (their accents, quotation marks, dashes), each source a link
+    const ids = [...new Set([d.event.id, ...d.cited.map(x => x.id), ...(d.plain ? [d.plain.id] : [])])];
+    await t.goto(`${base}/problems.html?sel=${ids.join(',')}`);
+    await t.waitForSelector('#bank-results-head:not([hidden])');
+    await t.click('#bank-create');
+    await t.waitForFunction(() => document.getElementById('bank-announce').textContent === 'The PDF is ready.', null, { timeout: 480000 });
+    const made = await t.evaluate(async () => ({ tex: window.bank.output.problems.mainTex, ids: window.bank.output.problems.ids,
+      links: window.bank.output.problems.ids.map(i => window.bank.byId.get(i).link).filter(Boolean),
+      bytes: Array.from(new Uint8Array(await (await fetch(document.querySelector('#bank-out-problems a[download$=".pdf"]').href)).arrayBuffer())) }));
+    const heads = made.tex.split('\n').filter(l => l.startsWith('\\bankproblem{'));
+    check(heads.length === ids.length && heads.filter(l => l.includes('{\\href{http')).length === made.links.length && !heads.some(l => /Research paper \d|Journal \d|Book \d/.test(l)),
+      `the headings of a PDF name the same sources, ${made.links.length} of ${ids.length} as links`);
+    const dir = mkdtempSync(join(tmpdir(), 'bank-e2e-'));
+    const f = join(dir, 'sources.pdf');
+    writeFileSync(f, Buffer.from(made.bytes));
+    const py = spawnSync('python3', [CHECK_PDF, f, String(ids.length), '0', ...made.links], { encoding: 'utf8' });
+    console.log('   ' + (py.stdout || py.stderr).trim());
+    check(py.status === 0, `the engine typesets every one of them, and the PDF's links lead where the page's do (${made.links.length} links)`);
+    rmSync(dir, { recursive: true, force: true });
     await t.close();
   }
 
@@ -1395,7 +1469,7 @@ try {
     await p2.locator(ROWS).first().locator('.bank-row-title').click();
     await p2.waitForSelector('.bank-preview-panel .bank-sheet canvas', { timeout: 240000 });
     check(await p2.evaluate(() => [...document.querySelectorAll('iframe.bank-pdf')].every(f => f.src.startsWith('blob:'))) && (await p2.locator('#bank-out-problems a', { hasText: 'Open PDF' }).count()) === 1
-      && (await p2.locator('.bank-preview-panel iframe, .bank-preview-panel a').count()) === 0,
+      && (await p2.locator('.bank-preview-panel iframe, .bank-preview-panel .bank-out-actions a').count()) === 0,
       'the problems PDF shows in a frame, with Open PDF / Download PDF; the statement is drawn into the page (PDF.js, under the CSP)');
     await ctx.close();
   }

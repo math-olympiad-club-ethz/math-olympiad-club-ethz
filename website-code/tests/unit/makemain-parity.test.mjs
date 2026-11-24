@@ -6,7 +6,7 @@ import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'no
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
-import { appendixOrder, makeMain, makePreview, pickPreview } from '../../site/static/js/bank-compile.js';
+import { appendixOrder, makeMain, makePreview, originLine, pickPreview, texUrl } from '../../site/static/js/bank-compile.js';
 
 const ROOT = new URL('../../', import.meta.url).pathname;
 const BODIES = ROOT + 'site/static/bank/bodies.json';
@@ -59,6 +59,40 @@ test('JS makeMain == Python make_main with shared results (order, closure, cycle
       + '\\bankappendixitem{c-res}\n'), tex);
     assert.equal(makeMain(bodies, [1, 3], 'problems', { appendix }), makeMain(bodies, [1, 3], 'problems'));
     assert.equal(makeMain(bodies, [2, 4], 'solutions', { appendix }), makeMain(bodies, [2, 4], 'solutions'));
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+
+// The line under a heading: the origin, a link when the source can be read online, the note of a proposed problem.
+// Synthetic data, so this runs without a build.
+test('JS originLine / texUrl == Python origin_line / tex_url (links with every character TeX would read, notes)', () => {
+  const urls = ['https://www.imc-math.org.uk/?year=2014&item=problems', 'https://klasirane.com/api/OLI/3-%D0%9D%D0%B0/2025/9-12%20кл/sol',
+    'https://isl.stanford.edu/~cover/papers/paper73.pdf', 'https://en.wikipedia.org/wiki/Fermat_point_(geometry)#History',
+    'https://x.org/a b~c^d{e}\\f$g\'h(i)j"k<l>m|n`o%20p%zq#r&s_t?u=кл;v[1]@!*+,=é€𝔽'];
+  const body = (i, extra) => ({ id: String(i).padStart(4, '0'), title: `T${i}`, origin: '', status: '', methods: [], statement: `S${i}`, solution: null, cites: [], figures: {}, ...extra });
+  const bodies = { '0001': body(1, { origin: 'IMC 2014, Day 1, Problem 4', link: urls[0] }),
+    '0002': body(2, { origin: 'A. Ivić & Ž. Mijajlović, On Kurepa’s problems, 19–28', link: urls[1], note: 'proposed, not reviewed yet' }),
+    '0003': body(3, { note: 'proposed, not reviewed yet' }), '0004': body(4, { origin: 'Folklore 2002' }), '0005': body(5, { link: urls[2] }),
+    '0006': body(6, { origin: 'T. M. Cover, ‘Pick the largest number’, 100% & #1_a', link: urls[4] }) };
+  const dir = mkdtempSync(join(tmpdir(), 'bank-origin-'));
+  try {
+    const file = join(dir, 'bodies.json');
+    writeFileSync(file, JSON.stringify({ build: 'x', problems: bodies, appendix: {} }));
+    const py = spawnSync('python3', ['-m', 'bank.stitch', 'main', '--bodies', file, '--ids', '1,2,3,4,5,6', '--variant', 'problems'], { cwd: ROOT, encoding: 'utf8' });
+    assert.equal(py.status, 0, py.stderr);
+    const js = makeMain(bodies, [1, 2, 3, 4, 5, 6], 'problems');
+    assert.equal(js, py.stdout);
+    assert.ok(js.includes('\\bankproblem{1}{T1}{\\href{https://www.imc-math.org.uk/?year=2014\\&item=problems}{IMC 2014, Day 1, Problem 4}}{0001}\n'), js);
+    assert.ok(js.includes('{\\href{https://klasirane.com/api/OLI/3-\\%D0\\%9D\\%D0\\%B0/2025/9-12\\%20\\%D0\\%BA\\%D0\\%BB/sol}{A. Ivić \\& Ž. Mijajlović, On Kurepa’s problems, 19–28}; proposed, not reviewed yet}{0002}\n'), js);
+    assert.ok(js.includes('\\bankproblem{3}{T3}{Proposed, not reviewed yet}{0003}\n') && js.includes('\\bankproblem{4}{T4}{Folklore 2002}{0004}\n'), js);
+    assert.ok(js.includes('\\bankproblem{5}{T5}{}{0005}\n'), 'a link with nothing to name it is not printed');
+    const tex = spawnSync('python3', ['-c', 'import json, sys\nfrom bank.sources import tex_url\nprint(json.dumps([tex_url(u) for u in json.load(sys.stdin)]))'],
+      { cwd: ROOT, encoding: 'utf8', input: JSON.stringify(urls) });
+    assert.equal(tex.status, 0, tex.stderr);
+    assert.deepEqual(urls.map(texUrl), JSON.parse(tex.stdout));
+    for (const u of urls.map(texUrl)) assert.match(u, /^[A-Za-z0-9\-._:/?[\]@!*+,;=\\%#&]+$/, 'only characters a heading can hold');
+    assert.equal(texUrl(urls[2]), 'https://isl.stanford.edu/\\%7Ecover/papers/paper73.pdf');
+    assert.equal(originLine({ origin: 'x' }), 'x');
+    assert.equal(originLine({}), '');
   } finally { rmSync(dir, { recursive: true, force: true }); }
 });
 

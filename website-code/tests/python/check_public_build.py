@@ -75,11 +75,14 @@ def check(site_dir, problems, items=()):
         bodies = bodies.get("problems", {})
         if sorted(bodies) != [f"{i:04d}" for i in want]:
             errors.append(f"static/bank/bodies.json holds {sorted(bodies)}, the published problems are {want}")
-        notes = {k: str(b.get("origin") or "").lower().endswith(PROPOSED_NOTE) for k, b in bodies.items()}
+        notes = {k: b.get("note") == PROPOSED_NOTE for k, b in bodies.items()}
         wrong = sorted(k for k, noted in notes.items() if noted != (int(k) in proposed_ids))
         if wrong:
-            errors.append(f"static/bank/bodies.json: the PDF origin line must end with '{PROPOSED_NOTE}' exactly for the "
-                          f"proposed problems: wrong in {wrong}")
+            errors.append(f"static/bank/bodies.json: the PDF origin line must end with '{PROPOSED_NOTE}' (the note) exactly "
+                          f"for the proposed problems: wrong in {wrong}")
+        unsafe = sorted(k for k, b in bodies.items() if b.get("link") and not re.match(r"https?://\S+$", b["link"]))
+        if unsafe:
+            errors.append(f"static/bank/bodies.json: the link of a source must be one http(s) address: wrong in {unsafe}")
         leaked = sorted(k for k, b in bodies.items() if int(k) in proposed_ids and b.get("solution") not in (None, MASKED_SOLUTION))
         if leaked:
             errors.append(f"static/bank/bodies.json: the solutions of proposed problems must not be published: {leaked}")

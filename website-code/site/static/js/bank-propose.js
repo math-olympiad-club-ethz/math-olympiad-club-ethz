@@ -118,7 +118,7 @@ export function validDate(s) {
 /* Characters the club preamble can print in a title or an origin number: TeX specials (TITLE_FORBIDDEN) and characters the
    fonts cannot print (math symbols such as √ ≤ ∑) are returned, sorted.  Mirrors bank/problems.py::unprintable. */
 const NOT_IN_T1 = 'ĦħĸĿŀŉŦŧſ';
-const PRINTABLE_EXTRA = '–—‘’“”…·•€„‚«»†‡‰'
+const PRINTABLE_EXTRA = '–—‘’“”…·•€„‚«»†‡‰' + 'ȘșȚț'
   + 'αβγδεζηθικλμνξοπρς'
   + 'στυφχψωϑϕϖϱϵΑΒΓΔΕΖ'
   + 'ΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ';

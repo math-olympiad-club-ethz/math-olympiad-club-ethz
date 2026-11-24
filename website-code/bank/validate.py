@@ -24,7 +24,8 @@ from . import appendix as A
 from . import paths
 from . import problems as P
 from .bib import parse_bib
-from .stitch import COMPILE_TIMEOUT, PDFLATEX, split_body, tex_env, tex_escape
+from . import sources
+from .stitch import COMPILE_TIMEOUT, PDFLATEX, origin_line, split_body, tex_env, tex_escape
 from .tags import TagError, load_tags
 
 WRAPPER = r"""\documentclass[11pt]{article}
@@ -54,7 +55,8 @@ def proof_sources(p, tags, with_solution=True):
         first = body.find(statement) if statement else 0
         body = "\n" * body[:max(first, 0)].count("\n") + "\\begin{problem}" + statement + "\\end{problem}\n"
     body = "\n" * (p["body_line"] - 1) + body
-    main = WRAPPER % {"title": tex_escape(p["title"]), "origin": tex_escape(P.origin_label(p, tags)),
+    src = sources.source(p, tags)                # the origin line of the site's PDFs: its name, linked
+    main = WRAPPER % {"title": tex_escape(p["title"]), "origin": origin_line({"origin": src["label"], "link": src["url"]}),
                       "id": "new" if p["id"] is None else f"{p['id']:04d}", "body": "body.tex",
                       # the results the solution cites, read from problem-bank/appendix/ (author mode)
                       "appendix": "\\bankappendixall\n" if with_solution else ""}

@@ -221,6 +221,7 @@ test('figures: top-level tikzpicture / tikzcd spans, nested ones inside', () => 
 
 test('titles and origin numbers: only characters the PDF headings can print', () => {
   assert.deepEqual(P.unprintable('Euler φ sums – Ωmega, naïve Łódź'), []);
+  assert.deepEqual(P.unprintable('Timișoara, Ștefan Țițeica'), []);      // the Romanian letters with a comma below
   assert.deepEqual(P.unprintable('√2 ≤ π^2'), ['^', '\u221a', '\u2264']);
   const f = o => P.validateDraft(draft(o), cat).map(e => e.field);
   assert.deepEqual(f({ title: '√2 is irrational' }), ['title']);

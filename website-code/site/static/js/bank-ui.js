@@ -591,6 +591,18 @@ function foldPreview() {
   mine.folding.finished.then(() => { if (preview === mine) closePreview(); }, () => {});
 }
 
+/* Where the problem comes from, under its statement: the source by name, a link when it can be read online.  The build
+   reads both from the problem's header (bank/sources.py; index rows `source` and `link`).  Nothing for a problem of
+   unknown origin. */
+function sourceLine(p) {
+  if (!p.source) return null;
+  const online = /^https?:\/\//.test(p.link || '');
+  // a range of pages or of years, 593–610, is not cut at the end of a line
+  const words = p.source.split(/(\d+–\d+)/).map((t, i) => (i % 2 ? el('span', { class: 'bank-source-range', text: t }) : t));
+  return el('p', { class: 'bank-source' }, el('span', { class: 'visually-hidden', text: 'Source: ' }),
+    online ? el('a', { href: p.link, target: '_blank', rel: 'noopener noreferrer' }, ...words) : el('span', {}, ...words));
+}
+
 /* Drawn at the panel's measure, as the build typeset it or typeset here; again when that measure changes (a phone
    turned, a window made narrower). */
 async function showStatement(mine, p, first) {
@@ -622,12 +634,15 @@ async function showStatement(mine, p, first) {
   if (preview !== mine) return;
   mine.done = true;
   mine.panel.dataset.typeset = by;              // by the build, or here (where it came from, for whoever looks)
+  const from = sourceLine(p);                  // the statement, then where it comes from, in letters no bigger than its own
+  if (from && mine.sheet) from.style.setProperty('--k', (mine.sheet.s / pxPerPt()).toFixed(3));
+  const body = el('div', {}, shown, from);
   if (first) {
-    await morph(mine.panel, () => mine.panel.replaceChildren(shown));
+    await morph(mine.panel, () => mine.panel.replaceChildren(body));
     if (preview === mine) mine.panel.scrollIntoView({ behavior: smooth(), block: 'nearest' });
   } else {       // typeset again for a new width (a window resized): the rows below glide to their new place
     const old = [...mine.panel.querySelectorAll('canvas')];
-    await morph(mine.panel, () => mine.panel.replaceChildren(shown));
+    await morph(mine.panel, () => mine.panel.replaceChildren(body));
     for (const c of old) { c.width = 0; c.height = 0; }
   }
 }
@@ -709,7 +724,12 @@ function buildRow(p) {
   });
   const tags = el('span', { class: 'bank-tags' });
   for (const a of p.area) tags.append(tagBadge('area', a, { clickable: true }));
-  if (p.origin) tags.append(tagBadge('origin', p.origin, { clickable: true }));
+  if (p.origin) {
+    const chip = tagBadge('origin', p.origin, { clickable: true });
+    // a paper, a journal, a book: the tag says what kind of source it is, its bubble which one (bank/sources.py PUBLICATIONS)
+    if (p.source && ['book', 'journal'].includes((S.getTag(cat, 'origin', p.origin) || {}).kind)) chip.dataset.tip = p.source;
+    tags.append(chip);
+  }
   for (const o of p.alsoIn || []) {             // shown when the Origin filter picked this problem through it
     const chip = tagBadge('origin', o, { clickable: true, typeLabel: 'Also in' });
     chip.classList.add('bank-chip-alsoin'); chip.dataset.slug = o; chip.hidden = true;

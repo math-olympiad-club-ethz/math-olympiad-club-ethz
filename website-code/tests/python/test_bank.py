@@ -16,8 +16,9 @@ from bank import appendix as A  # noqa: E402
 from bank import paths  # noqa: E402
 from bank import problems as P  # noqa: E402
 from bank import number  # noqa: E402
-from bank.data import MASKED_SOLUTION, build_index, mask_solutions, proposed_origin, visible_problems  # noqa: E402
-from bank.stitch import bank_sources, build_bodies, figure_context, find_figures, make_main, namespace_labels, parse_ids, resolve_citations, parse_bib, split_body  # noqa: E402
+from bank import sources as S  # noqa: E402
+from bank.data import MASKED_SOLUTION, PROPOSED_NOTE, build_index, mask_solutions, visible_problems  # noqa: E402
+from bank.stitch import bank_sources, build_bodies, figure_context, find_figures, make_main, namespace_labels, origin_line, parse_ids, resolve_citations, parse_bib, split_body  # noqa: E402
 from bank.validate import proof_sources  # noqa: E402
 from bank.tags import load_tags  # noqa: E402
 sys.path.insert(0, os.path.join(ROOT, "tests", "python"))
@@ -115,8 +116,8 @@ class Visibility(unittest.TestCase):
         self.assertEqual([r["proposed"] for r in idx["problems"]], [False, False])    # preview: review badges instead
         pub = build_index([other, good])
         self.assertEqual([(r["id"], r["proposed"]) for r in pub["problems"]], [(1, False), (2, True)])
-        self.assertEqual(proposed_origin("Putnam 1989, A3"), "Putnam 1989, A3; proposed, not reviewed yet")
-        self.assertEqual(proposed_origin(""), "Proposed, not reviewed yet")
+        self.assertEqual(origin_line({"origin": "Putnam 1989, A3", "note": PROPOSED_NOTE}), "Putnam 1989, A3; proposed, not reviewed yet")
+        self.assertEqual(origin_line({"origin": "", "note": PROPOSED_NOTE}), "Proposed, not reviewed yet")
 
     def test_proposed_solutions_are_masked_on_the_public_site(self):
         good = parse("0001-good-problem.tex")                                       # review: human, with a solution
@@ -187,6 +188,150 @@ class Stitch(unittest.TestCase):
         self.assertEqual(parse_ids("5,3,1-2"), [5, 3, 1, 2])
         self.assertEqual(parse_ids("2,2,1"), [2, 1])
         self.assertEqual(parse_ids("all", [3, 1, 2]), [1, 2, 3])
+
+
+class Sources(unittest.TestCase):
+    """Where a problem comes from, as the site says it (bank/sources.py): the name of its source and one link, read from
+    the header.  The notes here are made up in the forms the bank's notes have: the bank's own may change any day."""
+    LEAD = "Earliest known appearance (to the best of our knowledge): "
+
+    def problem(self, origin, references, date="", number=""):
+        return {"origin": origin, "origin_date": date, "origin_number": number, "references": self.LEAD + references}
+
+    def test_a_competition_is_named_by_its_tags_and_linked_to_the_first_link(self):
+        p = self.problem("imc", "IMC 2012 (19th IMC, Blagoevgrad), Day 2, Problem 2 (answer 1/2), proposed by A. Author; Official "
+                         "paper - https://www.imc-math.org.uk/archive/problems/2012/IMC_2012_Day_2_Problems.pdf ; solutions - https://www.imc-math.org.uk/s.pdf",
+                         "2012-07-29", "Day 2, Problem 2")
+        self.assertEqual(S.source(p, TAGS), {"label": "IMC 2012, Day 2, Problem 2", "cited": False,
+                                             "url": "https://www.imc-math.org.uk/archive/problems/2012/IMC_2012_Day_2_Problems.pdf"})
+        folklore = self.problem("folklore", "classical result (every bijection is a product of two involutions). A. Author, "
+                                "A Book, 1992 - https://example.org/book.html")
+        self.assertEqual(S.source(folklore, TAGS), {"label": "Folklore", "url": "https://example.org/book.html", "cited": False})
+
+    def test_a_publication_is_named_by_its_note(self):
+        cite = lambda refs, origin="paper": S.source(self.problem(origin, refs, "1976-05", "Theorem 2, p. 598"), TAGS)
+        # the citation stops at the first remark: a parenthesis that explains, here; what belongs to it stays, "(2)", "(1976)"
+        got = cite("L. E. Baum, M. M. Sweet, Continued Fractions of Algebraic Power Series in Characteristic 2, Ann. of Math. (2) "
+                   "103 (1976), no. 3, 593-610, remark following Theorem 2, p. 598 (the root f of f^3 + x^{-1} f + 1 = 0 has f_n = 1 "
+                   "iff the blocks are even; this is the identity), doi:10.2307/1970953 - https://api.crossref.org/works/10.2307/1970953; "
+                   "attribution per https://en.wikipedia.org/wiki/Baum%E2%80%93Sweet_sequence")
+        self.assertEqual(got, {"label": "L. E. Baum, M. M. Sweet, Continued Fractions of Algebraic Power Series in Characteristic 2, "
+                                        "Ann. of Math. (2) 103 (1976), no. 3, 593–610, remark following Theorem 2, p. 598",
+                               "url": "https://doi.org/10.2307/1970953", "cited": True})         # the page of the DOI, not its record
+        # a DOI, a colon before a quotation, " - " and a semicolon end it too; a title in quotation marks is part of it
+        self.assertEqual(cite("W. H. Gustafson, 'What is the probability that two group elements commute?', Amer. Math. Monthly "
+                              "80(9) (Nov. 1973) 1031-1034, doi:10.1080/x, 5/8 bound on p. 1032 (paywalled) - https://example.org/a")["label"],
+                         "W. H. Gustafson, ‘What is the probability that two group elements commute?’, Amer. Math. Monthly 80(9) (Nov. 1973) 1031–1034")
+        self.assertEqual(cite("A.H. Clifford & G.B. Preston, The Algebraic Theory of Semigroups, Vol. I (AMS Mathematical Surveys 7), "
+                              "1961, Section 1.7, Exercise 6(c): 'Every cancellative periodic semigroup is a group' (excerpt)", "book")["label"],
+                         "A.H. Clifford & G.B. Preston, The Algebraic Theory of Semigroups, Vol. I (AMS Mathematical Surveys 7), 1961, "
+                         "Section 1.7, Exercise 6(c)")
+        self.assertEqual(cite("G. Monge, Géométrie descriptive, Paris: Baudouin, an VII [1798/99], art. 44, pp. 54-55: the three-circle "
+                              "statement with a proof", "book")["label"],
+                         "G. Monge, Géométrie descriptive, Paris: Baudouin, an VII [1798/99], art. 44, pp. 54–55")
+        self.assertEqual(cite("Apollonius of Perga, Conics, Book III, Proposition 48 (late 3rd century BC): equal angles - T. L. Heath, "
+                              "Treatise (1896) - https://archive.org/x_djvu.txt;", "historical"),
+                         {"label": "Apollonius of Perga, Conics, Book III, Proposition 48", "url": "https://archive.org/x_djvu.txt", "cited": True})
+        self.assertEqual(cite("T. M. Cover, 'Pick the largest number', in T. Cover & B. Gopinath (eds.), Open Problems, Springer, 1987, "
+                              "DOI 10.1007/978-1-4612-4808-8_43 (the randomised problem)", "book")["label"],
+                         "T. M. Cover, ‘Pick the largest number’, in T. Cover & B. Gopinath (eds.), Open Problems, Springer, 1987")
+        self.assertEqual(cite("Martin Gardner, column 'A fifth collection of \"brain-teasers\"', Scientific American 202(2), February "
+                              "1960, p. 150 (first appearance in print; devised in 1958)", "journal")["label"],
+                         "Martin Gardner, column ‘A fifth collection of “brain-teasers”’, Scientific American 202(2), February 1960, p. 150")
+        # a lead-in before the citation is skipped, and a formula ends it (the statement, quoted)
+        self.assertEqual(cite("as a lemma of the left-factorial literature (!p = 0!+1!+...+(p-1)!), A. Ivić & Ž. Mijajlović, On Kurepa's "
+                              "problems in number theory, Publ. Inst. Math. (Beograd) N.S. 57(71), 1995, 19-28, formula (2.5.7) "
+                              "'!p ≡ [(p-1)!/e] + 1 (mod p)' - https://arxiv.org/pdf/math/0312202; same identity: V. Other - https://x.org/y")["label"],
+                         "A. Ivić & Ž. Mijajlović, On Kurepa's problems in number theory, Publ. Inst. Math. (Beograd) N.S. 57(71), 1995, 19–28")
+        # an apostrophe is not a quotation mark, a date not a range; the Romanian letters print (T1, comma below)
+        self.assertEqual(S.citation("D. Andrica, Revista Matematică Timișoara, No. 1-2 (1989), l'an 3, posted 2025-04-01"),
+                         "D. Andrica, Revista Matematică Timișoara, No. 1–2 (1989), l'an 3, posted 2025-04-01")
+        self.assertEqual(P.unprintable("Timișoara, Ștefan Țițeica"), [])
+
+    def test_a_note_that_does_not_start_with_a_citation_keeps_the_origin_label(self):
+        plain = "Research paper 1976, Theorem 2, p. 598"
+        for refs in ("see the paper cited below for the result and its history",               # no citation at its start
+                     "A. B, C",                                                                # too short to be one
+                     "A. Author, " + "a very long title " * 20,                                # longer than a heading holds
+                     "K. Satylkhanov (Сатылханов К.), On a problem of Euler, Vestnik 3 (2019)",   # letters a PDF heading cannot print...
+                     "A. Author, On x^2 + y^2 = z^2",                                         # ...and nothing left before a formula
+                     "none found. Background: A. Author, A Paper, J. Math. 3 (1999) - https://example.org/p",
+                     ""):
+            p = self.problem("paper", refs, "1976-05", "Theorem 2, p. 598")
+            self.assertEqual((S.source(p, TAGS)["label"], S.source(p, TAGS)["cited"]), (plain, False), refs)
+        self.assertEqual(S.citation("K. Satylkhanov (Сатылханов К.), On a problem of Euler, Vestnik 3 (2019)"),
+                         "K. Satylkhanov (Сатылханов К.), On a problem of Euler, Vestnik 3 (2019)")     # it is the PDF that cannot
+        self.assertEqual(S.source({"origin": "", "origin_date": "", "origin_number": "", "references": "A. Author, A Paper - https://x.org"}, TAGS),
+                         {"label": "", "url": None, "cited": False})                           # no origin: nothing is said
+
+    def test_the_link_is_the_first_one_the_site_shows(self):
+        link = lambda refs, publication=False: S.link(self.LEAD + refs, publication)
+        self.assertIsNone(link("none found. Method: Wikipedia - https://en.wikipedia.org/wiki/X"))
+        self.assertIsNone(link("A source with no link"))
+        # as written in running text: the punctuation after it is not part of it; the Wayback Machine over https
+        self.assertEqual(link("this is taken from arXiv:1411.7847 (https://arxiv.org/pdf/1411.7847); the paper was not opened"),
+                         "https://arxiv.org/pdf/1411.7847")
+        self.assertEqual(link("Wikipedia - https://en.wikipedia.org/wiki/Fermat_point_(geometry)."), "https://en.wikipedia.org/wiki/Fermat_point_(geometry)")
+        self.assertEqual(link("the proposers' statement - http://web.archive.org/web/2011/http://www.msri.org/x.pdf"),
+                         "https://web.archive.org/web/2011/http://www.msri.org/x.pdf")
+        self.assertEqual(link("A handout - http://math.stanford.edu/~vakil/putnam03/03mc4.pdf"), "http://math.stanford.edu/~vakil/putnam03/03mc4.pdf")
+        # a page for people where the note opened one for programs; where a moved page is now
+        self.assertEqual(link("Putnam 2017, B4 - https://kskedlaya.org/putnam-archive/2017.tex; solution - https://kskedlaya.org/putnam-archive/2017s.tex"),
+                         "https://kskedlaya.org/putnam-archive/2017.pdf")
+        self.assertEqual(link("IMC 2012, Day 2, Problem 2 - https://www.imc-math.org.uk/imc2012/IMC2012-day2-questions.pdf"),
+                         "https://www.imc-math.org.uk/?year=2012&item=problems")
+        self.assertEqual(link("IMC 2014, Day 1 - https://www.imc-math.org.uk/?year=2014&item=problems"), "https://www.imc-math.org.uk/?year=2014&item=problems")
+        self.assertEqual(link("ICMC 8, Round Two - https://icmathscomp.org/files/2024-2025/ICMC_8.2_paper.pdf"), "https://icmathscomp.org/files/8_2_paper.pdf")
+        # a copy of a book put online without its publisher, or an answer written for programs: the next link
+        self.assertEqual(link("A. Author, A Book (1992) - https://vdoc.pub/documents/a-book-6tff ; the publisher's page - https://www.ams.org/books/mmono/107/"),
+                         "https://www.ams.org/books/mmono/107/")
+        self.assertIsNone(link("A. Author, A Book - https://www.google.com/books/feeds/volumes?q=%22x%22&max-results=20"))
+        # a publication: only a link of the first source (a semicolon then a capital starts another work)...
+        first = "D. Andrica, Revista (RMT), No. 1-2 (1989), p. 67, Problem 6143 (issue not online; attribution printed in the book)"
+        self.assertEqual(link(first + "; T. Andreescu, D. Andrica, 360 Problems, GIL 2003 - https://archive.org/x.txt"), "https://archive.org/x.txt")
+        self.assertIsNone(link(first + "; T. Andreescu, D. Andrica, 360 Problems, GIL 2003 - https://archive.org/x.txt", publication=True))
+        # ...and a semicolon then a small letter is still about the first
+        self.assertEqual(link("R. P. Stanley, Problem E2701, Amer. Math. Monthly 85 (1978), p. 197: compute the volume, which is p_n; our "
+                              "problem asks only for the limit - https://api.crossref.org/works/10.2307/2321067 ; Solutions - https://x.org/s",
+                              publication=True), "https://doi.org/10.2307/2321067")
+
+    def test_a_heading_takes_the_link(self):
+        self.assertEqual(S.tex_url("https://x.org/a b~c^d{e}\\f$g'h(i)j\"k<l>m|n`o%20p#r&s_t?u=кл;v"),
+                         r"https://x.org/a\%20b\%7Ec\%5Ed\%7Be\%7D\%5Cf\%24g\%27h\%28i\%29j\%22k\%3Cl\%3Em\%7Cn\%60o\%20p\#r\&s\_t?u=\%D0\%BA\%D0\%BB;v")
+        b = {"origin": "A. Ivić & Ž. Mijajlović, On Kurepa's problems", "link": "https://arxiv.org/pdf/math/0312202?a=1&b_c=2"}
+        self.assertEqual(origin_line(b), r"\href{https://arxiv.org/pdf/math/0312202?a=1\&b\_c=2}{A. Ivić \& Ž. Mijajlović, On Kurepa's problems}")
+        self.assertEqual(origin_line(dict(b, note=PROPOSED_NOTE)), origin_line(b) + "; proposed, not reviewed yet")   # the note is not the link
+        self.assertEqual(origin_line({"origin": "", "link": "https://x.org"}), "")                # nothing to link
+        bodies = {"0001": {"id": "0001", "title": "T", "origin": "IMC 2012, Day 2, Problem 2", "link": "https://www.imc-math.org.uk/q.pdf",
+                           "note": PROPOSED_NOTE, "status": "", "methods": [], "statement": "S", "solution": None, "figures": {}}}
+        self.assertIn(r"\bankproblem{1}{T}{\href{https://www.imc-math.org.uk/q.pdf}{IMC 2012, Day 2, Problem 2}; proposed, not reviewed yet}{0001}",
+                      make_main(bodies, [1], "problems"))
+
+    def test_the_site_data_carry_the_source(self):
+        good = parse("0001-good-problem.tex")
+        good.update(origin="putnam", origin_date="1989-12-02", origin_number="A3",
+                    references=self.LEAD + "Putnam 1989, A3 (exam of 2 Dec 1989) - https://kskedlaya.org/putnam-archive/1989.pdf; Kalva - https://prase.cz/k.html")
+        row = build_index([good], tags=TAGS)["problems"][0]
+        self.assertEqual((row["source"], row["link"]), ("Putnam 1989, A3", "https://kskedlaya.org/putnam-archive/1989.pdf"))
+        self.assertEqual((build_index([good])["problems"][0]["source"], build_index([good])["problems"][0]["link"]), ("", None))
+        src = bank_sources([good], TAGS)[0]
+        self.assertEqual((src["origin"], src["link"]), ("Putnam 1989, A3", "https://kskedlaya.org/putnam-archive/1989.pdf"))
+        with tempfile.TemporaryDirectory() as d:
+            os.makedirs(os.path.join(d, "figures"))
+            body = build_bodies([dict(src, note=PROPOSED_NOTE)], d)[0]["0001"]
+            self.assertEqual((body["origin"], body["link"], body["note"]), (src["origin"], src["link"], PROPOSED_NOTE))
+            self.assertNotIn("note", build_bodies([src], d)[0]["0001"])                        # only what there is
+        main, _ = proof_sources(good, TAGS)                # the proofs of CI print the heading the site's PDFs print
+        self.assertIn(r"{\href{https://kskedlaya.org/putnam-archive/1989.pdf}{Putnam 1989, A3}}", main)
+
+    def test_every_problem_of_the_bank_has_a_heading_a_pdf_can_print(self):
+        for p in P.load_problems(paths.PROBLEMS_DIR):
+            src = S.source(p, TAGS)
+            self.assertEqual(P.unprintable(src["label"], forbidden=set("\\{}~^")), [], p["file"])
+            self.assertLessEqual(len(src["label"]), S.MAX_CITATION, p["file"])
+            if src["url"] is not None:
+                self.assertRegex(src["url"], r"^https?://\S+$", p["file"])
+                self.assertRegex(S.tex_url(src["url"]), r"^[A-Za-z0-9\-._:/?\[\]@!*+,;=\\%#&]+$", p["file"])
 
 
 class ProposedProblems(unittest.TestCase):
@@ -970,7 +1115,7 @@ class PublicBuildCheck(unittest.TestCase):
             os.makedirs(os.path.join(site, "static", "busytex"))
             write(site, "static/bank/index.json", build_index([good, other]))
             write(site, "static/bank/bodies.json", {"build": "b1", "problems": {"0001": {"figures": {"fig0001-1.pdf": {}}},
-                                                                             "0002": {"figures": {}, "origin": "Proposed, not reviewed yet"}}})
+                                                                             "0002": {"figures": {}, "note": "proposed, not reviewed yet"}}})
             write(site, "static/bank/figures/fig0001-1.pdf", "%PDF")
             for f in ("static/bank/tags.json", "static/bank/preamble.tex", "static/bank/references.bib", "index.html", "propose.html"):
                 write(site, f, "{}")
@@ -994,7 +1139,7 @@ class PublicBuildCheck(unittest.TestCase):
             self.assertIn("misses ['statements-150pt-a.pdf']", "\n".join(check_site(site, [good, other])))
             write(site, "problems.html", '<script>{"index":{"preview":false},"build":"b1","engine":"e1"}</script>')
             write(site, "static/bank/bodies.json", {"build": "b1", "problems": {"0001": {"figures": {"fig0001-1.pdf": {}}},
-                                                                             "0002": {"figures": {}, "origin": "Proposed, not reviewed yet",
+                                                                             "0002": {"figures": {}, "note": "proposed, not reviewed yet",
                                                                                       "solution": "A proof."}}})
             self.assertIn("the solutions of proposed problems must not be published: ['0002']", "\n".join(check_site(site, [good, other])))
             index = build_index([good, other])
@@ -1004,16 +1149,16 @@ class PublicBuildCheck(unittest.TestCase):
                                                                              "0002": {"figures": {}, "origin": "Putnam 1989"}}})
             errors = "\n".join(check_site(site, [good, other]))
             self.assertIn("(not marked: [2]; marked but reviewed: [])", errors)
-            self.assertIn("must end with 'proposed, not reviewed yet' exactly for the proposed problems: wrong in ['0002']", errors)
+            self.assertIn("must end with 'proposed, not reviewed yet' (the note) exactly for the proposed problems: wrong in ['0002']", errors)
             write(site, "static/bank/bodies.json", {"build": "b1", "problems": {"0001": {"figures": {"fig0001-1.pdf": {}}},
-                                                                             "0002": {"figures": {}, "origin": "Proposed, not reviewed yet"}}})
+                                                                             "0002": {"figures": {}, "note": "proposed, not reviewed yet"}}})
             write(site, "static/bank/figures/fig0003-1.pdf", "%PDF")                            # a figure of no published problem
             write(site, "static/bank/index.json", build_index([good, other], preview=True))
             errors = "\n".join(check_site(site, [good, other]))
             self.assertIn("figures of no published problem or shared result: ['fig0003-1.pdf']", errors)
             self.assertIn("'preview' is not false", errors)
             write(site, "static/bank/bodies.json", {"build": "b2", "problems": {"0001": {"figures": {"fig0001-1.pdf": {}}},
-                                                                             "0002": {"figures": {}, "origin": "Proposed, not reviewed yet"}}})
+                                                                             "0002": {"figures": {}, "note": "proposed, not reviewed yet"}}})
             self.assertIn("come from different builds", "\n".join(check_site(site, [good, other])))
 
     def test_check_wants_exactly_the_results_the_published_solutions_cite(self):

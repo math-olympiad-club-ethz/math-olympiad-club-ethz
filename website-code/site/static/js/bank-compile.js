@@ -270,6 +270,24 @@ export async function loadBodies() {
 export const texEscape = s => String(s).replace(/\\?[&%$#_]/g, m => (m.length === 2 ? m : '\\' + m));
 const pad4 = i => String(i).padStart(4, '0');
 
+/* A link as \href takes it inside the argument of a heading: characters TeX would read (spaces, ~ ^ { } \ $, quotes,
+   parentheses, letters outside ASCII) as %XX, then \% \# \& \_.  Mirrors bank/sources.py::tex_url. */
+const URL_KEEP = /^[A-Za-z0-9\-._:/?#[\]@!*+,;=%&]$/;
+const utf8 = new TextEncoder();
+export const texUrl = url => [...String(url)].map(c => (URL_KEEP.test(c) ? c : [...utf8.encode(c)].map(b => '%' + b.toString(16).toUpperCase().padStart(2, '0')).join('')))
+  .join('').replace(/[%#&_]/g, m => '\\' + m);
+
+/* The line under a problem's heading, as TeX: its origin, a link when it can be read online (the build reads both from
+   the problem's header: bank/sources.py), then its note, if any ("proposed, not reviewed yet").  '' when there is
+   neither.  Mirrors bank/stitch.py::origin_line. */
+export function originLine(b) {
+  let line = texEscape(b.origin || '');
+  if (line && b.link) line = `\\href{${texUrl(b.link)}}{${line}}`;
+  const note = b.note || '';
+  if (note) line = line ? `${line}; ${texEscape(note)}` : texEscape(note.slice(0, 1).toUpperCase() + note.slice(1));
+  return line;
+}
+
 /* The shared results (problem-bank/appendix/) loaded with the bodies: {name: {name, title, text, cites, figures}}. */
 export const loadedAppendix = () => state.appendix || {};
 
@@ -297,7 +315,7 @@ export function makeMain(bodies, ids, variant, { filters = '', showMethods = fal
   if (filters) out.push(`{\\normalsize Selection: ${texEscape(filters)}}\\\\[1ex]`);
   out.push('\\end{center}', '\\vspace*{\\stretch{2}}', '\\newpage');
   sel.forEach((b, k) => {
-    out.push(`\\bankproblem{${k + 1}}{${texEscape(b.title)}}{${texEscape(b.origin)}}{${b.id}}`);
+    out.push(`\\bankproblem{${k + 1}}{${texEscape(b.title)}}{${originLine(b)}}{${b.id}}`);
     if (showMethods && b.methods && b.methods.length) out.push(`\\bankmethods{${texEscape(b.methods.join(', '))}}`);
     out.push('\\begin{problem}', b.statement, '\\end{problem}');
     if (variant === 'solutions') {

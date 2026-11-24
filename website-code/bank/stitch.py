@@ -3,7 +3,7 @@
 CI side.  Reads problems/NNNN-title.tex (and the shared results appendix/<name>.tex) and writes
 
     site/static/bank/bodies.json          {"build", "problems": {"NNNN": {statement, solution|null, cites, figures, title,
-                                           origin, ...}}, "appendix": {name: {title, text, cites, figures}}}
+                                           origin, link?, note?, ...}}, "appendix": {name: {title, text, cites, figures}}}
     site/static/bank/figures/figNNNN-k.pdf externalised TikZ / tikz-cd / pgfplots pictures (figa-<name>-k.pdf: results)
 
 Per body it (1) strips the header comments, (2) namespaces every \\label / \\ref / \\eqref / \\cref /
@@ -40,6 +40,7 @@ import time
 from bank import paths
 from bank import problems as P
 from bank import appendix as A
+from bank import sources as S
 from bank.bib import CITE_RE, DROP_RE, bib_block, format_entry, parse_bib, parse_bib_text
 
 CLUB_NAME = "Math Olympiad Club at ETHZ"
@@ -343,7 +344,8 @@ def bank_sources(problems, tags):
         if P.BLOCK_RE.search(P.mask_comments(statement)):     # second barrier after the validator: never leak a solution
             raise ValueError(f"{p['file']}: a \\begin/\\end{{solution|bibentries|problem}} inside the problem block")
         methods = [tags["methods"][m]["name"] for m in p["methods"] if m in tags["methods"]]
-        out.append({"id": f"{p['id']:04d}", "title": p["title"], "origin": P.origin_label(p, tags),
+        src = S.source(p, tags)                 # the origin as a heading prints it, and where it can be read
+        out.append({"id": f"{p['id']:04d}", "title": p["title"], "origin": src["label"], "link": src["url"],
                     "status": p["status"], "methods": methods, "statement": statement, "solution": solution,
                     "cites": A.cited_names(solution) if solution is not None else [],
                     "bibtex": bib_block(p["body"]), "source": p["file"]})
@@ -371,6 +373,8 @@ def build_bodies(source, out_dir):
         own = parse_bib_text(p.get("bibtex") or "")        # the problem's own bibentries block wins for this problem
         statement, solution, ncite = resolve_citations(statement, solution, {**bib, **own} if own else bib)
         bodies[pid] = {"id": pid, "title": p["title"], "origin": p["origin"], "status": p["status"],
+                       # link: where the origin can be read; note: what follows it ("proposed, not reviewed yet")
+                       **{k: p[k] for k in ("link", "note") if p.get(k)},
                        "methods": list(p.get("methods") or []),
                        "statement": statement, "solution": solution, "cites": list(p.get("cites") or []), "figures": figs}
         stats["figures"] += len(figs)
@@ -413,6 +417,19 @@ def tex_escape(s):
     return re.sub(r"(?<!\\)([&%$#_])", r"\\\1", s)
 
 
+def origin_line(b):
+    """The line under a problem's heading, as TeX: its origin, a link when it can be read online (bank/sources.py),
+    then its note, if any (a proposed problem: bank/data.py::PROPOSED_NOTE).  "" when there is neither.  Mirrored in
+    bank-compile.js::originLine."""
+    line = tex_escape(b.get("origin") or "")
+    if line and b.get("link"):
+        line = r"\href{%s}{%s}" % (S.tex_url(b["link"]), line)
+    note = b.get("note") or ""
+    if note:
+        line = f"{line}; {tex_escape(note)}" if line else tex_escape(note[:1].upper() + note[1:])
+    return line
+
+
 def make_main(bodies, ids, variant="problems", filters="", standalone=False, show_methods=False, appendix=None):
     """The document the browser compiles, problems in the order of `ids` (the page decides the order).
     With standalone=False it starts at \\begin{document}
@@ -433,7 +450,7 @@ def make_main(bodies, ids, variant="problems", filters="", standalone=False, sho
         out.append(r"{\normalsize Selection: %s}\\[1ex]" % tex_escape(filters))
     out += [r"\end{center}", r"\vspace*{\stretch{2}}", r"\newpage"]
     for k, b in enumerate(sel, 1):
-        out.append(r"\bankproblem{%d}{%s}{%s}{%s}" % (k, tex_escape(b["title"]), tex_escape(b["origin"]), b["id"]))
+        out.append(r"\bankproblem{%d}{%s}{%s}{%s}" % (k, tex_escape(b["title"]), origin_line(b), b["id"]))
         if show_methods and b.get("methods"):
             out.append(r"\bankmethods{%s}" % tex_escape(", ".join(b["methods"])))
         out.append(r"\begin{problem}")

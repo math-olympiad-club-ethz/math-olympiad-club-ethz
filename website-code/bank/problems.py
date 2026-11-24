@@ -30,10 +30,12 @@ HEADER_ANY_CASE_RE = re.compile(r"^%\s*([A-Za-z][A-Za-z-]*)\s*:")
 MAX_ID = 9999                          # IDs have four digits (FILENAME_RE)
 TITLE_FORBIDDEN = set('\\&%#{}~^_$')
 MAX_TITLE_WORDS = 6
-# Characters the club preamble can print in a title, an origin number or a tag name (measured with pdflatex, T1 +
-# utf8 + lmodern, Greek declared in preamble.tex).  Mirrored in site/static/js/bank-propose.js::unprintable.
+# Characters the club preamble can print in a title, an origin number, a tag name or the citation of a source (measured
+# with pdflatex, T1 + utf8 + lmodern, Greek declared in preamble.tex; the Romanian Ș ș Ț ț are drawn with a comma
+# below).  Mirrored in site/static/js/bank-propose.js::unprintable.
 _NOT_IN_T1 = set("\u0126\u0127\u0138\u013f\u0140\u0149\u0166\u0167\u017f")
 _PRINTABLE_EXTRA = set("\u2013\u2014\u2018\u2019\u201c\u201d\u2026\u00b7\u2022\u20ac\u201e\u201a\u00ab\u00bb\u2020\u2021\u2030"
+                       "\u0218\u0219\u021a\u021b"
                        "\u03b1\u03b2\u03b3\u03b4\u03b5\u03b6\u03b7\u03b8\u03b9\u03ba\u03bb\u03bc\u03bd\u03be\u03bf\u03c0\u03c1\u03c2"
                        "\u03c3\u03c4\u03c5\u03c6\u03c7\u03c8\u03c9\u03d1\u03d5\u03d6\u03f1\u03f5\u0391\u0392\u0393\u0394\u0395\u0396"
                        "\u0397\u0398\u0399\u039a\u039b\u039c\u039d\u039e\u039f\u03a0\u03a1\u03a3\u03a4\u03a5\u03a6\u03a7\u03a8\u03a9")
