@@ -275,13 +275,12 @@ class Sources(unittest.TestCase):
         self.assertEqual(link("the proposers' statement - http://web.archive.org/web/2011/http://www.msri.org/x.pdf"),
                          "https://web.archive.org/web/2011/http://www.msri.org/x.pdf")
         self.assertEqual(link("A handout - http://math.stanford.edu/~vakil/putnam03/03mc4.pdf"), "http://math.stanford.edu/~vakil/putnam03/03mc4.pdf")
-        # a page for people where the note opened one for programs; where a moved page is now
+        # a page for people where the note opened one for programs; every other address is the one written
         self.assertEqual(link("Putnam 2017, B4 - https://kskedlaya.org/putnam-archive/2017.tex; solution - https://kskedlaya.org/putnam-archive/2017s.tex"),
                          "https://kskedlaya.org/putnam-archive/2017.pdf")
-        self.assertEqual(link("IMC 2012, Day 2, Problem 2 - https://www.imc-math.org.uk/imc2012/IMC2012-day2-questions.pdf"),
-                         "https://www.imc-math.org.uk/?year=2012&item=problems")
         self.assertEqual(link("IMC 2014, Day 1 - https://www.imc-math.org.uk/?year=2014&item=problems"), "https://www.imc-math.org.uk/?year=2014&item=problems")
-        self.assertEqual(link("ICMC 8, Round Two - https://icmathscomp.org/files/2024-2025/ICMC_8.2_paper.pdf"), "https://icmathscomp.org/files/8_2_paper.pdf")
+        self.assertEqual(link("IMC 2012, Day 2, Problem 2; official paper - https://www.imc-math.org.uk/archive/problems/2012/IMC_2012_Day_2_Problems.pdf"),
+                         "https://www.imc-math.org.uk/archive/problems/2012/IMC_2012_Day_2_Problems.pdf")
         # a copy of a book put online without its publisher, or an answer written for programs: the next link
         self.assertEqual(link("A. Author, A Book (1992) - https://vdoc.pub/documents/a-book-6tff ; the publisher's page - https://www.ams.org/books/mmono/107/"),
                          "https://www.ams.org/books/mmono/107/")

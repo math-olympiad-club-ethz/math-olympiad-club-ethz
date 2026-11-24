@@ -20,7 +20,10 @@ well: problem-bank/README.md ("What the website shows of them").
     python3 -m bank.sources            # every problem: its source and its link, as the site says them
     python3 -m bank.sources --check    # ask each link for its page too, and list the ones that do not answer
 
-Links die (a site moves its files): run --check before a history pass, correct the headers it names.
+Links die (a site moves its files): run --check before a history pass, and write the new addresses in the headers it
+names (2026-11-24: the IMC and ICMC had renamed 37 files).  --check hears only a site that says "gone": a site that
+answers an old address with a general page says nothing (the IMC's pages of a single problem, the same day), and only
+a person opening the link sees it.
 """
 import argparse
 import concurrent.futures
@@ -47,15 +50,6 @@ FOR_READERS = [
     (re.compile(r"^(https://kskedlaya\.org/putnam-archive/\d{4}s?)\.tex$"), r"\1.pdf"),
     (re.compile(r"^http://web\.archive\.org/"), "https://web.archive.org/"),
 ]
-# Addresses a site no longer serves, and where the same thing is now (seen 2026-11-24, with --check).  The headers still
-# carry the old ones: correct them there at the next history pass, then drop the line here (TODO.md).
-MOVED = [
-    # the IMC site keeps its papers under /archive/problems/<year>/ now, their names changed: the page of the year lists them
-    (re.compile(r"^https?://(?:www\.)?imc-math\.org\.uk/imc(\d{4})/[^/?#]+\.pdf$"), r"https://www.imc-math.org.uk/?year=\1&item=problems"),
-    # ICMC: /files/2024-2025/ICMC_8.2_paper.pdf is /files/8_2_paper.pdf
-    (re.compile(r"^https?://(?:www\.)?icmathscomp\.org/files/\d{4}-\d{4}/ICMC_(\d+)\.(\d+)_(paper|solutions)\.pdf$"),
-     r"https://icmathscomp.org/files/\1_\2_\3.pdf"),
-]
 MAX_CITATION = 280                                   # characters: three lines under a PDF heading
 FORMULA = set("=≡≠≤≥<>+^_{}\\|∘∈")                   # a citation has no formula: one starts a remark
 OPENING = {"(": ")", "[": "]"}
@@ -81,9 +75,9 @@ def _as_written(url):
 
 
 def _clean_url(url):
-    """The address the site links to for a link of a note: a page for people (FOR_READERS), where it is now (MOVED)."""
+    """The address the site links to for a link of a note: the one written, or its page for people (FOR_READERS)."""
     url = _as_written(url)
-    for old, new in FOR_READERS + MOVED:
+    for old, new in FOR_READERS:
         url = old.sub(new, url)
     return url
 
@@ -245,19 +239,9 @@ def main(argv=None):
     ap.add_argument("--check", action="store_true", help="ask each link for its page; exit 1 if one is gone")
     a = ap.parse_args(argv)
     tags = load_tags(paths.TAGS_FILE)
-    rows = []
-    for p in load_problems(paths.PROBLEMS_DIR):
-        src = source(p, tags)
-        publication = (tags["origin"].get(p["origin"]) or {}).get("kind") in PUBLICATIONS
-        text = note(p["references"])
-        written = next((_as_written(m.group(0)) for m in URL_RE.finditer(first_item(text) if publication else text)), None)
-        rows.append({"file": p["file"], **src, "moved": written if src["url"] and written and any(old.match(written) for old, _ in MOVED) else None})
+    rows = [{"file": p["file"], **source(p, tags)} for p in load_problems(paths.PROBLEMS_DIR)]
     for r in rows:
         print(f"{r['file'][:4]}  {r['label'] or '(no origin)'}\n      {r['url'] or '(no link)'}")
-    moved = [r for r in rows if r["moved"]]
-    if moved:
-        print(f"\n{len(moved)} header(s) carry an address its site no longer serves (the site links where it is now, MOVED): "
-              + ", ".join(r["file"][:4] for r in moved))
     if not a.check:
         return 0
     urls = sorted({r["url"] for r in rows if r["url"]})
