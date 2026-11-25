@@ -2,12 +2,12 @@
 
 What to check before a problem, a solution or a shared result is done. `writing-style.md` says how the text is written; this list covers the mechanical checks, the ones a tool or a careful read can settle. Each rule is stated once: where an item names a section of `writing-style.md`, the rule and its examples are there.
 
-## Done by the formatter
+## Source layout
 
-Antoine's editor does these when he saves a file: there is nothing to run, and the formatter is no longer part of this repository (`writing-style.md`, section 7, "Source layout"). In the seminar folder, by hand: `python3 indent.py FILE --write`.
+Antoine's editor does the first when he saves a file: his VS Code re-indents it with latexindent, so there is nothing to run (`writing-style.md`, section 7, "Source layout"). In the seminar folder, by hand: `python3 indent.py FILE --write`. The other two are the writer's.
 
 1. **Indentation**: 4 spaces per nesting level (`writing-style.md`, section 7, "Source layout").
-2. **Line width**: every paragraph on one line, which the editor wraps at the edge of its window; lines that stay alone are listed in the guide.
+2. **Line breaks**: where the source reads well, for example after a sentence, and never at a fixed width: the editor wraps a long line at the edge of its window. Nothing joins or cuts lines.
 3. **Double spaces**: a single space between words inside a paragraph.
 
 ## In the text

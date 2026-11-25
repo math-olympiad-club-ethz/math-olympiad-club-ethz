@@ -35,11 +35,6 @@
   "latex-workshop.message.error.show": false,
   "latex-workshop.message.warning.show": false,
 
-  // A paragraph is one source line: the editor wraps it at the edge of the window, whatever its width.
-  "[latex]": {
-    "editor.wordWrap": "on"
-  },
-
   // Hide the SyncTeX files of the previews in the Explorer (VS Code's default exclusions kept).
   "files.exclude": {
     "**/.git": true,
