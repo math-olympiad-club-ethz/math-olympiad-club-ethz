@@ -1,4 +1,4 @@
-# SHA-256 of the texlyre-busytex assets (release assets-v1.4.0, build.py::ASSETS_URL) that the engine bundle uses.
+# SHA-256 of the texlyre-busytex assets (release assets-v1.4.1, build.py::ASSETS_URL) that the engine bundle uses.
 # tools/busytex_bundle.py checks them before every build, also when they come from the cache: busytex.js runs in Node
 # during the build and ships to every visitor with busytex.wasm.  A new release = new hashes here (and in build.py).
 875b87795162cb26b15bd93cffa2e8739bcb900d623ab904029b39402508a1a4  busytex.js

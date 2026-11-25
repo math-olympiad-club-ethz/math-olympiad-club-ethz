@@ -27,19 +27,19 @@ jobs:
       run:
         working-directory: website-code
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false   # nothing here pushes: no token left in .git/config for problem code to read
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
-          python-version: '3.12'
+          python-version: '3.15'
 
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
-          node-version: '22'
+          node-version: '26'
           cache: npm
           cache-dependency-path: website-code/package-lock.json
 
@@ -63,13 +63,13 @@ jobs:
       # The texlyre-busytex release assets (~520 MB) are downloaded once and cached; tools/busytex_bundle.py checks
       # them against tools/busytex-assets.sha256 on every build, cached or not.
       - name: Cache the in-browser TeX engine assets
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: website-code/.cache/busytex-assets
-          key: busytex-assets-v1.4.0-${{ hashFiles('website-code/tools/busytex-assets.sha256') }}
+          key: busytex-assets-v1.4.1-${{ hashFiles('website-code/tools/busytex-assets.sha256') }}
 
       - name: Cache externalised figures
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: website-code/.cache/figures
           key: figures-${{ hashFiles('problem-bank/problems/**', 'problem-bank/appendix/**', 'problem-bank/preamble.tex') }}
@@ -78,14 +78,14 @@ jobs:
       # Successful pdflatex proofs, keyed by a hash of everything that goes in (bank/validate.py::compile_problem,
       # compile_item): an unchanged problem or shared result is not compiled again.
       - name: Cache the pdflatex proofs
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: website-code/.cache/proofs
           key: proofs-${{ hashFiles('problem-bank/problems/**', 'problem-bank/appendix/**', 'problem-bank/preamble.tex', 'problem-bank/tags.yml', 'problem-bank/references.bib') }}
           restore-keys: proofs-
 
       - name: Cache Playwright's Chromium
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ hashFiles('website-code/package-lock.json') }}
@@ -127,7 +127,7 @@ jobs:
 
       - name: Upload Pages artifact
         if: github.event_name != 'pull_request'
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: website-code/site
 
@@ -145,7 +145,7 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
 
   # A deploy that left files out (bank/leave_out.py) still ends red: GitHub mails whoever pushed, and the build job's
   # summary says what is wrong with each file.

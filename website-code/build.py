@@ -71,7 +71,7 @@ PROBLEMS_DIR = paths.PROBLEMS_DIR
 ASSETS_DIR = os.path.join(paths.CACHE_DIR, "busytex-assets", "busytex")     # texlyre-busytex assets, downloaded if absent
 JOBS = os.cpu_count() or 4                    # pdflatex runs at once
 BODIES_WARN_BYTES = 2_000_000        # a visitor downloads bodies.json for the first PDF (or a statement the page typesets itself)
-ASSETS_URL = "https://github.com/TeXlyre/texlyre-busytex/releases/download/assets-v1.4.0/busytex-assets.tar.gz"
+ASSETS_URL = "https://github.com/TeXlyre/texlyre-busytex/releases/download/assets-v1.4.1/busytex-assets.tar.gz"
 
 
 def fail(msg):
