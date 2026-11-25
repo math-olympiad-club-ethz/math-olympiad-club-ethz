@@ -1,7 +1,8 @@
 """Validate every problem file and every shared result; optionally compile each one standalone.
 
     python3 -m bank.validate                 # checks on problem-bank/problems/ and problem-bank/appendix/
-    python3 -m bank.validate --compile       # + pdflatex each problem (with its solution) and each shared result
+    python3 -m bank.validate --compile       # + the build's pdflatex proofs: each problem with and without its solution,
+                                             # each shared result (compile_failures, cached in .cache/proofs/)
     python3 -m bank.validate ../problem-bank/problems/0042-*.tex   # only some files (new-*.tex too)
     python3 -m bank.validate ../problem-bank/appendix/spectral-mapping-theorem.tex  # a shared result (compiled on its own)
 The shared results of problem-bank/appendix/ are checked with the problems (bank/appendix.py); a problem's proof
@@ -188,11 +189,13 @@ def check_bank(tags, problems_dir=None):
     return probs, items, errors
 
 
-def compile_failures(probs, items, tags, jobs, cache_dir=PROOF_CACHE):
+def compile_failures(probs, items, tags, jobs, cache_dir=PROOF_CACHE, compile_items=None):
     """The build's standalone compiles: every problem with and without its solution, every shared result on its own.
     Returns ([(problem or result, with_solution, error_excerpt)] of the failures, number of compiles); with_solution
-    is None for a shared result.  Successes are remembered in cache_dir, so a second run compiles only what changed."""
-    jobs_list = [(p, True) for p in probs] + [(p, False) for p in probs if p["has_solution"]] + [(it, None) for it in items]
+    is None for a shared result.  Successes are remembered in cache_dir, so a second run compiles only what changed.
+    items: the results a solution may cite; compile_items: the ones to compile (default: all of items)."""
+    jobs_list = ([(p, True) for p in probs] + [(p, False) for p in probs if p["has_solution"]]
+                 + [(it, None) for it in (items if compile_items is None else compile_items)])
     failed = []
     with concurrent.futures.ThreadPoolExecutor(max_workers=jobs) as ex:
         futs = {(ex.submit(compile_item, p, items, cache_dir=cache_dir) if ws is None
@@ -221,22 +224,22 @@ def _looks_like_item(f):
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("files", nargs="*", help="problem files or shared results (default: all of problems/ and appendix/)")
-    ap.add_argument("--compile", action="store_true", help="compile each problem standalone (with solution)")
+    ap.add_argument("--compile", action="store_true", help="compile as the build does: each problem with and without its "
+                                                           "solution, each shared result")
     a = ap.parse_args(argv)
     try:
         tags = load_tags(paths.TAGS_FILE)
     except TagError as e:
         print(f"{paths.TAGS_FILE}: {e}")
         return 1
-    n_err = 0
+    errors = []
     if a.files:
         probs, items = [], []
         for f in a.files:
             if _is_item_path(f):
                 items.append(A.parse_item_file(f))
             elif _looks_like_item(f):
-                print(f"{f}:1: a shared result must be in problem-bank/appendix/ (its file name is its citation key)")
-                n_err += 1
+                errors.append((f, 1, "a shared result must be in problem-bank/appendix/ (its file name is its citation key)"))
             else:
                 probs.append(P.parse_problem_file(f))
         compile_items = list(items)
@@ -244,38 +247,28 @@ def main(argv=None):
         by_name = {it["name"]: it for it in merged_items(items)}
         wanted = A.closure([n for p in probs for n in problem_cites(p)], {k: v["cites"] for k, v in by_name.items()})
         items += [by_name[n] for n in wanted if n not in {it["name"] for it in items}]
+        bib_keys = set(parse_bib(paths.BIB_FILE))
+        cat = A.catalogue(merged_items(items))
+        for p in probs:
+            P.validate(p, tags, bib_keys, cat)
+            errors += [(p["path"], line, msg) for line, msg in sorted(p["errors"])]
+        errors += P.check_ids(probs) + appendix_errors(items, bib_keys, whole_folder=False)
     else:
-        probs = P.load_problems(paths.PROBLEMS_DIR)
-        items = compile_items = A.load_items()
-    all_items = merged_items(items)
-    bib_keys = set(parse_bib(paths.BIB_FILE))
-    cat = A.catalogue(all_items)
-    for p in probs:
-        P.validate(p, tags, bib_keys, cat)
-        for line, msg in sorted(p["errors"]):
-            print(f"{p['path']}:{line}: {msg}")
-            n_err += 1
-    for path, line, msg in ((P.check_ids(probs) if a.files else folder_errors(paths.PROBLEMS_DIR, probs))
-                            + appendix_errors(items, bib_keys, whole_folder=not a.files)):
+        probs, items, errors = check_bank(tags)          # exactly what the build checks (and CI before a deploy)
+        compile_items = items
+    for path, line, msg in errors:
         print(f"{path}:{line}: {msg}")
-        n_err += 1
+    n_err = len(errors)
     if a.compile and n_err == 0:
-        with concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count() or 4) as ex:
-            futs = {ex.submit(compile_problem, p, tags, all_items, True): (p, True) for p in probs}
-            futs.update({ex.submit(compile_item, it, all_items): (it, None) for it in compile_items})
-            for fut in concurrent.futures.as_completed(futs):
-                p, ws = futs[fut]
-                ok, err = fut.result()
-                tag = "shared result" if ws is None else "with solution"
-                if ok:
-                    print(f"OK   {p['file']} ({tag})")
-                else:
-                    n_err += 1
-                    print(f"FAIL {p['path']} ({tag}):\n{err}\n")
+        failed, n = compile_failures(probs, merged_items(items), tags, os.cpu_count() or 4, compile_items=compile_items)
+        for p, ws, err in failed:
+            tag = "shared result" if ws is None else "with solution" if ws else "statement only"
+            print(f"FAIL {p['path']} ({tag}):\n{err}\n")
+        n_err += len(failed)
+        print(f"{n - len(failed)} of {n} compiles OK")
     what = f"{len(probs)} problem files" + (f", {len(items)} shared result{'' if len(items) == 1 else 's'}" if items else "")
     print(f"{what}, {n_err} problem(s) found" if n_err else f"{what}, all good")
     return 1 if n_err else 0
-
 
 if __name__ == "__main__":
     sys.exit(main())

@@ -7,21 +7,10 @@
 // The page loads this file as bank-ui.js?v=<build>.  The other modules are imported with the same ?v= (a relative
 // import does not inherit the query), so a browser never runs a cached module of the last deploy next to new ones.
 const V = new URL(import.meta.url).search;
-const [S, C, F] = await Promise.all([import(`./bank-search.js${V}`), import(`./bank-compile.js${V}`), import(`./tree-fold.js${V}`)]);
+const [S, C, F, D] = await Promise.all([import(`./bank-search.js${V}`), import(`./bank-compile.js${V}`), import(`./tree-fold.js${V}`),
+  import(`./bank-page.js${V}`)]);
 
-const $ = id => document.getElementById(id);
-const el = (tag, attrs = {}, ...children) => {
-  const e = document.createElement(tag);
-  for (const [k, v] of Object.entries(attrs)) {
-    if (k === 'class') e.className = v;
-    else if (k === 'text') e.textContent = v;
-    else if (k.startsWith('on')) e.addEventListener(k.slice(2), v);
-    else if (v === true) e.setAttribute(k, '');
-    else if (v !== false && v != null) e.setAttribute(k, v);
-  }
-  for (const c of children) if (c != null) e.append(c);
-  return e;
-};
+const { $, el, SHEET_PT, pxPerPt, PIXELS, magnified, freeCanvases } = D;      // shared with the Propose page (bank-page.js)
 
 /* ------------------------------------------------------------------ state */
 const data = JSON.parse($('bank-data').textContent);
@@ -413,8 +402,6 @@ function clearFilters() {
    when that fails, or for a statement the build left out. */
 let preview = null;         // {id, panel, btn, row, url, task, sheet, abort, status, done, measure, folding, watch}: one open at a time
 const EASE = F.EASE;
-const pxPerPt = () => (parseFloat(getComputedStyle(document.body).fontSize) || 18) / 10.95;   // the bank's \normalsize: 11pt class
-const SHEET_PT = 426.79;    // the sheets' measure (preamble.tex: A4, 3 cm side margins): wider screens use it as it is
 const PREVIEWS = data.previews || null;
 const typeset = new Map();  // the URL of a PDF of the build's previews -> {bytes, task}: kept open, the next statement shares its fonts
 /* A PDF of the build's previews, fetched whole and at once: with the drawing code (PDF.js), not after it (on slow 4G
@@ -428,23 +415,7 @@ function typesetPdf(url) {
   return t;
 }
 
-let pdfjsLib = null, pdfWorker = null;
-function loadPdfjs() {
-  if (!pdfjsLib) {
-    const v = data.pdfjs ? `?v=${encodeURIComponent(data.pdfjs)}` : '';
-    pdfjsLib = import(new URL(`../pdfjs/pdf.min.mjs${v}`, import.meta.url).href).then(lib => {
-      lib.GlobalWorkerOptions.workerSrc = new URL(`../pdfjs/pdf.worker.min.mjs${v}`, import.meta.url).href;
-      // one worker for every statement, started once (otherwise each opening starts a new one and reads its 1 MB again:
-      // measured on an iPhone, a statement drawn again in 113 ms instead of 226), and the page's own: given to each loading
-      // task, which then cannot take it down when it ends (Safari, a statement reopened at once: "the worker is being
-      // destroyed", and the plain PDF frame instead of the drawing)
-      try { pdfWorker = new lib.PDFWorker({ port: new Worker(lib.GlobalWorkerOptions.workerSrc, { type: 'module' }) }); } catch (e) { pdfWorker = null; /* workerSrc then */ }
-      return lib;
-    });
-    pdfjsLib.catch(() => { pdfjsLib = null; });       // tried again at the next Preview
-  }
-  return pdfjsLib;
-}
+const loadPdfjs = () => D.loadPdfjs(data.pdfjs);    // PDF.js, fetched once (bank-page.js)
 
 /* The drawing code of the statements (PDF.js, some 540 KB) comes once a list has been on screen a moment, when the
    browser has nothing else to do and the connection does not ask to save data: a first statement then waits for its
@@ -467,15 +438,6 @@ function previewMeasure(panel) {           // 3 pt to spare: a line may end a ha
   return Math.max(150, Math.min(SHEET_PT, panelWidth(panel) / pxPerPt() - 2 * C.PREVIEW_MARGIN_PT - 3));
 }
 
-/* How magnified an element is shown: by a pinch on a trackpad (site.js lays the page out bigger, or scales it) and by a
-   touch screen's own pinch (the visual viewport). */
-const magnified = e => { const w = e.offsetWidth, vv = window.visualViewport; return (w ? Math.max(1, e.getBoundingClientRect().width / w) : 1) * Math.max(1, (vv && vv.scale) || 1); };
-/* The most pixels a statement's drawing may have on this setup: on a phone or a tablet what Safari allows a canvas there
-   (about 16.7 million: it refuses more); on a computer 48 million, which draws a long statement sharp at the largest zoom
-   on a Retina screen (drawing that many takes some 50 ms, measured). */
-const COARSE = matchMedia('(pointer: coarse)').matches;
-const IOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1);   // an iPad says it is a Mac
-const PIXELS = COARSE || IOS ? 16e6 : 48e6;
 
 /* A page of a PDF into a canvas (as far right as the text goes), with its text layer.  `from`: {pdf}, the statement
    typeset here, or {url, page, fill}, a page of the build's previews (C.pickPreview), `fill` times the page's text size
@@ -483,10 +445,7 @@ const PIXELS = COARSE || IOS ? 16e6 : 48e6;
 async function drawSheet(mine, from) {
   const lib = await loadPdfjs();
   if (mine.task) { mine.task.destroy(); mine.task = null; }      // the drawing of an older measure
-  // On a touch screen the glyphs are drawn as shapes: the statement's fonts added to the page would make it restyle all of
-  // itself, a long task on a slow phone (measured on a low-end Android: 63-75 ms at each opening).  A computer keeps the
-  // fonts' own drawing: shapes come out about 8% lighter.
-  const opts = { useWasm: false, stopAtErrors: false, disableFontFace: COARSE, ...(pdfWorker ? { worker: pdfWorker } : {}) };
+  const opts = D.docOptions();                 // with the page's own worker; on a touch screen, glyphs as shapes
   let doc;
   if (from.url) {
     const t = typesetPdf(from.url);
@@ -561,8 +520,6 @@ function morph(panel, change) {
   return panel.animate([{ height: `${from}px` }, { height: `${to}px` }], { duration: 320, easing: EASE }).finished.catch(() => {});
 }
 
-/* A drawing nobody will see again gives back its memory at once (Safari on iOS counts every canvas against one budget). */
-function freeCanvases(root) { for (const c of root.querySelectorAll('canvas')) { c.width = 0; c.height = 0; } }
 
 function closePreview() {
   if (!preview) return;

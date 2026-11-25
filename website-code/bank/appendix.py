@@ -166,16 +166,7 @@ def parse_item_file(path):
     if it["name"] is None:
         it["errors"].append((1, "file name must be the result's name in lowercase kebab-case, e.g. "
                                 "spectral-mapping-theorem.tex (it is the key solutions cite with \\appendixref)"))
-    with open(path, "rb") as f:
-        raw = f.read()
-    try:
-        text = raw.decode("utf-8")
-    except UnicodeDecodeError as err:
-        text = raw.decode("utf-8", errors="replace")
-        it["errors"].append((raw[:err.start].count(b"\n") + 1, f"the file is not UTF-8 (byte 0x{raw[err.start]:02x}): save it as UTF-8"))
-    if text.startswith("\ufeff"):
-        text = text[1:]
-    text = text.replace("\r\n", "\n").replace("\r", "\n")
+    text = P.read_tex(path, it["errors"])
     it["body"] = text
     masked = P.mask_comments(text)
     it["blocks"] = [(m.group(1), m.group(2), m.start(), m.end()) for m in ITEM_BLOCK_RE.finditer(masked)]
@@ -249,52 +240,11 @@ def validate_item(it, bib_keys=None, cat=None):
                 rest[j] = " "
     for ln in sorted({at(m.start()) for m in re.finditer(r"\S+", "".join(rest))}):
         e.append((ln, "text outside the appendixitem and bibentries blocks is ignored: move it into the block, or make it a % comment"))
-    for rx, label in P.FORBIDDEN_TEX:
-        mm = re.search(rx, text)
-        if mm:
-            e.append((at(mm.start()), f"result files must not contain {label}: the preamble is added automatically"))
-    for rx, why in P.UNSAFE_TEX:
-        mm = re.search(rx, text)
-        if mm:
-            e.append((at(mm.start()), f"result files must not contain {mm.group(0)}: {why}"))
     mm = APPENDIX_CMD_RE.search(masked)
     if mm:
         e.append((at(mm.start()), "\\appendix is not needed: the file is already a result of the appendix"))
-    for mm in P.CITE_COMMAND_RE.finditer(text):
-        if mm.group(1) not in P.SUPPORTED_CITES:
-            e.append((at(mm.start()), f"\\{mm.group(1)} is not supported on the website: write \\cite{{key}} (or \\cite[p.~3]{{key}})"))
-            break
-    mm = re.search(r"\\(bibliography|addbibresource|bibliographystyle)\s*[\[{]", text)
-    if mm:
-        e.append((at(mm.start()), f"remove \\{mm.group(1)}: citations are resolved automatically from references.bib and the bibentries block"))
-    for mm in re.finditer(r"\\(begin|end)(\s*\{\s*(appendixitem|bibentries)\s*\})", text):
-        if mm.group(2) != "{" + mm.group(3) + "}":
-            e.append((at(mm.start()), f"write \\{mm.group(1)}{{{mm.group(3)}}} without spaces"))
-    mm = re.search(r"\\tikz(?![A-Za-z@])", text)
-    if mm:
-        e.append((at(mm.start()), "inline \\tikz is not supported: draw inside \\begin{tikzpicture}...\\end{tikzpicture}"))
-    pos = P.dollar_at(masked)
-    if pos is not None:
-        e.append((at(pos), P.DOLLAR_MESSAGE))
     own = [k for k, _ in it["bib_entries"]]
-    bib_line = at(text.find("\\begin{bibentries}")) if "\\begin{bibentries}" in text else 1
-    if it["bibtex"].strip() and not own:
-        e.append((bib_line, "the bibentries block contains no BibTeX entry (expected @article{key, author = {...}, ...})"))
-    if any(not k for k in own):
-        e.append((bib_line, "a BibTeX entry in the bibentries block has no key (@article{key, ...})"))
-    dup = sorted({k for k in own if k and own.count(k) > 1})
-    if dup:
-        e.append((bib_line, f"BibTeX key(s) given twice in the bibentries block: {', '.join(dup)}"))
-    if bib_keys is not None:
-        known = set(bib_keys) | set(own)
-        from .bib import CITE_RE
-        cited = P.without_bibentries(text)
-        reported = set()
-        for m in CITE_RE.finditer(cited):
-            for k in (k.strip() for k in m.group(3).split(",")):
-                if k and k not in known and k not in reported:
-                    reported.add(k)
-                    e.append((at(m.start()), f"citation key '{k}' is neither in references.bib nor in this file's bibentries block"))
+    e.extend(P.tex_errors(text, masked, at, "result files", ("appendixitem", "bibentries"), own, it["bibtex"], bib_keys))
     # shared-result rules, block by block: the result's text, then its bibentries block (which cites nothing)
     blocks = [(it["text_start"], it["text"], True)]
     if len(it["blocks"]) == 4:
@@ -340,16 +290,8 @@ def stray_files(appendix_dir=None):
     appendix_dir = appendix_dir or paths.APPENDIX_DIR
     if not os.path.isdir(appendix_dir):
         return []
-    out = []
-    for f in sorted(os.listdir(appendix_dir)):
-        path = os.path.join(appendix_dir, f)
-        if f in HELPER_FILES or f.endswith(P.LOCAL_LEFTOVERS):
-            continue
-        if f.endswith(".tex") and not f.startswith("_") and os.path.isfile(path):
-            continue                              # a result file: parse_item_file checks its name
-        out.append((path, 1, "not a result file: results are named <name>.tex (lowercase kebab-case), and nothing else "
-                             "belongs in this folder"))
-    return out
+    return P.strays(appendix_dir, HELPER_FILES, "not a result file: results are named <name>.tex (lowercase kebab-case), "
+                                                "and nothing else belongs in this folder")
 
 
 # ---- which results a PDF holds ----------------------------------------------------------------------------------------

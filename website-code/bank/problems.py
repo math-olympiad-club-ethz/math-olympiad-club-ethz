@@ -90,6 +90,21 @@ def _split_list(v):
     return [x.strip() for x in v.split(",") if x.strip()]
 
 
+def read_tex(path, errors):
+    """The text of a .tex file of the bank (a problem or a shared result) as LaTeX and the website read it: UTF-8 (a
+    file that is not gets an error in `errors`, its bad bytes replaced), without a byte order mark, with \\n newlines."""
+    with open(path, "rb") as f:
+        raw = f.read()
+    try:
+        text = raw.decode("utf-8")
+    except UnicodeDecodeError as err:
+        text = raw.decode("utf-8", errors="replace")
+        errors.append((raw[:err.start].count(b"\n") + 1, f"the file is not UTF-8 (byte 0x{raw[err.start]:02x}): save it as UTF-8"))
+    if text.startswith("\ufeff"):             # a byte order mark would hide the first header line
+        text = text[1:]
+    return text.replace("\r\n", "\n").replace("\r", "\n")      # universal newlines, as text-mode reading did
+
+
 def parse_problem_file(path):
     """Return a dict describing the file.  Never raises on bad content: problems are
     collected in p['errors'] as (line, message) tuples; more checks in validate()."""
@@ -102,16 +117,7 @@ def parse_problem_file(path):
     if not m and not n:
         p["errors"].append((1, "file name must look like 0042-roots-on-the-unit-circle.tex (four digits, hyphen, lowercase "
                                "kebab-case title), or new-roots-on-the-unit-circle.tex for a proposed problem not numbered yet"))
-    with open(path, "rb") as f:
-        raw = f.read()
-    try:
-        text = raw.decode("utf-8")
-    except UnicodeDecodeError as err:
-        text = raw.decode("utf-8", errors="replace")
-        p["errors"].append((raw[:err.start].count(b"\n") + 1, f"the file is not UTF-8 (byte 0x{raw[err.start]:02x}): save it as UTF-8"))
-    if text.startswith("\ufeff"):             # a byte order mark would hide the first header line
-        text = text[1:]
-    text = text.replace("\r\n", "\n").replace("\r", "\n")      # universal newlines, as text-mode reading did
+    text = read_tex(path, p["errors"])
     lines = text.split("\n")
     body_start = 0
     for i, line in enumerate(lines):
@@ -253,9 +259,6 @@ def expected_file_name(p):
     return f"{'new' if p['id'] is None else format(p['id'], '04d')}-{kebab(p['title'])}.tex"
 
 
-def _body_line(p, pos):
-    return p["body_line"] + p["body"][:pos].count("\n")
-
 
 def _block_order_error(blocks):
     """None, or the offset of the first block marker out of place (-1 when a marker is missing at the end)."""
@@ -264,6 +267,58 @@ def _block_order_error(blocks):
         return None
     k = max(len(os.path.commonprefix([seq, order])) for order in _BLOCK_ORDERS)
     return blocks[k][2] if k < len(blocks) else -1
+
+
+def tex_errors(text, masked, at, files, blocks, own, bibtex, bib_keys):
+    """[(line, message)]: the rules every file of the bank follows, a problem (validate) or a shared result
+    (bank/appendix.py::validate_item).  text: the file's body; masked: the same with its comments blanked
+    (mask_comments); at(pos): the line of an offset of text; files: "problem files" or "result files", for the messages;
+    blocks: the names of the blocks the file holds; own: the keys of its bibentries block, bibtex: that block's text;
+    bib_keys: the keys of references.bib (None: citations are not checked)."""
+    e = []
+    for rx, label in FORBIDDEN_TEX:
+        mm = re.search(rx, text)
+        if mm:
+            e.append((at(mm.start()), f"{files} must not contain {label}: the preamble is added automatically"))
+    for rx, why in UNSAFE_TEX:
+        mm = re.search(rx, text)
+        if mm:
+            e.append((at(mm.start()), f"{files} must not contain {mm.group(0)}: {why}"))
+    for mm in CITE_COMMAND_RE.finditer(text):
+        if mm.group(1) not in SUPPORTED_CITES:
+            e.append((at(mm.start()), f"\\{mm.group(1)} is not supported on the website: write \\cite{{key}} (or \\cite[p.~3]{{key}})"))
+            break
+    mm = re.search(r"\\(bibliography|addbibresource|bibliographystyle)\s*[\[{]", text)
+    if mm:
+        e.append((at(mm.start()), f"remove \\{mm.group(1)}: citations are resolved automatically from references.bib and the bibentries block"))
+    for mm in re.finditer(r"\\(begin|end)(\s*\{\s*(%s)\s*\})" % "|".join(blocks), text):
+        if mm.group(2) != "{" + mm.group(3) + "}":
+            e.append((at(mm.start()), f"write \\{mm.group(1)}{{{mm.group(3)}}} without spaces"))
+    mm = re.search(r"\\tikz(?![A-Za-z@])", text)
+    if mm:
+        e.append((at(mm.start()), "inline \\tikz is not supported: draw inside \\begin{tikzpicture}...\\end{tikzpicture} "
+                                  "(the website turns tikzpicture and tikzcd environments into images)"))
+    pos = dollar_at(masked)
+    if pos is not None:
+        e.append((at(pos), DOLLAR_MESSAGE))
+    bib_line = at(max(text.find("\\begin{bibentries}"), 0))
+    if bibtex.strip() and not own:
+        e.append((bib_line, "the bibentries block contains no BibTeX entry (expected @article{key, author = {...}, ...})"))
+    if any(not k for k in own):
+        e.append((bib_line, "a BibTeX entry in the bibentries block has no key (@article{key, ...})"))
+    dup = sorted({k for k in own if k and own.count(k) > 1})
+    if dup:
+        e.append((bib_line, f"BibTeX key(s) given twice in the bibentries block: {', '.join(dup)}"))
+    if bib_keys is not None:
+        known = set(bib_keys) | set(own)
+        reported = set()
+        cited = without_bibentries(text)          # same newlines as the body: its own offsets give the line
+        for m in CITE_RE.finditer(cited):
+            for k in (k.strip() for k in m.group(3).split(",")):
+                if k and k not in known and k not in reported:
+                    reported.add(k)
+                    e.append((at(0) + cited[:m.start()].count("\n"), f"citation key '{k}' is neither in references.bib nor in this file's bibentries block"))
+    return e
 
 
 def validate(p, tags, bib_keys=None, appendix=None):
@@ -389,48 +444,8 @@ def validate(p, tags, bib_keys=None, appendix=None):
             for pos, msg in A.check_text(text[s:t], appendix, allow_cites=kind == "solution", labels=labels):
                 e.append((at(s + pos), msg))
 
-    for rx, label in FORBIDDEN_TEX:
-        mm = re.search(rx, text)
-        if mm:
-            e.append((at(mm.start()), f"problem files must not contain {label}: the preamble is added automatically"))
-    for rx, why in UNSAFE_TEX:
-        mm = re.search(rx, text)
-        if mm:
-            e.append((at(mm.start()), f"problem files must not contain {mm.group(0)}: {why}"))
-    for mm in CITE_COMMAND_RE.finditer(text):
-        if mm.group(1) not in SUPPORTED_CITES:
-            e.append((at(mm.start()), f"\\{mm.group(1)} is not supported on the website: write \\cite{{key}} (or \\cite[p.~3]{{key}})"))
-            break
-    mm = re.search(r"\\(bibliography|addbibresource|bibliographystyle)\s*[\[{]", text)
-    if mm:
-        e.append((at(mm.start()), f"remove \\{mm.group(1)}: citations are resolved automatically from references.bib and the bibentries block"))
-    for mm in re.finditer(r"\\(begin|end)(\s*\{\s*(problem|solution|bibentries)\s*\})", text):
-        if mm.group(2) != "{" + mm.group(3) + "}":
-            e.append((at(mm.start()), f"write \\{mm.group(1)}{{{mm.group(3)}}} without spaces"))
-    mm = re.search(r"\\tikz(?![A-Za-z@])", text)
-    if mm:
-        e.append((at(mm.start()), "inline \\tikz is not supported: draw inside \\begin{tikzpicture}...\\end{tikzpicture} "
-                                            "(the website turns tikzpicture and tikzcd environments into images)"))
-    pos = dollar_at(masked)
-    if pos is not None:
-        e.append((at(pos), DOLLAR_MESSAGE))
     own = [k for k, _ in p["bib_entries"]]
-    if p["bibtex"].strip() and not own:
-        e.append((_body_line(p, p["body"].find("\\begin{bibentries}")), "the bibentries block contains no BibTeX entry (expected @article{key, author = {...}, ...})"))
-    if any(not k for k in own):
-        e.append((_body_line(p, p["body"].find("\\begin{bibentries}")), "a BibTeX entry in the bibentries block has no key (@article{key, ...})"))
-    dup = sorted({k for k in own if k and own.count(k) > 1})
-    if dup:
-        e.append((_body_line(p, p["body"].find("\\begin{bibentries}")), f"BibTeX key(s) given twice in the bibentries block: {', '.join(dup)}"))
-    if bib_keys is not None:
-        known = set(bib_keys) | set(own)
-        reported = set()
-        cited = without_bibentries(text)          # same newlines as the body: its own offsets give the line
-        for m in CITE_RE.finditer(cited):
-            for k in (k.strip() for k in m.group(3).split(",")):
-                if k and k not in known and k not in reported:
-                    reported.add(k)
-                    e.append((p["body_line"] + cited[:m.start()].count("\n"), f"citation key '{k}' is neither in references.bib nor in this file's bibentries block"))
+    e.extend(tex_errors(text, masked, at, "problem files", ("problem", "solution", "bibentries"), own, p["bibtex"], bib_keys))
     return e
 
 
@@ -479,13 +494,19 @@ def stray_files(problems_dir):
     """(path, line, message) for every entry of problems/ that is neither a problem file nor a helper.  load_problems
     reads only *.tex, so a file whose extension was forgotten or mistyped (new-foo, 0081-x.TEX) would otherwise be
     skipped silently."""
+    return strays(problems_dir, HELPER_FILES, "not a problem file: problems are named NNNN-title.tex or new-title.tex, "
+                                             "and nothing else belongs in this folder")
+
+
+def strays(folder, helpers, message):
+    """(path, 1, message) for every entry of `folder` that is not a .tex file to read (a problem or a shared result: its
+    parser checks its name), a helper or a local leftover.  Shared by problems/ and appendix/."""
     out = []
-    for f in sorted(os.listdir(problems_dir)):
-        path = os.path.join(problems_dir, f)
-        if f in HELPER_FILES or f.endswith(LOCAL_LEFTOVERS):
+    for f in sorted(os.listdir(folder)):
+        path = os.path.join(folder, f)
+        if f in helpers or f.endswith(LOCAL_LEFTOVERS):
             continue
         if f.endswith(".tex") and not f.startswith("_") and os.path.isfile(path):
-            continue                            # a problem file: parse_problem_file checks its name
-        out.append((path, 1, "not a problem file: problems are named NNNN-title.tex or new-title.tex, and nothing else "
-                             "belongs in this folder"))
+            continue
+        out.append((path, 1, message))
     return out

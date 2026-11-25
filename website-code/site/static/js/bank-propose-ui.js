@@ -9,22 +9,10 @@
    Logic lives in bank-propose.js (pure, unit-tested); this file is only the DOM. */
 // Loaded as bank-propose-ui.js?v=<build>: the other modules are imported with the same ?v= (see bank-propose.js).
 const V = new URL(import.meta.url).search;
-const [S, C, P, { parseBibEntries, parseBibText }, F] = await Promise.all(
-  ['bank-search', 'bank-compile', 'bank-propose', 'bank-tex', 'tree-fold'].map(m => import(`./${m}.js${V}`)));
+const [S, C, P, { parseBibEntries, parseBibText }, F, D] = await Promise.all(
+  ['bank-search', 'bank-compile', 'bank-propose', 'bank-tex', 'tree-fold', 'bank-page'].map(m => import(`./${m}.js${V}`)));
 
-const $ = id => document.getElementById(id);
-const el = (tag, attrs = {}, ...children) => {
-  const e = document.createElement(tag);
-  for (const [k, v] of Object.entries(attrs)) {
-    if (k === 'class') e.className = v;
-    else if (k === 'text') e.textContent = v;
-    else if (k.startsWith('on')) e.addEventListener(k.slice(2), v);
-    else if (v === true) e.setAttribute(k, '');
-    else if (v !== false && v != null) e.setAttribute(k, v);
-  }
-  for (const c of children) if (c != null) e.append(c);
-  return e;
-};
+const { $, el, SHEET_PT, pxPerPt, COARSE, PIXELS, magnified, freeCanvases } = D;      // shared with the Problems page (bank-page.js)
 
 const data = JSON.parse($('propose-data').textContent);
 const cat = S.buildCatalogue(data.tags);
@@ -515,10 +503,8 @@ function showPreviewStatus(text, kind, st) {
   setPreviewStatus(text, kind, st);
 }
 
-const SHEET_PT = 426.79;                      // the sheets' measure (preamble.tex: A4, 3 cm side margins)
 const LEFT_PT = 85.04, TOP_PT = 56.69, BOTTOM_PT = 56.69;     // preamble.tex: the text block starts 3 cm from the left, 2 cm from the top and bottom
 const EDGE_PT = 4;                            // kept round the text, so that no glyph is cut
-const pxPerPt = () => (parseFloat(getComputedStyle(document.body).fontSize) || 18) / 10.95;   // the bank's \normalsize: 11pt class
 
 /* The measure the sheet is typeset at: its own width at the page's text size (pt), as the statements on the Problems page,
    or the bank's own (null) when the sheet is that wide.  The PDF sent by email always has the bank's (makeA4). */
@@ -646,26 +632,7 @@ async function runPreview() {
 }
 
 /* ---- drawing it: PDF.js, like the statements on the Problems page (bank-ui.js) */
-let pdfjsLib = null, pdfWorker = null;
-function loadPdfjs() {
-  if (!pdfjsLib) {
-    const v = data.pdfjs ? `?v=${encodeURIComponent(data.pdfjs)}` : '';
-    pdfjsLib = import(new URL(`../pdfjs/pdf.min.mjs${v}`, import.meta.url).href).then(lib => {
-      lib.GlobalWorkerOptions.workerSrc = new URL(`../pdfjs/pdf.worker.min.mjs${v}`, import.meta.url).href;
-      // the page's own worker, given to each loading task (see bank-ui.js loadPdfjs: Safari, "the worker is being destroyed")
-      try { pdfWorker = new lib.PDFWorker({ port: new Worker(lib.GlobalWorkerOptions.workerSrc, { type: 'module' }) }); } catch (e) { pdfWorker = null; /* workerSrc then */ }
-      return lib;
-    });
-    pdfjsLib.catch(() => { pdfjsLib = null; });       // tried again at the next drawing
-  }
-  return pdfjsLib;
-}
-/* How magnified the sheet is shown: by a pinch on a trackpad (site.js) and by a touch screen's own pinch. */
-const magnified = e => { const w = e.offsetWidth, vv = window.visualViewport; return (w ? Math.max(1, e.getBoundingClientRect().width / w) : 1) * Math.max(1, (vv && vv.scale) || 1); };
-const COARSE = matchMedia('(pointer: coarse)').matches;
-const IOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1);
-const PIXELS = COARSE || IOS ? 16e6 : 48e6;          // as bank-ui.js: what Safari allows a canvas on a phone; more on a computer
-function freeCanvases(root) { for (const c of root.querySelectorAll('canvas')) { c.width = 0; c.height = 0; } }
+const loadPdfjs = () => D.loadPdfjs(data.pdfjs);    // PDF.js, fetched once (bank-page.js)
 
 /* The pages of the PDF, each cut to its text (the bank's sheet without its margins and its page number), as wide as the
    sheet allows and never wider than the page's text size; sharp at the zoom shown.  A newer drawing ends an older one:
@@ -674,7 +641,7 @@ let drawing = 0;
 async function drawPages(pdf, measure) {
   const mine = ++drawing;
   const lib = await loadPdfjs();
-  const task = lib.getDocument({ data: pdf.slice(), useWasm: false, stopAtErrors: false, disableFontFace: COARSE, ...(pdfWorker ? { worker: pdfWorker } : {}) });
+  const task = lib.getDocument({ data: pdf.slice(), ...D.docOptions() });
   try {
     const doc = await task.promise;
     const pages = [];
