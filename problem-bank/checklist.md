@@ -4,10 +4,10 @@ What to check before a problem, a solution or a shared result is done. `writing-
 
 ## Source layout
 
-Antoine's editor does the first when he saves a file: his VS Code re-indents it with latexindent, so there is nothing to run (`writing-style.md`, section 7, "Source layout"). In the seminar folder, by hand: `python3 indent.py FILE --write`. The other two are the writer's.
+Antoine's editor does the first when he saves a file; in the seminar folder, by hand: `python3 indent.py FILE --write`. That folder, `seminar_antoine_problems_solutions/`, is local (git-ignored): the tools this list names in it (`indent.py`, `leftright.py`), its `TO-CHECK.md` and its `appendix/` are not in the public repository. The other two are the writer's.
 
 1. **Indentation**: 4 spaces per nesting level (`writing-style.md`, section 7, "Source layout").
-2. **Line breaks**: where the source reads well, for example after a sentence, and never at a fixed width: the editor wraps a long line at the edge of its window. Nothing joins or cuts lines.
+2. **Line breaks**: the writer's, never at a fixed width (same section).
 3. **Double spaces**: a single space between words inside a paragraph.
 
 ## In the text

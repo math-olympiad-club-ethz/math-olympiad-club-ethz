@@ -31,9 +31,8 @@ Problems whose header says `review: human` appear on the website as they are; th
 
 ### Add or improve a problem (no git needed)
 
-- **Propose a problem** (in the site's header) opens a page where the problem is written in LaTeX and typeset as it is written (the in-browser pdfTeX of the Problems page). Only the statement and its topic are needed; a solution, where it comes from (one line, such as "IMC 2012, Problem 3"), why the proposer likes it, methods, difficulty, references and BibTeX are optional, and a topic or a method the tree lacks can be named where it belongs. **Send to the club** opens the device's share menu with the PDF, the problem file `new-<title>.tex` and the proposer's note (a .txt, when written): a click on Mail gives an email with them attached and one line, "Problem: <title>"; the club's address is copied, to paste in To. Without a share menu (Firefox) the files are saved and the mail app opens with that line. A page cannot put files into an email any other way. Whoever reads it adds the .tex to `problem-bank/problems/`; new tags are named in a comment line of its header.
-- To improve an existing problem (a tag, a second solution, a fix), edit its file on GitHub: that becomes a pull request. (An Edit link per problem on the website comes with the planned administrator mode, see TODO.md.)
-- Only people with write access merge. Merging = approved, not finished: we can add tags or solutions later; until `review: human`, the problem shows on the website as "proposed" (behind its switch).
+- **Propose a problem** (in the site's header) opens a page where the problem is written in LaTeX and typeset as it is written (the in-browser pdfTeX of the Problems page). Only the statement and its topic are needed; a solution, where it comes from (one line, such as "IMC 2012, Problem 3"), why the proposer likes it, methods, difficulty, references and BibTeX are optional, and a topic or a method the tree lacks can be named where it belongs. **Send to the club** opens the device's share menu with the PDF, the problem file `new-<title>.tex` and the proposer's note (a .txt, when written): a click on Mail gives an email with them attached and one line, "Problem: <title>"; the club's address, olympiadclub@math.ethz.ch, is copied, to paste in To. Without a share menu (Firefox) the files are saved and the mail app opens with that line. A page cannot put files into an email any other way. Whoever reads it adds the .tex to `problem-bank/problems/`; new tags are named in a comment line of its header.
+- To improve an existing problem (a tag, a second solution, a fix), edit its file on GitHub. How that becomes a pull request, who merges it and what `review: human` changes on the website: [`problem-bank/README.md`](problem-bank/README.md#improve-a-problem-review), "Improve a problem, review". (An Edit link per problem on the website comes with the planned administrator mode, see TODO.md.)
 - After the merge, the Action `.github/workflows/number-new-problems.yml` renames `new-<title>.tex` to the next free `NNNN-<title>.tex` and redeploys the site. Nobody chooses a number.
 
 Details (by hand, file format, review): [`problem-bank/README.md`](problem-bank/README.md).
@@ -42,14 +41,16 @@ Details (by hand, file format, review): [`problem-bank/README.md`](problem-bank/
 
 ```bash
 cd website-code
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
 npm ci
 python3 build.py --preview --no-compile --no-bundle
 python3 -m http.server 8000 --directory site
 ```
-Then open http://localhost:8000/problems.html. (The first two commands are needed once.)
+Then open http://localhost:8000/problems.html. `python3 -m venv .venv`, `pip install` and `npm ci` are needed once. `source .venv/bin/activate` is needed in every new terminal, before any `python3` or `npm` command of this repository: the site's Python packages are installed in that environment only (a Python from Homebrew has none of them and refuses a plain `pip install`), and the tests start `python3` too.
 
-- `--preview` includes unreviewed problems (with a `review:` badge) so you can review in the real UI.
+- `--preview` shows every problem with its solution and a `review:` badge, and the `new-<title>.tex` files under provisional numbers, so you can review in the real UI. (The public build publishes every numbered problem too, the unreviewed ones as "proposed", without their solutions.)
 - Without `--no-compile` every problem is compiled with your local TeX Live (MacTeX) — what CI does.
 - Without `--no-bundle` the in-browser engine bundle `website-code/site/static/busytex/` is (re)built: this downloads the texlyre-busytex assets once (≈520 MB, cached in `.cache/`, checked against `tools/busytex-assets.sha256`) and needs Node + TeX Live (≈40 s). You only need it after changing `preamble.tex`; when the bundle is missing (fresh clone) or was made from an older `preamble.tex`, it is built even with `--no-bundle`, so that build takes longer.
 - `python3 -m bank.validate --compile` (in `website-code/`) validates and compiles the problem files and the shared results alone.
@@ -73,10 +74,12 @@ website-code/
   site/                     ← the site as served (GitHub Pages); site/static/js/bank-*.js is the page's code
   tools/                    ← busytex_bundle.py (in-browser TeX engine bundle)
   tests/                    ← unit (node:test), python (unittest), e2e (Playwright)
-.github/workflows/          ← deploy.yml: TeX Live + build + tests, any failure → nothing deploys;
+.github/workflows/          ← deploy.yml: TeX Live + build + tests; on main a broken problem file is left out and the run
+                               ends red, any other failure → nothing deploys;
                                number-new-problems.yml: new-<title>.tex → NNNN-<title>.tex after a merge
-.github/CODEOWNERS          ← paths that run code (CI, site, local preview) need a code owner's review
-.vscode/                    ← save a problem file and it compiles (LaTeX Workshop), see "Run locally"
+.github/CODEOWNERS          ← paths that run code (CI, site, local preview): a code owner is asked to review pull
+                               requests that touch them
+.vscode/                    ← save a problem file and it compiles (LaTeX Workshop), see problem-bank/README.md, "Add a problem"
 TODO.md                     ← what is still open, across the whole repository
 ```
 

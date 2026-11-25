@@ -1,10 +1,11 @@
 // Unit tests of the search logic (node --test).  No dependencies.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { existsSync } from 'node:fs';
 import * as S from '../../site/static/js/bank-search.js';
+import { pageData } from '../lib/page-data.mjs';
 
-// a small catalogue in the shape of tags.json
+// a small tag catalogue, in the shape the pages carry (build.py)
 const tagsJson = {
   area: [
     { slug: 'analysis', name: 'Analysis', description: 'Real and complex analysis.', aliases: ['calculus'], parent: null, children: ['real-analysis'], depth: 1 },
@@ -33,12 +34,12 @@ const tagsJson = {
   ],
 };
 const cat = S.buildCatalogue(tagsJson);
-const P = (id, o = {}) => ({ id, title: `P${id}`, area: [], methods: [], difficulty: 'unrated', difficultySource: '', origin: '', alsoIn: [], originDate: '', originYear: null, hasSolution: false, partial: false, solved: false, review: 'human', ...o });
+const P = (id, o = {}) => ({ id, title: `P${id}`, area: [], methods: [], difficulty: 'unrated', difficultySource: '', origin: '', alsoIn: [], originYear: null, hasSolution: false, partial: false, review: 'human', ...o });
 const problems = [
-  P(1, { area: ['sequences'], methods: ['induction'], difficulty: 'easy', origin: 'imc', originYear: 2012, solved: true, hasSolution: true }),
-  P(2, { area: ['series', 'congruences'], methods: ['induction', 'pigeonhole'], difficulty: 'hard', origin: 'putnam', alsoIn: ['imo'], originYear: 1989, solved: true, hasSolution: true }),
-  P(3, { area: ['group-theory'], methods: [], difficulty: 'medium', origin: '', originYear: null, hasSolution: true, partial: true, solved: false }),
-  P(4, { area: ['linear-algebra'], methods: ['am-gm'], difficulty: 'unrated', origin: 'imo', originYear: 2025, hasSolution: false, solved: false }),
+  P(1, { area: ['sequences'], methods: ['induction'], difficulty: 'easy', origin: 'imc', originYear: 2012, hasSolution: true }),
+  P(2, { area: ['series', 'congruences'], methods: ['induction', 'pigeonhole'], difficulty: 'hard', origin: 'putnam', alsoIn: ['imo'], originYear: 1989, hasSolution: true }),
+  P(3, { area: ['group-theory'], methods: [], difficulty: 'medium', origin: '', originYear: null, hasSolution: true, partial: true }),
+  P(4, { area: ['linear-algebra'], methods: ['am-gm'], difficulty: 'unrated', origin: 'imo', originYear: 2025, hasSolution: false }),
 ];
 const f = (o) => ({ ...S.emptyFilters(), ...o });
 
@@ -60,7 +61,6 @@ test('inside one filter any of its choices will do; every filter set must hold',
   assert.deepEqual(S.filterProblems(problems, f({ area: ['sequences', 'series'] }), cat).map(p => p.id), [1, 2]);          // either area
   assert.deepEqual(S.filterProblems(problems, f({ methods: ['pigeonhole', 'am-gm'] }), cat).map(p => p.id), [2, 4]);       // either method
   assert.deepEqual(S.filterProblems(problems, f({ area: ['series'], methods: ['pigeonhole', 'induction'], difficulty: ['easy'] }), cat).map(p => p.id), []);   // and each filter holds
-  assert.deepEqual(S.decodeState('?m=induction,pigeonhole&op=or', cat).filters, f({ methods: ['induction', 'pigeonhole'], showMethods: true }));   // an old link's op= is read as nothing
 });
 
 test('difficulty and origin are always "any of the selected", combined with AND to the rest', () => {
@@ -75,8 +75,7 @@ test('unrated problems match only when no difficulty is selected', () => {
   assert.ok(!S.matches(problems[3], f({ difficulty: ['easy', 'medium', 'hard', 'extreme'] }), cat));
 });
 
-test('origin-year range; an old link with an ID range (id=) is ignored', () => {
-  assert.deepEqual(S.decodeState('id=2-3', cat).filters, S.emptyFilters());     // the ID means nothing to visitors
+test('origin-year range', () => {
   assert.deepEqual(S.filterProblems(problems, f({ yearFrom: 2000 }), cat).map(p => p.id), [1, 3, 4]);
   assert.deepEqual(S.filterProblems(problems, f({ yearFrom: 1980, yearTo: 1990 }), cat).map(p => p.id), [2, 3]);
   assert.ok(S.matches(problems[2], f({ yearFrom: 3000 }), cat), 'an undated problem always matches a year range');
@@ -183,7 +182,7 @@ test('automatic PDF order: difficulty (unrated last), then top-level area in tag
     Q(13, 'unrated', ['analysis']), Q(14, 'easy', ['congruences']), Q(15, 'medium', []), Q(16, 'extreme', ['sequences']),
     Q(17, 'easy', ['linear-algebra']), Q(9, 'easy', ['real-analysis'])];
   const byId = new Map(rows.map(r => [r.id, r]));
-  // roots in tags.json order: analysis, algebra, linear-algebra, number-theory
+  // roots in the catalogue's order: analysis, algebra, linear-algebra, number-theory
   assert.deepEqual(S.autoOrder([10, 11, 12, 13, 14, 15, 16, 17, 9], byId, cat), [9, 12, 17, 11, 14, 15, 10, 16, 13]);
   assert.deepEqual(S.autoOrder([13, 13, 9], byId, cat), [9, 13]);                   // repeats dropped
   assert.deepEqual(S.autoOrder([99, 9], byId, cat), [9, 99]);                       // unknown IDs last
@@ -257,10 +256,10 @@ test('tag counts: areas count their descendants, origins count also-in', () => {
   }
 });
 
-test('the real tags.json catalogue from the build loads and is consistent', () => {
-  let json;
-  try { json = JSON.parse(readFileSync(new URL('../../site/static/bank/tags.json', import.meta.url), 'utf8')); } catch (e) { return; }  // not built yet
-  const real = S.buildCatalogue(json);
+test('the real tag catalogue, as the built Problems page carries it, loads and is consistent', (t) => {
+  const page = new URL('../../site/problems.html', import.meta.url).pathname;
+  if (!existsSync(page)) { t.skip('site/problems.html not built'); return; }
+  const real = S.buildCatalogue(pageData(page, 'bank-data').tags);
   assert.ok(real.byType.area.size >= 100 && real.byType.methods.size >= 60 && real.byType.difficulty.size === 4 && real.byType.origin.size >= 30);
   for (const [slug, t] of real.byType.area) { for (const c of t.children) assert.equal(real.byType.area.get(c).parent, slug); assert.ok(t.depth <= 3); }
   assert.ok(S.suggest(real, 'abstract algebra').map(s => s.tag.slug).includes('algebra'));

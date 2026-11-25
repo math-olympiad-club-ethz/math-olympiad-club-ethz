@@ -79,7 +79,7 @@ async function phonePage({ network = true } = {}) {
   await cdp.send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-transparency', value: 'no-preference' }] });
   if (network) { await cdp.send('Network.enable'); await cdp.send('Network.emulateNetworkConditions', NET); }
   await p.addInitScript(watchMetrics);
-  return { p, ctx, cdp };
+  return { p, ctx };
 }
 
 // a page on arrival: fresh browser, nothing cached
@@ -146,13 +146,12 @@ try {
   }
 
   // interactions: each alone, from the input to the next frame; again once if over budget
-  async function interactions(page, steps, setup, init) {
+  async function interactions(page, steps, init) {
     const { p, ctx } = await phonePage({ network: false });      // what is measured here is the main thread, not the network
     if (init) await p.addInitScript(init);
     await p.goto(`${base}/${page}`, { waitUntil: 'load' });
     await p.waitForSelector('html[data-ready]');
     await p.waitForTimeout(800);
-    if (setup) await setup(p);
     for (const [label, act] of steps) {
       let worst = Infinity;
       for (let attempt = 0; attempt < 2 && worst > INTERACTION; attempt++) {
@@ -230,7 +229,7 @@ try {
     ['a topic unfolded', step(p => p.click('#pp-tree .tt-tg[data-for="analysis"]'), p => p.click('#pp-tree .tt-tg[data-for="analysis"]'))],
     ['a topic chosen', step(p => p.click('#pp-tree .tt-name[data-slug="analysis"]'), p => p.click('#pp-tree .tt-name[data-slug="analysis"]'))],
     ['a letter typed in "Where is it from?"', step(async p => { if (await p.locator('#pp-from').isHidden()) await p.click('#pp-add-from'); await p.locator('#pp-from').pressSequentially('I'); })],
-  ], null, () => Object.defineProperty(Navigator.prototype, 'connection', { get: () => ({ saveData: true, effectiveType: '4g' }) }));   // a phone that saves data: no typesetting, the keys alone are measured
+  ], () => Object.defineProperty(Navigator.prototype, 'connection', { get: () => ({ saveData: true, effectiveType: '4g' }) }));   // a phone that saves data: no typesetting, the keys alone are measured
 } catch (e) {
   failures.push('the test itself failed: ' + (e && e.stack || e));
 } finally {

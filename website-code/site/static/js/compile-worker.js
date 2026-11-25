@@ -9,7 +9,7 @@
      ← {type:'started', id}                  pdfTeX starts (the engine is loaded): the page starts its timeout here
      ← {type:'marker', id, pid}              a line "BANK:<pid>" on the terminal (\typeout before each problem, and
                                              "BANK:a-<name>" before each shared result)
-     ← {type:'result', id, version, exit, pdf?, log, passes:[ms], pages, errors}
+     ← {type:'result', id, version, exit, pdf?, log, pages, errors}
      ← {type:'error', id?, message}          message: a short sentence for the page (details go to the console)
 
    Assets (site/static/busytex/, built by tools/busytex_bundle.py): manifest.json, busytex.js.gz, busytex.wasm.gz,
@@ -64,7 +64,6 @@ async function openCache(name, version) {
   if (!self.caches) return null;
   try {
     const cache = await caches.open(name);
-    for (const k of await caches.keys()) if (k.startsWith('bank-engine-')) await caches.delete(k);   // the earlier scheme: one cache per version
     // one cache across versions: a new version downloads only the files that changed (each is checked against manifest.json,
     // and a stale one is replaced). Its finished PDFs do go: a new engine makes other ones.
     const seen = await cache.match(ENGINE_VERSION_KEY);
@@ -219,16 +218,14 @@ function capWrites(FS) {
 function runTeX(args) {
   const { Module } = state;
   state.reset(); capped.clear();
-  const t0 = performance.now();
   let exit;
   capping = true;
   try {
     exit = Module.callMain([...args]);         // copy: callMain unshifts thisProgram into its argument
     Module._flush_streams();
   } finally { capping = false; }
-  const ms = Math.round(performance.now() - t0);
   Module.HEAPU8.fill(0); Module.HEAPU8.set(state.header);
-  return { exit, ms, ...state.io() };
+  return { exit, ...state.io() };
 }
 
 /* The end of a (possibly huge) file, without reading the rest. */
@@ -252,11 +249,11 @@ function compile(id, mainTex, files) {
   for (const [n, data] of Object.entries(files || {})) FS.writeFile(PROJECT + '/' + n, data);
   FS.chdir(PROJECT);
   post({ type: 'started', id });
-  const passes = []; let log = ''; let exit = 0; let last = null;
+  let log = ''; let exit = 0; let last = null;
   currentJob = id;
   try {
     for (let pass = 0; pass < 3; pass++) {
-      last = runTeX(manifest.pdftex_args); passes.push(last.ms); exit = last.exit;
+      last = runTeX(manifest.pdftex_args); exit = last.exit;
       log = readTail(FS, PROJECT + '/main.log', LOG_TAIL);
       try { FS.unlink(PROJECT + '/main.log'); } catch (e) { /* no log */ }
       if (exit !== 0) break;
@@ -271,7 +268,7 @@ function compile(id, mainTex, files) {
   if (pdf && (pdf.length === 0 || /^No pages of output\.$/m.test(log) || /^No pages of output\.$/m.test(last.stdout))) { pdf = null; if (!errors.length) errors.push('! No pages of output.'); }
   if (capped.has(pdfPath)) { pdf = null; errors.push('! The PDF is too large.'); }
   clearProject(FS);                              // big files a run wrote are freed now, not at the next compile
-  post({ type: 'result', id, version: manifest.version, exit, pdf, log, passes, pages, errors }, pdf ? [pdf.buffer] : []);
+  post({ type: 'result', id, version: manifest.version, exit, pdf, log, pages, errors }, pdf ? [pdf.buffer] : []);
 }
 
 function ensureInit(base) {

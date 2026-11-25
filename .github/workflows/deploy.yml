@@ -106,7 +106,7 @@ jobs:
       - name: Build (validate + compile every problem, site data for all problems, engine bundle, HTML)
         run: python3 build.py --preview
 
-      - name: Unit tests (search logic)
+      - name: Unit tests (search, propose, JS/Python parity)
         run: npm run test:unit
 
       - name: Validator / stitch tests
@@ -117,7 +117,7 @@ jobs:
           npx playwright install --with-deps chromium
           npm run test:e2e
 
-      - name: Public build (published problems only; keeps the bundle built above)
+      - name: Public build (numbered problems, the unreviewed marked proposed; keeps the bundle built above)
         run: python3 build.py --no-compile --no-bundle
 
       # What gets deployed: every problem with a final number (without review: human: marked proposed), their figures,

@@ -8,9 +8,10 @@ import { spawnSync } from 'node:child_process';
 import * as S from '../../site/static/js/bank-search.js';
 import * as P from '../../site/static/js/bank-propose.js';
 import * as T from '../../site/static/js/bank-tex.js';
+import { pageData } from '../lib/page-data.mjs';
 
 const ROOT = new URL('../../', import.meta.url).pathname;
-const TAGS = ROOT + 'site/static/bank/tags.json';
+const PROPOSE = ROOT + 'site/propose.html';           // the built page: the tags it checks a draft against, in its propose-data
 const BIB = ROOT + '../problem-bank/references.bib';
 
 const PY = String.raw`
@@ -31,7 +32,7 @@ out["unprintable"] = [P.unprintable(t) for t in req.get("unprintable", [])]
 out["mask"] = [P.mask_comments(t) for t in req.get("mask", [])]
 out["labels"] = [[label_refs(t)[0], [list(r) for r in label_refs(t)[1]]] for t in req.get("labels", [])]
 out["figures"] = [[list(f) for f in find_figures(t)] for t in req.get("figures", [])]
-out["dates"] = [P._valid_date(t, allow_partial=True) for t in req.get("dates", [])]
+out["dates"] = [P._valid_date(t) for t in req.get("dates", [])]
 out["cited"] = [A.cited_names(t) for t in req.get("cited", [])]
 out["malformed"] = [[list(x) for x in A.malformed_refs(t)] for t in req.get("cited", [])]
 out["citations"] = [[list(x) for x in A.citations(t)] for t in req.get("cited", [])]
@@ -136,8 +137,8 @@ test('comments, labels, figures and dates: JS == Python', () => {
 });
 
 test('files made by the page pass the Python validator with the same fields; invalid drafts fail both', (t) => {
-  if (!existsSync(TAGS)) { t.skip('site/static/bank/tags.json not built'); return; }
-  const cat = S.buildCatalogue(JSON.parse(readFileSync(TAGS, 'utf8')));
+  if (!existsSync(PROPOSE)) { t.skip('site/propose.html not built'); return; }
+  const cat = S.buildCatalogue(pageData(PROPOSE, 'propose-data').tags);
   const bibKeys = T.parseBibEntries(readFileSync(BIB, 'utf8')).map(([k]) => k);
   const base = { ...P.emptyDraft(), statement: 'Prove that \\( 1+1=2 \\).', area: ['primes'] };
   const good = [
@@ -211,8 +212,8 @@ test('shared results: the citation scanner is the same on both sides (\\appendix
 });
 
 test('shared results: drafts citing them pass or fail on both sides', (t) => {
-  if (!existsSync(TAGS)) { t.skip('site/static/bank/tags.json not built'); return; }
-  const cat = S.buildCatalogue(JSON.parse(readFileSync(TAGS, 'utf8')));
+  if (!existsSync(PROPOSE)) { t.skip('site/propose.html not built'); return; }
+  const cat = S.buildCatalogue(pageData(PROPOSE, 'propose-data').tags);
   const bibKeys = T.parseBibEntries(readFileSync(BIB, 'utf8')).map(([k]) => k);
   const results = [{ name: 'cauchy-group-theorem', labels: [] }, { name: 'field-norm', labels: ['appendix:field-norm:A.2.3'] }];
   const base = { ...P.emptyDraft(), statement: 'Prove that \\( 1+1=2 \\).', area: ['primes'] };

@@ -118,7 +118,7 @@ function initEngine() {
 
 /* Whether the engine (some 16 MB: build.py engine_download_mb) may be fetched ahead, before anyone has asked for a PDF: not on data saver, on a slow
    connection or on a touch screen, where a tick must not start a download that size. Create PDF, and the Propose page's sheet, start it. */
-export function mayPrefetchEngine() {
+function mayPrefetchEngine() {
   try {
     const c = navigator.connection;
     if (c && (c.saveData || /^(slow-2g|2g|3g)$/.test(c.effectiveType || ''))) return false;
@@ -288,7 +288,7 @@ export function originLine(b) {
   return line;
 }
 
-/* The shared results (problem-bank/appendix/) loaded with the bodies: {name: {name, title, text, cites, figures}}. */
+/* The shared results (problem-bank/appendix/) loaded with the bodies: {name: {title, text, cites, figures}}. */
 export const loadedAppendix = () => state.appendix || {};
 
 /* The results a solutions PDF prints, in order: those cited by its printed solutions (PDF order), then the results
@@ -306,13 +306,12 @@ export function appendixOrder(sel, appendix) {
 
 /* Stitched document.  MUST stay identical to bank/stitch.py::make_main.  `appendix`: the shared results; a solutions
    PDF whose solutions cite some ends with them. */
-export function makeMain(bodies, ids, variant, { filters = '', showMethods = false, appendix = null } = {}) {
+export function makeMain(bodies, ids, variant, { showMethods = false, appendix = null } = {}) {
   const sel = ids.map(i => bodies[pad4(i)]).filter(Boolean);
   const out = ['\\begin{document}', '\\thispagestyle{empty}', '\\vspace*{\\stretch{1}}', '\\begin{center}',
     `{\\Huge\\bfseries ${CLUB_NAME}}\\\\[2ex]`,
     `{\\LARGE ${variant === 'problems' ? 'Problems' : 'Problems and solutions'}}\\\\[4ex]`,
     `{\\large ${sel.length} problem${sel.length === 1 ? '' : 's'}}\\\\[1ex]`];
-  if (filters) out.push(`{\\normalsize Selection: ${texEscape(filters)}}\\\\[1ex]`);
   out.push('\\end{center}', '\\vspace*{\\stretch{2}}', '\\newpage');
   sel.forEach((b, k) => {
     out.push(`\\bankproblem{${k + 1}}{${texEscape(b.title)}}{${originLine(b)}}{${b.id}}`);
@@ -438,14 +437,13 @@ async function storePdf(key, pdf) {
 }
 
 /* Compile one variant for a list of IDs, in the order given (the page decides it: bank-search.js::autoOrder or
-   the hand-made order).  Resolves {ids, variant, pdf, mainTex, pages, passes, fromCache, ms}.
+   the hand-made order).  Resolves {ids, pdf, mainTex, pages, fromCache}.
    signal (AbortSignal): cancels; the promise then rejects with name 'AbortError'. */
 export function compileSelection(ids, variant, { showMethods = false, signal = null } = {}) {
   return untilAborted(selection(ids, variant, { showMethods, signal }), signal);
 }
 
 async function selection(ids, variant, { showMethods, signal }) {
-  const t0 = performance.now();
   if (!engineSupported()) throw new Error(UNSUPPORTED);
   const bodies = await loadBodies();
   const sorted = [...new Set(ids.map(Number))];      // the order given, each ID once
@@ -461,7 +459,7 @@ async function selection(ids, variant, { showMethods, signal }) {
   const version = await engineVersion();
   const key = await selectionKey(version, variant, mainTex, figureStamp([...sel, ...results]));
   const stored = await storedPdf(key);
-  if (stored) return { ids: sorted, pdf: stored, mainTex, fromCache: true, passes: [], pages: null, ms: Math.round(performance.now() - t0) };
+  if (stored) return { ids: sorted, pdf: stored, mainTex, fromCache: true, pages: null };
   if (signal && signal.aborted) throw abortError();
   const [{ files, verified }] = await Promise.all([figureFiles([...sel, ...results]), initEngine()]);     // the drawings arrive while the engine starts
   // the timeout counts the shared results too (each is a page or two of text)
@@ -471,10 +469,10 @@ async function selection(ids, variant, { showMethods, signal }) {
   checkEngine(r);
   if (r.exit !== 0 || !r.pdf || !r.pdf.length) throw compileError(r, mainTex);
   if (verified && r.version === version) await storePdf(key, r.pdf);
-  return { ids: sorted, pdf: r.pdf, mainTex, fromCache: false, passes: r.passes, pages: r.pages, ms: Math.round(performance.now() - t0) };
+  return { ids: sorted, pdf: r.pdf, mainTex, fromCache: false, pages: r.pages };
 }
 
-/* One problem on its own, for the "Preview" button in the results list: the statement only — a preview never shows a
+/* One problem on its own, for a statement opened under its title.  The statement only: a preview never shows a
    solution, and its row already shows the title and the origin.  Not part of the stitched document, so makeMain (and its
    Python twin) stay untouched.
    bank-ui.js draws it into the page, so the page is the text with 2 pt round it, not an A4 sheet.  `width` (pt, two
@@ -549,7 +547,7 @@ async function preview(id, signal, width) {
 }
 
 /* Compile any document against the club format (the propose page's live preview).  No PDF cache.
-   Resolves the worker's result {exit, pdf|null, log, errors, passes, pages}; rejects only if the engine fails. */
+   Resolves the worker's result {exit, pdf|null, log, errors, pages}; rejects only if the engine fails. */
 export async function compileTex(mainTex, { timeoutMs = 60000 } = {}) {
   if (!engineSupported()) throw new Error(UNSUPPORTED);
   await initEngine();

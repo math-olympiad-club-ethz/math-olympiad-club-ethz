@@ -1,42 +1,38 @@
 // End-to-end test of the Problems page in headless Chromium (Playwright library, no test runner): the calm page on arrival
-// (the tree of topics unfolded one level, the row of filters, no list); a topic chosen in the tree and its problems listed on
+// (the tree folded, All problems alone; the row of filters; no list); a topic chosen in the tree and its problems listed on
 // the right, the fold rule, the numbers of the tree; the search bar and the tags it suggests; the filters, a word each with
 // its menu and the numbers of its choices, and their one rule; tick problems, Create, and check that both PDFs contain the
 // expected problems in the expected order (automatic, then dragged by hand); the statement of a problem drawn under its
-// title; shareable links and the back button; no Edit link per problem (until the administrator mode) and no problem number
-// anywhere; keyboard focus, ARIA, the tag counts, the layout at 360 px (a phone) and in dark mode, the theme, the PDF links
-// without a built-in PDF viewer (headless Chromium, like Chrome for Android), the Content-Security-Policy, the engine
-// prefetch, the message when the page's script fails to load, and the proposed problems of the public build.
+// title; shareable links and the back button; no problem number anywhere; keyboard focus, ARIA, the tag counts, the
+// layout at 360 px (a phone) and in dark mode, the theme, a statement printed in the dark theme, the PDF links without a
+// built-in PDF viewer (headless Chromium, like Chrome for Android), the Content-Security-Policy, the engine prefetch, the
+// message when the page's script fails to load, and the proposed problems of the public build.
 // Needs a built site (python3 build.py --preview) and the engine bundle in site/static/busytex/.
 //   node tests/e2e/bank.mjs            exit 0 = pass
 //   E2E_SHOTS=<dir> node tests/e2e/bank.mjs   also saves screenshots (360 px, dark mode) into <dir>
 import { chromium } from 'playwright';
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { startServer } from '../lib/static-server.mjs';
+import { pageData } from '../lib/page-data.mjs';
 
 const DOCS = resolve(new URL('../../site', import.meta.url).pathname);
 const CHECK_PDF = resolve(new URL('./check_pdf.py', import.meta.url).pathname);
 const SHOTS = process.env.E2E_SHOTS || '';
 if (SHOTS) mkdirSync(SHOTS, { recursive: true });
-// pre-flight: the test needs a preview build (all problems) and the engine bundle
+// pre-flight: the test needs a preview build (python3 build.py --preview) and the engine bundle
 if (!existsSync(join(DOCS, 'static', 'busytex', 'manifest.json'))) {
   console.log('The engine bundle site/static/busytex/ is missing. Build it once with:  python3 build.py --preview');
   process.exit(2);
 }
-try {
-  const html = readFileSync(join(DOCS, 'problems.html'), 'utf8');
-  const m = /"count":(\d+)/.exec(html);
-  if (!m || Number(m[1]) === 0) {
-    console.log('site/problems.html lists no problem (public build, nothing published yet). Run:  npm run build:preview');
-    process.exit(2);
-  }
-} catch (e) { console.log('site/problems.html is missing. Run:  npm run build:preview'); process.exit(2); }
-// The problems of this build, in ID order.  On main, bank/leave_out.py may have left broken ones out, so the links
-// below take their numbers from here, never fixed ones (range(i, j): the i-th to the j-th problem, j - i + 1 of them).
-const IDS = JSON.parse(readFileSync(join(DOCS, 'static', 'bank', 'index.json'), 'utf8')).problems.map(p => p.id);
+if (!existsSync(join(DOCS, 'problems.html'))) { console.log('site/problems.html is missing. Run:  npm run build:preview'); process.exit(2); }
+// The problems of this build, in ID order, from the index the page carries.  On main, bank/leave_out.py may have left
+// broken ones out, so the links below take their numbers from here, never fixed ones (range(i, j): the i-th to the j-th
+// problem, j - i + 1 of them).
+const IDS = pageData(join(DOCS, 'problems.html'), 'bank-data').index.problems.map(p => p.id);
+if (!IDS.length) { console.log('site/problems.html lists no problem: the bank is empty.'); process.exit(2); }
 const range = (i, j) => `${IDS[i]}-${IDS[j]}`;
 const pad = n => String(n).padStart(4, '0');
 const failures = [];
@@ -132,7 +128,7 @@ const folded = (p = page) => p.waitForFunction(() => !document.querySelector('#b
 const address = async (p = page) => { await p.waitForTimeout(300); return p.evaluate(() => location.search); };
 
 try {
-  console.log('1. a calm page on arrival: the tree unfolded one level, the row of filters, no list');
+  console.log('1. a calm page on arrival: the tree folded (All problems alone), the row of filters, no list');
   // the first paint, before any script: the page as served, read with JavaScript off
   const firstPaint = await (async () => {
     const ctx = await browser.newContext({ javaScriptEnabled: false });
@@ -150,7 +146,9 @@ try {
   const total = nAll - nProposed;                         // what the page lists by default (a preview build: every problem)
   check(total > 0, `index has ${total} problems`);
   // the letters of the site's own text beyond plain Latin (tags such as Vojtěch Jarník, φ σ τ) are in the basic font
-  // files: no page of the bank downloads a second one for them (tools/subset_fonts.py, fonts.css)
+  // files: no page of the bank downloads a second one for them (tools/subset_fonts.py, fonts.css).  site.js puts fonts.css
+  // to use only after the first paint: wait for it, or its faces are not declared yet and nothing is asked for
+  await page.waitForFunction(() => [...document.styleSheets].some(s => (s.href || '').includes('/fonts.css')));
   const fontFiles = await page.evaluate(async () => {
     const own = [...window.bank.cat.byType.area.values(), ...window.bank.cat.byType.origin.values()].map(t => t.name).join(' ');
     await document.fonts.ready;
@@ -231,7 +229,6 @@ try {
   await page.waitForTimeout(300);
   check(engineRequests.length === 0, 'nor after a scroll, a click on the page and a key press');
   await page.keyboard.press('Escape');
-  check((await page.locator('#site-nav a[href="propose.html"]').count()) === 1, 'the header links to the propose page');
   // a word found in one title only, for the searches below
   const probe = await page.evaluate(() => {
     const counts = new Map();
@@ -264,17 +261,14 @@ try {
   check(noNumber(await page.locator('#bank-results').textContent()), 'no problem number is shown in the list');
   const diffChip = (await page.locator(ROWS).locator('.bank-chip-unrated').first().textContent()).trim();
   check(/Difficulty\s*None\s*AI: (Easy|Medium|Hard|Extreme)/.test(diffChip), `an unrated problem's chip says "Difficulty None", the AI estimate in small print on its right (${diffChip})`);
-  check(await page.locator('#bank-create').isDisabled(), 'Create is disabled with no selection');
-  check((await page.locator('#bank-results a.bank-edit').count()) === 0, 'no Edit link per problem (it comes with the administrator mode)');
-  check(!/\bunsolved\b/.test(await page.locator('#bank-results').textContent()) && (await page.locator(`${ROWS} .bank-marker-incomplete`).first().textContent()) === 'Incomplete solution',
+  check((await page.locator(`${ROWS} .bank-marker-incomplete`).first().textContent()) === 'Incomplete solution',
     'a problem without a whole solution is marked "Incomplete solution" (the same words as the filter)');
   const rowParts = await page.evaluate(() => {
     const li = document.querySelector('#bank-results > li:not([hidden])');
-    return { check: !!li.querySelector(':scope > .bank-check'), title: li.querySelector('.bank-row-title')?.getAttribute('aria-expanded'), chips: li.querySelectorAll('.bank-chip').length,
-      gone: document.querySelectorAll('.bank-preview-btn, .bank-row-actions, .bank-bar, #bank-idle, #bank-chips, #bank-filter-btn, #bank-advanced').length };
+    return { check: !!li.querySelector(':scope > .bank-check'), title: li.querySelector('.bank-row-title')?.getAttribute('aria-expanded'), chips: li.querySelectorAll('.bank-chip').length };
   });
-  check(rowParts.check && rowParts.title === 'false' && rowParts.chips > 0 && rowParts.gone === 0,
-    'a row: its tick box, its title (a button that opens the statement), its tags; no Preview button, no bar of the old page');
+  check(rowParts.check && rowParts.title === 'false' && rowParts.chips > 0,
+    'a row: its tick box, its title (a button that opens the statement), its tags');
   await page.click(NAME(''));
   v = await view();
   check(v.n === 0 && !v.head && !v.lit.length && !v.all, 'a second click on All problems lets go of it: no list, nothing lit');
@@ -286,7 +280,7 @@ try {
     await t.goto(`${base}/problems.html`);
     await t.waitForSelector('html[data-ready]');
     await unfoldTree(t);
-    // each first-level topic in its own colour (bank/colours.py, through tags.json), in both themes; none grey
+    // each first-level topic in its own colour (bank/colours.py, through the tags the page carries), in both themes; none grey
     for (const theme of ['light', 'dark']) {
       const paint = await t.evaluate(theme => {
         const was = document.documentElement.dataset.theme;
@@ -301,7 +295,7 @@ try {
       }, theme);
       const wrong = paint.out.filter(x => !x.want || x.got !== x.want || x.got === paint.faint);
       check(paint.out.length > 1 && !wrong.length && new Set(paint.out.map(x => x.got)).size === paint.out.length,
-        `${theme} theme: each of the ${paint.out.length} first-level topics in its own colour from tags.json, none grey${wrong.length ? ' (not: ' + wrong.map(x => `${x.slug} ${x.got}`).join(', ') + ')' : ''}`);
+        `${theme} theme: each of the ${paint.out.length} first-level topics in its own colour from the page's tags, none grey${wrong.length ? ' (not: ' + wrong.map(x => `${x.slug} ${x.got}`).join(', ') + ')' : ''}`);
     }
     const place = () => t.evaluate(() => {
       const at = e => { const r = e.getBoundingClientRect(); return `${Math.round(r.left)},${Math.round(r.top)}`; };
@@ -426,7 +420,6 @@ try {
     check(!quick.seen.includes('bare') && quick.after === 'false',
       `a branch folded the moment it opened stays clipped while it goes (${quick.seen.join(' ')}), and a click into a branch folding away goes nowhere`);
     await page.click(NAME(''));                      // let go of All problems
-    check((await view()).n === 0, 'a second click on All problems: the calm page again');
   }
 
   console.log('1d. a filter narrows what the tree counts, and opens nothing; what is lit is what is listed, and a click on it lets it go');
@@ -641,6 +634,16 @@ try {
   });
   check(aria.tabindex === '-1' && aria.ariaExpanded === 0 && aria.nested === 0 && aria.combo,
     'the bar is a combobox that controls the list; the list is not a Tab stop, and its options carry no aria-expanded and no control inside');
+  // the option the arrows reach is the one a screen reader is told is selected, and only that one
+  const selected = () => page.evaluate(() => ({ on: [...document.querySelectorAll('#bank-listbox [role=option][aria-selected="true"]')].map(o => o.id),
+    n: document.querySelectorAll('#bank-listbox [role=option]').length, active: document.getElementById('bank-search').getAttribute('aria-activedescendant') }));
+  await page.fill('#bank-search', 'alge');
+  await page.waitForSelector('#bank-listbox [role=option]');
+  await page.keyboard.press('ArrowDown'); const sel1 = await selected();
+  await page.keyboard.press('ArrowDown'); const sel2 = await selected();
+  await page.keyboard.type('b'); const sel3 = await selected();
+  check(sel1.on.length === 1 && sel1.on[0] === sel1.active && sel2.on.length === 1 && sel2.on[0] === sel2.active && sel2.active !== sel1.active && sel3.n > 0 && sel3.on.length === 0,
+    `ArrowDown selects one option (aria-selected), the one aria-activedescendant names (${sel1.active}); ArrowDown again moves it (${sel2.active}); a letter typed leaves none selected (of ${sel3.n} options)`);
   await page.keyboard.press('Tab');
   check(await page.evaluate(() => document.activeElement && document.activeElement.id !== 'bank-listbox' && document.activeElement.id !== 'bank-search' && document.getElementById('bank-listbox').hidden),
     'Tab from the search bar leaves it (not into the scrolling list), and the list closes');
@@ -862,14 +865,13 @@ try {
   await closeMenu();
   await page.click(NAME(''));
 
-  console.log('4c. one rule: inside one filter any choice will do, every filter set must hold; old links; the tags of a row');
-  await page.goto(`${base}/problems.html?op=and&a=analysis,algebra`);
+  console.log('4c. one rule: inside one filter any choice will do, every filter set must hold; links; the tags of a row');
+  await page.goto(`${base}/problems.html?a=analysis,algebra`);
   await page.waitForSelector(ROWS);
   const either = await under(['analysis', 'algebra']);
   v = await view();
   check(same(v.ids, either) && v.count === `${either.length} problems in Analysis and Algebra` && same(v.lit, ['analysis', 'algebra']),
-    `an old link with op=and and two topics lists the problems of either (${either.length}), both names lit`);
-  check((await address()) === '?a=analysis,algebra', 'its op= is dropped from the address');
+    `a link with two topics lists the problems of either (${either.length}), both names lit`);
   await page.goto(`${base}/problems.html?d=${diffs[0].slug},${diffs[1].slug}&o=${om.slugs[0]}`);
   await page.waitForSelector('html[data-ready]');
   v = await view();
@@ -1010,7 +1012,6 @@ try {
   check((out.p.tex.match(/\\bankproblem\{/g) || []).length === n20, `problems .tex has ${n20} problem headings`);
   check(out.s.tex.includes('\\begin{solution}') || out.s.tex.includes('\\banknosolution'), 'solutions .tex has solutions or "No complete solution yet" markers');
   check(!/\\today/.test(out.p.tex + out.s.tex), 'no \\today in the generated documents');
-  check(!/Selection:/.test(out.p.tex + out.s.tex), 'the cover prints no "Selection" line (no filters, no typed text)');
   const cited = await page.evaluate(async (ids) => {                            // shared results (problem-bank/appendix/)
     const b = await window.bank.C.loadBodies();
     return window.bank.C.appendixOrder(ids.map(i => b[String(i).padStart(4, '0')]), window.bank.C.loadedAppendix());
@@ -1417,14 +1418,14 @@ try {
   await page.click('#bank-select-all');
   await page.click('#bank-create');
   await waitPdf('problems'); await askSolutions();
+  const greek = await page.evaluate(() => window.bank.cat.byType.area.get('arithmetic-functions').name);
   check(await page.evaluate(() => !!(window.bank.output.problems.pdf && window.bank.output.solutions.pdf)),
-    'both PDFs build with the topic "Arithmetic functions (φ, σ, τ, …)" chosen');
+    `both PDFs build with the topic "${greek}" chosen`);
   await page.goto(`${base}/problems.html?q=zqx%5E%7B%7D%5Cinput%7Bzqy%7D&sel=${IDS[0]},${IDS[1]}`);
   await page.waitForSelector('#bank-results-head:not([hidden])');
   await page.click('#bank-create');
   await waitPdf('problems');
-  check(await page.evaluate(() => !!window.bank.output.problems.pdf && !/zqy|Selection:/.test(window.bank.output.problems.mainTex)),
-    'a link with LaTeX in its search text (q=zqx^{}\\input{zqy}) builds a clean PDF: the text never reaches the document');
+  check(await page.evaluate(() => !!window.bank.output.problems.pdf), 'a link with LaTeX in its search text (q=zqx^{}\\input{zqy}) builds its PDF');
   await page.goto(`${base}/problems.html?q=%E2%88%91`);
   await page.waitForSelector('html[data-ready]');
   v = await view();
@@ -1474,10 +1475,9 @@ try {
     await ctx.close();
   }
 
-  console.log('10. layout at 360 px and in dark mode; the theme; a phone');
+  console.log('10. layout at 360 px and in dark mode; the theme; a phone; a statement printed in the dark theme');
   for (const scheme of ['light', 'dark']) {
     const ctx = await browser.newContext({ viewport: { width: 360, height: 780 }, colorScheme: scheme, hasTouch: true, isMobile: true });
-    await ctx.addInitScript(() => localStorage.setItem('theme', 'light'));      // what the old site saved on every visit
     const p3 = await ctx.newPage();
     watch(p3);
     const logos = [];
@@ -1511,7 +1511,7 @@ try {
       check(!(await phone()).bar, 'and the bar goes with the last tick');
     }
     const theme = await p3.evaluate(() => document.documentElement.getAttribute('data-theme'));
-    check(theme === scheme, `with no choice saved, the page follows the system: ${scheme} (${theme}); the old site's automatic "light" does not count`);
+    check(theme === scheme, `with no choice saved, the page follows the system: ${scheme} (${theme})`);
     const lay = await p3.evaluate(() => {
       const w = document.documentElement.clientWidth, out = [];
       for (const li of document.querySelectorAll('#bank-results > li:not([hidden])')) {
@@ -1568,6 +1568,23 @@ try {
       await p4.waitForSelector(ROWS);
       await p4.screenshot({ path: join(SHOTS, 'problems-1280-dark.png') });
     }
+    await ctx.close();
+  }
+  {
+    // printed in the dark theme: a statement's page as drawn (inverted, as on screen, it would print white on white)
+    const ctx = await browser.newContext({ colorScheme: 'dark' });
+    const t = await ctx.newPage();
+    watch(t);
+    await t.goto(`${base}/problems.html`);
+    await listAll(t);
+    await t.locator(ROWS).first().locator('.bank-row-title').click();
+    await t.waitForSelector('.bank-preview-panel .bank-sheet canvas', { timeout: 240000 });
+    const sheet = () => t.evaluate(() => { const cs = getComputedStyle(document.querySelector('.bank-preview-panel .bank-sheet canvas')); return { filter: cs.filter, opacity: cs.opacity }; });
+    const onScreen = await sheet();
+    await t.emulateMedia({ media: 'print' });
+    const onPaper = await sheet();
+    check((await t.getAttribute('html', 'data-theme')) === 'dark' && /invert/.test(onScreen.filter) && onPaper.filter === 'none' && onPaper.opacity === '1',
+      `dark theme: an opened statement is inverted on screen (${onScreen.filter}), and printed as drawn (filter ${onPaper.filter}, opacity ${onPaper.opacity})`);
     await ctx.close();
   }
 

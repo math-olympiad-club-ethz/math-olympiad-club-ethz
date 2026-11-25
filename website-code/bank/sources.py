@@ -44,7 +44,8 @@ URL_RE = re.compile(r"https?://[^\s<>\"]+")
 NOT_LINKED = ("vdoc.pub", "dokumen.pub", "pdfcoffee.com", "pdfdrive.com", "libgen.", "sci-hub.", "z-lib.", "zlibrary.",
               "annas-archive.", "google.com/books/feeds")
 # A page for people where the note opened one for programs: a DOI's page, not its record at Crossref; a Putnam paper
-# of Kedlaya's archive as its PDF, not its TeX source (the archive has both for every year).
+# of Kedlaya's archive as its PDF, not its TeX source (the archive has both for every year); a copy of the Wayback
+# Machine over https, not http.
 FOR_READERS = [
     (re.compile(r"^https?://api\.crossref\.org/works/(10\.[^?#]+)$"), r"https://doi.org/\1"),
     (re.compile(r"^(https://kskedlaya\.org/putnam-archive/\d{4}s?)\.tex$"), r"\1.pdf"),

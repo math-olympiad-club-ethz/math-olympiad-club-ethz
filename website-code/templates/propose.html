@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 
 {% block head %}
-{% set v = ('?v=' ~ asset_version) if asset_version else '' %}{# one version per build: see bank-propose.js #}
     <!-- the page's modules start downloading with the page, not after its data -->
     <link rel="modulepreload" href="{{ url_for('static', filename='js/bank-propose-ui.js') }}{{ v }}">
     <link rel="modulepreload" href="{{ url_for('static', filename='js/bank-search.js') }}{{ v }}">
@@ -12,7 +11,6 @@
 {% endblock %}
 
 {% block content %}
-{% set v = ('?v=' ~ asset_version) if asset_version else '' %}
 <div>
   <div class="bank-head">
     <h1 class="node lit">Propose a problem</h1>
@@ -98,20 +96,20 @@
       <summary><span>More details</span> <span class="pp-details-hint">methods, difficulty, references, bibliography</span></summary>
       <div class="pp-details-body">
         <div class="pp-field">
-          <p class="form-label" id="pp-methods-label">Methods <span class="text-muted fw-normal small">(what the solution uses)</span></p>
+          <p class="form-label" id="pp-methods-label">Methods <span>(what the solution uses)</span></p>
           <ul id="pp-methods" class="tt pp-tree" aria-labelledby="pp-methods-label" tabindex="-1"></ul>
         </div>
         <div class="pp-field">
-          <p class="form-label" id="pp-difficulty-label">Difficulty <span class="text-muted fw-normal small">(your estimate)</span></p>
+          <p class="form-label" id="pp-difficulty-label">Difficulty <span>(your estimate)</span></p>
           <div id="pp-difficulty" class="pp-choices" role="group" aria-labelledby="pp-difficulty-label" tabindex="-1"></div>
           <div class="form-text" id="pp-difficulty-help"></div>
         </div>
         <div class="pp-field">
-          <label class="form-label" for="pp-references">References <span class="text-muted fw-normal small">(sources or links, one per line)</span></label>
+          <label class="form-label" for="pp-references">References <span>(sources or links, one per line)</span></label>
           <textarea id="pp-references" class="form-control pp-grow" rows="2"></textarea>
         </div>
         <div class="pp-field">
-          <label for="pp-bibtex" class="form-label">Bibliography <span class="text-muted fw-normal small">(BibTeX, for <code>\cite{key}</code> in the text)</span></label>
+          <label for="pp-bibtex" class="form-label">Bibliography <span>(BibTeX, for <code>\cite{key}</code> in the text)</span></label>
           <textarea id="pp-bibtex" class="form-control pp-tex pp-grow" rows="5" aria-describedby="pp-bib-keys pp-bibtex-error" spellcheck="false" autocorrect="off" autocapitalize="off" placeholder="@article{hurwitz1967,&#10;  author  = {Solomon Hurwitz},&#10;  title   = {On the Rational Solutions of $m^n = n^m$},&#10;  journal = {The American Mathematical Monthly},&#10;  year    = {1967},&#10;}"></textarea>
           <div class="form-text" id="pp-bib-keys"></div>
           <div id="pp-bibtex-error" class="pp-field-error" role="alert" hidden></div>
@@ -132,7 +130,7 @@
 
   <dialog id="pp-latex" class="pp-dialog" aria-labelledby="pp-latex-title">
     <div class="d-flex align-items-center gap-2 mb-2">
-      <h2 id="pp-latex-title" class="h5 m-0">LaTeX help</h2>
+      <h2 id="pp-latex-title" class="h5">LaTeX help</h2>
       <span class="flex-grow-1"></span>
       <button type="button" class="btn-close" aria-label="Close" data-close></button>
     </div>

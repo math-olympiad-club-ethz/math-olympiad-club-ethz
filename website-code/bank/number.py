@@ -1,6 +1,7 @@
 """Give proposed problems their number.
 
-A proposed problem arrives as problem-bank/problems/new-<title>.tex (from the website's "+" page, or by hand).
+A proposed problem arrives as problem-bank/problems/new-<title>.tex: added by whoever receives a proposal (the
+Propose page mails new-<title>.tex), or written by hand.
 Once it is merged into main, the GitHub Action .github/workflows/number-new-problems.yml runs
 
     python3 -m bank.number --apply

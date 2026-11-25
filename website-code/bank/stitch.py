@@ -1,6 +1,7 @@
 """Stitch problem bodies for the in-browser (BusyTeX / pdfTeX-in-WebAssembly) compile.
 
-CI side.  Reads problems/NNNN-title.tex (and the shared results appendix/<name>.tex) and writes
+CI side.  From problems/NNNN-title.tex (and the shared results appendix/<name>.tex), build_bodies and build_appendix
+return what build.py writes to bodies.json, and write the figures:
 
     site/static/bank/bodies.json          {"build", "problems": {"NNNN": {statement, solution|null, cites, figures, title,
                                            origin, link?, note?, ...}}, "appendix": {name: {title, text, cites, figures}}}
@@ -21,7 +22,6 @@ precompiled format club.fmt (the format already contains \\documentclass + the S
 
     python3 -m bank.stitch main --ids 1-20 --variant problems|solutions [--bodies site/static/bank/bodies.json]
     python3 -m bank.stitch main --ids 7,3,12 --variant problems           # the problems in exactly this order
-    python3 -m bank.stitch main --ids all --variant solutions --standalone   # with \\documentclass+preamble (no .fmt)
     python3 -m bank.stitch preview --id 7 [--width 200]                       # one statement's preview (makePreview)
 
 build_previews typesets every statement in advance for the Problems page's previews (make_previews).
@@ -430,24 +430,18 @@ def origin_line(b):
     return line
 
 
-def make_main(bodies, ids, variant="problems", filters="", standalone=False, show_methods=False, appendix=None):
+def make_main(bodies, ids, variant="problems", show_methods=False, appendix=None):
     """The document the browser compiles, problems in the order of `ids` (the page decides the order).
-    With standalone=False it starts at \\begin{document}
-    (\\documentclass + stitched preamble live in club.fmt); standalone=True adds them (plain pdflatex).
+    It starts at \\begin{document}: \\documentclass and the stitched preamble live in club.fmt.
     appendix: the shared results ({name: entry}, bodies.json "appendix"); a solutions PDF whose solutions cite some
     ends with them (bank/appendix.py::appendix_order).  A PDF that cites none is the same as without `appendix`."""
     assert variant in ("problems", "solutions")
     sel = [bodies[f"{i:04d}"] for i in ids if f"{i:04d}" in bodies]
-    out = []
-    if standalone:
-        out += [DOCUMENTCLASS, r"\def\BankStitched{}", r"\input{preamble}"]
-    out.append(r"\begin{document}")
+    out = [r"\begin{document}"]
     out += [r"\thispagestyle{empty}", r"\vspace*{\stretch{1}}", r"\begin{center}",
             r"{\Huge\bfseries %s}\\[2ex]" % CLUB_NAME,
             r"{\LARGE %s}\\[4ex]" % ("Problems" if variant == "problems" else "Problems and solutions"),
             r"{\large %d problem%s}\\[1ex]" % (len(sel), "" if len(sel) == 1 else "s")]
-    if filters:
-        out.append(r"{\normalsize Selection: %s}\\[1ex]" % tex_escape(filters))
     out += [r"\end{center}", r"\vspace*{\stretch{2}}", r"\newpage"]
     for k, b in enumerate(sel, 1):
         out.append(r"\bankproblem{%d}{%s}{%s}{%s}" % (k, tex_escape(b["title"]), origin_line(b), b["id"]))
@@ -560,8 +554,9 @@ def build_previews(bodies, out_dir, jobs=4):
     """The previews of every statement in `bodies`, one PDF per measure of PREVIEW_MEASURES, written to
     <out_dir>/previews/ under names that change with their content (GitHub Pages caches files for 10 minutes); cached by
     content in .cache/previews/.  Returns ({"ids": [...], "measures": [{"pt", "url"}]}, messages): page k of each PDF is
-    the statement of ids[k-1].  A measure that cannot be made is left out, with a message: the page typesets the
-    statements of a missing measure in the browser, as before."""
+    the statement of ids[k-1].  A measure that cannot be made is left out, with a message: the page draws the
+    statements of a missing measure from the nearest other one, scaled (bank-compile.js::pickPreview); when no measure
+    was made at all (None then, in place of the dict), it typesets them in the browser."""
     from concurrent.futures import ThreadPoolExecutor
     ids = sorted(int(k) for k in bodies)
     fig_dir = os.path.join(out_dir, "figures")
@@ -640,8 +635,6 @@ def main(argv=None):
     m.add_argument("--bodies", default=os.path.join(paths.BANK_DATA_DIR, "bodies.json"))
     m.add_argument("--ids", default="all", help="IDs in PDF order, e.g. 5,3,1-2 (default: all, ascending)")
     m.add_argument("--variant", choices=("problems", "solutions"), default="problems")
-    m.add_argument("--filters", default="")
-    m.add_argument("--standalone", action="store_true")
     m.add_argument("--show-methods", action="store_true", help="add the Methods line under each heading")
     v = sub.add_parser("preview", help="print one statement's preview document (bank-compile.js::makePreview)")
     v.add_argument("--bodies", default=os.path.join(paths.BANK_DATA_DIR, "bodies.json"))
@@ -655,7 +648,7 @@ def main(argv=None):
         sys.stdout.write(make_preview(bodies, a.id, a.width))
         return 0
     ids = parse_ids(a.ids, [int(k) for k in bodies])
-    sys.stdout.write(make_main(bodies, ids, a.variant, a.filters, a.standalone, a.show_methods, data.get("appendix")))
+    sys.stdout.write(make_main(bodies, ids, a.variant, show_methods=a.show_methods, appendix=data.get("appendix")))
     return 0
 
 

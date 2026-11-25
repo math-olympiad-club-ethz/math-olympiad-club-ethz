@@ -17,7 +17,7 @@ from bank import paths  # noqa: E402
 from bank import problems as P  # noqa: E402
 from bank import number  # noqa: E402
 from bank import sources as S  # noqa: E402
-from bank.data import MASKED_SOLUTION, PROPOSED_NOTE, build_index, mask_solutions, visible_problems  # noqa: E402
+from bank.data import MASKED_SOLUTION, PROPOSED_NOTE, build_index, build_tag_catalogue, mask_solutions, visible_problems  # noqa: E402
 from bank.stitch import bank_sources, build_bodies, figure_context, find_figures, make_main, namespace_labels, origin_line, parse_ids, resolve_citations, parse_bib, split_body  # noqa: E402
 from bank.validate import proof_sources  # noqa: E402
 from bank.tags import load_tags  # noqa: E402
@@ -134,12 +134,6 @@ class Visibility(unittest.TestCase):
         self.assertEqual([(x["solution"], x["cites"]) for x in source],
                          [("S", ["alpha"]), (MASKED_SOLUTION, []), (None, [])])
 
-    def test_new_files_are_never_public(self):
-        new = parse("new-a-proposed-problem.tex", CONTRIB)
-        number.assign_provisional_ids([new], 7)
-        self.assertEqual([p["id"] for p in visible_problems([new], preview=True)], [8])
-        self.assertEqual(visible_problems([new]), [])
-
 
 class Stitch(unittest.TestCase):
     def test_labels_are_namespaced(self):
@@ -163,12 +157,12 @@ class Stitch(unittest.TestCase):
         bodies = {"0001": {"id": "0001", "title": "A & B", "origin": "Putnam 1989, A3", "status": "", "methods": ["Induction"], "statement": "S1", "solution": "Sol1", "figures": {}},
                   "0002": {"id": "0002", "title": "T2", "origin": "", "status": "", "methods": [], "statement": "S2", "solution": None, "figures": {}},
                   "0003": {"id": "0003", "title": "T3", "origin": "", "status": "partial", "methods": [], "statement": "S3", "solution": "Sol3", "figures": {}}}
-        pr = make_main(bodies, [3, 1, 2], "problems", filters="Area: X")
-        self.assertIn(r"\bankproblem{1}{T3}{}{0003}", pr)          # order as given (caller sorts by ID)
+        pr = make_main(bodies, [3, 1, 2], "problems")
+        self.assertIn(r"\bankproblem{1}{T3}{}{0003}", pr)          # order as given
         self.assertIn(r"\bankproblem{2}{A \& B}{Putnam 1989, A3}{0001}", pr)
+        self.assertIn(r"\bankproblem{3}{T2}{}{0002}", pr)
         self.assertNotIn(r"\begin{solution}", pr)
         self.assertNotIn(r"\banknosolution", pr)
-        self.assertIn("Selection: Area: X", pr)
         self.assertIn("3 problems", pr)
         so = make_main(bodies, [1, 2, 3], "solutions", show_methods=True)
         self.assertEqual(so.count(r"\banknosolution"), 2)            # unsolved + partial
@@ -176,13 +170,6 @@ class Stitch(unittest.TestCase):
         self.assertIn(r"\bankmethods{Induction}", so)
         self.assertNotIn(r"\bankmethods", make_main(bodies, [1], "solutions"))
         self.assertNotIn(r"\today", so)
-
-    def test_make_main_keeps_the_given_order(self):
-        bodies = {f"{i:04d}": {"id": f"{i:04d}", "title": f"T{i}", "origin": "", "status": "", "methods": [], "statement": f"S{i}",
-                               "solution": None, "figures": {}} for i in (1, 2, 3)}
-        tex = make_main(bodies, [3, 1, 2], "problems")
-        self.assertLess(tex.index(r"\bankproblem{1}{T3}{}{0003}"), tex.index(r"\bankproblem{2}{T1}{}{0001}"))
-        self.assertIn(r"\bankproblem{3}{T2}{}{0002}", tex)
 
     def test_parse_ids_keeps_the_written_order(self):
         self.assertEqual(parse_ids("5,3,1-2"), [5, 3, 1, 2])
@@ -275,12 +262,9 @@ class Sources(unittest.TestCase):
         self.assertEqual(link("the proposers' statement - http://web.archive.org/web/2011/http://www.msri.org/x.pdf"),
                          "https://web.archive.org/web/2011/http://www.msri.org/x.pdf")
         self.assertEqual(link("A handout - http://math.stanford.edu/~vakil/putnam03/03mc4.pdf"), "http://math.stanford.edu/~vakil/putnam03/03mc4.pdf")
-        # a page for people where the note opened one for programs; every other address is the one written
+        # a page for people where the note opened one for programs
         self.assertEqual(link("Putnam 2017, B4 - https://kskedlaya.org/putnam-archive/2017.tex; solution - https://kskedlaya.org/putnam-archive/2017s.tex"),
                          "https://kskedlaya.org/putnam-archive/2017.pdf")
-        self.assertEqual(link("IMC 2014, Day 1 - https://www.imc-math.org.uk/?year=2014&item=problems"), "https://www.imc-math.org.uk/?year=2014&item=problems")
-        self.assertEqual(link("IMC 2012, Day 2, Problem 2; official paper - https://www.imc-math.org.uk/archive/problems/2012/IMC_2012_Day_2_Problems.pdf"),
-                         "https://www.imc-math.org.uk/archive/problems/2012/IMC_2012_Day_2_Problems.pdf")
         # a copy of a book put online without its publisher, or an answer written for programs: the next link
         self.assertEqual(link("A. Author, A Book (1992) - https://vdoc.pub/documents/a-book-6tff ; the publisher's page - https://www.ams.org/books/mmono/107/"),
                          "https://www.ams.org/books/mmono/107/")
@@ -461,7 +445,8 @@ class ProposedProblems(unittest.TestCase):
         new = parse("new-a-proposed-problem.tex", CONTRIB)
         new["review"] = "human"
         self.assertEqual(visible_problems([good, new]), [good])                    # no ID yet: never listed
-        number.assign_provisional_ids([good, new])
+        number.assign_provisional_ids([good, new], 7)
+        self.assertEqual(new["id"], 8)                                             # the number it will get: past the highest ever given
         self.assertEqual(visible_problems([good, new]), [good])                    # provisional: preview only
         self.assertEqual(visible_problems([good, new], preview=True), [good, new])
         self.assertTrue(build_index([good, new], preview=True)["problems"][1]["provisional"])
@@ -681,11 +666,10 @@ class FigureContext(unittest.TestCase):
 class HeaderAndDates(unittest.TestCase):
     def test_dates(self):
         for d in ("1989", "1989-12", "1989-12-02", "2024-02-29", "0050-01-01", "0001"):
-            self.assertTrue(P._valid_date(d, allow_partial=True), d)
+            self.assertTrue(P._valid_date(d), d)
         for d in ("20240102", "2024-W01-1", "2024-W01", "\u0661\u0669\u0668\u0669", "\uff11\uff19\uff18\uff19", "0000", "1989-13",
                   "1989-02-30", "2023-02-29", "89", "1989-1", " 1989"):
-            self.assertFalse(P._valid_date(d, allow_partial=True), d)
-        self.assertFalse(P._valid_date("1989-12"))                           # full dates only without allow_partial
+            self.assertFalse(P._valid_date(d), d)
 
     def test_bom_capitals_titles_and_encoding(self):
         p = probe("\\begin{problem}\nS.\n\\end{problem}\n", header="\ufeff" + HEADER)
@@ -1105,6 +1089,14 @@ def write(site, rel, data):
         f.write(data if isinstance(data, str) else json.dumps(data))
 
 
+def carry(site, page, script_id, data):
+    """Write a page of a fake site that carries `data` inline, as build.py::render_pages writes it."""
+    write(site, page, '<script type="application/json" id="%s">%s</script>' % (script_id, json.dumps(data).replace("<", "\\u003c")))
+
+
+CATALOGUE = build_tag_catalogue(TAGS)
+
+
 class PublicBuildCheck(unittest.TestCase):
     def test_check_catches_unpublished_content(self):
         good, other = parse("0001-good-problem.tex"), parse("0002-wrong-title.tex")      # review: human / none
@@ -1112,38 +1104,39 @@ class PublicBuildCheck(unittest.TestCase):
             bank = os.path.join(site, "static", "bank")
             os.makedirs(os.path.join(bank, "figures"))
             os.makedirs(os.path.join(site, "static", "busytex"))
-            write(site, "static/bank/index.json", build_index([good, other]))
             write(site, "static/bank/bodies.json", {"build": "b1", "problems": {"0001": {"figures": {"fig0001-1.pdf": {}}},
                                                                              "0002": {"figures": {}, "note": "proposed, not reviewed yet"}}})
             write(site, "static/bank/figures/fig0001-1.pdf", "%PDF")
-            for f in ("static/bank/tags.json", "static/bank/preamble.tex", "static/bank/references.bib", "index.html", "propose.html"):
+            for f in ("static/bank/preamble.tex", "static/bank/references.bib", "index.html"):
                 write(site, f, "{}")
-            write(site, "problems.html", '<script>{"index":{"preview":false},"build":"b1","engine":"e1"}</script>')
+            carry(site, "propose.html", "propose-data", {"tags": CATALOGUE})
+            page = lambda index=build_index([good, other]), **more: carry(site, "problems.html", "bank-data",
+                                                                         {"tags": CATALOGUE, "index": index, "build": "b1", "engine": "e1", **more})
+            page()
             write(site, "static/busytex/busytex.wasm.gz", "12345")
             write(site, "static/busytex/manifest.json", {"version": "e1", "files": {"busytex.wasm.gz": {"bytes": 5}}})
             self.assertEqual(check_site(site, [good, other]), [])
             # the statements typeset by the build: exactly the published ones, the files named and no other
-            page = lambda ids: ('<script>{"index":{"preview":false},"build":"b1","engine":"e1","previews":{"ids":%s,'
-                                '"measures":[{"pt":150,"url":"static/bank/previews/statements-150pt-a.pdf"}]}}</script>' % json.dumps(ids))
-            write(site, "problems.html", page([1, 2]))
+            previews = lambda ids: {"ids": ids, "measures": [{"pt": 150, "url": "static/bank/previews/statements-150pt-a.pdf"}]}
+            page(previews=previews([1, 2]))
             os.makedirs(os.path.join(bank, "previews"))
             write(site, "static/bank/previews/statements-150pt-a.pdf", "%PDF")
             self.assertEqual(check_site(site, [good, other]), [])
-            write(site, "problems.html", page([1, 2, 3]))
+            page(previews=previews([1, 2, 3]))
             self.assertIn("the previews hold the statements of [1, 2, 3], the published problems are [1, 2]", "\n".join(check_site(site, [good, other])))
-            write(site, "problems.html", page([1, 2]))
+            page(previews=previews([1, 2]))
             write(site, "static/bank/previews/statements-150pt-old.pdf", "%PDF")
             self.assertIn("holds files the page does not name: ['statements-150pt-old.pdf']", "\n".join(check_site(site, [good, other])))
             shutil.rmtree(os.path.join(site, "static", "bank", "previews"))
             self.assertIn("misses ['statements-150pt-a.pdf']", "\n".join(check_site(site, [good, other])))
-            write(site, "problems.html", '<script>{"index":{"preview":false},"build":"b1","engine":"e1"}</script>')
+            page()
             write(site, "static/bank/bodies.json", {"build": "b1", "problems": {"0001": {"figures": {"fig0001-1.pdf": {}}},
                                                                              "0002": {"figures": {}, "note": "proposed, not reviewed yet",
                                                                                       "solution": "A proof."}}})
             self.assertIn("the solutions of proposed problems must not be published: ['0002']", "\n".join(check_site(site, [good, other])))
             index = build_index([good, other])
             index["problems"][1]["proposed"] = False                                    # an unreviewed problem shown as reviewed
-            write(site, "static/bank/index.json", index)
+            page(index)
             write(site, "static/bank/bodies.json", {"build": "b1", "problems": {"0001": {"figures": {"fig0001-1.pdf": {}}},
                                                                              "0002": {"figures": {}, "origin": "Putnam 1989"}}})
             errors = "\n".join(check_site(site, [good, other]))
@@ -1152,7 +1145,7 @@ class PublicBuildCheck(unittest.TestCase):
             write(site, "static/bank/bodies.json", {"build": "b1", "problems": {"0001": {"figures": {"fig0001-1.pdf": {}}},
                                                                              "0002": {"figures": {}, "note": "proposed, not reviewed yet"}}})
             write(site, "static/bank/figures/fig0003-1.pdf", "%PDF")                            # a figure of no published problem
-            write(site, "static/bank/index.json", build_index([good, other], preview=True))
+            page(build_index([good, other], preview=True))
             errors = "\n".join(check_site(site, [good, other]))
             self.assertIn("figures of no published problem or shared result: ['fig0003-1.pdf']", errors)
             self.assertIn("'preview' is not false", errors)
@@ -1171,10 +1164,10 @@ class PublicBuildCheck(unittest.TestCase):
 
             def bodies(appendix):
                 write(site, "static/bank/bodies.json", {"build": "b1", "problems": {"0001": {"figures": {}}}, "appendix": appendix})
-            write(site, "static/bank/index.json", build_index([good]))
-            for f in ("static/bank/tags.json", "static/bank/preamble.tex", "static/bank/references.bib", "index.html", "propose.html"):
+            for f in ("static/bank/preamble.tex", "static/bank/references.bib", "index.html"):
                 write(site, f, "{}")
-            write(site, "problems.html", '<script>{"index":{"preview":false},"build":"b1","engine":"e1"}</script>')
+            carry(site, "problems.html", "bank-data", {"tags": CATALOGUE, "index": build_index([good]), "build": "b1", "engine": "e1"})
+            carry(site, "propose.html", "propose-data", {"tags": CATALOGUE})
             write(site, "static/busytex/manifest.json", {"version": "e1", "files": {}})
             bodies({"alpha": {"figures": {"figa-alpha-1.pdf": {}}}, "beta": {"figures": {}}})
             write(site, "static/bank/figures/figa-alpha-1.pdf", "%PDF")

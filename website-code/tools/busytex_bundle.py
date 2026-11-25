@@ -2,7 +2,7 @@
 """Build site/static/busytex/ — the static, pre-compressed BusyTeX bundle the problem-bank page compiles with.
 
     python3 tools/busytex_bundle.py --assets <dir with busytex.js/.wasm + texlive-*.js/.data>
-        [--bodies site/static/bank/bodies.json] [--out site/static/busytex] [--staging .cache/busytex-staging]
+        [--bodies site/static/bank/bodies.json]
 
 Output (all git-ignored build products):
     busytex.js.gz, busytex.wasm.gz      the texlyre-busytex engine (combined binary — no pdftex-only build exists),
@@ -15,7 +15,6 @@ Output (all git-ignored build products):
                                          texmf.cnf and a trimmed pdftex.map
     manifest.json                        sizes + sha256 of everything (cache busting), env, paths
     LICENSE-texlyre-busytex.txt, NOTICE.txt
-The build log (report.json + selected files) is written to <staging>/build-report.json, not deployed.
 The assets are checked against tools/busytex-assets.sha256 first.  Dates are fixed (SOURCE_DATE_EPOCH=0,
 FORCE_SOURCE_DATE=1), so the same sources give the same bundle and the same engine version.
 
@@ -49,6 +48,10 @@ LOCAL_DIRS = ["tex/latex/stmaryrd", "fonts/tfm/public/stmaryrd", "fonts/type1/pu
               "tex/latex/algorithmicx", "tex/latex/algorithms"]
 LOCAL_SKIP_EXT = (".pfm", ".afm", ".txt", ".md", ".pdf", ".dvi", ".mf", ".map")
 ASSET_HASHES = os.path.join(ROOT, "tools", "busytex-assets.sha256")
+OUT_DIR = paths.BUSYTEX_DIR          # site/static/busytex/: the bundle
+# The working folder, not deployed: the recorder documents, the selected TeX Live files, club.fmt, and the build log
+# of the Node half (report.json, files.json, pdf/).
+STAGING_DIR = os.path.join(paths.CACHE_DIR, "busytex-staging")
 NODE_TIMEOUT = 1200                  # seconds for the WASM format build + recorder compiles (about 40 s locally)
 
 INI = r"""% club.ini — precompiled preamble of the Math Olympiad Club at ETHZ problem bank (stitched mode).
@@ -59,8 +62,8 @@ INI = r"""% club.ini — precompiled preamble of the Math Olympiad Club at ETHZ 
 \dump
 """
 
-# Exercises every construct of the LaTeX census so lazily-loaded files (lstlang*, .fd, mt-*.cfg, fonts at odd
-# sizes) are recorded even if no current problem uses them.
+# The census: one document that uses the constructs a problem may use, so lazily-loaded files (lstlang*, .fd,
+# mt-*.cfg, fonts at odd sizes) are recorded even if no current problem uses them.
 CENSUS_DOC = r"""\begin{document}
 \bankproblem{1}{Census test}{Putnam 1989, A3}{0000}
 \bankproblem{2}{Proposed}{}{new}
@@ -241,8 +244,6 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--assets", required=True, help="directory holding busytex.js/.wasm and texlive-*.js/.data")
     ap.add_argument("--bodies", default=os.path.join(paths.BANK_DATA_DIR, "bodies.json"))
-    ap.add_argument("--out", default=paths.BUSYTEX_DIR)
-    ap.add_argument("--staging", default=os.path.join(paths.CACHE_DIR, "busytex-staging"))
     a = ap.parse_args(argv)
     t0 = time.time()
     log = lambda *a: print(*a, flush=True)
@@ -261,12 +262,12 @@ def main(argv=None):
     fig_dir = os.path.join(os.path.dirname(a.bodies), "figures")
     ids = sorted(int(k) for k in bodies)
 
-    if os.path.exists(a.staging):
-        shutil.rmtree(a.staging)
-    os.makedirs(a.staging)
+    if os.path.exists(STAGING_DIR):
+        shutil.rmtree(STAGING_DIR)
+    os.makedirs(STAGING_DIR)
     docs = []
     for variant in ("problems", "solutions"):
-        tex = stitch.make_main(bodies, ids, variant, filters="all problems", appendix=appendix)
+        tex = stitch.make_main(bodies, ids, variant, appendix=appendix)
         files = {os.path.basename(m): os.path.join(fig_dir, os.path.basename(m))
                  for m in re.findall(r"\\includegraphics(?:\[[^\]]*\])?\{([^}]+)\}", tex)}
         docs.append((f"all_{variant}", tex, files))
@@ -274,26 +275,26 @@ def main(argv=None):
     log(f"{len(ids)} problems; documents: {', '.join(d[0] for d in docs)}")
 
     log("harvesting bbm PK bitmaps with the local pdflatex …")
-    pk = harvest_pk(docs, a.staging, log)
+    pk = harvest_pk(docs, STAGING_DIR, log)
 
     texmf = local_texmf()
     job = {
         "assetsDir": os.path.abspath(a.assets), "dataPackages": DATA_PACKAGES,
         "localTexmf": texmf, "localFiles": local_files(texmf), "extraFiles": pk,
         "localPdftexMap": subprocess.check_output(["kpsewhich", "pdftex.map"], text=True).strip(),
-        "preamble": paths.PREAMBLE_FILE, "ini": INI, "docs": [], "out": a.staging,
+        "preamble": paths.PREAMBLE_FILE, "ini": INI, "docs": [], "out": STAGING_DIR,
     }
     for name, tex, files in docs:
-        p = os.path.join(a.staging, name + ".tex")
+        p = os.path.join(STAGING_DIR, name + ".tex")
         with open(p, "w", encoding="utf-8") as f:
             f.write(tex)
         job["docs"].append({"name": name, "tex": p, "files": files})
-    job_path = os.path.join(a.staging, "job.json")
+    job_path = os.path.join(STAGING_DIR, "job.json")
     with open(job_path, "w") as f:
         json.dump(job, f, indent=1)
     log("running the WASM engine (format build + recorder compiles) …")
     subprocess.run(["node", os.path.join(ROOT, "tools", "busytex_bundle_node.cjs"), job_path], check=True, timeout=NODE_TIMEOUT)
-    with open(os.path.join(a.staging, "report.json")) as f:
+    with open(os.path.join(STAGING_DIR, "report.json")) as f:
         report = json.load(f)
     failed = [d for d in report["docs"] if d["exit"] != 0]
     if failed:
@@ -303,7 +304,7 @@ def main(argv=None):
         return 1
 
     # ---- assemble the data package -----------------------------------------------------------------
-    tree = os.path.join(a.staging, "texmf-dist")
+    tree = os.path.join(STAGING_DIR, "texmf-dist")
     rel_paths = sorted(os.path.relpath(os.path.join(dp, f), tree) for dp, _, fs in os.walk(tree) for f in fs)
     with open(os.path.join(tree, "ls-R"), "w") as f:
         f.write(ls_r(rel_paths + ["ls-R"]))
@@ -318,8 +319,8 @@ def main(argv=None):
     blob = bytes(blob)
     meta = {"files": index}
 
-    os.makedirs(a.out, exist_ok=True)
-    for stale in glob.glob(os.path.join(a.out, "*")):
+    os.makedirs(OUT_DIR, exist_ok=True)
+    for stale in glob.glob(os.path.join(OUT_DIR, "*")):
         os.remove(stale)
     manifest = {"files": {}, "env": {
         "TEXMFDIST": "/texlive/texmf-dist", "TEXMFVAR": "/texlive/texmf-dist/texmf-var", "TEXMFCACHE": "/texlive/texmf-dist/texmf-var",
@@ -328,12 +329,11 @@ def main(argv=None):
         "fmt_path": "/texlive/texmf-dist/texmf-var/web2c/pdftex/club.fmt",
         "pdftex_args": ["pdflatex", "-interaction=nonstopmode", "-halt-on-error", "--fmt", "/texlive/texmf-dist/texmf-var/web2c/pdftex/club.fmt", "main.tex"],
         "rerun_patterns": ["Rerun to get", "Label(s) may have changed", "rerunfilecheck", "run LaTeX again"]}
-    build_report = {"report": report}
 
     def emit(name, data, compress=True):
         out_name = name + (".gz" if compress else "")
         payload = gz(data) if compress else data
-        with open(os.path.join(a.out, out_name), "wb") as f:
+        with open(os.path.join(OUT_DIR, out_name), "wb") as f:
             f.write(payload)
         manifest["files"][out_name] = {"bytes": len(payload), "raw_bytes": len(data), "sha256": sha256(data)}
         log(f"  {out_name:24s} {len(payload):>12,d} bytes" + (f"  (raw {len(data):,d})" if compress else ""))
@@ -343,7 +343,7 @@ def main(argv=None):
         emit("busytex.js", f.read())
     with open(os.path.join(a.assets, "busytex.wasm"), "rb") as f:
         emit("busytex.wasm", blank_unused_icu(f.read()))
-    with open(os.path.join(a.staging, "club.fmt"), "rb") as f:
+    with open(os.path.join(STAGING_DIR, "club.fmt"), "rb") as f:
         fmt = f.read()
     # pdfTeX gzips its format, which then compresses badly a second time and is inflated again at each LaTeX pass: unpacked,
     # the download is smaller and each pass faster
@@ -351,8 +351,6 @@ def main(argv=None):
     emit("club-texlive.data", blob)
     emit("club-texlive.json", json.dumps(meta, separators=(",", ":")).encode(), compress=False)
     manifest["data"] = {"files": len(index), "raw_bytes": len(blob)}
-    with open(os.path.join(a.staging, "files.json")) as f:
-        build_report["selection"] = json.load(f)
     versions = os.path.join(a.assets, "versions.txt")
     if os.path.exists(versions):
         with open(versions) as f:
@@ -360,17 +358,15 @@ def main(argv=None):
     manifest["version"] = sha256("".join(v["sha256"] for k, v in sorted(manifest["files"].items())).encode())[:16]
     with open(paths.PREAMBLE_FILE, "rb") as f:          # build.py rebuilds the bundle when preamble.tex changed
         manifest["preamble_sha256"] = sha256(f.read())
-    with open(os.path.join(a.out, "manifest.json"), "w") as f:
+    with open(os.path.join(OUT_DIR, "manifest.json"), "w") as f:
         json.dump(manifest, f, indent=1)
-    with open(os.path.join(a.staging, "build-report.json"), "w") as f:      # local paths inside: not deployed
-        json.dump(build_report, f, indent=1)
     # the release assets carry no licence file: the copy kept beside this tool is the one that ships
-    shutil.copy(os.path.join(ROOT, "tools", "LICENSE-texlyre-busytex.txt"), os.path.join(a.out, "LICENSE-texlyre-busytex.txt"))
+    shutil.copy(os.path.join(ROOT, "tools", "LICENSE-texlyre-busytex.txt"), os.path.join(OUT_DIR, "LICENSE-texlyre-busytex.txt"))
     try:        # the TeX Live of the machine that builds this bundle (CI's, for the deployed one)
         local_tl = re.search(r"TeX Live \d{4}", subprocess.run(["pdflatex", "--version"], capture_output=True, text=True, timeout=60).stdout).group(0)
     except Exception:
         local_tl = "TeX Live"
-    with open(os.path.join(a.out, "NOTICE.txt"), "w") as f:
+    with open(os.path.join(OUT_DIR, "NOTICE.txt"), "w") as f:
         # what the "licences" link of the Problems and Propose pages opens: the AGPL's Appropriate Legal Notices
         f.write("The PDFs of this site are made in your browser by pdfTeX, through TeXlyre-BusyTeX. Nothing is uploaded.\n\n"
                 "TeXlyre-BusyTeX (busytex.js, busytex.wasm: pdfTeX, XeTeX, LuaTeX, bibtex8, makeindex and kpathsea compiled\n"
@@ -389,12 +385,13 @@ def main(argv=None):
                 "Also in this folder: a trimmed subset of the TeX Live tree (club-texlive.data, GPL or LPPL per file), with\n"
                 f"stmaryrd, bbm, algorithmicx and algorithms from the build's own {local_tl}, and bbm PK bitmaps generated by METAFONT.\n"
                 "club.fmt is a pdfTeX format built from the club's preamble.tex. See manifest.json.\n\n"
-                "PDF.js (the folder ../pdfjs/) draws the preview of a problem on the Problems page.\n"
+                "PDF.js (the folder ../pdfjs/) draws the preview of a problem on the Problems page and the sheet of the\n"
+                "Propose page.\n"
                 "Copyright the Mozilla Foundation and the PDF.js contributors, under the Apache License, version 2.0:\n"
                 "../pdfjs/LICENSE. Source code: https://github.com/mozilla/pdf.js\n")
     total = sum(v["bytes"] for v in manifest["files"].values())
-    log(f"total first download {total:,d} bytes ({total / 1e6:.2f} MB) in {time.time() - t0:.0f} s → {a.out}")
-    shutil.rmtree(os.path.join(a.staging, "texmfvar"), ignore_errors=True)
+    log(f"total first download {total:,d} bytes ({total / 1e6:.2f} MB) in {time.time() - t0:.0f} s → {OUT_DIR}")
+    shutil.rmtree(os.path.join(STAGING_DIR, "texmfvar"), ignore_errors=True)
     return 0
 
 

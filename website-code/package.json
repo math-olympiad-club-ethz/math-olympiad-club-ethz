@@ -1,23 +1,20 @@
 {
-  "name": "math-olympiad-club-zurich",
+  "name": "math-olympiad-club-ethz",
   "version": "1.0.0",
-  "description": "Website and problem bank of the Math Olympiad Club at ETH Zurich, hosted on GitHub Pages.",
+  "description": "Website and problem bank of the Math Olympiad Club at ETHZ, hosted on GitHub Pages.",
   "scripts": {
-    "build": "python3 build.py",
     "build:preview": "python3 build.py --preview --no-compile --no-bundle",
-    "serve": "python3 -m http.server 8000 --directory site",
     "test": "npm run build:preview && npm run test:unit && npm run test:python && npm run test:e2e",
     "test:unit": "node --test tests/unit/*.test.mjs",
     "test:python": "python3 -m unittest discover -s tests/python",
-    "test:e2e": "node tests/e2e/bank.mjs && node tests/e2e/propose.mjs && node tests/e2e/phone-and-chrome.mjs && node tests/e2e/pinch.mjs && node tests/e2e/perf.mjs",
-    "test:perf": "node tests/e2e/perf.mjs"
+    "test:e2e": "node tests/e2e/bank.mjs && node tests/e2e/propose.mjs && node tests/e2e/phone-and-chrome.mjs && node tests/e2e/pinch.mjs && node tests/e2e/perf.mjs"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/math-olympiad-club-ethz/math-olympiad-club-ethz.git"
   },
   "keywords": [],
-  "author": "Math Olympiad Club at ETH Zurich",
+  "author": "Math Olympiad Club at ETHZ",
   "license": "UNLICENSED",
   "bugs": {
     "url": "https://github.com/math-olympiad-club-ethz/math-olympiad-club-ethz/issues"

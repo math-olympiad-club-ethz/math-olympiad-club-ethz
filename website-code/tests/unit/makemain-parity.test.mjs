@@ -11,25 +11,25 @@ import { appendixOrder, makeMain, makePreview, originLine, pickPreview, texUrl }
 const ROOT = new URL('../../', import.meta.url).pathname;
 const BODIES = ROOT + 'site/static/bank/bodies.json';
 
-test('JS makeMain == Python make_main on the built bodies (problems / solutions / methods / filters)', (t) => {
+test('JS makeMain == Python make_main on the built bodies (problems / solutions / methods / figures / any order)', (t) => {
   if (!existsSync(BODIES)) { t.skip('site/static/bank/bodies.json not built'); return; }
   const bodies = JSON.parse(readFileSync(BODIES, 'utf8')).problems;
   const all = Object.keys(bodies).map(Number).sort((a, b) => a - b);
   const cases = [
-    { ids: all.slice(0, 5), variant: 'problems', filters: '', showMethods: false },
-    { ids: all.slice(0, 5), variant: 'solutions', filters: 'Area: Analysis & Algebra (any of) · IDs 1–20', showMethods: false },
-    { ids: all, variant: 'solutions', filters: '', showMethods: true },
-    { ids: all.filter(i => Object.keys(bodies[String(i).padStart(4, '0')].figures || {}).length), variant: 'solutions', filters: 'figures', showMethods: true },
-    { ids: [...all.slice(0, 12)].reverse().concat(all.slice(20, 23)), variant: 'solutions', filters: 'hand-made order', showMethods: false },   // any order, kept as given
+    { ids: all.slice(0, 5), variant: 'problems', showMethods: false },
+    { ids: all.slice(0, 5), variant: 'solutions', showMethods: false },
+    { ids: all, variant: 'solutions', showMethods: true },
+    { ids: all.filter(i => Object.keys(bodies[String(i).padStart(4, '0')].figures || {}).length), variant: 'solutions', showMethods: true },   // figures
+    { ids: [...all.slice(0, 12)].reverse().concat(all.slice(20, 23)), variant: 'solutions', showMethods: false },   // any order, kept as given
   ];
   const appendix = JSON.parse(readFileSync(BODIES, 'utf8')).appendix || {};
   for (const c of cases) {
     if (!c.ids.length) continue;
-    const args = ['-m', 'bank.stitch', 'main', '--bodies', BODIES, '--ids', c.ids.join(','), '--variant', c.variant, '--filters', c.filters];
+    const args = ['-m', 'bank.stitch', 'main', '--bodies', BODIES, '--ids', c.ids.join(','), '--variant', c.variant];
     if (c.showMethods) args.push('--show-methods');
     const py = spawnSync('python3', args, { cwd: ROOT, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
     assert.equal(py.status, 0, py.stderr);
-    const js = makeMain(bodies, c.ids, c.variant, { filters: c.filters, showMethods: c.showMethods, appendix });
+    const js = makeMain(bodies, c.ids, c.variant, { showMethods: c.showMethods, appendix });
     assert.equal(js, py.stdout, `mismatch for ${JSON.stringify({ ...c, ids: c.ids.length })}`);
   }
 });

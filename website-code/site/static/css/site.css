@@ -36,7 +36,7 @@
   size-adjust: 87.49%; ascent-override: 94.53%; descent-override: 26.63%; line-gap-override: 0%; }
 
 /* ===================== tokens ===================== */
-/* Contrast on --bg: ink 14.0:1 (dark 14.7), ink-dim 6.4 (7.1), accent-text 4.8 (14.0), danger 6.0 (8.6), ok 5.6 (10.9).
+/* Contrast on --bg: ink 14.0:1 (dark 14.7), ink-dim 6.4 (7.1), accent-text 5.0 (14.0), danger 6.0 (8.6), ok 5.6 (10.9).
    --accent is only for large text, dots and lines (4.5:1 in light mode); --ink-faint, --edge, --chip-line and
    --accent-dim are for lines only, never for text. */
 :root {
@@ -151,7 +151,7 @@ body::before {
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 p, ul, ol, dl, dd, h1, h2, pre { margin: 0; }
 ul, ol { padding: 0; }
-button, input, select, textarea { font: inherit; letter-spacing: inherit; color: inherit; }
+button, input, textarea { font: inherit; letter-spacing: inherit; color: inherit; }
 strong { font-weight: 700; }
 
 a { color: inherit; text-decoration: underline solid var(--accent) 1px; text-underline-offset: .2em; }
@@ -177,8 +177,8 @@ code { font-size: .86em; color: var(--accent-text); overflow-wrap: anywhere; }
 main { flex: 1 0 auto; padding-top: calc(var(--head-h) + var(--u) * 5); padding-bottom: calc(var(--u) * 7); }
 @media (max-width: 40rem) { main { padding-top: calc(var(--head-h) + var(--u) * 4); padding-bottom: calc(var(--u) * 5); } }
 /* a pinch on a trackpad magnifies .page and leaves the header alone (site.js). A transform does it; so that it stays
-   sharp, a magnified page is also laid out twice as big (.is-laid, with a zoom and a width in px set by site.js), and
-   the transform brings that to the size asked for. Laid out bigger, the page leaves the flow: the room to scroll in is
+   sharp, in Safari a magnified page is also laid out bigger, at the whole number at or above the zoom (.is-laid, with a
+   zoom and a width in px set by site.js), and the transform brings that to the size asked for. Laid out bigger, the page leaves the flow: the room to scroll in is
    then the room of what is shown. The page scrolls both ways, and what sticks stops sticking: position: sticky does not
    count a parent's transform. */
 .page { position: relative; z-index: 1; flex: 1 0 auto; display: flex; flex-direction: column; transform-origin: 0 0; }
@@ -191,7 +191,7 @@ main { flex: 1 0 auto; padding-top: calc(var(--head-h) + var(--u) * 5); padding-
 .is-zoomed .bank-row { content-visibility: visible; }      /* a row's estimated height would move the rows below at each new layout */
 .is-laid .tt-panel { overflow-anchor: none; }               /* Safari's scroll anchoring corrects by the wrong amount under a zoom */
 
-/* a dot on the line, level with the middle of the x-height of the element's first line (the first one lit).
+/* a dot on the line, level with the middle of the x-height of the element's first line.
    Computer Modern Serif: ascent .935 em, descent .25 em, x-height .431 em. */
 .node { position: relative; }
 .node::before {
@@ -331,14 +331,12 @@ h1 .l { display: block; }
 .text-danger, .text-danger-emphasis { color: var(--danger) !important; }
 .text-success, .text-success-emphasis { color: var(--ok) !important; }
 .text-warning { color: var(--accent-text) !important; }
-.fw-normal { font-weight: 400 !important; }
 .d-flex { display: flex; }
 .d-block { display: block; }
 .flex-wrap { flex-wrap: wrap; }
 .flex-grow-1 { flex-grow: 1; }
 .align-items-center { align-items: center; }
 .align-self-center { align-self: center; }
-.align-baseline { vertical-align: baseline; }
 .gap-2 { gap: 8px 10px; }
 .m-0 { margin: 0 !important; }
 .mb-0 { margin-bottom: 0 !important; }
@@ -347,8 +345,6 @@ h1 .l { display: block; }
 .mt-1 { margin-top: 4px !important; }
 .mt-4 { margin-top: calc(var(--u) * 2) !important; }
 .my-4 { margin-top: calc(var(--u) * 2) !important; margin-bottom: calc(var(--u) * 2) !important; }
-.ms-2 { margin-left: 8px; }
-.p-0 { padding: 0 !important; }
 
 /* ===================== buttons ===================== */
 .btn {
@@ -378,7 +374,6 @@ h1 .l { display: block; }
 
 /* ===================== forms ===================== */
 .form-label { display: block; margin-bottom: 6px; font-size: var(--fs-sm); line-height: var(--lh-sm); color: var(--ink-dim); }
-.form-label .small { font-size: inherit; line-height: inherit; }
 .form-text { margin-top: 4px; font-size: 15px; line-height: 22px; color: var(--ink-dim); }
 /* a field: a faint wash over one rule, like writing on a form; on focus the rule turns amber and doubles */
 .form-control {
@@ -429,12 +424,10 @@ input[type="checkbox"]:indeterminate::before { width: 10px; height: 0; border-le
 .bank-out-x::before { content: "×"; }
 .bank-out-x::after { content: ""; position: absolute; inset: -10px -8px; }      /* room for a finger */
 @media (hover: hover) { .bank-out-x:hover { color: var(--accent-text); } }
-.card-body { padding: 0; }
 .alert { margin: 0 0 var(--u); padding: 8px 14px; border-left: 2px solid var(--ink-dim); background: var(--wash); color: var(--ink); }
 .alert-danger { border-left-color: var(--danger); }
 .alert-danger strong { color: var(--danger); }
 .alert-warning { border-left-color: var(--accent); }
-.alert-link { color: inherit; }
 .list-group { list-style: none; margin: 0; padding: 0; }
 .list-group-item { border-bottom: 1px solid var(--edge); }
 
@@ -586,7 +579,6 @@ html[data-list]:not([data-ready]) .bank { min-height: 100vh; }     /* a link tha
 .bank-range-input:focus-visible::-moz-range-thumb { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* the rows: a tick box, the title (which opens the statement under it, and closes it), the tags */
-.bank-results { list-style: none; margin: 0; padding: 0; }
 .bank-row {
   /* its own box reaches a little to the left (--reach), so that the mark of a tick and the focus rings stay inside it:
      its paint is contained.  A row off screen is neither laid out nor painted, so a list of a hundred rows costs what
@@ -594,7 +586,7 @@ html[data-list]:not([data-ready]) .bank { min-height: 100vh; }     /* a link tha
   --reach: 16px;
   position: relative; display: grid; grid-template-columns: 18px minmax(0, 1fr); column-gap: 18px; row-gap: 6px; align-items: start;
   padding: var(--u) 0 var(--u) var(--reach); margin-left: calc(-1 * var(--reach));
-  border-bottom: 0; background: linear-gradient(var(--edge), var(--edge)) right bottom / calc(100% - var(--reach)) 1px no-repeat;
+  background: linear-gradient(var(--edge), var(--edge)) right bottom / calc(100% - var(--reach)) 1px no-repeat;
   content-visibility: auto; contain-intrinsic-size: auto 132px;
 }
 @media (max-width: 52rem) { .bank-row { --reach: calc(var(--off) + 2px); } }      /* a phone: it reaches the line of the page */
@@ -744,7 +736,6 @@ html[data-list]:not([data-ready]) .bank { min-height: 100vh; }     /* a link tha
 .bank-sheet .textLayer br::selection { background: transparent; }
 @media (max-width: 40rem) {
   .bank-row { column-gap: 14px; }
-  .bank-row-tags { grid-column: 2 / -1; }
 }
 
 /* PDF order */
@@ -802,7 +793,7 @@ textarea.pp-grow { resize: none; overflow-y: hidden; }          /* it grows with
 textarea.pp-grow.is-full { overflow-y: auto; }
 .pp-field-error { margin-top: 8px; padding: 6px 0 6px 12px; border-left: 2px solid var(--danger); color: var(--danger); font-size: var(--fs-note); line-height: var(--lh-note); overflow-wrap: anywhere; }
 .pp-field-error code { color: var(--ink); white-space: pre-wrap; }
-/* the three lines that open in place: + and the words, what they hold after them */
+/* the four lines that open in place: + and the words, what they hold after them */
 .pp-part { margin-top: 10px; }
 .pp-field-error + .pp-part { margin-top: 14px; }          /* the first line under the statement */
 .pp-add { display: flex; align-items: baseline; width: 100%; padding: 5px 0; border: 0; background: none; color: var(--ink); font-size: var(--fs-sm); line-height: var(--lh-sm); text-align: left; cursor: pointer; }
@@ -835,7 +826,7 @@ textarea.pp-grow.is-full { overflow-y: auto; }
 .pp-label-row { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
 .pp-help-btn { padding: 0; font-size: var(--fs-xs); }
 .pp-note { font-family: var(--serif); font-size: var(--fs-note); line-height: var(--lh-note); }
-/* the trees' own lines: "New topic here" (a dashed node), a topic named anew (dashed, marked new, its ×), a group of methods */
+/* the trees' own lines: "New topic here" (a dashed node), a topic named anew (dashed, marked new, its ×) */
 .tt-add > .tt-row > .tt-dot { background: none; border: 1.5px dashed var(--c); }
 .tt-add-btn { padding: 1px 3px 0; border: 0; background: none; color: var(--ink-dim); font: inherit; text-align: left; cursor: pointer;
   text-decoration: underline dotted var(--ink-faint) 1px; text-underline-offset: .25em; }
@@ -846,7 +837,6 @@ textarea.pp-grow.is-full { overflow-y: auto; }
 .tt-new .tt-name { border: 1px dashed var(--c); box-shadow: none; cursor: default; }
 .tt-new-mark { color: var(--ink-dim); }
 .tt-new-x { padding: 0 6px; border: 0; background: none; color: var(--accent-text); font: inherit; cursor: pointer; }
-.tt-group { color: var(--ink); }
 /* a choice among a few words (difficulty): one or none */
 .pp-choices { display: flex; flex-wrap: wrap; gap: 8px; }
 .pp-choices:focus { outline: none; }
@@ -873,7 +863,7 @@ textarea.pp-grow.is-full { overflow-y: auto; }
 .pp-details > summary::-webkit-details-marker { display: none; }
 .pp-details-hint { margin-left: 1.4ch; color: var(--ink-dim); font-size: var(--fs-xs); }
 .pp-details-body { display: grid; gap: 20px; padding: 12px 0 6px 2ch; }
-.pp-field { min-width: 0; margin: 0; padding: 0; border: 0; }
+.pp-field { min-width: 0; }
 /* send */
 .pp-send { padding-top: 6px; }
 .pp-send-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
@@ -886,7 +876,7 @@ textarea.pp-grow.is-full { overflow-y: auto; }
   width: min(58rem, calc(100vw - 2rem)); max-height: calc(100vh - 3rem); max-height: calc(100dvh - 3rem); padding: 16px 20px; overscroll-behavior: contain;
   color: var(--ink); background: var(--bg); border: 1px solid var(--chip-line);
 }
-.pp-dialog[open] { display: flex; flex-direction: column; }     /* one scroller inside: the preamble */
+.pp-dialog[open] { display: flex; flex-direction: column; }     /* one scroller inside: .pp-help */
 .pp-dialog { zoom: calc(1 / var(--page-zoom, 1)); }             /* over a page laid out bigger (site.js) it keeps its size, and fits the window */
 .pp-dialog::backdrop { background: var(--backdrop); }
 .pp-confirm { width: min(27rem, calc(100vw - 2rem)); padding: 20px 22px 18px; }     /* a question: small, on the page's own paper */
@@ -965,6 +955,7 @@ a, button, input, label, summary, .bank-option, .bank-chip-clickable { touch-act
   [data-theme="dark"] .club-logo { background-image: url("../images/club_logo_light_176.webp?v=2"); }
   .item, .team > div, .bank-row { break-inside: avoid; }
   .bank-row { content-visibility: visible; margin-left: 0; padding-left: 0; background: none; border-bottom: 1px solid var(--edge); }
+  [data-theme="dark"] :is(.bank-sheet, .pp-pages) canvas { filter: none; opacity: 1; }   /* the pages as drawn: inverted, they would print white on white */
 }
 
 /* ===================== motion: colour only ===================== */

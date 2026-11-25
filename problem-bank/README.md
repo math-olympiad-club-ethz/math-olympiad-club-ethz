@@ -23,7 +23,7 @@ inspiration/                    ← personal reference material, git-ignored
 
 ## Add a problem
 
-**From the website (no git):** **Propose a problem**, in the site's header. Write the statement (and, if you have one, the solution), say what it is about, check the sheet that typesets it, then **Send to the club**: the share menu opens with the PDF, `new-<title>.tex` and the proposer's note (.txt); a click on Mail gives the email with them attached and one line, "Problem: <title>", and the address olympiadclub@math.ethz.ch is copied to paste in To. Without a share menu (Firefox) the files are saved and the mail app opens. Whoever reads it adds the .tex to `problems/` (by hand, as below, or with GitHub's *Add file*); the numbering Action does the rest.
+**From the website (no git):** **Propose a problem**, in the site's header, then **Send to the club** (what the page asks for and what it sends: [`../README.md`](../README.md#add-or-improve-a-problem-no-git-needed), "Add or improve a problem"); whoever reads the email adds the .tex to `problems/` (by hand, as below, or with GitHub's *Add file*), and the numbering Action does the rest.
 
 **By hand:**
 
@@ -68,7 +68,7 @@ A result that several solutions use (a theorem with its proof: Cauchy's theorem,
 - `review: human` publishes the problem on the website as reviewed; without it, the problem is listed as "proposed", only once the visitor turns on "Show the proposed problems" (the Proposed filter of the Problems page), with its statement but not its solution (the solution stays in the file; the site prints "This solution is not published yet").
 - Two independent fields say who checked what:
   - `review` — the problem itself (statement, solution, tags): `none` nobody yet, `ai` a tool looked at it, `human` the club accepted it → published.
-  - `history` — only the history fields (`origin`, `origin-date`, `origin-number`, `also-in`, `references`): `none` nobody looked, `ai` filled by an AI pass from sources it found (what it changed and how sure it was: [`history-review.md`](history-review.md)), `human` checked by a person against the source. `history` never decides whether a problem is published.
+  - `history` — only the history fields (`origin`, `origin-date`, `origin-number`, `also-in`, `references`): `none` nobody looked, `ai` filled by an AI pass from sources it found (for 0001-0080, what it changed and how sure it was: [`history-review.md`](history-review.md)), `human` checked by a person against the source. `history` never decides whether a problem is published.
   - The history fields record the earliest source known to us, never a final truth: when an earlier source turns up, they change. For that reason every `references` field starts with "Earliest known appearance (to the best of our knowledge):" ("none found." when no source of the problem is known).
   - What the website shows of them: under a statement and in a PDF heading, the source by name, as a link to where it can be read (`../website-code/bank/sources.py`). The `references` line itself is never shown: it is our research record, with answers, working remarks and every page opened. The site reads two things in it:
     - **The link**: the first address of the line. Write the source first, then ` - ` and the page where it can be read (the official paper, the DOI, a scan). Copies of books put online without their publisher are not linked (`NOT_LINKED` in `sources.py`).
@@ -79,5 +79,5 @@ A result that several solutions use (a theorem with its proof: Cauchy's theorem,
 - Statements and solutions are written by humans. Tools may only fill header fields. (Exception, decided by Antoine on 2026-09-29: statements, and solutions when he asks for them, may be written by AI; such files say so in a `% AI-WRITTEN, NEEDS HUMAN REVIEW` comment under the header and keep `review: none` until a person has checked them. A shared result has no header: the comment is at the top of its file, and the result is checked before any problem citing it gets `review: human`.)
 - IDs are sequential integers without meaning, given automatically after the merge; they never change and are never reused.
 - Every header field except `area` may be empty; an empty field never breaks anything.
-- Only `review: human` problems appear on the website as reviewed (the others only as "proposed", behind a switch, statement only). The repository itself is public: every file here (unreviewed problems and their solutions, `known-errors.md`, `history-review.md`) can be read on GitHub, and stays in the history.
+- The repository is public: every file here (unreviewed problems and their solutions, `known-errors.md`, `history-review.md`) can be read on GitHub, and stays in the history, whatever the website shows of a problem (see "Improve a problem, review").
 - The ID never appears on the website (list, search, PDFs); it only names the file.

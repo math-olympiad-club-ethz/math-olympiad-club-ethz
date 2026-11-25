@@ -1,7 +1,7 @@
 /* fonts.css: the site's two web fonts, Computer Modern Serif and Typewriter.  A file of its own, put to use by site.js
    once the page has been painted: Safari paints nothing until the web fonts it has been told about have arrived (1.4 s on
    a slow phone line, measured), while the fallbacks of site.css take the same room, so the swap moves nothing.  On the
-   next pages of a visit site.js puts it to use at once (the fonts come from the cache).  base.html fetches it early.
+   next pages of a visit site.js puts it to use at once (the fonts come from the cache).  base.html fetches it early. */
 
 /* Each weight (the serif's regular and bold, the typewriter's regular: it is never bold) comes in two files: the basic
    Latin every page uses, with the few other letters the site's own text shows (ě ă ț φ σ τ), and the rest (accents,

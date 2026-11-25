@@ -176,11 +176,11 @@ def without_bibentries(body):
 DATE_RE = re.compile(r"([0-9]{4})(?:-([0-9]{2})(?:-([0-9]{2}))?)?")
 
 
-def _valid_date(s, allow_partial=False):
-    """YYYY-MM-DD (or YYYY / YYYY-MM with allow_partial): ASCII digits and a real calendar date, year 0001 or later.
+def _valid_date(s):
+    """YYYY, YYYY-MM or YYYY-MM-DD: ASCII digits and a real calendar date, year 0001 or later.
     One explicit grammar, so the answer does not depend on the Python version.  Mirrored in bank-propose.js::validDate."""
     m = DATE_RE.fullmatch(s)
-    if not m or (not allow_partial and m.group(3) is None):
+    if not m:
         return False
     try:
         datetime.date(int(m.group(1)), int(m.group(2) or 1), int(m.group(3) or 1))
@@ -308,7 +308,7 @@ def validate(p, tags, bib_keys=None, appendix=None):
         v = p["header"].get(k, "").strip()
         if v not in allowed:
             e.append((line(k), f"'{k}' must be one of {sorted(x for x in allowed if x)} or empty, got '{v}'"))
-    if p["origin_date"] and not _valid_date(p["origin_date"], allow_partial=True):
+    if p["origin_date"] and not _valid_date(p["origin_date"]):
         e.append((line("origin-date"), f"'origin-date' must be YYYY, YYYY-MM or YYYY-MM-DD, got '{p['origin_date']}'"))
     if p["origin"] and p["origin"] not in tags["origin"]:
         e.append((line("origin"), f"unknown origin '{p['origin']}' (add it to tags.yml or fix the spelling)"))
@@ -478,7 +478,7 @@ LOCAL_LEFTOVERS = (".pdf", ".synctex.gz", ".synctex(busy)", ".aux", ".log", ".ou
 def stray_files(problems_dir):
     """(path, line, message) for every entry of problems/ that is neither a problem file nor a helper.  load_problems
     reads only *.tex, so a file whose extension was forgotten or mistyped (new-foo, 0081-x.TEX) would otherwise be
-    skipped silently, and a latexmkrc there would run on the maintainer's machine at the next preview."""
+    skipped silently."""
     out = []
     for f in sorted(os.listdir(problems_dir)):
         path = os.path.join(problems_dir, f)

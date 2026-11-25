@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 
 {% block head %}
-{% set v = ('?v=' ~ asset_version) if asset_version else '' %}{# one version per build: see bank-ui.js #}
     <!-- the page's modules start downloading with the page, not after its data -->
     <link rel="modulepreload" href="{{ url_for('static', filename='js/bank-ui.js') }}{{ v }}">
     <link rel="modulepreload" href="{{ url_for('static', filename='js/bank-search.js') }}{{ v }}">
@@ -11,7 +10,6 @@
 {% endblock %}
 
 {% block content %}
-{% set v = ('?v=' ~ asset_version) if asset_version else '' %}
 <div class="bank">
   <div class="bank-head">
     <h1 class="node lit">Problems</h1>
@@ -44,14 +42,14 @@
     </div>
     <div id="bank-menu" class="bank-menu" role="group" hidden></div>
   </div>
-  <div id="bank-status" class="bank-status small text-muted" aria-live="off"></div>
+  <div id="bank-status" class="bank-status text-muted" aria-live="off"></div>
   <div id="bank-announce" class="visually-hidden" role="status" aria-live="polite"></div>
 
   <!-- order of the ticked problems in the PDF: automatic, or dragged by hand (kept in the URL) -->
   <section id="bank-order" class="card bank-order" hidden aria-labelledby="bank-order-title">
-    <div class="card-body">
+    <div>
       <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
-        <strong id="bank-order-title" class="card-header m-0">Order in the PDF</strong>
+        <strong id="bank-order-title">Order in the PDF</strong>
         <span id="bank-order-mode" class="small text-muted"></span>
         <span class="flex-grow-1"></span>
         <button id="bank-order-reset" type="button" class="btn btn-sm">Back to automatic order</button>
@@ -95,11 +93,11 @@
   <section id="bank-output" class="bank-output mt-4" hidden aria-label="Generated PDFs">
     <div id="bank-out-problems" class="card" hidden>
       <div class="card-header bank-out-head" tabindex="-1">Problem set<button type="button" class="bank-out-x" data-clear="problems" aria-label="Clear the problem set" hidden></button></div>
-      <div class="card-body bank-out-body"></div>
+      <div class="bank-out-body"></div>
     </div>
     <div id="bank-out-solutions" class="card" hidden>
       <div class="card-header bank-out-head" tabindex="-1">Problem set with solutions<button type="button" class="bank-out-x" data-clear="solutions" aria-label="Clear the problem set with solutions" hidden></button></div>
-      <div class="card-body bank-out-body"></div>
+      <div class="bank-out-body"></div>
     </div>
     <p class="legal"><a href="{{ url_for('static', filename='busytex/NOTICE.txt') }}" target="_blank" rel="noopener">licences</a></p>
   </section>

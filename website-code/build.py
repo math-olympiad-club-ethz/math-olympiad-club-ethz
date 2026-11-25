@@ -3,11 +3,11 @@
 Static site generator for the Math Olympiad Club at ETHZ website and problem bank.
 
     python3 build.py                 # full build: validate + compile every problem, site data, bundle, HTML
-    python3 build.py --preview       # include unreviewed problems (with a review badge) — local review
+    python3 build.py --preview       # show everything as a reviewer sees it: no problem marked proposed, solutions
+                                     # unmasked, review badges, new-*.tex under their provisional number
     python3 build.py --no-compile    # skip the per-problem pdflatex proofs (fast local iteration)
     python3 build.py --no-bundle     # skip the in-browser engine bundle (site/static/busytex/ kept as is; built if
                                      # missing or made from an older preamble.tex)
-    python3 build.py --assets DIR    # texlyre-busytex assets (default .cache/busytex-assets/busytex; downloaded if absent)
 
 Steps (any failure stops the build — nothing deploys):
   1. tags.yml is loaded and checked.
@@ -17,18 +17,22 @@ Steps (any failure stops the build — nothing deploys):
   3. every problem is compiled standalone with pdflatex, with and without its solution (the solution with the shared
      results it cites), and every shared result on its own (successes are remembered in .cache/proofs/ by a hash of
      everything that goes in, so an unchanged problem is not compiled again).
-  4. site data: site/static/bank/{tags.json,index.json,bodies.json,figures/} (every numbered problem, the unreviewed
-     ones marked proposed, see bank/data.py; or all with --preview, where new-title.tex files appear under their provisional number, see bank/number.py).  bodies.json carries the CI-side transforms (namespaced labels, externalised
+  4. site data (every numbered problem, the unreviewed ones marked proposed, see bank/data.py; or all with --preview,
+     where new-title.tex files appear under their provisional number, see bank/number.py): the index and the tag
+     catalogue, which the pages carry inline (step 7), and site/static/bank/{bodies.json,figures/}, with copies of
+     preamble.tex and references.bib.  bodies.json carries the CI-side transforms (namespaced labels, externalised
      TikZ figures, pre-resolved citations) and the shared results those problems cite ("appendix").  Then every
      statement typeset in advance for the Problems page's previews, site/static/bank/previews/ (bank/stitch.py::
-     build_previews, cached in .cache/previews/): a measure that fails is left out with a warning (the page typesets
-     those statements in the browser).
+     build_previews, cached in .cache/previews/): a measure that fails is left out with a warning (the page draws
+     those statements from the nearest other measure, scaled).
   5. the in-browser engine bundle site/static/busytex/ (trimmed TeX Live + format file), unless --no-bundle and
      the bundle exists and was made from the current preamble.tex.  The texlyre-busytex assets are checked against
      tools/busytex-assets.sha256 first.
-  6. the HTML pages from templates/ into site/.
-Everything this script writes (site/static/bank/, site/static/busytex/, site/*.html) is a build output and
-git-ignored: CI runs the build and deploys its own copies. Only the sources are committed.
+  6. PDF.js (the npm package pdfjs-dist) into site/static/pdfjs/: it draws the Problems page's previews and the
+     Propose page's sheet.
+  7. the HTML pages from templates/ into site/.
+Everything this script writes (site/static/bank/, site/static/busytex/, site/static/pdfjs/, site/*.html) is a build
+output and git-ignored: CI runs the build and deploys its own copies. Only the sources are committed.
 On main, CI first runs bank/leave_out.py, which deletes broken problem files from its own checkout (the run still
 ends red), so one broken file no longer stops the deploy; this script itself stays strict.
 """
@@ -64,8 +68,9 @@ STATIC_DIR = paths.STATIC_DIR
 BANK_DATA_DIR = paths.BANK_DATA_DIR
 TEMPLATES_DIR = paths.TEMPLATES_DIR
 PROBLEMS_DIR = paths.PROBLEMS_DIR
-DEFAULT_ASSETS = os.path.join(paths.CACHE_DIR, "busytex-assets", "busytex")
-BODIES_WARN_BYTES = 2_000_000        # every visitor downloads bodies.json on the first Create / Preview
+ASSETS_DIR = os.path.join(paths.CACHE_DIR, "busytex-assets", "busytex")     # texlyre-busytex assets, downloaded if absent
+JOBS = os.cpu_count() or 4                    # pdflatex runs at once
+BODIES_WARN_BYTES = 2_000_000        # a visitor downloads bodies.json for the first PDF (or a statement the page typesets itself)
 ASSETS_URL = "https://github.com/TeXlyre/texlyre-busytex/releases/download/assets-v1.4.0/busytex-assets.tar.gz"
 
 
@@ -118,10 +123,6 @@ def write_site_data(probs, items, tags, preview, jobs=4):
     visible = visible_problems(probs, preview)
     index = build_index(probs, preview, tags)
     catalogue = build_tag_catalogue(tags)
-    with open(os.path.join(BANK_DATA_DIR, "tags.json"), "w", encoding="utf-8") as f:
-        json.dump(catalogue, f, ensure_ascii=False, separators=(",", ":"))
-    with open(os.path.join(BANK_DATA_DIR, "index.json"), "w", encoding="utf-8") as f:
-        json.dump(index, f, ensure_ascii=False, separators=(",", ":"))
     # bodies + figures (only the visible problems)
     fig_dir = os.path.join(BANK_DATA_DIR, "figures")
     if os.path.isdir(fig_dir):
@@ -154,7 +155,7 @@ def write_site_data(probs, items, tags, preview, jobs=4):
     if size > BODIES_WARN_BYTES:
         print(f"⚠️  bodies.json is {size / 1e6:.1f} MB: every visitor downloads it on the first Create or Preview "
               f"(time to split it, e.g. one file per problem)")
-    shutil.copyfile(paths.PREAMBLE_FILE, os.path.join(BANK_DATA_DIR, "preamble.tex"))   # "Download .tex", "Show available LaTeX"
+    shutil.copyfile(paths.PREAMBLE_FILE, os.path.join(BANK_DATA_DIR, "preamble.tex"))   # "Download .tex", the LaTeX help of the Propose page
     shutil.copyfile(paths.BIB_FILE, os.path.join(BANK_DATA_DIR, "references.bib"))      # \cite in the propose page's preview
     n_proposed = sum(1 for r in index["problems"] if r["proposed"])
     print(f"site data: {index['count']} problem(s) {'(PREVIEW: all, with review badges)' if preview else f'published ({n_proposed} proposed)'}, "
@@ -164,7 +165,7 @@ def write_site_data(probs, items, tags, preview, jobs=4):
     # every statement typeset in advance, for the Problems page's previews (bank/stitch.py::build_previews)
     previews, missing = stitch.build_previews(bodies, BANK_DATA_DIR, jobs)
     for m in missing:
-        print(f"⚠️  previews, {m}: the page typesets these statements in the browser")
+        print(f"⚠️  previews, {m}: the page draws these statements from the nearest other measure, scaled")
     if previews:
         sizes = [os.path.getsize(os.path.join(OUTPUT_DIR, m["url"])) for m in previews["measures"]]
         print(f"previews: {len(previews['ids'])} statements at {len(sizes)} measures, {sum(sizes) / 1e6:.1f} MB in all")
@@ -233,8 +234,9 @@ PDFJS_PACKAGE = os.path.join(ROOT, "node_modules", "pdfjs-dist")
 
 def copy_pdfjs():
     """PDF.js (npm package pdfjs-dist, pinned in package.json; its legacy build, which older Safari runs too) into
-    site/static/pdfjs/, with its licence: it draws a problem's preview into the Problems page.  Returns its version,
-    which the page puts on the files' address (?v=), so a new release is never mixed with a cached one."""
+    site/static/pdfjs/, with its licence: it draws a problem's preview into the Problems page, and the sheet of the
+    Propose page.  Returns its version, which the pages put on the files' address (?v=), so a new release is never
+    mixed with a cached one."""
     try:
         with open(os.path.join(PDFJS_PACKAGE, "package.json"), encoding="utf-8") as f:
             version = json.load(f)["version"]
@@ -392,11 +394,10 @@ def render_pages(index, catalogue, build=None, items=(), pdfjs=None, forms=None,
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--preview", action="store_true", help="include unreviewed problems (local review mode)")
+    ap.add_argument("--preview", action="store_true", help="show everything as a reviewer sees it: no problem marked proposed, "
+                    "solutions unmasked, review badges, new-*.tex under their provisional number")
     ap.add_argument("--no-compile", action="store_true", help="skip the per-problem pdflatex proofs")
     ap.add_argument("--no-bundle", action="store_true", help="skip building site/static/busytex/ (still built when missing)")
-    ap.add_argument("--assets", default=DEFAULT_ASSETS, help="texlyre-busytex assets directory")
-    ap.add_argument("--jobs", type=int, default=os.cpu_count() or 4)
     a = ap.parse_args(argv)
 
     step("tags.yml")
@@ -413,27 +414,27 @@ def main(argv=None):
 
     if not a.no_compile:
         step("compiling every problem standalone (with and without solution) and every shared result")
-        compile_all(probs, items, tags, a.jobs)
+        compile_all(probs, items, tags, JOBS)
 
     step("site data")
-    index, catalogue, build, previews = write_site_data(probs, items, tags, a.preview, a.jobs)
+    index, catalogue, build, previews = write_site_data(probs, items, tags, a.preview, JOBS)
 
-    # a fresh clone has no bundle, and one made from an older preamble.tex lacks its new macros: Create / Preview and
-    # the browser tests need a current one
+    # a fresh clone has no bundle, and one made from an older preamble.tex lacks its new macros: Create, the Propose
+    # page's sheet and the browser tests need a current one
     stale = not bundle_is_current()
     if not a.no_bundle or stale:
         step("in-browser engine bundle" + (" (missing or built from an older preamble.tex, so built despite --no-bundle)"
                                            if a.no_bundle else ""))
-        build_bundle(ensure_assets(a.assets))
+        build_bundle(ensure_assets(ASSETS_DIR))
 
-    step("PDF.js (draws the previews)")
+    step("PDF.js (draws the previews and the Propose page's sheet)")
     pdfjs = copy_pdfjs()
     print(f"pdfjs-dist {pdfjs} → site/static/pdfjs/")
 
     step("HTML pages")
     render_pages(index, catalogue, build, items, pdfjs, origin_forms(probs), previews)
     check_fonts(catalogue, index, ("index.html", "problems.html", "propose.html", "404.html"))
-    print(f"\n🎉 Site built in 'website-code/site/'{' (preview)' if a.preview else ''}. Serve it with: python3 -m http.server 8000 --directory website-code/site")
+    print(f"\n🎉 Site built in 'website-code/site/'{' (preview)' if a.preview else ''}. Serve it from website-code/ with: python3 -m http.server 8000 --directory site")
 
 
 if __name__ == "__main__":

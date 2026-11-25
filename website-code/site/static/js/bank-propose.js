@@ -105,7 +105,7 @@ export function problemFile(draft) {
 /* ------------------------------------------------------------------ checks (same rules as the CI validator) */
 
 /* YYYY, YYYY-MM or YYYY-MM-DD: ASCII digits and a real calendar date, year 0001 or later.  Mirrors
-   bank/problems.py::_valid_date (allow_partial). */
+   bank/problems.py::_valid_date. */
 export function validDate(s) {
   const m = /^([0-9]{4})(?:-([0-9]{2})(?:-([0-9]{2}))?)?$/.exec(s);
   if (!m) return false;

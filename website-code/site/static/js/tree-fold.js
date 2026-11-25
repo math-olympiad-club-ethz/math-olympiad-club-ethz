@@ -4,7 +4,7 @@
    it, its node turning to + as it goes: a fold that closes several levels shows each of them closing (three levels in
    under half a second; one level a little quicker than it opens). */
 export const EASE = 'cubic-bezier(.4, 0, .2, 1)';
-export const OPEN_MS = 260, FOLD_MS = 240, FOLD_STEP = 100;
+const OPEN_MS = 260, FOLD_MS = 240, FOLD_STEP = 100;
 /* A first-level topic's colours, light and dark (bank/colours.py, in the page's tags), on the node that stands for it:
    everything inside takes them (site.css [data-topic]).  No topic: the node's own colour again. */
 export function paint(node, tag) {

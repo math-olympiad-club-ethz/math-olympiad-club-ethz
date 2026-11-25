@@ -1,5 +1,5 @@
 .DS_Store
-venv/
+.venv/
 __pycache__/
 *.pyc
 
@@ -28,7 +28,7 @@ __pycache__/
 *.dvi
 
 # Personal inspiration / working material — kept local per person, never committed.
-# (Holds the ~55 MB reference library and problem_collection.tex notes, under problem-bank/inspiration/.)
+# (Holds the ~63 MB reference library and problem_collection.tex notes, under problem-bank/inspiration/.)
 /problem-bank/inspiration/*
 !/problem-bank/inspiration/README.md
 

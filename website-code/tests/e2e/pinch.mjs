@@ -40,8 +40,8 @@ const asSafari = () => { if (!('GestureEvent' in window)) window.GestureEvent = 
 const notSafari = () => { delete window.GestureEvent; };
 const noZoomProperty = () => { if (!('GestureEvent' in window)) window.GestureEvent = function GestureEvent() {}; const real = CSS.supports.bind(CSS); CSS.supports = (...a) => (a[0] === 'zoom' ? false : real(...a)); };
 
-async function open(path, { width = 1280, height = 800, before = asSafari, clock = true } = {}) {
-  const c = await browser.newContext({ viewport: { width, height }, deviceScaleFactor: 2 });
+async function open(path, { height = 800, before = asSafari, clock = true } = {}) {
+  const c = await browser.newContext({ viewport: { width: 1280, height }, deviceScaleFactor: 2 });
   const p = await c.newPage();
   p.on('pageerror', e => errors.push('pageerror: ' + e.message));
   p.on('console', m => { if (m.type() === 'error' && !(shooting && /Refused to apply a stylesheet/.test(m.text()))) errors.push(m.text()); });
@@ -159,7 +159,7 @@ try {
     check(farEnd.laid === whole(farEnd.zoom) && farEnd.scale <= 1 && farEnd.transform === `scale(${farEnd.scale})` && Math.abs(farEnd.sw - farEnd.vw * farEnd.zoom) < 3 && await pinned(p) < NEAR,
       `when the fingers leave, laid out at ${farEnd.laid} and brought down to ${farEnd.zoom.toFixed(2)}x: drawn with more pixels than it shows, never stretched (${farEnd.transform})`);
     check(movedFar < NEAR, `and nothing has moved (${movedFar.toFixed(2)} px at most)`);
-    const top = await pinchTo(p, 6);
+    await pinchTo(p, 6);
     await p.clock.runFor(300);
     const topEnd = await state(p);
     const topOff = await pinned(p) / 5;
@@ -234,7 +234,7 @@ try {
   console.log('6. a dialog over a magnified page');
   {
     const p = await open('/propose.html', { clock: false });
-    // opened as "Show available LaTeX" opens it (showModal), wherever that button is on the page
+    // opened as "LaTeX help" opens it (showModal), wherever that button is on the page
     const size = () => p.evaluate(() => { const d = document.getElementById('pp-latex'); d.showModal(); const r = d.getBoundingClientRect(); d.close(); return [r.left, r.width, r.height]; });
     const plain = await size();
     await p.mouse.move(640, 300);
@@ -245,7 +245,7 @@ try {
     const s = await state(p);
     const zoomed = await size();
     check(s.laid === whole(s.zoom) && s.zoom > 1.5 && Math.abs(zoomed[1] - plain[1]) < 1 && Math.abs(zoomed[0] - plain[0]) < 1 && zoomed[1] <= 1280,
-      `"Available LaTeX" keeps its size and its place in the window at ${s.zoom.toFixed(2)}x (${Math.round(zoomed[1])} px wide, as on the normal page)`);
+      `"LaTeX help" keeps its size and its place in the window at ${s.zoom.toFixed(2)}x (${Math.round(zoomed[1])} px wide, as on the normal page)`);
     await p.context().close();
   }
 
@@ -288,13 +288,17 @@ try {
     const p = await open('/problems.html', { before });
     await p.keyboard.down('Control');
     await pin(p);
+    const head = await p.evaluate(() => JSON.stringify(document.querySelector('.brand').getBoundingClientRect()));
     const start = await state(p);
-    const moving = await pinchTo(p, 1.8);
+    let still = true;
+    const moving = await pinchTo(p, 1.8, m => { still = still && m.laid === 1 && m.x === 0 && m.y === 0; });
+    check(/translate/.test(moving.transform) && still, `while the fingers move only the transform of the page changes: no layout, no real scroll (${moving.transform})`);
     await p.clock.runFor(400);
     const s = await state(p);
     check(s.laid === 1 && s.cls === 'page' && s.transform === `scale(${s.scale})` && Math.abs(s.zoom - moving.zoom) < 1e-4 && s.room && Math.abs(s.room[0] - start.w * s.zoom) < 1 && Math.abs(s.room[1] - start.h * s.zoom) < 1,
       `nothing is laid out again, and the room to scroll in is said outright (${s.transform}, room ${s.room && s.room.map(Math.round).join(' x ')})`);
     check(Math.abs(s.sw - s.vw * s.zoom) < 3 && moving.worst < 1.5 && await pinned(p) < 1.5 && s.told.length === 1, 'the magnified page can be reached, the place under the pointer has stayed, and the page is told');
+    check(await p.evaluate(b => JSON.stringify(document.querySelector('.brand').getBoundingClientRect()) === b, head), 'the header has not moved by a pixel');
     const normal = await pinchBackToNormal(p);
     check(normal.attr === '' && !normal.zoomed && normal.sw === normal.vw, 'and pinching back returns to the normal page');
     await p.keyboard.up('Control');

@@ -11,10 +11,9 @@
    A file, not an inline script: the pages' Content-Security-Policy allows no inline script. */
 (function () {
   var root = document.documentElement;
-  // 'color-mode' holds a clicked choice.  The old key 'theme' was written 'light' on every visit: only a 'dark' in it
-  // was a real choice.
+  // 'color-mode' holds a clicked choice.
   function savedChoice() {
-    try { return localStorage.getItem('color-mode') || (localStorage.getItem('theme') === 'dark' ? 'dark' : null); } catch (e) { return null; /* site data blocked */ }
+    try { return localStorage.getItem('color-mode'); } catch (e) { return null; /* site data blocked */ }
   }
   function apply(choice) {
     var dark = false;

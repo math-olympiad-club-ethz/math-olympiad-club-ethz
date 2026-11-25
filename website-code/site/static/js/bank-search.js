@@ -1,17 +1,19 @@
 /* bank-search.js — the problem bank's search logic.  Pure functions, no DOM, no fetch:
    the same file is used by the page (as an ES module) and by the unit tests (node:test).
 
-   Data shapes (produced by build.py):
-     tags.json   {area:[{slug,name,description,aliases,parent,children,depth}], methods:[{…,group}],
-                  difficulty:[…], origin:[{…,kind}]}
-     index.json  {preview, count, problems:[{id,title,area:[],methods:[],difficulty,difficultySource,
-                  origin,alsoIn:[],originYear,hasSolution,partial,review,provisional,proposed,solutionMasked}]}
-                 (solutionMasked: a proposed problem whose solution the public site does not show yet, bank/data.py)
+   Data shapes (the page's data, written inline by build.py):
+     the tag catalogue  {area:[{slug,name,description,aliases,parent,children,depth,colour}], methods:[{…,group}],
+                         difficulty:[…], origin:[{…,kind}]}
+                        (colour: a first-level topic's colours, light and dark, bank/colours.py)
+     the index          {preview, count, problems:[{id,title,area:[],methods:[],difficulty,difficultySource,origin,
+                         alsoIn:[],originYear,source,link,hasSolution,partial,review,provisional,proposed,solutionMasked}]}
+                        (source, link: where the problem comes from and where that can be read, bank/sources.py;
+                         solutionMasked: a proposed problem whose solution the public site does not show yet, bank/data.py)
 */
 
 export const TAG_TYPES = ['area', 'methods', 'difficulty', 'origin'];
 export const TYPE_LABEL = { area: 'Topic', methods: 'Methods', difficulty: 'Difficulty', origin: 'Origin' };     // (an area of tags.yml is a topic on the pages)
-/* The kinds of origin (tags.yml), as the pages name them: the Origin filter and the Propose page group the origins by kind. */
+/* The kinds of origin (tags.yml), as the pages name them: the Origin filter groups the origins by kind. */
 export const ORIGIN_KIND = { university: 'University competitions', 'high-school': 'Olympiads (high school)', book: 'Books', journal: 'Journals & papers',
   exam: 'Exams', course: 'Courses', folklore: 'Folklore', original: 'Original', interview: 'Interviews' };
 
@@ -86,7 +88,7 @@ function problemHasTag(problem, type, slug, cat) {
 }
 
 /* Does the text typed in the search bar match this problem?  Every typed word must start a word of the title.
-   Titles are the only text here: the statements are not in index.json (they are loaded only when a PDF is built),
+   Titles are the only text here: the statements are not in the index (they are loaded only when a PDF is built),
    and the problem's ID is never searched or shown (it means nothing to visitors).  '' matches everything. */
 export function matchesText(problem, query) {
   const q = normalize(query);

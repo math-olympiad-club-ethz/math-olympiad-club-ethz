@@ -2,7 +2,6 @@
 
     python3 -m bank.validate                 # checks on problem-bank/problems/ and problem-bank/appendix/
     python3 -m bank.validate --compile       # + pdflatex each problem (with its solution) and each shared result
-    python3 -m bank.validate --compile --no-solution   # also compile the statement-only variant
     python3 -m bank.validate ../problem-bank/problems/0042-*.tex   # only some files (new-*.tex too)
     python3 -m bank.validate ../problem-bank/appendix/spectral-mapping-theorem.tex  # a shared result (compiled on its own)
 The shared results of problem-bank/appendix/ are checked with the problems (bank/appendix.py); a problem's proof
@@ -223,8 +222,6 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("files", nargs="*", help="problem files or shared results (default: all of problems/ and appendix/)")
     ap.add_argument("--compile", action="store_true", help="compile each problem standalone (with solution)")
-    ap.add_argument("--no-solution", action="store_true", help="with --compile: also compile the statement-only variant")
-    ap.add_argument("--jobs", type=int, default=os.cpu_count() or 4)
     a = ap.parse_args(argv)
     try:
         tags = load_tags(paths.TAGS_FILE)
@@ -263,18 +260,13 @@ def main(argv=None):
         print(f"{path}:{line}: {msg}")
         n_err += 1
     if a.compile and n_err == 0:
-        jobs = []
-        for p in probs:
-            jobs.append((p, True))
-            if a.no_solution and p["has_solution"]:
-                jobs.append((p, False))
-        with concurrent.futures.ThreadPoolExecutor(max_workers=a.jobs) as ex:
-            futs = {ex.submit(compile_problem, p, tags, all_items, ws): (p, ws) for p, ws in jobs}
+        with concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count() or 4) as ex:
+            futs = {ex.submit(compile_problem, p, tags, all_items, True): (p, True) for p in probs}
             futs.update({ex.submit(compile_item, it, all_items): (it, None) for it in compile_items})
             for fut in concurrent.futures.as_completed(futs):
                 p, ws = futs[fut]
                 ok, err = fut.result()
-                tag = "shared result" if ws is None else "with solution" if ws else "statement only"
+                tag = "shared result" if ws is None else "with solution"
                 if ok:
                     print(f"OK   {p['file']} ({tag})")
                 else:

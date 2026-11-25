@@ -1,8 +1,8 @@
 // End-to-end test of the "Propose a problem" page in headless Chromium (Playwright library, no test runner):
 // what is required, the lines that open in place (what it is about: the tree of topics; a solution; where it is from,
 // with the competitions the bank knows; why the proposer likes it), the methods tree, the sheet typeset by the in-browser
-// pdfTeX (PDF content checked with pypdf), LaTeX errors under their box, a stuck compile, sending (the mail app opened
-// with the message, the file and a link), the link opening the proposal for the club (its .tex and its PDF), the file
+// pdfTeX (PDF content checked with pypdf), LaTeX errors under their box, a stuck compile, sending (the share menu with
+// the PDF, the .tex and the note; without one, the files saved and the mail app opened with one line), the file
 // passing `python3 -m bank.validate --compile`, LaTeX help, and the draft kept on this device (two tabs).
 // Needs a built site (python3 build.py --preview) and the engine bundle in site/static/busytex/.
 //   node tests/e2e/propose.mjs            exit 0 = pass
@@ -36,9 +36,8 @@ const page = await context.newPage();
 const consoleErrors = [];
 page.on('console', m => { if (m.type() === 'error') consoleErrors.push(m.text()); });
 page.on('pageerror', e => consoleErrors.push('pageerror: ' + e.message));
-// window.open and the mail app are recorded, not opened
+// the mail app is recorded, not opened
 await page.addInitScript(() => {
-  window.__opened = []; window.open = (url) => { window.__opened.push(url); return {}; };
   window.__mailto = [];
   // no share menu unless a test gives one (headless browsers differ): Firefox's case
   Object.defineProperty(Navigator.prototype, 'share', { configurable: true, value: undefined });
@@ -56,10 +55,10 @@ page.on('request', r => { if (r.url().includes('/static/busytex/')) engineReques
 const sheetBytes = () => page.evaluate(() => Array.from(window.propose.state.preview.pdf || []));
 const status = () => page.textContent('#pp-preview-status');
 // the sheet shows the text now in the form (typeset, or its LaTeX error)
-const waitSheet = async (what, p = page) => {
-  try { await p.waitForFunction(() => window.propose.upToDate() && ['ok', 'error', 'failed'].includes(document.getElementById('pp-preview-status').dataset.state), null, { timeout: 240000 }); }
-  catch (e) { throw new Error(`the sheet (${what}) never followed the text: "${await p.textContent('#pp-preview-status')}"`); }
-  return p.evaluate(() => document.getElementById('pp-preview-status').dataset.state);
+const waitSheet = async (what) => {
+  try { await page.waitForFunction(() => window.propose.upToDate() && ['ok', 'error', 'failed'].includes(document.getElementById('pp-preview-status').dataset.state), null, { timeout: 240000 }); }
+  catch (e) { throw new Error(`the sheet (${what}) never followed the text: "${await page.textContent('#pp-preview-status')}"`); }
+  return page.evaluate(() => document.getElementById('pp-preview-status').dataset.state);
 };
 // the share menu as Chrome has it: canShare says yes to everything, share() refuses a .tex file (as Chrome 153 does, the
 // tap spent); what it takes is recorded.  noShareSheet: none again (Firefox)
@@ -77,14 +76,13 @@ const noShareSheet = () => page.evaluate(() => { delete navigator.share; delete 
 const lastMail = async () => { const u = new URL(await page.evaluate(() => window.__mailto[window.__mailto.length - 1])); return { to: u.pathname, subject: u.searchParams.get('subject'), body: u.searchParams.get('body') }; };
 
 try {
-  console.log('1. from the Problems page, the header link opens the propose page; the club\'s address is shown');
+  console.log('1. from the Problems page, the header link opens the propose page; Send knows the club\'s address');
   await page.goto(`${base}/problems.html`);
   await page.click('#site-nav a[href="propose.html"]');
   await page.waitForFunction(() => document.documentElement.hasAttribute('data-ready'));
   check(page.url().endsWith('/propose.html'), 'the header link "Propose a problem" opens propose.html');
   check((await page.getAttribute('#pp-submit', 'data-address')) === 'olympiadclub@math.ethz.ch', 'Send knows the club\'s address (olympiadclub@math.ethz.ch)');
-  check(await page.locator('.pp-send button:visible').count() === 1 && await page.locator('.pp-send a').count() === 0 && !/GitHub/.test(await page.textContent('.pp-send')),
-    'one way to send: Send to the club, nothing else');
+  check(await page.locator('.pp-send button:visible').count() === 1, 'one way to send: Send to the club, nothing else');
   const modules = await page.evaluate(() => performance.getEntriesByType('resource').map(e => e.name).filter(n => /\/static\/js\/bank-[a-z-]+\.js/.test(n)));
   const query = new Set(modules.map(n => new URL(n).search));
   check(modules.some(n => n.includes('bank-compile.js')) && query.size === 1 && /^\?v=\w+$/.test([...query][0]),
@@ -100,7 +98,7 @@ try {
   await page.click('#pp-submit');
   const errs = await page.textContent('#pp-errors');
   check(/statement/i.test(errs) && /about/i.test(errs), `sending an empty form says what is missing (${errs.replace(/\s+/g, ' ').trim()})`);
-  check((await page.evaluate(() => window.__opened.length + window.__mailto.length)) === 0 && downloads.length === 0, 'nothing is sent while something required is missing');
+  check((await page.evaluate(() => window.__mailto.length)) === 0 && downloads.length === 0, 'nothing is sent while something required is missing');
   check(await page.locator('#pp-statement.is-invalid').count() === 1 && await page.locator('#pp-add-about.is-invalid').count() === 1, 'the statement box and the line "What is it about?" are marked');
   check(engineRequests.length === 0, 'still no engine download');
   const described = await page.evaluate(() => { const t = document.getElementById('pp-statement');
@@ -306,7 +304,7 @@ try {
   check((await page.evaluate(() => navigator.clipboard.readText())) === 'olympiadclub@math.ethz.ch' && /Thank you\. We read every proposal/.test(await page.textContent('#pp-submit-status')),
     'the club\'s address was copied for To, and the page thanks the sender once it is sent');
 
-  console.log('7b. without a share menu (Firefox): the files saved, the mail app opened with the message and a link');
+  console.log('7b. without a share menu (Firefox): the files saved, the mail app opened with the message');
   await noShareSheet();
   await page.evaluate(() => { window.__mailto = []; });
   downloads.length = 0;
@@ -328,7 +326,7 @@ try {
   console.log('   ' + (val.stdout || val.stderr).trim().split('\n').join('\n   '));
   check(val.status === 0, 'the file passes the CI validator and compiles with pdflatex (author mode, real TikZ)');
 
-  console.log('9. LaTeX help');
+  console.log('8. LaTeX help');
   check(await page.locator('#pp-show-latex').isVisible() && await page.locator('.pp-label-row #pp-show-latex').count() === 1, '"LaTeX help" sits beside the statement');
   await page.click('#pp-show-latex');
   await page.waitForFunction(() => document.getElementById('pp-preamble').dataset.loaded === '1', null, { timeout: 10000 });
@@ -344,7 +342,7 @@ try {
   await page.click('#pp-latex [data-close]');
   check(await page.locator('#pp-latex').isHidden(), 'the dialog closes');
 
-  console.log('10. the draft stays on this device (also right after typing); a second tab is noticed; Start again');
+  console.log('9. the draft stays on this device (also right after typing); a second tab is noticed; Start again');
   await page.reload();
   await page.waitForFunction(() => document.documentElement.hasAttribute('data-ready'));
   const restored = await page.evaluate(() => window.propose.readDraft());
@@ -389,6 +387,29 @@ try {
   await page.reload();
   await page.waitForFunction(() => document.documentElement.hasAttribute('data-ready'));
   check(!(await page.evaluate(() => window.propose.readDraft().statement)), 'and the draft is gone after a reload');
+  // what the page keeps beside the file is a draft too: a "Where is it from?" that names no competition, a note; spaces are not
+  const reload = async () => { await page.reload(); await page.waitForFunction(() => document.documentElement.hasAttribute('data-ready')); };
+  const stored = () => page.waitForFunction(() => /Saved on this device/.test(document.getElementById('pp-saved').textContent), null, { timeout: 5000 }).catch(() => {});
+  for (const [line, text, what] of [['from', 'Kalva archive', 'a "Where is it from?" that names no competition'], ['note', 'A cute identity hides behind it.', 'a note ("Why do you like it?")']]) {
+    await page.click(`#pp-add-${line}`);
+    await page.fill(`#pp-${line}`, '   ');
+    const blank = await page.locator('#pp-clear').isHidden();
+    await page.fill(`#pp-${line}`, text);
+    const shown = await page.locator('#pp-clear').isVisible();
+    await stored();
+    await reload();
+    const back = await page.evaluate(k => window.propose.readDraft()[k], line);
+    check(blank && shown && back === text && /Your draft is back/.test(await page.textContent('#pp-saved')) && await page.locator('#pp-clear').isVisible(),
+      `a form that holds only ${what} has something written: "Start again" shows (not for spaces alone), and after a reload the text is back ("${await page.textContent('#pp-saved')}")`);
+    await page.click('#pp-clear');
+    await page.click('#pp-confirm-yes');
+  }
+  await page.click('#pp-add-note');
+  await page.fill('#pp-note', '   ');
+  await stored();
+  await reload();
+  check(await page.locator('#pp-clear').isHidden() && !/draft is back/.test(await page.textContent('#pp-saved')),
+    'spaces alone are no draft: after a reload nothing is brought back, and "Start again" stays hidden');
 
   check(consoleErrors.length === 0, 'no console errors' + (consoleErrors.length ? ': ' + consoleErrors.slice(0, 3).join(' | ') : ''));
   check(cspViolations.length === 0, 'no Content-Security-Policy violation in any of the above' + (cspViolations.length ? ': ' + cspViolations.slice(0, 3).join(' | ') : ''));

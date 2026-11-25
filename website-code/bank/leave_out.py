@@ -211,7 +211,6 @@ def delete(left):
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--delete", action="store_true", help="delete the files to leave out (GitHub Actions only)")
-    ap.add_argument("--jobs", type=int, default=os.cpu_count() or 4)
     a = ap.parse_args(argv)
     ci = os.environ.get("GITHUB_ACTIONS") == "true"
     if a.delete and not ci:
@@ -219,7 +218,7 @@ def main(argv=None):
               "Without --delete, this lists what a deploy would leave out.")
         return 2
     try:
-        left, fatal = plan(a.jobs)
+        left, fatal = plan()
     except Exception as e:      # anything unexpected: stop, as the build would
         left, fatal = {}, f"the checks themselves failed: {type(e).__name__}: {e}"
     report(left, fatal, ci, a.delete)

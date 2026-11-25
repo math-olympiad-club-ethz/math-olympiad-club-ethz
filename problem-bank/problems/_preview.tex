@@ -2,7 +2,8 @@
 % The file to preview is passed in \bankfile (path without extension), e.g.
 %   cd problem-bank && TEXINPUTS=.: latexmk -pdf -usepretex='\def\bankfile{problems/0003-roots-on-the-unit-circle}' -jobname=0003-roots-on-the-unit-circle -outdir=problems problems/_preview.tex
 %   cd problem-bank && TEXINPUTS=.: latexmk -pdf -usepretex='\def\bankfile{appendix/spectral-mapping-theorem}' -jobname=spectral-mapping-theorem -outdir=appendix problems/_preview.tex
-% .vscode/settings.json does exactly this for the .tex file you are editing.  website-code/build.py does not use this file.
+% In VS Code, .vscode/bank-preview.sh does this for the .tex file saved last, on every save (with an absolute path and
+% the options -norc -bibtex-).  website-code/build.py does not use this file.
 % A problem is followed by the shared results its solution cites (\appendixref, read from appendix/); a file of
 % problem-bank/appendix/ is shown as that result (followed by the results it cites).
 \documentclass[11pt]{article}

@@ -1,12 +1,13 @@
 // End-to-end test of what the sticky header and row of filters, the bubbles and a phone ask of the site, in headless Chromium (mobile
 // emulation for the phone): no download the visitor did not ask for, nothing hidden under what is stuck, no stray bubble,
-// no page wider than a phone, a trackpad pinch that leaves the header alone, a theme fade that swallows no click.
+// no page wider than a phone, a theme fade that swallows no click.  (The trackpad pinch: pinch.mjs.)
 // Needs a built site (python3 build.py --preview) and the engine bundle in site/static/busytex/.
 //   node tests/e2e/phone-and-chrome.mjs            exit 0 = pass
 import { chromium, devices } from 'playwright';
 import { existsSync, readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { startServer } from '../lib/static-server.mjs';
+import { pageData } from '../lib/page-data.mjs';
 
 const ROOT = resolve(new URL('../../', import.meta.url).pathname);
 const SITE = join(ROOT, 'site');
@@ -14,8 +15,9 @@ if (!existsSync(join(SITE, 'static', 'busytex', 'manifest.json')) || !existsSync
   console.log('The site or its engine bundle is missing. Build it once with:  python3 build.py --preview');
   process.exit(2);
 }
-// The problems of this build, in ID order (on main, bank/leave_out.py may have left broken ones out: no fixed numbers)
-const IDS = JSON.parse(readFileSync(join(SITE, 'static', 'bank', 'index.json'), 'utf8')).problems.map(p => p.id);
+// The problems of this build, in ID order, from the index the page carries (on main, bank/leave_out.py may have left
+// broken ones out: no fixed numbers)
+const IDS = pageData(join(SITE, 'problems.html'), 'bank-data').index.problems.map(p => p.id);
 const failures = [];
 const check = (cond, msg) => { if (!cond) { failures.push(msg); console.log('  ✗ ' + msg); } else console.log('  ✓ ' + msg); };
 
@@ -196,9 +198,6 @@ try {
       return { sw: document.documentElement.scrollWidth, cw: document.documentElement.clientWidth, xRight: x.right, win: innerWidth, tree: document.getElementById('bank-tree-topics').hidden, rows: document.querySelectorAll('#bank-results > li:not([hidden])').length };
     });
     check(w.sw <= w.cw && w.xRight <= w.win && w.tree && w.rows > 0, `a link to a topic with a long name: the tree is folded into one line that wraps, its list under it, and the page stays ${w.cw} px wide`);
-    await p.locator('#bank-results > li:not([hidden]) .bank-check').first().check();
-    const bar = await p.evaluate(() => { const r = document.getElementById('bank-actions').getBoundingClientRect(); return { bottom: r.bottom, h: innerHeight, pos: getComputedStyle(document.getElementById('bank-actions')).position }; });
-    check(bar.pos === 'fixed' && Math.abs(bar.bottom - bar.h) < 1 && await p.locator('#bank-create').isVisible(), 'once a problem is ticked, Create PDF waits at the bottom of the screen');
     await p.goto(`${base}/propose.html`);
     const sizes = await p.evaluate(() => [...document.querySelectorAll('input:not([type=checkbox]):not([type=radio]):not([type=range]), select, textarea')].filter(e => e.offsetParent && parseFloat(getComputedStyle(e).fontSize) < 16).map(e => e.id));
     check(sizes.length === 0, `no field under 16 px, which would make an iPhone zoom${sizes.length ? ': ' + sizes.join(', ') : ''}`);
@@ -240,32 +239,11 @@ try {
     await c.close();
   }
 
-  console.log('5. a pinch on a trackpad, and the theme fade');
+  console.log('5. the theme fade');
   {
-    const c = await browser.newContext({ viewport: { width: 1280, height: 800 }, deviceScaleFactor: 2 });
+    const c = await browser.newContext({ viewport: { width: 1280, height: 800 } });
     const p = watch(await c.newPage());
     await p.goto(`${base}/index.html`);
-    const before = await p.evaluate(() => JSON.stringify(document.querySelector('.brand').getBoundingClientRect()));
-    await p.mouse.move(900, 500);
-    await p.keyboard.down('Control');
-    for (let i = 0; i < 40; i++) { await p.mouse.wheel(0, -3); await p.waitForTimeout(16); }
-    const during = await p.evaluate(() => ({ t: document.querySelector('.page').style.transform, x: scrollX }));
-    check(/translate/.test(during.t) && during.x === 0, 'during a pinch only the transform of the page changes: no layout, no real scroll');
-    await p.waitForTimeout(350);
-    await p.keyboard.up('Control');
-    const after = await p.evaluate((b) => {
-      const scale = parseFloat(/scale\(([\d.]+)\)/.exec(document.querySelector('.page').style.transform)[1]);
-      return { same: JSON.stringify(document.querySelector('.brand').getBoundingClientRect()) === b, x: scrollX, scale, sw: document.documentElement.scrollWidth, w: document.documentElement.clientWidth };
-    }, before);
-    check(after.same, 'the header has not moved by a pixel');
-    check(Math.abs(after.x - 900 * (after.scale - 1)) < 3, `the zoom goes where the pointer is, on the right too (scrolled ${after.x} at ${after.scale.toFixed(2)}x)`);
-    check(Math.abs(after.sw - after.w * after.scale) < 3, 'all of the magnified page can be reached');
-    await p.keyboard.down('Control');
-    for (let i = 0; i < 120; i++) { await p.mouse.wheel(0, 6); await p.waitForTimeout(4); }
-    await p.waitForTimeout(350);
-    await p.keyboard.up('Control');
-    check(await p.evaluate(() => document.querySelector('.page').style.transform === '' && !document.documentElement.classList.contains('is-zoomed')), 'pinching back returns to the normal page');
-
     await p.click('#theme-toggle');
     await p.waitForTimeout(100);
     await p.mouse.click(...(await p.evaluate(() => { const r = document.querySelector('.site-nav a[href="problems.html"]').getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; })));

@@ -4,10 +4,11 @@ build.
     python3 tests/python/check_public_build.py [--site site]
 
 Exit 1 with one line per problem if the site holds more (or less) than the rule "every problem with a final number,
-the ones without review: human marked proposed" allows (bank/data.py): index.json, bodies.json and figures/ must hold
-exactly those problems and the shared results that the solutions of the reviewed ones cite (bank/appendix.py), the
-proposed ones marked as such in the index and in their PDF origin line and without their solution (bank/data.py::
-mask_solutions), the pages must embed the public index, the statements typeset in advance (static/bank/previews/,
+the ones without review: human marked proposed" allows (bank/data.py): the index problems.html carries inline (its
+bank-data, read as the page reads it: page_data), bodies.json and figures/ must hold exactly those problems and the
+shared results that the solutions of the reviewed ones cite (bank/appendix.py), the proposed ones marked as such in the
+index and in their PDF origin line and without their solution (bank/data.py::mask_solutions), the index must be the
+public one, both pages must carry the tag catalogue, the statements typeset in advance (static/bank/previews/,
 bank/stitch.py::build_previews) must be those of the published problems, and the engine bundle must be complete.
 """
 import argparse
@@ -25,6 +26,18 @@ from bank.data import MASKED_SOLUTION, PROPOSED_NOTE, is_proposed, visible_probl
 from bank.validate import problem_cites  # noqa: E402
 
 
+def page_data(path, script_id):
+    """The data a built page carries inline (build.py::render_pages), read as the page reads it: the text of its
+    <script type="application/json" id="script_id">, parsed as JSON (the build writes every "<" in it as \\u003c, so
+    nothing in it ends the script).  OSError when the page is missing; ValueError when the script is, or is not JSON."""
+    with open(path, encoding="utf-8") as f:
+        html = f.read()
+    m = re.search(r'<script\b[^>]*\bid="%s"[^>]*>(.*?)</script>' % re.escape(script_id), html, re.S)
+    if not m:
+        raise ValueError(f'no <script type="application/json" id="{script_id}">')
+    return json.loads(m.group(1))
+
+
 def check(site_dir, problems, items=()):
     """[message] for every way `site_dir` differs from the public build of `problems` (parsed problem files) and the
     shared results `items` (bank/appendix.py::load_items)."""
@@ -39,37 +52,52 @@ def check(site_dir, problems, items=()):
             errors.append(f"static/bank/{name}: {err}")
             return None
 
+    def inline(page, script_id):
+        """What `page` carries inline, or None (a page that is missing is said further down)."""
+        path = os.path.join(site_dir, page)
+        if not os.path.isfile(path):
+            return None
+        try:
+            got = page_data(path, script_id)
+        except (OSError, ValueError) as err:
+            errors.append(f"{page}: {err}")
+            return None
+        if not isinstance(got, dict):
+            errors.append(f"{page}: its {script_id} is not a JSON object")
+            return None
+        return got
+
     want = sorted(p["id"] for p in visible_problems(problems, preview=False))
     proposed_ids = {p["id"] for p in visible_problems(problems, preview=False) if is_proposed(p)}
-    index = load("index.json")
-    if index is not None:
+    data = inline("problems.html", "bank-data")
+    index = data.get("index") if data is not None else None
+    if data is not None and not isinstance(index, dict):
+        errors.append("problems.html carries no index")
+    if isinstance(index, dict):
         if index.get("preview") is not False:
-            errors.append("static/bank/index.json: 'preview' is not false (a preview build would be deployed)")
+            errors.append("problems.html: the index's 'preview' is not false (a preview build would be deployed)")
         got = [r.get("id") for r in index.get("problems", [])]
         if got != want or index.get("count") != len(want):
-            errors.append(f"static/bank/index.json lists {got} (count {index.get('count')}), the published problems are {want}")
+            errors.append(f"problems.html lists {got} (count {index.get('count')}), the published problems are {want}")
         hidden = [r.get("id") for r in index.get("problems", []) if r.get("provisional")]
         if hidden:
-            errors.append(f"static/bank/index.json lists provisional problems (new-*.tex, not merged): {hidden}")
+            errors.append(f"problems.html lists provisional problems (new-*.tex, not merged): {hidden}")
         unmarked = [r.get("id") for r in index.get("problems", []) if r.get("id") in proposed_ids and r.get("proposed") is not True]
         marked = [r.get("id") for r in index.get("problems", []) if r.get("id") not in proposed_ids and r.get("proposed")]
         if unmarked or marked:
-            errors.append(f"static/bank/index.json: proposed must be true exactly for the problems without review: human "
+            errors.append(f"problems.html: proposed must be true exactly for the problems without review: human "
                           f"(not marked: {unmarked}; marked but reviewed: {marked})")
         shown = [r.get("id") for r in index.get("problems", []) if r.get("id") in proposed_ids and r.get("hasSolution")]
         if shown:
-            errors.append(f"static/bank/index.json: proposed problems listed with a solution (masked on the public site): {shown}")
+            errors.append(f"problems.html: proposed problems listed with a solution (masked on the public site): {shown}")
+    # the tag catalogue, which both pages carry
+    for page, carried in (("problems.html", data), ("propose.html", inline("propose.html", "propose-data"))):
+        if carried is not None and not (isinstance(carried.get("tags"), dict) and carried["tags"].get("area")):
+            errors.append(f"{page} carries no tag catalogue")
+    data = data or {}
     bodies = load("bodies.json")
-    html = ""
-    try:
-        with open(os.path.join(site_dir, "problems.html"), encoding="utf-8") as f:
-            html = f.read()
-        if '"preview":false' not in html or '"preview":true' in html:
-            errors.append("problems.html does not embed the public index (preview: false)")
-    except OSError:
-        pass
     if bodies is not None:
-        if bodies.get("build") and '"build":"%s"' % bodies["build"] not in html:
+        if bodies.get("build") and data.get("build") != bodies["build"]:
             errors.append("problems.html and static/bank/bodies.json come from different builds")
         appendix = bodies.get("appendix") or {}
         bodies = bodies.get("problems", {})
@@ -100,11 +128,7 @@ def check(site_dir, problems, items=()):
         if used - present:
             errors.append(f"static/bank/figures/ misses {sorted(used - present)}")
     # the statements typeset by the build: those of the published problems, the files the page names and no other
-    m = re.search(r"<script[^>]*>(\{.*?\})</script>", html, re.S)
-    try:
-        previews = json.loads(m.group(1)).get("previews") if m else None
-    except ValueError:
-        previews = None
+    previews = data.get("previews")
     pv_dir = os.path.join(bank, "previews")
     present = set(os.listdir(pv_dir)) if os.path.isdir(pv_dir) else set()
     if previews:
@@ -117,7 +141,7 @@ def check(site_dir, problems, items=()):
             errors.append(f"static/bank/previews/ holds files the page does not name: {sorted(present - named)}")
     elif present:
         errors.append(f"static/bank/previews/ holds {sorted(present)}, but problems.html names no previews")
-    for name in ("tags.json", "preamble.tex", "references.bib"):
+    for name in ("preamble.tex", "references.bib"):
         if not os.path.isfile(os.path.join(bank, name)):
             errors.append(f"static/bank/{name} is missing")
     for page in ("index.html", "problems.html", "propose.html"):
@@ -127,7 +151,7 @@ def check(site_dir, problems, items=()):
     try:
         with open(os.path.join(engine, "manifest.json"), encoding="utf-8") as f:
             manifest = json.load(f)
-        if '"engine":"%s"' % manifest["version"] not in html:
+        if data.get("engine") != manifest["version"]:
             errors.append("problems.html does not name the engine in static/busytex/manifest.json")
         for name, info in manifest["files"].items():
             path = os.path.join(engine, name)

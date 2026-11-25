@@ -2,7 +2,7 @@
 
 What the AI history pass (2026-09-22) changed in the problem headers, with its sources, and what you still have to review. Set `history: human` in a problem's header once you accept its history. Delete this file when every problem is reviewed.
 
-Branch `problem-bank`, nothing committed. Fields written: `origin`, `origin-date`, `origin-number`, `also-in`, `references`, and `history: ai` on all 80 problems. Not touched: statements, solutions, titles, file names, area/methods, difficulty, review, taken-from. `python3 -m bank.validate` prints "80 problem files, all good".
+The pass covered the 80 problems the bank held that day (0001-0080). Fields written: `origin`, `origin-date`, `origin-number`, `also-in`, `references`, and `history: ai` on all 80 problems. Not touched: statements, solutions, titles, file names, area/methods, difficulty, review. The problems that still say `history: ai` today are listed in [`../TODO.md`](../TODO.md) ("History check").
 
 ## How the values were obtained
 
@@ -45,17 +45,7 @@ Branch `problem-bank`, nothing committed. Fields written: `origin`, `origin-date
 
 ## Questions for the maintainer
 
-1. **Titles**: apply which of the names above? (each = title line + `mv` of the file, number kept.)
-2. **Convention "first appearance of the result" vs "first time posed as a problem"**: the pass uses the result's paper when the statement *is* the published theorem (0005 Baum–Sweet 1976 / Putnam 1989 A6; 0016 Ivić–Mijajlović 1995 / Bernoulli 2023 P2; 0018 Sutner 1988 / Bernoulli 2023 P3; 0030 Minkowski 1887 / Bernoulli 2024 P4; 0036 Gustafson 1973) and the competition when it is only a special case of a theorem (0080 Bulgaria 2024 P5, special case of Frankl 1983). OK, or switch to competitions-first?
-3. **New slugs** `paper` and `historical`: keep, or rather widen the `journal` description / use `book`? (0038 Monge 1799 stayed `book`.)
-4. **Folklore vs first verified appearance**: 0053 (only verified source: Vakil's Stanford Putnam masterclass, 17 Nov 2003 — use `course` with that date?), 0048 (double-free sets, Wang 1989 not opened), 0045 (Clifford–Preston 1961 book kept as origin; or folklore?), 0055 (folklore, earliest opened: Wu :: riddles 2002).
-5. **0019**: the earliest record is your own MSE post (2025-04-01). Does your friend remember where it came from?
-6. **0031** (collection): origin = first part (AMC 12B 2007 P23) or earliest part (AIME 1998 P14)?
-7. **0010**: RMT year 1989 comes from a printed attribution; the same book dates RMT problem 6191 to 1987, so 1989 may be a misprint. Anyone with access to RMT?
-8. **0020**: origin = Cover 1987 "Pick the largest number" (the randomized-switching version, which is the club's question) or the envelope paradox itself (Kraitchik 1953 / folklore)?
-9. **taken-from** (outside this pass): the club sources are kept in references as "Club source: …" (Sudakov & Milojević 0035/0038/0039/0040; Hongler 0046/0051/0052/0056/0057; Wu 0032/0055; Levi 0066/0067; Vakil 0053). Move them to taken-from?
-10. **Older-source searches**: re-run a search-only pass for the 63 problems listed above once the search quota resets?
-11. **0025** holds two separate IMO problems (1988 P6 and 2007 P5): split into two files?
+Moved to [`../TODO.md`](../TODO.md) (its section on the decisions from the history pass), the one place where they are kept.
 
 ## Content issues
 

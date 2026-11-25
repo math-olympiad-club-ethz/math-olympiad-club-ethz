@@ -50,9 +50,9 @@ def origin_year(p):
 
 
 def index_entry(p, tags=None):
-    """One row of index.json.  Derived fields are computed here, never typed by hand.  tags (bank/tags.py): with them
-    the row says where the problem comes from, `source`, and where that can be read, `link` (bank/sources.py); the
-    Problems page prints it under the statement."""
+    """One row of the index (the Problems page carries it inline).  Derived fields are computed here, never typed by
+    hand.  tags (bank/tags.py): with them the row says where the problem comes from, `source`, and where that can be
+    read, `link` (bank/sources.py); the Problems page prints it under the statement."""
     src = source(p, tags) if tags else {"label": "", "url": None}
     return {
         "id": p["id"],
@@ -90,8 +90,8 @@ def _tag_public(t):
 
 
 def build_tag_catalogue(tags):
-    """tags.json: the four tag types as the browser needs them (area keeps parent/children, and a first-level topic
-    its colours, light and dark: colours.py)."""
+    """The tag catalogue (the pages carry it inline): the four tag types as the browser needs them (area keeps
+    parent/children, and a first-level topic its colours, light and dark: colours.py)."""
     area, colours = [], topic_colours(tags)
     for slug, t in tags["area"].items():
         e = _tag_public(t)

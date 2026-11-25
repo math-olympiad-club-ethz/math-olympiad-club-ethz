@@ -1,5 +1,5 @@
 /* bank-propose-ui.js — the "Propose a problem" page (propose.html): a desk and a sheet.  On the left the problem is
-   written: a title, the statement, and three lines that open in place (a solution, where it is from, what it is about);
+   written: a title, the statement, and four lines that open in place (what it is about, a solution, where it is from, why you like it);
    the rest waits under More details.  On the right the same problem is typeset by the in-browser pdfTeX (the Problems
    page's) and drawn with PDF.js, like the statements there.
    Sending (Antoine's choice, 2026-11-23, after trying the others): the share menu, with the PDF, the .tex file and the
@@ -18,7 +18,6 @@ const el = (tag, attrs = {}, ...children) => {
   for (const [k, v] of Object.entries(attrs)) {
     if (k === 'class') e.className = v;
     else if (k === 'text') e.textContent = v;
-    else if (k === 'style') for (const [prop, val] of Object.entries(v)) e.style.setProperty(prop, val);   // CSSOM: allowed by the page's CSP
     else if (k.startsWith('on')) e.addEventListener(k.slice(2), v);
     else if (v === true) e.setAttribute(k, '');
     else if (v !== false && v != null) e.setAttribute(k, v);
@@ -214,7 +213,7 @@ function autosize(ta) {
 }
 const autosizeAll = () => { for (const ta of document.querySelectorAll('.pp-grow')) autosize(ta); };
 
-/* ------------------------------------------------------------------ the three lines that open in place */
+/* ------------------------------------------------------------------ the four lines that open in place */
 
 function openPart(name, open = true) {
   const btn = $(`pp-add-${name}`), box = $(`pp-${name}-box`);
@@ -357,7 +356,6 @@ function fileDraft(d) {
 
 function setDraft(d) {
   d = { ...P.emptyDraft(), from: '', ...d };
-  if (!d.from && d.origin) d.from = P.originLabel(cat, d.origin, d.originDate, d.originNumber);    // a draft from before the one line
   for (const [k, id] of Object.entries(TEXT_FIELDS)) $(id).value = d[k] || '';
   difficulty.set(d.difficulty);
   topics.set(d.area);
@@ -417,7 +415,7 @@ function showErrors(errors) {
   box.replaceChildren();
   if (shown.length) {
     box.append(el('strong', { text: shown.length === 1 ? 'One thing to do before sending:' : `${shown.length} things to do before sending:` }),
-      el('ul', { class: 'mb-0' }, ...shown.map((e, i) => el('li', { id: `pp-error-${i}` }, el('a', { href: '#' + FIELD_INPUT[e.field], class: 'alert-link fw-normal',
+      el('ul', {}, ...shown.map((e, i) => el('li', { id: `pp-error-${i}` }, el('a', { href: '#' + FIELD_INPUT[e.field],
         onclick: ev => { ev.preventDefault(); reveal(e.field); }, text: SAY[e.message] || e.message })))));
   }
   box.hidden = !shown.length;
@@ -465,7 +463,9 @@ function saveSoon(d) {
   clearTimeout(saveTimer);
   saveTimer = setTimeout(saveNow, 400);
 }
-const hasContent = d => Object.keys(P.emptyDraft()).some(k => (Array.isArray(d[k]) ? d[k].length : String(d[k] || '').trim()));
+/* Something is written or chosen: in a field of the file, or in a line the page keeps beside it (TEXT_FIELDS: "Where is it
+   from?" not read as a competition, the note). */
+const hasContent = d => [...Object.keys(P.emptyDraft()), ...Object.keys(TEXT_FIELDS)].some(k => (Array.isArray(d[k]) ? d[k].length : String(d[k] || '').trim()));
 
 function restoreDraft() {
   let d = null;
@@ -599,14 +599,14 @@ function showLatexError(log, doc) {
   return box === 'statement' ? 'the statement' : box === 'solution' ? 'the solution' : 'the bibliography (More details)';
 }
 
-async function runPreview({ force = false } = {}) {
+async function runPreview() {
   const pv = state.preview;
   clearTimeout(pv.timer);
   if (!C.engineSupported()) { setPreviewStatus('This browser cannot typeset LaTeX. You can still send your problem: we typeset it.', 'warning'); return; }
   if (pv.running) { pv.again = true; return; }          // typeset when the running one ends
   const cur = currentPreview();
   if (!cur) { clearPreview(); return; }
-  if (cur.tex === pv.shownTex && !force) { setPreviewStatus(...pv.shownStatus); return; }
+  if (cur.tex === pv.shownTex) { setPreviewStatus(...pv.shownStatus); return; }
   pv.running = true; pv.again = false;
   $('pp-preview-status').dataset.state = 'running';
   const busy = setTimeout(() => { if (pv.running) setPreviewStatus('Typesetting…', 'muted', 'running'); }, 600);   // a quick one says nothing
@@ -787,7 +787,7 @@ function checkBeforeSending() {
   return d;
 }
 
-/* After a send, a copy or a download: the saved draft is marked, so that a reload does not present it as unsent work. */
+/* After a send (the share menu, or the files saved and the mail app opened): the saved draft is marked, so that a reload does not present it as unsent work. */
 function markSent(d) {
   pendingDraft = { ...d, sent: true };
   saveNow();

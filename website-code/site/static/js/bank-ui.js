@@ -15,7 +15,6 @@ const el = (tag, attrs = {}, ...children) => {
   for (const [k, v] of Object.entries(attrs)) {
     if (k === 'class') e.className = v;
     else if (k === 'text') e.textContent = v;
-    else if (k === 'style') for (const [prop, val] of Object.entries(v)) e.style.setProperty(prop, val);   // CSSOM: allowed by the page's CSP
     else if (k.startsWith('on')) e.addEventListener(k.slice(2), v);
     else if (v === true) e.setAttribute(k, '');
     else if (v !== false && v != null) e.setAttribute(k, v);
@@ -83,17 +82,15 @@ function syncUrl() {
 }
 
 /* ------------------------------------------------------------------ tags on a problem */
-function tagBadge(type, slug, { clickable = false, typeLabel = S.TYPE_LABEL[type] } = {}) {
+function tagBadge(type, slug, { typeLabel = S.TYPE_LABEL[type] } = {}) {
   const tag = S.getTag(cat, type, slug) || { name: slug };
   const b = el('span', { class: `bank-chip bank-chip-${type}`, 'data-tip': type === 'area' ? S.areaPath(cat, slug) : (tag.description || '') });   // the bubble: tips.js
   b.append(el('span', { class: 'bank-chip-type', text: typeLabel }), el('span', { text: tag.name }));
-  if (clickable) {
-    b.classList.add('bank-chip-clickable');
-    b.setAttribute('role', 'button'); b.tabIndex = -1;      // a mouse shortcut: the keyboard picks tags in the search bar and the filters (fewer Tab stops per row)
-    const add = (e) => { e.preventDefault(); e.stopPropagation(); pickTag(type, slug); listIntoView(); };
-    b.addEventListener('click', add);
-    b.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') add(e); });
-  }
+  b.classList.add('bank-chip-clickable');
+  b.setAttribute('role', 'button'); b.tabIndex = -1;      // a mouse shortcut: the keyboard picks tags in the search bar and the filters (fewer Tab stops per row)
+  const add = (e) => { e.preventDefault(); e.stopPropagation(); pickTag(type, slug); listIntoView(); };
+  b.addEventListener('click', add);
+  b.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') add(e); });
   return b;
 }
 
@@ -125,7 +122,7 @@ function listIntoView() {
    estimate in small print; that estimate still drives the difficulty filter and the automatic PDF order. */
 const diffName = slug => (S.getTag(cat, 'difficulty', slug) || { name: slug }).name;
 function difficultyChip(p) {
-  if (p.difficultySource === 'human') return tagBadge('difficulty', p.difficulty, { clickable: true });
+  if (p.difficultySource === 'human') return tagBadge('difficulty', p.difficulty);
   const chip = el('span', { class: 'bank-chip bank-chip-unrated' },
     el('span', { class: 'bank-chip-type', text: S.TYPE_LABEL.difficulty }), el('span', { text: 'None' }));
   if (p.difficultySource === 'ai') {
@@ -162,7 +159,7 @@ function renderList() {
   box.replaceChildren();
   state.list.items.forEach((it, i) => {
     if (it.header) { box.append(el('div', { class: 'bank-list-header', role: 'presentation', text: it.header })); return; }
-    const row = el('div', { class: `bank-option bank-option-${it.tag.type}`, role: 'option', id: `bank-opt-${i}`, 'aria-selected': 'false', 'data-index': i },
+    const row = el('div', { class: `bank-option bank-option-${it.tag.type}`, role: 'option', id: `bank-opt-${i}`, 'aria-selected': 'false' },
       el('span', { class: 'bank-option-type', text: S.TYPE_LABEL[it.tag.type] }), el('span', { class: 'bank-option-label', text: it.label }),
       it.sub ? el('span', { class: 'bank-option-sub', text: it.sub }) : null, el('span', { class: 'bank-option-count', text: String(it.count) }));
     row.addEventListener('click', e => { e.stopPropagation(); chooseItem(i); });
@@ -178,10 +175,10 @@ function setActive(i, scroll = true) {
   const items = state.list.items;
   if (i < 0 || !items[i] || !items[i].tag) i = -1;
   state.list.active = i;
-  document.querySelectorAll('#bank-listbox .bank-option-active').forEach(e => e.classList.remove('bank-option-active'));
+  document.querySelectorAll('#bank-listbox .bank-option-active').forEach(e => { e.classList.remove('bank-option-active'); e.setAttribute('aria-selected', 'false'); });
   if (i >= 0) {
     const row = document.getElementById(`bank-opt-${i}`);
-    if (row) { row.classList.add('bank-option-active'); if (scroll) row.scrollIntoView({ block: 'nearest' }); }
+    if (row) { row.classList.add('bank-option-active'); row.setAttribute('aria-selected', 'true'); if (scroll) row.scrollIntoView({ block: 'nearest' }); }
     $('bank-search').setAttribute('aria-activedescendant', `bank-opt-${i}`);
   } else $('bank-search').removeAttribute('aria-activedescendant');
 }
@@ -409,7 +406,7 @@ function clearFilters() {
 
 /* ------------------------------------------------------------------ Preview: one problem, read here */
 /* The statement is typeset by pdfTeX (bank-compile.js makePreview) and drawn into the page by PDF.js (site/static/pdfjs/,
-   copied by build.py; loaded on the first Preview): no frame, no toolbar, the page's own background and ink, and the size
+   copied by build.py; fetched once a list is shown, at the latest with the first statement): no frame, no toolbar, the page's own background and ink, and the size
    of the page's own text, which is Computer Modern too.  A text layer over the drawing lets it be selected and read
    aloud.  Where PDF.js cannot run, the browser's PDF frame as before.  The build has typeset every statement in advance
    (data.previews, C.pickPreview): a statement opens without the LaTeX engine, at once; the page typesets it itself only
@@ -580,10 +577,10 @@ function closePreview() {
   preview = null;
 }
 
-/* The cross: the preview folds away, then goes. */
+/* The title pressed again: the statement folds away, then goes. */
 function foldPreview() {
   const mine = preview;
-  mine.btn.setAttribute('aria-expanded', 'false');       // the cross goes at once
+  mine.btn.setAttribute('aria-expanded', 'false');       // the chevron turns back at once
   if (!mine.panel.animate || reducedMotion()) { closePreview(); return; }
   const h = mine.panel.getBoundingClientRect().height;
   mine.folding = mine.panel.animate([{ height: `${h}px`, opacity: 1 }, { height: '0px', opacity: 0, paddingTop: '0px', paddingBottom: '0px', marginTop: '0px' }],
@@ -664,7 +661,7 @@ async function togglePreview(p, row, btn) {
   if (!ahead) prefetch();
   const status = el('div', { class: 'small text-muted', role: 'status', text: ahead ? '' : 'Compiling this problem…' });
   const panel = el('div', { class: 'bank-preview-panel', id: `bank-preview-${p.id}` }, status);
-  btn.setAttribute('aria-expanded', 'true');       // and the CSS gives the button a cross
+  btn.setAttribute('aria-expanded', 'true');       // and the CSS turns the title's chevron
   btn.setAttribute('aria-controls', panel.id);
   const mine = preview = { id: p.id, panel, btn, row, url: null, task: null, abort: new AbortController(), status, done: false, ahead };
   if (ahead) setTimeout(() => { if (preview === mine && !mine.done && status.isConnected && !status.textContent) status.textContent = 'Opening the statement…'; }, 500);
@@ -723,20 +720,20 @@ function buildRow(p) {
     if (cb.checked && getComputedStyle(bar).position === 'fixed' && cb.getBoundingClientRect().bottom > bar.getBoundingClientRect().top) cb.closest('li').scrollIntoView({ block: 'nearest' });
   });
   const tags = el('span', { class: 'bank-tags' });
-  for (const a of p.area) tags.append(tagBadge('area', a, { clickable: true }));
+  for (const a of p.area) tags.append(tagBadge('area', a));
   if (p.origin) {
-    const chip = tagBadge('origin', p.origin, { clickable: true });
+    const chip = tagBadge('origin', p.origin);
     // a paper, a journal, a book: the tag says what kind of source it is, its bubble which one (bank/sources.py PUBLICATIONS)
     if (p.source && ['book', 'journal'].includes((S.getTag(cat, 'origin', p.origin) || {}).kind)) chip.dataset.tip = p.source;
     tags.append(chip);
   }
   for (const o of p.alsoIn || []) {             // shown when the Origin filter picked this problem through it
-    const chip = tagBadge('origin', o, { clickable: true, typeLabel: 'Also in' });
+    const chip = tagBadge('origin', o, { typeLabel: 'Also in' });
     chip.classList.add('bank-chip-alsoin'); chip.dataset.slug = o; chip.hidden = true;
     tags.append(chip);
   }
   tags.append(difficultyChip(p));
-  for (const m of p.methods) tags.append(tagBadge('methods', m, { clickable: true }));      // visible only while the methods are shown (CSS)
+  for (const m of p.methods) tags.append(tagBadge('methods', m));      // visible only while the methods are shown (CSS)
   // what these mean is said once, in the menu of the Solution filter
   const marker = p.solutionMasked ? el('span', { class: 'bank-marker bank-marker-masked', text: 'Solution under review' })
     : !S.isComplete(p) ? el('span', { class: 'bank-marker bank-marker-incomplete', text: 'Incomplete solution' }) : null;
@@ -746,7 +743,7 @@ function buildRow(p) {
   const badge = p.provisional ? el('span', { class: 'bank-review bank-review-new', 'data-tip': 'Just proposed, not in the bank yet.', text: 'New' }) : null;
   // the title opens the statement under it (togglePreview), and closes it; the box beside it is the tick
   const title = el('button', { type: 'button', class: 'bank-row-title', 'aria-expanded': 'false' }, el('span', { class: 'bank-title', text: p.title }), el('span', { class: 'chev', 'aria-hidden': 'true' }));
-  const li = el('li', { class: 'list-group-item bank-row' + (cb.checked ? ' bank-row-selected' : ''), 'data-id': p.id, hidden: true },
+  const li = el('li', { class: 'bank-row' + (cb.checked ? ' bank-row-selected' : ''), 'data-id': p.id, hidden: true },
     cb,
     el('span', { class: 'bank-row-main' }, title, badge),
     el('span', { class: 'bank-row-tags' }, tags, marker, review));
@@ -1137,7 +1134,7 @@ function setStatus(text, kind = 'muted') {
   if (stage && stage !== saidStage) $('bank-announce').textContent = stage;
   saidStage = stage;
   const was = s.className;
-  s.className = 'bank-status small ' + (kind === 'muted' ? 'text-muted' : `text-${kind}-emphasis`);
+  s.className = 'bank-status ' + (kind === 'muted' ? 'text-muted' : `text-${kind}-emphasis`);
   if (s.className !== was) syncStuckHeights();    // -emphasis: readable in dark mode too
 }
 
@@ -1197,7 +1194,7 @@ function clearOutput(variant) {
    the page itself is out of date, nor when the problem texts did not download). */
 function resetLink(err) {
   if (err && (err.name === 'AbortError' || err.name === 'StaleError' || err.noReset)) return null;
-  return el('button', { type: 'button', class: 'btn btn-link btn-sm p-0 ms-2 align-baseline bank-reset-engine', onclick: onResetEngine }, 'Reset the LaTeX engine');
+  return el('button', { type: 'button', class: 'btn btn-link btn-sm bank-reset-engine', onclick: onResetEngine }, 'Reset the LaTeX engine');
 }
 
 async function onResetEngine() {
@@ -1349,7 +1346,7 @@ async function onCreateSolutions() {
 
 /* The engine (some 16 MB) and the problem texts are fetched ahead only on a clear sign that a PDF is coming: a first tick,
    a Preview (once its statement is drawn), the pointer or the focus on a Create that can be used.  Not on a mere scroll or click on the page, and for the
-   engine not at all on a touch screen or a slow connection (C.mayPrefetchEngine): there, Create starts it. */
+   engine not at all on a touch screen or a slow connection (bank-compile.js mayPrefetchEngine): there, Create starts it. */
 let prefetched = false;
 function prefetch() {             // after the next frame: the tick or the click that asked for it shows first
   if (prefetched) return;
